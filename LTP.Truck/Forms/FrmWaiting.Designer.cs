@@ -39,7 +39,7 @@
       tableLayoutPanel5 = new TableLayoutPanel();
       pictureBox1 = new PictureBox();
       label2 = new Label();
-      label1 = new Label();
+      lbTitle = new Label();
       btnMenu = new PictureBox();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
@@ -163,7 +163,7 @@
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel5.Controls.Add(pictureBox1, 0, 1);
       tableLayoutPanel5.Controls.Add(label2, 0, 3);
-      tableLayoutPanel5.Controls.Add(label1, 0, 2);
+      tableLayoutPanel5.Controls.Add(lbTitle, 0, 2);
       tableLayoutPanel5.Location = new Point(877, 3);
       tableLayoutPanel5.Name = "tableLayoutPanel5";
       tableLayoutPanel5.RowCount = 5;
@@ -200,17 +200,17 @@
       label2.Text = "Weight Logging System";
       label2.TextAlign = ContentAlignment.MiddleCenter;
       // 
-      // label1
+      // lbTitle
       // 
-      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label1.AutoSize = true;
-      label1.Font = new Font("Segoe UI", 45.25F, FontStyle.Bold);
-      label1.Location = new Point(3, 493);
-      label1.Name = "label1";
-      label1.Size = new Size(849, 82);
-      label1.TabIndex = 1;
-      label1.Text = "HỆ THỐNG CÂN XE TẢI";
-      label1.TextAlign = ContentAlignment.MiddleCenter;
+      lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbTitle.AutoSize = true;
+      lbTitle.Font = new Font("Segoe UI", 45.25F, FontStyle.Bold);
+      lbTitle.Location = new Point(3, 493);
+      lbTitle.Name = "lbTitle";
+      lbTitle.Size = new Size(849, 82);
+      lbTitle.TabIndex = 1;
+      lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
+      lbTitle.TextAlign = ContentAlignment.MiddleCenter;
       // 
       // btnMenu
       // 
@@ -256,7 +256,7 @@
     private TableLayoutPanel tableLayoutPanel5;
     private PictureBox pictureBox1;
     private Label label2;
-    private Label label1;
+    private Label lbTitle;
     private PictureBox btnMenu;
     private UserControls.UcPanelLogin ucPanelLogin1;
   }

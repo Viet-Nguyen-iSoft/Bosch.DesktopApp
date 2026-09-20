@@ -3,6 +3,7 @@ using Common;
 using HelperManager;
 using LTP.Truck.Controls;
 using System.Diagnostics;
+using System.Windows.Forms;
 using static Common.EnumData;
 using static LTP.Truck.EnumData;
 
@@ -13,6 +14,7 @@ namespace LTP.Truck.Forms
     public FrmWaiting()
     {
       InitializeComponent();
+      LoadConfig();
       this.Load += FrmWaiting_Load;
     }
 
@@ -140,6 +142,28 @@ namespace LTP.Truck.Forms
       ucPanelLogin1.Account = "admin";
       ucPanelLogin1.Password = "admin";
       ucPanelLogin1.OnSendLogin += UcPanelLogin1_OnSendLogin;
+    }
+
+    private void LoadConfig()
+    {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(() =>
+        {
+          LoadConfig();
+        }));
+        return;
+      }
+
+      var station = Environment.GetEnvironmentVariable("STATION");
+      if (station == "1")
+      {
+        lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
+      }
+      else
+      {
+        lbTitle.Text = "HỆ THỐNG CÂN PHẾ PHẨM";
+      }
     }
 
     private async void UcPanelLogin1_OnSendLogin(object? sender, EventArgs e)

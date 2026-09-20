@@ -422,3 +422,5 @@ obj/
 
 *.pdf
 *.html
+
+*.env
