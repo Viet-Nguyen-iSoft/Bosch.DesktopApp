@@ -44,11 +44,6 @@ jobs:
           Set-Content -Path version.txt -Value $version -Encoding utf8NoBOM
           Write-Host "Version = $version"
 
-      - name: Remove Environment Configuration
-        shell: pwsh
-        run: |
-          Remove-Item "${{ env.PUBLISH_DIR }}\.env" -Force -ErrorAction SilentlyContinue
-
       - name: Create Update.zip
         shell: pwsh
         run: |

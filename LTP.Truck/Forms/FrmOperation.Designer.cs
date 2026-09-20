@@ -48,7 +48,7 @@ namespace LTP.Truck.Forms
       btnProduct = new RJButton();
       btnClient = new RJButton();
       tableLayoutPanel7 = new TableLayoutPanel();
-      label3 = new Label();
+      lbVersion = new Label();
       pictureBox1 = new PictureBox();
       tableLayoutPanel2 = new TableLayoutPanel();
       tableLayoutPanel4 = new TableLayoutPanel();
@@ -419,7 +419,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel7.ColumnCount = 1;
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel7.Controls.Add(label3, 0, 1);
+      tableLayoutPanel7.Controls.Add(lbVersion, 0, 1);
       tableLayoutPanel7.Controls.Add(pictureBox1, 0, 0);
       tableLayoutPanel7.Location = new Point(3, 768);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -430,18 +430,18 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.Size = new Size(244, 85);
       tableLayoutPanel7.TabIndex = 1;
       // 
-      // label3
+      // lbVersion
       // 
-      label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label3.AutoSize = true;
-      label3.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label3.Location = new Point(0, 50);
-      label3.Margin = new Padding(0);
-      label3.Name = "label3";
-      label3.Size = new Size(244, 30);
-      label3.TabIndex = 4;
-      label3.Text = "Version: 1.0.0";
-      label3.TextAlign = ContentAlignment.MiddleCenter;
+      lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbVersion.AutoSize = true;
+      lbVersion.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbVersion.Location = new Point(0, 50);
+      lbVersion.Margin = new Padding(0);
+      lbVersion.Name = "lbVersion";
+      lbVersion.Size = new Size(244, 30);
+      lbVersion.TabIndex = 4;
+      lbVersion.Text = "Version: 1.0.0";
+      lbVersion.TextAlign = ContentAlignment.MiddleCenter;
       // 
       // pictureBox1
       // 
@@ -664,7 +664,7 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel6;
     private FlowLayoutPanel flowLayoutPanel1;
     private TableLayoutPanel tableLayoutPanel7;
-    private Label label3;
+    private Label lbVersion;
     private PictureBox pictureBox1;
     private TableLayoutPanel tableLayoutPanel2;
     private TableLayoutPanel tableLayoutPanel4;

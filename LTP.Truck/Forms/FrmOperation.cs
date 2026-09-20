@@ -186,6 +186,7 @@ namespace LTP.Truck.Forms
 
     private void FrmOperation_Load(object? sender, EventArgs e)
     {
+      lbVersion.Text = $"Version {AppCore.Ins._appConfig?.Version ?? string.Empty}";
       LoadStation(AppCore.Ins._station);
       //LoadAccount(AppCore.Ins._userCurrent);
 
