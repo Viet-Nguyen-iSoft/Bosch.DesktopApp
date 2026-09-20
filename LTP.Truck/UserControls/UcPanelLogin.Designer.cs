@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.UserControls
+namespace LTP.Truck.UserControls
 {
   partial class UcPanelLogin
   {
@@ -77,7 +77,7 @@
       // 
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
-      label1.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 36F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.ForeColor = Color.Red;
       label1.Location = new Point(30, 30);
       label1.Margin = new Padding(0);
@@ -107,7 +107,7 @@
       // 
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
-      label2.Font = new Font("Segoe UI", 20.25F, FontStyle.Bold);
+      label2.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
       label2.ForeColor = Color.FromArgb(255, 56, 60);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
@@ -125,7 +125,7 @@
       txtAccount.BorderFocusColor = Color.HotPink;
       txtAccount.BorderRadius = 5;
       txtAccount.BorderSize = 2;
-      txtAccount.Font = new Font("Roboto Condensed", 26.25F);
+      txtAccount.Font = new Font("Roboto", 26.25F);
       txtAccount.ForeColor = Color.FromArgb(64, 64, 64);
       txtAccount.Location = new Point(4, 45);
       txtAccount.Margin = new Padding(4);
@@ -160,7 +160,7 @@
       // 
       label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label3.AutoSize = true;
-      label3.Font = new Font("Segoe UI", 20.25F, FontStyle.Bold);
+      label3.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
       label3.ForeColor = Color.FromArgb(255, 56, 60);
       label3.Location = new Point(0, 0);
       label3.Margin = new Padding(0);
@@ -193,7 +193,7 @@
       txtPass.BorderFocusColor = Color.HotPink;
       txtPass.BorderRadius = 5;
       txtPass.BorderSize = 2;
-      txtPass.Font = new Font("Roboto Condensed", 26.25F);
+      txtPass.Font = new Font("Roboto", 26.25F);
       txtPass.ForeColor = Color.FromArgb(64, 64, 64);
       txtPass.Location = new Point(4, 5);
       txtPass.Margin = new Padding(4);

@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.UserControls
+namespace LTP.Truck.UserControls
 {
   partial class UcItem
   {
@@ -56,7 +56,7 @@
       // 
       lbValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbValue.AutoSize = true;
-      lbValue.Font = new Font("Segoe UI", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbValue.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbValue.Location = new Point(8, 30);
       lbValue.Name = "lbValue";
       lbValue.Size = new Size(214, 62);

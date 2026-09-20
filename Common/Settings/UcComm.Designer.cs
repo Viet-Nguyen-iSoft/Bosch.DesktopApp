@@ -1,4 +1,4 @@
-﻿namespace Common.Settings
+namespace Common.Settings
 {
   partial class UcComm
   {
@@ -69,7 +69,7 @@
       lbAutoConnect.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbAutoConnect.AutoSize = true;
       lbAutoConnect.BackColor = Color.Transparent;
-      lbAutoConnect.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbAutoConnect.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       lbAutoConnect.Location = new Point(0, 132);
       lbAutoConnect.Margin = new Padding(0);
       lbAutoConnect.Name = "lbAutoConnect";
@@ -164,7 +164,7 @@
       lbCommName.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbCommName.AutoSize = true;
       lbCommName.BackColor = Color.Transparent;
-      lbCommName.Font = new Font("Roboto Condensed", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbCommName.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbCommName.ForeColor = Color.Black;
       lbCommName.Location = new Point(0, 0);
       lbCommName.Margin = new Padding(0);
@@ -180,7 +180,7 @@
       lbInfor.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbInfor.AutoSize = true;
       lbInfor.BackColor = Color.Transparent;
-      lbInfor.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbInfor.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       lbInfor.Location = new Point(0, 60);
       lbInfor.Margin = new Padding(0);
       lbInfor.Name = "lbInfor";

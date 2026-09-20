@@ -1,4 +1,4 @@
-﻿using LTP.Truck.Custom;
+using LTP.Truck.Custom;
 
 namespace LTP.Truck.Forms
 {
@@ -236,7 +236,7 @@ namespace LTP.Truck.Forms
       btnSetting.Dock = DockStyle.Top;
       btnSetting.FlatAppearance.BorderSize = 0;
       btnSetting.FlatStyle = FlatStyle.Flat;
-      btnSetting.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+      btnSetting.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
       btnSetting.ForeColor = Color.Black;
       btnSetting.Image = (Image)resources.GetObject("btnSetting.Image");
       btnSetting.ImageAlign = ContentAlignment.MiddleLeft;
@@ -434,7 +434,7 @@ namespace LTP.Truck.Forms
       // 
       lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersion.AutoSize = true;
-      lbVersion.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbVersion.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       lbVersion.Location = new Point(0, 50);
       lbVersion.Margin = new Padding(0);
       lbVersion.Name = "lbVersion";
@@ -513,7 +513,7 @@ namespace LTP.Truck.Forms
       // 
       lbTitlePage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitlePage.AutoSize = true;
-      lbTitlePage.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitlePage.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitlePage.Location = new Point(5, 44);
       lbTitlePage.Margin = new Padding(5, 0, 0, 0);
       lbTitlePage.Name = "lbTitlePage";
@@ -526,7 +526,7 @@ namespace LTP.Truck.Forms
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Segoe UI", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";

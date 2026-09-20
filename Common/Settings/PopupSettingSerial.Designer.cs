@@ -1,4 +1,4 @@
-﻿namespace Common.Settings
+namespace Common.Settings
 {
   partial class PopupSettingSerial
   {
@@ -73,7 +73,7 @@
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.FromArgb(199, 199, 199);
-      label1.Font = new Font("Roboto Condensed", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -86,7 +86,7 @@
       // 
       cbbComm.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbComm.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbComm.Font = new Font("Roboto Condensed", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbComm.Font = new Font("Roboto", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbComm.FormattingEnabled = true;
       cbbComm.Location = new Point(193, 12);
       cbbComm.Name = "cbbComm";
@@ -199,7 +199,7 @@
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
@@ -213,7 +213,7 @@
       label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label5.AutoSize = true;
       label5.BackColor = Color.Transparent;
-      label5.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label5.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label5.Location = new Point(0, 61);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
@@ -227,7 +227,7 @@
       label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label6.AutoSize = true;
       label6.BackColor = Color.Transparent;
-      label6.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label6.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label6.Location = new Point(0, 122);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
@@ -271,7 +271,7 @@
     {
       label.AutoSize = true;
       label.Dock = DockStyle.Fill;
-      label.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label.Margin = Padding.Empty;
       label.TabIndex = tabIndex;
       label.Text = text;
@@ -282,7 +282,7 @@
     {
       textBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       textBox.BorderStyle = BorderStyle.FixedSingle;
-      textBox.Font = new Font("Roboto Condensed", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      textBox.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       textBox.Margin = new Padding(3, 10, 3, 10);
       textBox.TabIndex = tabIndex;
       textBox.Text = text;

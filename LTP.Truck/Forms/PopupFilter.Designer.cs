@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class PopupFilter
   {
@@ -43,7 +43,7 @@
       label21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label21.AutoSize = true;
       label21.BackColor = Color.Transparent;
-      label21.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label21.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label21.Location = new Point(9, 76);
       label21.Margin = new Padding(0);
       label21.Name = "label21";
@@ -56,7 +56,7 @@
       // 
       cbbStatus.Anchor = AnchorStyles.Left;
       cbbStatus.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbStatus.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbStatus.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbStatus.FormattingEnabled = true;
       cbbStatus.Items.AddRange(new object[] { "Tất cả", "Cân lần 01", "Cân lần 02" });
       cbbStatus.Location = new Point(126, 72);
@@ -69,7 +69,7 @@
       labelType.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       labelType.AutoSize = true;
       labelType.BackColor = Color.Transparent;
-      labelType.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      labelType.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       labelType.Location = new Point(9, 141);
       labelType.Margin = new Padding(0);
       labelType.Name = "labelType";
@@ -82,7 +82,7 @@
       // 
       cbbType.Anchor = AnchorStyles.Left;
       cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbType.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbType.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbType.FormattingEnabled = true;
       cbbType.Items.AddRange(new object[] { "Tất cả", "Dữ liệu hiện hữu", "Dữ liệu xóa" });
       cbbType.Location = new Point(126, 140);

@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class PopupApplyVersionNew
   {
@@ -203,7 +203,7 @@
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
       lbTitle.BackColor = Color.White;
-      lbTitle.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
@@ -247,7 +247,7 @@
       lbVersionCurrent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersionCurrent.AutoSize = true;
       lbVersionCurrent.BackColor = Color.White;
-      lbVersionCurrent.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbVersionCurrent.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbVersionCurrent.Location = new Point(280, 0);
       lbVersionCurrent.Margin = new Padding(0);
       lbVersionCurrent.Name = "lbVersionCurrent";
@@ -322,7 +322,7 @@
       lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersion.AutoSize = true;
       lbVersion.BackColor = Color.White;
-      lbVersion.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbVersion.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbVersion.Location = new Point(280, 0);
       lbVersion.Margin = new Padding(0);
       lbVersion.Name = "lbVersion";

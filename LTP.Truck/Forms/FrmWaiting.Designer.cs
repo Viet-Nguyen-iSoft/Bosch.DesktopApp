@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class FrmWaiting
   {
@@ -87,7 +87,7 @@
       // 
       lbs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbs.AutoSize = true;
-      lbs.Font = new Font("Microsoft Sans Serif", 20.25F, FontStyle.Bold);
+      lbs.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
       lbs.ForeColor = Color.White;
       lbs.Location = new Point(0, 0);
       lbs.Margin = new Padding(0);
@@ -178,7 +178,7 @@
       // 
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
-      label2.Font = new Font("Segoe UI", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label2.Location = new Point(3, 575);
       label2.Name = "label2";
       label2.Size = new Size(849, 45);
@@ -190,7 +190,7 @@
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Segoe UI", 45.25F, FontStyle.Bold);
+      lbTitle.Font = new Font("Roboto", 45.25F, FontStyle.Bold);
       lbTitle.Location = new Point(3, 493);
       lbTitle.Name = "lbTitle";
       lbTitle.Size = new Size(849, 82);
@@ -215,7 +215,7 @@
       // 
       lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersion.AutoSize = true;
-      lbVersion.Font = new Font("Microsoft Sans Serif", 20.25F, FontStyle.Bold);
+      lbVersion.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
       lbVersion.ForeColor = Color.White;
       lbVersion.Location = new Point(693, 0);
       lbVersion.Margin = new Padding(0);

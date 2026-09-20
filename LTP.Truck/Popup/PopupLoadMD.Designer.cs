@@ -1,4 +1,4 @@
-﻿using LTP.Truck.Custom;
+using LTP.Truck.Custom;
 
 namespace LTP.Truck.Popup
 {
@@ -97,7 +97,7 @@ namespace LTP.Truck.Popup
       label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
-      label4.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label4.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
@@ -114,7 +114,7 @@ namespace LTP.Truck.Popup
       txtSearch.BorderFocusColor = Color.HotPink;
       txtSearch.BorderRadius = 5;
       txtSearch.BorderSize = 2;
-      txtSearch.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtSearch.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearch.ForeColor = Color.FromArgb(64, 64, 64);
       txtSearch.Location = new Point(106, 7);
       txtSearch.Margin = new Padding(4);
@@ -140,7 +140,7 @@ namespace LTP.Truck.Popup
       btnSearch.FlatAppearance.BorderColor = Color.White;
       btnSearch.FlatAppearance.BorderSize = 0;
       btnSearch.FlatStyle = FlatStyle.Flat;
-      btnSearch.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnSearch.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnSearch.ForeColor = Color.White;
       btnSearch.Location = new Point(1309, 3);
       btnSearch.Name = "btnSearch";
@@ -155,7 +155,7 @@ namespace LTP.Truck.Popup
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
       lbTitle.BackColor = Color.FromArgb(199, 199, 199);
-      lbTitle.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
@@ -239,7 +239,7 @@ namespace LTP.Truck.Popup
       dgv.BorderStyle = BorderStyle.None;
       dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle1.BackColor = SystemColors.Control;
-      dataGridViewCellStyle1.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle1.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
@@ -248,7 +248,7 @@ namespace LTP.Truck.Popup
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle2.BackColor = SystemColors.Window;
-      dataGridViewCellStyle2.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle2.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
       dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
@@ -260,7 +260,7 @@ namespace LTP.Truck.Popup
       dgv.ReadOnly = true;
       dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle3.BackColor = SystemColors.Control;
-      dataGridViewCellStyle3.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle3.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;

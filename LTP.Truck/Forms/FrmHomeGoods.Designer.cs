@@ -176,7 +176,7 @@ namespace LTP.Truck.Forms
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.FromArgb(199, 199, 199);
-      label1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -214,7 +214,7 @@ namespace LTP.Truck.Forms
       rjButton1.BorderSize = 0;
       rjButton1.FlatAppearance.BorderSize = 0;
       rjButton1.FlatStyle = FlatStyle.Flat;
-      rjButton1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
+      rjButton1.Font = new Font("Roboto", 14.25F, FontStyle.Bold);
       rjButton1.ForeColor = Color.White;
       rjButton1.Image = (Image)resources.GetObject("rjButton1.Image");
       rjButton1.Location = new Point(578, 3);
@@ -234,7 +234,7 @@ namespace LTP.Truck.Forms
       rjButton2.BorderSize = 0;
       rjButton2.FlatAppearance.BorderSize = 0;
       rjButton2.FlatStyle = FlatStyle.Flat;
-      rjButton2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
+      rjButton2.Font = new Font("Roboto", 14.25F, FontStyle.Bold);
       rjButton2.ForeColor = Color.White;
       rjButton2.Image = (Image)resources.GetObject("rjButton2.Image");
       rjButton2.Location = new Point(398, 3);
@@ -284,7 +284,7 @@ namespace LTP.Truck.Forms
       label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label5.AutoSize = true;
       label5.BackColor = Color.Transparent;
-      label5.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label5.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label5.Location = new Point(377, 0);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
@@ -298,7 +298,7 @@ namespace LTP.Truck.Forms
       label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
-      label4.Font = new Font("Segoe UI", 27.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label4.Font = new Font("Roboto", 27.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
@@ -327,7 +327,7 @@ namespace LTP.Truck.Forms
       label13.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label13.AutoSize = true;
       label13.BackColor = Color.Transparent;
-      label13.Font = new Font("Segoe UI", 39.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label13.Font = new Font("Roboto", 39.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label13.Location = new Point(664, 0);
       label13.Margin = new Padding(0);
       label13.Name = "label13";
@@ -342,7 +342,7 @@ namespace LTP.Truck.Forms
       lbWeightValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbWeightValue.AutoSize = true;
       lbWeightValue.BackColor = Color.Transparent;
-      lbWeightValue.Font = new Font("Segoe UI", 90F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbWeightValue.Font = new Font("Roboto", 90F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbWeightValue.Location = new Point(0, 0);
       lbWeightValue.Margin = new Padding(0);
       lbWeightValue.Name = "lbWeightValue";
@@ -391,7 +391,7 @@ namespace LTP.Truck.Forms
       label16.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label16.AutoSize = true;
       label16.BackColor = Color.Transparent;
-      label16.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold);
+      label16.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
       label16.Location = new Point(317, 0);
       label16.Margin = new Padding(0);
       label16.Name = "label16";
@@ -405,7 +405,7 @@ namespace LTP.Truck.Forms
       label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label12.AutoSize = true;
       label12.BackColor = Color.Transparent;
-      label12.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold);
+      label12.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
       label12.Location = new Point(0, 0);
       label12.Margin = new Padding(0);
       label12.Name = "label12";
@@ -419,7 +419,7 @@ namespace LTP.Truck.Forms
       label15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label15.AutoSize = true;
       label15.BackColor = Color.Transparent;
-      label15.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold);
+      label15.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
       label15.Location = new Point(84, 0);
       label15.Margin = new Padding(0);
       label15.Name = "label15";
@@ -451,7 +451,7 @@ namespace LTP.Truck.Forms
       label19.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label19.AutoSize = true;
       label19.BackColor = Color.Transparent;
-      label19.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold);
+      label19.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
       label19.Location = new Point(318, 0);
       label19.Margin = new Padding(0);
       label19.Name = "label19";
@@ -465,7 +465,7 @@ namespace LTP.Truck.Forms
       label20.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label20.AutoSize = true;
       label20.BackColor = Color.Transparent;
-      label20.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold);
+      label20.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
       label20.Location = new Point(0, 0);
       label20.Margin = new Padding(0);
       label20.Name = "label20";
@@ -479,7 +479,7 @@ namespace LTP.Truck.Forms
       lbGross.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbGross.AutoSize = true;
       lbGross.BackColor = Color.Transparent;
-      lbGross.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold);
+      lbGross.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
       lbGross.Location = new Point(102, 0);
       lbGross.Margin = new Padding(0);
       lbGross.Name = "lbGross";
@@ -567,7 +567,7 @@ namespace LTP.Truck.Forms
       txtLicensePlate.BorderFocusColor = Color.HotPink;
       txtLicensePlate.BorderRadius = 5;
       txtLicensePlate.BorderSize = 2;
-      txtLicensePlate.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtLicensePlate.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtLicensePlate.ForeColor = Color.FromArgb(64, 64, 64);
       txtLicensePlate.Location = new Point(4, 4);
       txtLicensePlate.Margin = new Padding(4);
@@ -593,7 +593,7 @@ namespace LTP.Truck.Forms
       btnLoadLicensePlate.FlatAppearance.BorderColor = Color.Black;
       btnLoadLicensePlate.FlatAppearance.BorderSize = 3;
       btnLoadLicensePlate.FlatStyle = FlatStyle.Flat;
-      btnLoadLicensePlate.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnLoadLicensePlate.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadLicensePlate.ForeColor = Color.Black;
       btnLoadLicensePlate.Location = new Point(204, 4);
       btnLoadLicensePlate.Name = "btnLoadLicensePlate";
@@ -609,7 +609,7 @@ namespace LTP.Truck.Forms
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
@@ -622,7 +622,7 @@ namespace LTP.Truck.Forms
       // 
       cbbProduct.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbProduct.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbProduct.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
       cbbProduct.Location = new Point(191, 148);
       cbbProduct.Name = "cbbProduct";
@@ -634,7 +634,7 @@ namespace LTP.Truck.Forms
       label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label6.AutoSize = true;
       label6.BackColor = Color.Transparent;
-      label6.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label6.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label6.Location = new Point(0, 95);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
@@ -648,7 +648,7 @@ namespace LTP.Truck.Forms
       label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label7.AutoSize = true;
       label7.BackColor = Color.Transparent;
-      label7.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label7.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label7.Location = new Point(0, 143);
       label7.Margin = new Padding(0);
       label7.Name = "label7";
@@ -662,7 +662,7 @@ namespace LTP.Truck.Forms
       label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label8.AutoSize = true;
       label8.BackColor = Color.Transparent;
-      label8.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label8.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label8.Location = new Point(0, 191);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
@@ -676,7 +676,7 @@ namespace LTP.Truck.Forms
       lbGrossT.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbGrossT.AutoSize = true;
       lbGrossT.BackColor = Color.Transparent;
-      lbGrossT.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbGrossT.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       lbGrossT.Location = new Point(0, 239);
       lbGrossT.Margin = new Padding(0);
       lbGrossT.Name = "lbGrossT";
@@ -689,7 +689,7 @@ namespace LTP.Truck.Forms
       // 
       cbbProductGroup.Anchor = AnchorStyles.Left;
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbProductGroup.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbProductGroup.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
       cbbProductGroup.Location = new Point(191, 100);
       cbbProductGroup.Name = "cbbProductGroup";
@@ -701,7 +701,7 @@ namespace LTP.Truck.Forms
       label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label3.AutoSize = true;
       label3.BackColor = Color.Transparent;
-      label3.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label3.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label3.Location = new Point(0, 47);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
@@ -737,7 +737,7 @@ namespace LTP.Truck.Forms
       txtNameDriver.BorderRadius = 5;
       txtNameDriver.BorderSize = 2;
       txtNameDriver.Enabled = false;
-      txtNameDriver.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtNameDriver.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtNameDriver.ForeColor = Color.FromArgb(64, 64, 64);
       txtNameDriver.Location = new Point(4, 4);
       txtNameDriver.Margin = new Padding(4);
@@ -757,7 +757,7 @@ namespace LTP.Truck.Forms
       label14.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label14.AutoSize = true;
       label14.BackColor = Color.Transparent;
-      label14.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label14.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label14.Location = new Point(261, 0);
       label14.Margin = new Padding(0);
       label14.Name = "label14";
@@ -775,7 +775,7 @@ namespace LTP.Truck.Forms
       txtIdCard.BorderRadius = 5;
       txtIdCard.BorderSize = 2;
       txtIdCard.Enabled = false;
-      txtIdCard.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtIdCard.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtIdCard.ForeColor = Color.FromArgb(64, 64, 64);
       txtIdCard.Location = new Point(365, 4);
       txtIdCard.Margin = new Padding(4);
@@ -814,7 +814,7 @@ namespace LTP.Truck.Forms
       lbTare.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTare.AutoSize = true;
       lbTare.BackColor = Color.Transparent;
-      lbTare.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+      lbTare.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
       lbTare.Location = new Point(401, 0);
       lbTare.Margin = new Padding(0);
       lbTare.Name = "lbTare";
@@ -828,7 +828,7 @@ namespace LTP.Truck.Forms
       label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label11.AutoSize = true;
       label11.BackColor = Color.Transparent;
-      label11.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label11.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label11.Location = new Point(244, 0);
       label11.Margin = new Padding(0);
       label11.Name = "label11";
@@ -841,7 +841,7 @@ namespace LTP.Truck.Forms
       // 
       cbbTare.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbTare.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbTare.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
       cbbTare.Location = new Point(3, 5);
       cbbTare.Name = "cbbTare";
@@ -853,7 +853,7 @@ namespace LTP.Truck.Forms
       lbSumWeight.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbSumWeight.AutoSize = true;
       lbSumWeight.BackColor = Color.Transparent;
-      lbSumWeight.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+      lbSumWeight.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
       lbSumWeight.Location = new Point(188, 239);
       lbSumWeight.Margin = new Padding(0);
       lbSumWeight.Name = "lbSumWeight";
@@ -867,7 +867,7 @@ namespace LTP.Truck.Forms
       label10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label10.AutoSize = true;
       label10.BackColor = Color.FromArgb(199, 199, 199);
-      label10.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label10.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label10.Location = new Point(0, 0);
       label10.Margin = new Padding(0);
       label10.Name = "label10";
@@ -946,7 +946,7 @@ namespace LTP.Truck.Forms
       dgv.BorderStyle = BorderStyle.None;
       dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle1.BackColor = SystemColors.Control;
-      dataGridViewCellStyle1.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle1.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
@@ -955,7 +955,7 @@ namespace LTP.Truck.Forms
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle2.BackColor = SystemColors.Window;
-      dataGridViewCellStyle2.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle2.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
       dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
@@ -967,7 +967,7 @@ namespace LTP.Truck.Forms
       dgv.ReadOnly = true;
       dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle3.BackColor = SystemColors.Control;
-      dataGridViewCellStyle3.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle3.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
@@ -1012,7 +1012,7 @@ namespace LTP.Truck.Forms
       label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label9.AutoSize = true;
       label9.BackColor = Color.Transparent;
-      label9.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label9.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label9.Location = new Point(0, 0);
       label9.Margin = new Padding(0);
       label9.Name = "label9";
@@ -1029,7 +1029,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.BorderFocusColor = Color.HotPink;
       txtSearchKey.BorderRadius = 5;
       txtSearchKey.BorderSize = 2;
-      txtSearchKey.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtSearchKey.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearchKey.ForeColor = Color.FromArgb(64, 64, 64);
       txtSearchKey.Location = new Point(106, 11);
       txtSearchKey.Margin = new Padding(4);
@@ -1049,7 +1049,7 @@ namespace LTP.Truck.Forms
       label17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
-      label17.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label17.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label17.Location = new Point(576, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
@@ -1063,7 +1063,7 @@ namespace LTP.Truck.Forms
       label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
-      label18.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label18.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label18.Location = new Point(932, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
@@ -1118,7 +1118,7 @@ namespace LTP.Truck.Forms
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label27.AutoSize = true;
       label27.BackColor = Color.FromArgb(199, 199, 199);
-      label27.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label27.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label27.Location = new Point(0, 0);
       label27.Margin = new Padding(0);
       label27.Name = "label27";

@@ -1,4 +1,4 @@
-﻿namespace Common.Settings
+namespace Common.Settings
 {
   partial class PopupChooseComm
   {
@@ -67,7 +67,7 @@
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.FromArgb(199, 199, 199);
-      label1.Font = new Font("Roboto Condensed", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -98,7 +98,7 @@
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
@@ -111,7 +111,7 @@
       // 
       cbbConnectionType.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbConnectionType.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbConnectionType.Font = new Font("Roboto Condensed", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbConnectionType.Font = new Font("Roboto", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbConnectionType.FormattingEnabled = true;
       cbbConnectionType.Location = new Point(143, 21);
       cbbConnectionType.Name = "cbbConnectionType";

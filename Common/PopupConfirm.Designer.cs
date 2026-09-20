@@ -1,4 +1,4 @@
-﻿namespace Common
+namespace Common
 {
   partial class PopupConfirm
   {
@@ -102,7 +102,7 @@
       // 
       lbInformation.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbInformation.AutoSize = true;
-      lbInformation.Font = new Font("Microsoft Sans Serif", 20.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbInformation.Font = new Font("Roboto", 20.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbInformation.ForeColor = Color.Black;
       lbInformation.Location = new Point(143, 0);
       lbInformation.Name = "lbInformation";

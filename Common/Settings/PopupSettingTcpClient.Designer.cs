@@ -1,4 +1,4 @@
-﻿namespace Common.Settings
+namespace Common.Settings
 {
   partial class PopupSettingTcpClient
   {
@@ -77,7 +77,7 @@
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.FromArgb(199, 199, 199);
-      label1.Font = new Font("Roboto Condensed", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -134,7 +134,7 @@
       txtTimeout.BorderFocusColor = Color.HotPink;
       txtTimeout.BorderRadius = 5;
       txtTimeout.BorderSize = 2;
-      txtTimeout.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtTimeout.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTimeout.ForeColor = Color.FromArgb(64, 64, 64);
       txtTimeout.Location = new Point(194, 155);
       txtTimeout.Margin = new Padding(4);
@@ -157,7 +157,7 @@
       txtPort.BorderFocusColor = Color.HotPink;
       txtPort.BorderRadius = 5;
       txtPort.BorderSize = 2;
-      txtPort.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtPort.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtPort.ForeColor = Color.FromArgb(64, 64, 64);
       txtPort.Location = new Point(194, 85);
       txtPort.Margin = new Padding(4);
@@ -177,7 +177,7 @@
       label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label3.AutoSize = true;
       label3.BackColor = Color.Transparent;
-      label3.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label3.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label3.Location = new Point(0, 70);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
@@ -191,7 +191,7 @@
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
@@ -205,7 +205,7 @@
       label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label5.AutoSize = true;
       label5.BackColor = Color.Transparent;
-      label5.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label5.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label5.Location = new Point(0, 210);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
@@ -219,7 +219,7 @@
       label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
-      label4.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label4.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label4.Location = new Point(0, 140);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
@@ -233,7 +233,7 @@
       label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label6.AutoSize = true;
       label6.BackColor = Color.Transparent;
-      label6.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label6.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label6.Location = new Point(0, 282);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
@@ -250,7 +250,7 @@
       txtIP.BorderFocusColor = Color.HotPink;
       txtIP.BorderRadius = 5;
       txtIP.BorderSize = 2;
-      txtIP.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtIP.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtIP.ForeColor = Color.FromArgb(64, 64, 64);
       txtIP.Location = new Point(194, 15);
       txtIP.Margin = new Padding(4);

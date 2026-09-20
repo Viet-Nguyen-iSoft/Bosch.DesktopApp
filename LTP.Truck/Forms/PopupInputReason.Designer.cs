@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class PopupInputReason
   {
@@ -65,7 +65,7 @@
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
       lbTitle.BackColor = Color.FromArgb(199, 199, 199);
-      lbTitle.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
