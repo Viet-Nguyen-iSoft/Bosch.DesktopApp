@@ -205,6 +205,15 @@ namespace LTP.Truck.Forms
 
     private void LoadConfig()
     {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(() =>
+        {
+          LoadConfig();
+        }));
+        return;
+      }
+
       var station = Environment.GetEnvironmentVariable("STATION");
       if (station=="1")
       {

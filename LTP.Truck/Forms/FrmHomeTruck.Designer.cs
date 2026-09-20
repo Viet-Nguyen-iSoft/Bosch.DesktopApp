@@ -677,6 +677,7 @@ namespace LTP.Truck.Forms
       txtWareHouse.BorderFocusColor = Color.HotPink;
       txtWareHouse.BorderRadius = 5;
       txtWareHouse.BorderSize = 2;
+      txtWareHouse.Enabled = false;
       txtWareHouse.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtWareHouse.ForeColor = Color.FromArgb(64, 64, 64);
       txtWareHouse.Location = new Point(4, 4);
@@ -740,6 +741,7 @@ namespace LTP.Truck.Forms
       txtTypeGoods.BorderFocusColor = Color.HotPink;
       txtTypeGoods.BorderRadius = 5;
       txtTypeGoods.BorderSize = 2;
+      txtTypeGoods.Enabled = false;
       txtTypeGoods.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTypeGoods.ForeColor = Color.FromArgb(64, 64, 64);
       txtTypeGoods.Location = new Point(4, 4);
@@ -803,6 +805,7 @@ namespace LTP.Truck.Forms
       txtClient.BorderFocusColor = Color.HotPink;
       txtClient.BorderRadius = 5;
       txtClient.BorderSize = 2;
+      txtClient.Enabled = false;
       txtClient.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtClient.ForeColor = Color.FromArgb(64, 64, 64);
       txtClient.Location = new Point(4, 4);
