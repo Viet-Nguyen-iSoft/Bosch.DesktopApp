@@ -68,7 +68,7 @@ namespace LTP.Truck.UserControls
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(8, 5);
       lbTitle.Name = "lbTitle";
       lbTitle.Size = new Size(214, 25);

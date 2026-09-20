@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class FrmOptionCloseApp
   {
@@ -77,7 +77,7 @@
       btnMini.BorderSize = 0;
       btnMini.FlatAppearance.BorderSize = 0;
       btnMini.FlatStyle = FlatStyle.Flat;
-      btnMini.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnMini.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnMini.ForeColor = Color.White;
       btnMini.Image = (Image)resources.GetObject("btnMini.Image");
       btnMini.ImageAlign = ContentAlignment.MiddleLeft;
@@ -100,7 +100,7 @@
       btnRestartApp.BorderSize = 0;
       btnRestartApp.FlatAppearance.BorderSize = 0;
       btnRestartApp.FlatStyle = FlatStyle.Flat;
-      btnRestartApp.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnRestartApp.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnRestartApp.ForeColor = Color.White;
       btnRestartApp.Image = (Image)resources.GetObject("btnRestartApp.Image");
       btnRestartApp.ImageAlign = ContentAlignment.MiddleLeft;
@@ -123,7 +123,7 @@
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
@@ -146,7 +146,7 @@
       btnBack.BorderSize = 0;
       btnBack.FlatAppearance.BorderSize = 0;
       btnBack.FlatStyle = FlatStyle.Flat;
-      btnBack.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnBack.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnBack.ForeColor = Color.White;
       btnBack.Image = (Image)resources.GetObject("btnBack.Image");
       btnBack.ImageAlign = ContentAlignment.MiddleLeft;
@@ -169,7 +169,7 @@
       btnCheckVersion.BorderSize = 0;
       btnCheckVersion.FlatAppearance.BorderSize = 0;
       btnCheckVersion.FlatStyle = FlatStyle.Flat;
-      btnCheckVersion.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnCheckVersion.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnCheckVersion.ForeColor = Color.White;
       btnCheckVersion.Image = (Image)resources.GetObject("btnCheckVersion.Image");
       btnCheckVersion.ImageAlign = ContentAlignment.MiddleLeft;
