@@ -175,7 +175,7 @@ namespace LTP.Truck
 
         AppCore.Ins.CheckConnectServer();
         AppCore.Ins.ConnectWeight();
-        CheckOpenMulApp();
+        //CheckOpenMulApp();
         ChangePage(EnumScreen.Waiting);
       }
       catch (Exception ex)

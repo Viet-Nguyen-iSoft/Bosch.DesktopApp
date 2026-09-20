@@ -6,7 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>icon_app_bosch.ico</ApplicationIcon>
+    <PackageIcon>delivery (1).png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon_app_bosch.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ApiCICD\ApiCICD.csproj" />
@@ -60,6 +66,13 @@
 
   <ItemGroup>
     <Folder Include="Versions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\Admin\Downloads\delivery (1).png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

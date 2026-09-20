@@ -1231,6 +1231,10 @@ namespace LTP.Truck.Forms
         //PdfHelper.InitAsync().GetAwaiter().GetResult();
         string pathFileTemplate = Application.StartupPath + "Template\\TemplateTruck.html";
         string folderOutput = Application.StartupPath + "Report";
+        if (!Directory.Exists(folderOutput))
+        {
+          Directory.CreateDirectory(folderOutput);
+        }
 
         string template = File.ReadAllText(pathFileTemplate);
         string company = "Công ty TNHH BOSCH Việt Nam";
