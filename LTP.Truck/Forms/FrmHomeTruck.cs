@@ -331,6 +331,7 @@ namespace LTP.Truck.Forms
       _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
       _recordTruck.CreatedAt = DateTime.UtcNow;
       _recordTruck.UpdatedAt = DateTime.UtcNow;
+      _recordTruck.WeighInAt = DateTime.UtcNow;
 
       await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
       await LoadHistorical();
@@ -378,6 +379,7 @@ namespace LTP.Truck.Forms
         _recordTruck.StationId = AppCore.Ins._station?.Id;
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
         _recordTruck.UpdatedAt = DateTime.UtcNow;
+        _recordTruck.WeighOutAt = DateTime.UtcNow;
 
         await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
         await LoadHistorical();

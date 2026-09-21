@@ -1,4 +1,5 @@
 ﻿using Common;
+using HelperManager;
 using iSoft.Communication.Interface;
 using iSoft.Database;
 using iSoft.Database.DTO;
@@ -425,6 +426,14 @@ namespace LTP.Truck.Forms
 
     private async void btnPrint_Click(object sender, EventArgs e)
     {
+      var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts.Trim());
+      if (!validLicense.IsValid)
+      {
+        PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
+        return;
+      }
+
       if (_recordTruckDTO?.RecordTruck is not RecordTruck selectedRecordTruck)
       {
         using var popupMsg = new PopupConfirm("Vui lòng chọn biển số xe !",
@@ -464,11 +473,12 @@ namespace LTP.Truck.Forms
       {
         ProductId = selectedProduct.Id,
         CategoryTareId = selectedTare.Id,
-        RecordTruckId = selectedRecordTruck.Id,
+        //RecordTruckId = selectedRecordTruck.Id,
         Net = _msgDataWeight.ValueWeight,
         Tare = selectedTare.Value ?? 0.0,
         UserId = AppCore.Ins._userCurrent?.Id,
         StationId = AppCore.Ins._station?.Id,
+        LicensePlate = validLicense.Plate,
         CreatedAt = DateTime.UtcNow,
         EnableFlag = true
       };

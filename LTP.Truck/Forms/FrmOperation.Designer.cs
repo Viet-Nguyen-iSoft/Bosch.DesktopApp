@@ -196,7 +196,7 @@ namespace LTP.Truck.Forms
       btnHomeTruck.Padding = new Padding(15, 0, 0, 0);
       btnHomeTruck.Size = new Size(242, 70);
       btnHomeTruck.TabIndex = 0;
-      btnHomeTruck.Text = "         CÂN XE TẢI";
+      btnHomeTruck.Text = "        CÂN XE TẢI";
       btnHomeTruck.TextAlign = ContentAlignment.MiddleLeft;
       btnHomeTruck.TextColor = Color.Black;
       btnHomeTruck.UseVisualStyleBackColor = false;
@@ -221,7 +221,7 @@ namespace LTP.Truck.Forms
       btnHomeGoods.Padding = new Padding(15, 0, 0, 0);
       btnHomeGoods.Size = new Size(242, 70);
       btnHomeGoods.TabIndex = 2;
-      btnHomeGoods.Text = "         CÂN HÀNG";
+      btnHomeGoods.Text = "        CÂN HÀNG";
       btnHomeGoods.TextAlign = ContentAlignment.MiddleLeft;
       btnHomeGoods.TextColor = Color.Black;
       btnHomeGoods.UseVisualStyleBackColor = false;
@@ -245,7 +245,7 @@ namespace LTP.Truck.Forms
       btnSetting.Padding = new Padding(15, 0, 0, 0);
       btnSetting.Size = new Size(242, 70);
       btnSetting.TabIndex = 6;
-      btnSetting.Text = "       CÀI ĐẶT";
+      btnSetting.Text = "        CÀI ĐẶT";
       btnSetting.TextAlign = ContentAlignment.MiddleLeft;
       btnSetting.TextColor = Color.Black;
       btnSetting.UseVisualStyleBackColor = false;
@@ -270,7 +270,7 @@ namespace LTP.Truck.Forms
       btnMasterData.Padding = new Padding(15, 0, 0, 0);
       btnMasterData.Size = new Size(242, 70);
       btnMasterData.TabIndex = 7;
-      btnMasterData.Text = "         MASTERDATA";
+      btnMasterData.Text = "        MASTERDATA";
       btnMasterData.TextAlign = ContentAlignment.MiddleLeft;
       btnMasterData.TextColor = Color.Black;
       btnMasterData.UseVisualStyleBackColor = false;
@@ -435,10 +435,10 @@ namespace LTP.Truck.Forms
       lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersion.AutoSize = true;
       lbVersion.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      lbVersion.Location = new Point(0, 50);
+      lbVersion.Location = new Point(0, 53);
       lbVersion.Margin = new Padding(0);
       lbVersion.Name = "lbVersion";
-      lbVersion.Size = new Size(244, 30);
+      lbVersion.Size = new Size(244, 27);
       lbVersion.TabIndex = 4;
       lbVersion.Text = "Version: 1.0.0";
       lbVersion.TextAlign = ContentAlignment.MiddleCenter;
@@ -450,7 +450,7 @@ namespace LTP.Truck.Forms
       pictureBox1.Location = new Point(10, 0);
       pictureBox1.Margin = new Padding(10, 0, 10, 0);
       pictureBox1.Name = "pictureBox1";
-      pictureBox1.Size = new Size(224, 50);
+      pictureBox1.Size = new Size(224, 53);
       pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
       pictureBox1.TabIndex = 0;
       pictureBox1.TabStop = false;
@@ -514,10 +514,10 @@ namespace LTP.Truck.Forms
       lbTitlePage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitlePage.AutoSize = true;
       lbTitlePage.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      lbTitlePage.Location = new Point(5, 44);
+      lbTitlePage.Location = new Point(5, 47);
       lbTitlePage.Margin = new Padding(5, 0, 0, 0);
       lbTitlePage.Name = "lbTitlePage";
-      lbTitlePage.Size = new Size(542, 30);
+      lbTitlePage.Size = new Size(542, 27);
       lbTitlePage.TabIndex = 4;
       lbTitlePage.Text = "Trang chính";
       lbTitlePage.TextAlign = ContentAlignment.MiddleLeft;
@@ -530,7 +530,7 @@ namespace LTP.Truck.Forms
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(547, 44);
+      lbTitle.Size = new Size(547, 47);
       lbTitle.TabIndex = 3;
       lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -586,9 +586,9 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel8.ColumnCount = 5;
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 260F));
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 280F));
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 3F));
-      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 260F));
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 280F));
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250F));
       tableLayoutPanel8.Controls.Add(ucStatusConnectServer, 1, 0);
       tableLayoutPanel8.Controls.Add(ucStatusConnectWeight, 3, 0);
@@ -604,17 +604,17 @@ namespace LTP.Truck.Forms
       // ucStatusConnectServer
       // 
       ucStatusConnectServer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucStatusConnectServer.Location = new Point(243, 3);
+      ucStatusConnectServer.Location = new Point(203, 3);
       ucStatusConnectServer.Name = "ucStatusConnectServer";
-      ucStatusConnectServer.Size = new Size(254, 44);
+      ucStatusConnectServer.Size = new Size(274, 44);
       ucStatusConnectServer.TabIndex = 0;
       // 
       // ucStatusConnectWeight
       // 
       ucStatusConnectWeight.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucStatusConnectWeight.Location = new Point(506, 3);
+      ucStatusConnectWeight.Location = new Point(486, 3);
       ucStatusConnectWeight.Name = "ucStatusConnectWeight";
-      ucStatusConnectWeight.Size = new Size(254, 44);
+      ucStatusConnectWeight.Size = new Size(274, 44);
       ucStatusConnectWeight.TabIndex = 1;
       // 
       // lbTime

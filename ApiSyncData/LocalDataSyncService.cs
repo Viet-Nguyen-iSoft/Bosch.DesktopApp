@@ -241,6 +241,8 @@ namespace ApiSyncData
         CreatedAt = record.CreatedAt,
         UpdatedAt = record.UpdatedAt,
         DeletedFlag = record.DeletedFlag,
+        WeighInAt = record.WeighInAt,
+        WeighOutAt = record.WeighOutAt,
       };
     }
 
