@@ -19,11 +19,11 @@ namespace iSoft.Database.Repositorys
       return query.ToListAsync();
     }
 
-    public async Task<LicensePlate?> EnsureExistsAsync(string? licensePlate)
+    public async Task<(bool Exist, LicensePlate? LicensePlate)> EnsureExistsAsync(string? licensePlate)
     {
       var normalizedLicensePlate = Normalize(licensePlate);
       if (normalizedLicensePlate == null)
-        return null;
+        return (true, null);
 
       var licensePlates = Context.Set<LicensePlate>();
       var existingLicensePlate = await licensePlates
@@ -39,7 +39,7 @@ namespace iSoft.Database.Repositorys
           existingLicensePlate.UpdatedAt = DateTime.UtcNow;
         }
 
-        return existingLicensePlate;
+        return (true,existingLicensePlate);
       }
 
       var newLicensePlate = new LicensePlate
@@ -51,7 +51,7 @@ namespace iSoft.Database.Repositorys
       };
 
       await licensePlates.AddAsync(newLicensePlate);
-      return newLicensePlate;
+      return (false, newLicensePlate);
     }
 
     public static string? Normalize(string? licensePlate)

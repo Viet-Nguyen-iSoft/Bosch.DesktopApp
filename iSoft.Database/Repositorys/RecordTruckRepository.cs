@@ -62,7 +62,7 @@ namespace iSoft.Database.Repositorys
       return query.FirstOrDefaultAsync(record => record.Id == id);
     }
 
-    public async Task<RecordTruck> AddOrUpdateAsync(RecordTruck recordTruck)
+    public async Task<(RecordTruck Record, bool Exist, LicensePlate? LicensePlate)> AddOrUpdateAsync(RecordTruck recordTruck)
     {
       if (recordTruck == null)
       {
@@ -76,7 +76,7 @@ namespace iSoft.Database.Repositorys
       recordTruck.LicensePlate = LicensePlateRepository.Normalize(recordTruck.LicensePlate);
 
       var licensePlateRepository = new LicensePlateRepository((CommonDbContext)Context);
-      await licensePlateRepository.EnsureExistsAsync(recordTruck.LicensePlate);
+      var rsLicensePlate = await licensePlateRepository.EnsureExistsAsync(recordTruck.LicensePlate);
 
       var records = Context.Set<RecordTruck>();
       var existingRecord = recordTruck.Id == Guid.Empty
@@ -93,7 +93,7 @@ namespace iSoft.Database.Repositorys
       }
 
       await Context.SaveChangesAsync();
-      return existingRecord ?? recordTruck;
+      return (existingRecord ?? recordTruck, rsLicensePlate.Exist, rsLicensePlate.LicensePlate);
     }
   }
 }

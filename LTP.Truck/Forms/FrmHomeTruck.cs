@@ -1,5 +1,6 @@
 ﻿using Accessibility;
 using ApiSyncData;
+using ApiSyncData.Req;
 using Common;
 using HelperManager;
 using iSoft.Communication.Interface;
@@ -16,6 +17,7 @@ using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Threading.Tasks;
 using static Common.EnumData;
+using static HelperManager.EnumData;
 using static iSoft.Database.EnumData;
 
 namespace LTP.Truck.Forms
@@ -150,6 +152,22 @@ namespace LTP.Truck.Forms
     private async void FrmHomeTruck_Shown(object? sender, EventArgs e)
     {
       await LoadHistorical();
+      await LoadLicensePlateSuggestionsAsync();
+    }
+
+    private async Task LoadLicensePlateSuggestionsAsync()
+    {
+      try
+      {
+        var licensePlates = await AppCore.Ins._licensePlateService
+          .GetAllAsync(IsContainDelete: false);
+        txtLicensePlate.SetAutoCompleteSource(
+          licensePlates.Select(licensePlate => licensePlate.Plate));
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private void Ins_OnSendDataWeightTruck(object? sender, MessageDataOutput e)
@@ -333,7 +351,22 @@ namespace LTP.Truck.Forms
       _recordTruck.UpdatedAt = DateTime.UtcNow;
       _recordTruck.WeighInAt = DateTime.UtcNow;
 
-      await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
+      var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
+      //Push API biển số xe
+      if (rs.Exist==false)
+      {
+        LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
+        licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
+
+        ApiJobs apiJobs = new ApiJobs();
+        apiJobs.Json = JsonHelper.ToJson(licensePlate);
+        apiJobs.EnumTypeAPI = EnumTypeAPI.Plate;
+        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+        apiJobs.CreatedAt = DateTime.UtcNow;
+        await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
+      }  
+
+      await LoadLicensePlateSuggestionsAsync();
       await LoadHistorical();
 
       ////POST PDF

@@ -38,7 +38,7 @@ namespace iSoft.Database.Service
       return await repository.GetDetailByIdAsync(id, isContainDelete).ConfigureAwait(false);
     }
 
-    public async Task<RecordTruck> AddOrUpdateAsync(RecordTruck recordTruck)
+    public async Task<(RecordTruck Record, bool Exist, LicensePlate? LicensePlate)> AddOrUpdateAsync(RecordTruck recordTruck)
     {
       try
       {
