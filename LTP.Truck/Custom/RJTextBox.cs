@@ -372,8 +372,21 @@ namespace LTP.Truck.Custom
       this.textBox1.ReadOnly = true;
     }
 
-    public void SetAutoCompleteSource(IEnumerable<string?> values)
+    public void SetAutoCompleteSource(
+      IEnumerable<string?> values,
+      string fontFamily = "Roboto",
+      float fontSize = 16F)
     {
+      if (!string.Equals(textBox1.Font.FontFamily.Name, fontFamily,
+          StringComparison.OrdinalIgnoreCase) ||
+        Math.Abs(textBox1.Font.SizeInPoints - fontSize) > 0.01F ||
+        textBox1.Font.Style != FontStyle.Regular)
+      {
+        var autoCompleteFont = new Font(
+          fontFamily, fontSize, FontStyle.Regular, GraphicsUnit.Point);
+        Font = autoCompleteFont;
+      }
+
       var source = new AutoCompleteStringCollection();
       source.AddRange(values
         .Where(value => !string.IsNullOrWhiteSpace(value))

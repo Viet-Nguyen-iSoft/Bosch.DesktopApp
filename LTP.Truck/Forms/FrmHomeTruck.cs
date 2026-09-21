@@ -262,7 +262,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.IndicatedWeight.ToString("F3");
+      lbWeightValue.Text = messageData.IndicatedWeight.ToString("F0");
     }
 
     private RecordTruck _recordTruck { get; set; } = new RecordTruck();

@@ -1,4 +1,5 @@
 ﻿using Common;
+using ApiSyncData.Req;
 using HelperManager;
 using iSoft.Communication.Interface;
 using iSoft.Communication.Mode;
@@ -9,6 +10,7 @@ using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using System.Data;
 using static Common.EnumData;
+using static HelperManager.EnumData;
 
 namespace LTP.Truck.Forms
 {
@@ -28,6 +30,7 @@ namespace LTP.Truck.Forms
 
       cbbTare.SelectedValueChanged += cbbTare_SelectedValueChanged;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
+      txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       lbTare.Text = "0.000";
       this.Load += FrmHomeGoods_Load;
     }
@@ -89,6 +92,7 @@ namespace LTP.Truck.Forms
       {
         await LoadDataFirst();
         await LoadHistorical();
+        await LoadLicensePlateSuggestionsAsync();
 
         cbbProductGroup.SelectedIndex = -1;
         cbbTare.SelectedIndex = -1;
@@ -106,6 +110,22 @@ namespace LTP.Truck.Forms
       catch (Exception ex)
       {
 
+      }
+    }
+
+    private async Task LoadLicensePlateSuggestionsAsync()
+    {
+      try
+      {
+        var licensePlates = await AppCore.Ins._licensePlateService
+          .GetAllAsync(IsContainDelete: false);
+
+        txtLicensePlate.SetAutoCompleteSource(
+          licensePlates.Select(licensePlate => licensePlate.Plate));
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -429,6 +449,29 @@ namespace LTP.Truck.Forms
       }
     }
 
+    private async void TxtLicensePlate__TextChanged(object? sender, EventArgs e)
+    {
+      var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts.Trim());
+      if (validLicense.IsValid)
+      {
+        await LoadSumWeightAsync(validLicense.Plate);
+      }
+      else
+      {
+        if (InvokeRequired)
+        {
+          BeginInvoke(new Action(() =>
+          {
+            lbSumWeight.Text = "0.000";
+          }));
+          return;
+        }
+
+        lbSumWeight.Text = "0.000";
+      }  
+    }
+
+
     private async void btnPrint_Click(object sender, EventArgs e)
     {
       if (string.IsNullOrEmpty(txtLicensePlate.Texts.Trim()))
@@ -498,6 +541,30 @@ namespace LTP.Truck.Forms
       btnPrint.Enabled = false;
       try
       {
+        var licensePlateResult = await AppCore.Ins._licensePlateService
+          .EnsureExistsAsync(validLicense.Plate);
+
+        if (!licensePlateResult.Exist)
+        {
+          var licensePlateRequest = new LicensePlateUpsertRequest
+          {
+            Id = licensePlateResult.LicensePlate?.Id,
+            LicensePlateCode = licensePlateResult.LicensePlate?.Plate ?? string.Empty,
+            Description = licensePlateResult.LicensePlate?.Description
+          };
+
+          var apiJob = new ApiJobs
+          {
+            Json = JsonHelper.ToJson(licensePlateRequest),
+            EnumTypeAPI = EnumTypeAPI.Plate,
+            EnumStatusAPI = EnumStatusAPI.Created,
+            CreatedAt = DateTime.UtcNow
+          };
+
+          await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
+          await LoadLicensePlateSuggestionsAsync();
+        }
+
         await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
         await LoadSumWeightAsync(validLicense.Plate);
 
