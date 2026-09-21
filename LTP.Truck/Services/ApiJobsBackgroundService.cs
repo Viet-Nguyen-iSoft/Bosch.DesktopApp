@@ -2,6 +2,7 @@ using ApiSyncData;
 using ApiSyncData.Req;
 using HelperManager;
 using iSoft.Database.Service;
+using LTP.Truck.Controls;
 using static HelperManager.EnumData;
 
 namespace LTP.Truck.Services
@@ -13,6 +14,16 @@ namespace LTP.Truck.Services
     public async Task CheckCreatedJobsAsync(
       CancellationToken cancellationToken = default)
     {
+      cancellationToken.ThrowIfCancellationRequested();
+
+      var appConfig = AppCore.Ins._appConfig;
+      if (appConfig == null || string.IsNullOrWhiteSpace(appConfig.IpServer))
+        return;
+
+      var pingTimeout = Math.Clamp(appConfig.TimeoutConnectServer ?? 500, 100, 1000);
+      if (!TcpHelper.IsPing(appConfig.IpServer.Trim(), pingTimeout))
+        return;
+
       var apiJobs = await _apiJobsService
         .GetCreatedAsync(cancellationToken)
         .ConfigureAwait(false);
@@ -32,9 +43,7 @@ namespace LTP.Truck.Services
                 throw new InvalidOperationException("Không thể đọc dữ liệu biển số từ API job.");
 
               var api = new ApiService();
-              await api.UpsertLicensePlateAsync(
-                licensePlate,
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+              await api.UpsertLicensePlateAsync(licensePlate);
               break;
 
             default:

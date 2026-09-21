@@ -262,7 +262,8 @@ namespace LTP.Truck.Forms
 
       if (station != null)
       {
-        if (station?.Code == "1")
+        var stationKey = Environment.GetEnvironmentVariable("STATION");
+        if (stationKey == "1")
         {
           lbTitle.Text = $"HỆ THỐNG CÂN XE TẢI - {station.Name}";
         }

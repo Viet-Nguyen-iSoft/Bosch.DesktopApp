@@ -28,5 +28,12 @@ namespace iSoft.Database.Service
       var repository = new RecordWeightRepository(context);
       return await repository.SumNetByRecordTruckIdAsync(recordTruckId).ConfigureAwait(false);
     }
+
+    public async Task<double> SumNetByRecordTruckIdAsync(string plate)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordWeightRepository(context);
+      return await repository.SumNetByRecordTruckIdAsync(plate).ConfigureAwait(false);
+    }
   }
 }

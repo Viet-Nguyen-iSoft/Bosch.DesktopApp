@@ -1,4 +1,5 @@
 using ApiSyncData.Record;
+using HelperManager;
 using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,12 @@ namespace ApiSyncData
     {
       ArgumentNullException.ThrowIfNull(api);
 
+      if (!await CanReachServerAsync(cancellationToken).ConfigureAwait(false))
+      {
+        LastSynchronizedCount = 0;
+        return 0;
+      }
+
       await SyncLock.WaitAsync(cancellationToken).ConfigureAwait(false);
       try
       {
@@ -65,6 +72,25 @@ namespace ApiSyncData
       {
         SyncLock.Release();
       }
+    }
+
+    private static async Task<bool> CanReachServerAsync(
+      CancellationToken cancellationToken)
+    {
+      await using var db = new MySqlDbContext();
+      var appConfig = await db.Set<AppConfig>()
+        .AsNoTracking()
+        .Where(config => !config.DeletedFlag)
+        .FirstOrDefaultAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      cancellationToken.ThrowIfCancellationRequested();
+
+      if (appConfig == null || string.IsNullOrWhiteSpace(appConfig.IpServer))
+        return false;
+
+      var pingTimeout = Math.Clamp(appConfig.TimeoutConnectServer ?? 500, 100, 1000);
+      return TcpHelper.IsPing(appConfig.IpServer.Trim(), pingTimeout);
     }
 
     private static async Task<int> SyncRecordTrucksAsync(
@@ -193,8 +219,7 @@ namespace ApiSyncData
     {
       await using var db = new MySqlDbContext();
       return await db.Set<RecordWeight>()
-        .Where(record => !record.SyncFlag &&
-          record.RecordTruckId.HasValue)
+        .Where(record => !record.SyncFlag)
         .Include(record => record.Station)
         .Include(record => record.User)
         .Include(record => record.Product)
@@ -260,6 +285,7 @@ namespace ApiSyncData
         Id = record.Id,
         Net = record.Net,
         Tare = record.Tare,
+        LicensePlate = record.LicensePlate,
         StationId = GetSourceId(
           nameof(RecordWeight),
           record.Id,

@@ -152,6 +152,10 @@ namespace iSoft.Communication.Interface
     {
       try
       {
+        var a = SicsOutputData.Decode(messageDataInput.DataAsString);
+
+
+
         var result = Processing(messageDataInput);
         if (result!=null)
         {
@@ -160,7 +164,7 @@ namespace iSoft.Communication.Interface
             this.MessageDataOutput.Source = result.Source;
             this.MessageDataOutput.MachineId = messageDataInput.MachineId;
             this.MessageDataOutput.NameDevice = result.NameDevice;
-            this.MessageDataOutput.ValueTare = result.ValueTare;
+            this.MessageDataOutput.Tare = result.Tare;
             this.MessageDataOutput.eValueWeight = result.eValueWeight;
             this.MessageDataOutput.SourceDateTime = result.SourceDateTime;
             this.MessageDataOutput.DataAsBytes = result.DataAsBytes;
@@ -171,7 +175,7 @@ namespace iSoft.Communication.Interface
             this.MessageDataOutput.Source = result.Source;
             this.MessageDataOutput.MachineId = messageDataInput.MachineId;
             this.MessageDataOutput.NameDevice = result.NameDevice;
-            this.MessageDataOutput.ValueWeight = result.ValueWeight;
+            this.MessageDataOutput.Net = result.Net;
             this.MessageDataOutput.eValueWeight = result.eValueWeight;
             this.MessageDataOutput.unitOfWeight = result.unitOfWeight;
             this.MessageDataOutput.SourceDateTime = result.SourceDateTime;
@@ -183,8 +187,8 @@ namespace iSoft.Communication.Interface
             this.MessageDataOutput.Source = result.Source;
             this.MessageDataOutput.MachineId = messageDataInput.MachineId;
             this.MessageDataOutput.NameDevice = result.NameDevice;
-            this.MessageDataOutput.ValueWeight = result.ValueWeight;
-            this.MessageDataOutput.ValueTare = result.ValueTare;
+            this.MessageDataOutput.Net = result.Net;
+            this.MessageDataOutput.Tare = result.Tare;
             this.MessageDataOutput.eValueWeight = result.eValueWeight;
             this.MessageDataOutput.unitOfWeight = result.unitOfWeight;
             this.MessageDataOutput.SourceDateTime = result.SourceDateTime;
@@ -200,6 +204,77 @@ namespace iSoft.Communication.Interface
         //TODO
       }
     }
+
+    //public static MessageDataOutput? DecodeSICS(string message)
+    //{
+    //  try
+    //  {
+    //    if (string.IsNullOrEmpty(message)) return null;
+
+    //    MessageDataOutput sicsOutputData = new MessageDataOutput();
+    //    string[] parts = message.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+    //    if (parts.Length < 4)
+    //    {
+    //      sicsOutputData.Net = 0.0;
+    //      sicsOutputData.ActiveWeighingStatus = ActiveWeighingStatus.Default;
+    //      sicsOutputData.EnumValueWeight = eValueWeightType.Net;
+    //      sicsOutputData.UnitOfWeight = UnitOfWeight.None;
+    //      sicsOutputData.DataAsString = message;
+    //      sicsOutputData.SourceDateTime = DateTime.Now;
+    //      return sicsOutputData;
+    //    }
+
+    //    string key = parts[0].Replace("\r", "").Replace("\n", "");
+    //    if (key == "S")
+    //    {
+    //      sicsOutputData.EnumValueWeight = eValueWeightType.Net;
+    //      if (parts[1] == "S")
+    //      {
+    //        sicsOutputData.Net = double.Parse(parts[2]);
+    //        sicsOutputData.ActiveWeighingStatus = ActiveWeighingStatus.Stable;
+    //        if (parts[3].Trim() == "kg")
+    //        {
+    //          sicsOutputData.UnitOfWeight = UnitOfWeight.Kilograms;
+    //        }
+    //      }
+    //      else if (parts[1] == "D")
+    //      {
+    //        sicsOutputData.Net = double.Parse(parts[2]);
+    //        sicsOutputData.ActiveWeighingStatus = ActiveWeighingStatus.Motion;
+    //        if (parts[3].Trim() == "kg")
+    //        {
+    //          sicsOutputData.UnitOfWeight = UnitOfWeight.Kilograms;
+    //        }
+    //      }
+    //      else if (parts[1] == "+")
+    //      {
+    //        sicsOutputData.Net = 0.0;
+    //        sicsOutputData.Tare = 0.0;
+    //        sicsOutputData.ActiveWeighingStatus = ActiveWeighingStatus.Overload;
+    //        sicsOutputData.UnitOfWeight = UnitOfWeight.None;
+    //      }
+    //      else if (parts[1] == "-")
+    //      {
+    //        sicsOutputData.Net = 0.0;
+    //        sicsOutputData.Tare = 0.0;
+    //        sicsOutputData.ActiveWeighingStatus = ActiveWeighingStatus.Underload;
+    //        sicsOutputData.UnitOfWeight = UnitOfWeight.None;
+    //      }
+    //    }
+    //    else if (key == "TA")
+    //    {
+    //      sicsOutputData.EnumValueWeight = eValueWeightType.Tare;
+    //      sicsOutputData.Tare = double.Parse(parts[2]);
+    //    }
+
+    //    return sicsOutputData;
+    //  }
+    //  catch (Exception)
+    //  {
+    //    return null;
+    //  }
+    //}
 
     protected virtual void OnConnectionStatusChanged(bool isConnected)
     {
@@ -231,21 +306,21 @@ namespace iSoft.Communication.Interface
             {
               if (sicsFormatData.EValueWeightType == eValueWeightType.All)
               {
-                messageDataOutput.ValueWeight = sicsFormatData.IndicatedWeight ?? 0;
-                messageDataOutput.ValueTare = sicsFormatData.TareWeight ?? 0;
-                messageDataOutput.activeWeighingStatus = sicsFormatData.ActiveWeighingStatus;
+                messageDataOutput.Net = sicsFormatData.IndicatedWeight ?? 0;
+                messageDataOutput.Tare = sicsFormatData.TareWeight ?? 0;
+                messageDataOutput.ActiveWeighingStatus = sicsFormatData.ActiveWeighingStatus;
                 messageDataOutput.unitOfWeight = sicsFormatData.Unit;
               }
               else if (sicsFormatData.EValueWeightType == eValueWeightType.Net)
               {
-                messageDataOutput.ValueWeight = sicsFormatData.IndicatedWeight ?? 0.0;
-                messageDataOutput.activeWeighingStatus = sicsFormatData.ActiveWeighingStatus;
+                messageDataOutput.Net = sicsFormatData.IndicatedWeight ?? 0.0;
+                messageDataOutput.ActiveWeighingStatus = sicsFormatData.ActiveWeighingStatus;
                 messageDataOutput.unitOfWeight = sicsFormatData.Unit;
                 messageDataOutput.eValueWeight = eValueWeightType.Net;
               }
               else if (sicsFormatData.EValueWeightType == eValueWeightType.Tare)
               {
-                messageDataOutput.ValueTare = sicsFormatData.TareWeight ?? 0.0;
+                messageDataOutput.Tare = sicsFormatData.TareWeight ?? 0.0;
                 //messageDataOutput.activeWeighingStatus = sicsFormatData.ActiveWeighingStatus;
                 //messageDataOutput.unitOfWeight = sicsFormatData.Unit;
                 messageDataOutput.eValueWeight = eValueWeightType.Tare;
@@ -267,8 +342,8 @@ namespace iSoft.Communication.Interface
               _IndicatedWeight = (newStandardContinuousOutputData?.IndicatedWeight == null) ? 0 : (double)newStandardContinuousOutputData.IndicatedWeight;
               _IndicatedTare = (newStandardContinuousOutputData?.TareWeight == null) ? 0 : (double)newStandardContinuousOutputData.TareWeight;
 
-              messageDataOutput.ValueWeight = _IndicatedWeight;
-              messageDataOutput.ValueTare = _IndicatedTare;
+              messageDataOutput.Net = _IndicatedWeight;
+              messageDataOutput.Tare = _IndicatedTare;
 
               if (this.ActiveWeighingStatus != newStandardContinuousOutputData?.StatusB.ActiveWeighingStatus)
                 OnActiveWeighingStatusChangeEvent?.Invoke(this, newStandardContinuousOutputData.StatusB.ActiveWeighingStatus);
@@ -277,7 +352,7 @@ namespace iSoft.Communication.Interface
               this.ActiveWeighingStatus = _standardContinuousOutputData.StatusB.ActiveWeighingStatus;
 
               messageDataOutput.unitOfWeight = _standardContinuousOutputData.Unit;
-              messageDataOutput.activeWeighingStatus = this.ActiveWeighingStatus;
+              messageDataOutput.ActiveWeighingStatus = this.ActiveWeighingStatus;
               messageDataOutput.DataAsBytes = messsage.DataAsBytes ?? new byte[0];
               messageDataOutput.DataAsString = messsage.DataAsString ?? string.Empty;
               messageDataOutput.eValueWeight = eValueWeightType.All;

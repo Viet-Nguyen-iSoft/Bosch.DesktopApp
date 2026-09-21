@@ -79,12 +79,13 @@ namespace iSoft.Database
           RecordWeight = record,
           No = orderedRecords.Count - index,
           Datetime = record.CreatedAt?.ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
-          LicensePlate = record.RecordTruck?.LicensePlate,
-          ProductGroup = record.Product?.ProductGroup?.Name,
-          Product = record.Product?.Name,
-          CategoryTare = record.CategoryTare?.Name,
-          Net = record.Net.ToString("F3"),
-          Tare = record.Tare.ToString("F3"),
+          //LicensePlate = record.RecordTruck?.LicensePlate,
+          LicensePlate = record?.LicensePlate,
+          ProductGroup = record?.Product?.ProductGroup?.Name,
+          Product = record?.Product?.Name,
+          CategoryTare = record?.CategoryTare?.Name,
+          Net = (record?.Net??0.0).ToString("F3"),
+          Tare = (record?.Tare ?? 0.0).ToString("F3"),
         })
         .ToList();
     }

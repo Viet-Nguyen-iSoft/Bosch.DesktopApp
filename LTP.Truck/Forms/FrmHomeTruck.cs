@@ -261,7 +261,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.ValueWeight.ToString("F3");
+      lbWeightValue.Text = messageData.Net.ToString("F3");
     }
 
     private RecordTruck _recordTruck { get; set; } = new RecordTruck();
@@ -288,14 +288,14 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        if (_msgDataWeight.ValueWeight <= 0)
+        if (_msgDataWeight.Net <= 0)
         {
           PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupConfirm.ShowDialog();
           return;
         }
 
-        _recordTruck.NetTimeTemp = _msgDataWeight.ValueWeight;
+        _recordTruck.NetTimeTemp = _msgDataWeight.Net;
         if (_recordTruck.EnumTypeDataTruck == EnumTypeDataTruck.None)
         {
           _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.WeightedTime01;

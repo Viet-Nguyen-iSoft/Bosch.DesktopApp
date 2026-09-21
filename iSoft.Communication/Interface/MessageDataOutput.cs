@@ -13,14 +13,14 @@ namespace iSoft.Communication.Interface
     public Guid? MachineId { get; set; }
     public string? NameDevice { get; set; }
 
-    public double ValueWeight { get; set; } = 0;
-    public double ValueTare { get; set; } = 0;
+    public double Net { get; set; } = 0;
+    public double Tare { get; set; } = 0;
 
     public eValueWeightType eValueWeight { get; set; }
 
     public UnitOfWeight unitOfWeight { get; set; }
 
-    public ActiveWeighingStatus activeWeighingStatus { get; set; }
+    public ActiveWeighingStatus ActiveWeighingStatus { get; set; }
 
     public DateTime SourceDateTime { get; set; }
 

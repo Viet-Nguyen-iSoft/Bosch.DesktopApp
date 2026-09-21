@@ -144,16 +144,16 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.ValueWeight.ToString("F3");
+      lbWeightValue.Text = messageData.Net.ToString("F3");
 
       //Tare
       if (_categoryTare != null)
       {
-        lbGross.Text = (messageData.ValueWeight + (_categoryTare?.Value ?? 0.0)).ToString("F3");
+        lbGross.Text = (messageData.Net + (_categoryTare?.Value ?? 0.0)).ToString("F3");
       }
       else
       {
-        lbGross.Text = messageData.ValueWeight.ToString("F3");
+        lbGross.Text = messageData.Net.ToString("F3");
       }
     }
 
@@ -387,20 +387,20 @@ namespace LTP.Truck.Forms
           txtLicensePlate.Texts = selectedRecord.LicensePlate ?? string.Empty;
           txtNameDriver.Texts = selectedRecord.NameDriver ?? string.Empty;
           txtIdCard.Texts = selectedRecord.IdCard ?? string.Empty;
-          await LoadSumWeightAsync(selectedRecord.RecordTruck?.Id ?? Guid.Empty);
+          await LoadSumWeightAsync(selectedRecord.RecordTruck?.LicensePlate ?? string.Empty);
         }
       };
       popup.ShowDialog(this);
     }
 
-    private async Task LoadSumWeightAsync(Guid recordTruckId)
+    private async Task LoadSumWeightAsync(string plate)
     {
       var loadVersion = ++_sumWeightLoadVersion;
 
       try
       {
-        var totalWeight = recordTruckId != Guid.Empty
-          ? await AppCore.Ins._recordWeightService.SumNetByRecordTruckIdAsync(recordTruckId)
+        var totalWeight = !string.IsNullOrEmpty(plate)
+          ? await AppCore.Ins._recordWeightService.SumNetByRecordTruckIdAsync(plate)
           : 0.0;
 
         if (IsDisposed || Disposing || loadVersion != _sumWeightLoadVersion)
@@ -426,6 +426,13 @@ namespace LTP.Truck.Forms
 
     private async void btnPrint_Click(object sender, EventArgs e)
     {
+      if (string.IsNullOrEmpty(txtLicensePlate.Texts.Trim()))
+      {
+        PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn hoặc điền biển số xe !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
+        return;
+      }
+
       var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts.Trim());
       if (!validLicense.IsValid)
       {
@@ -434,13 +441,13 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      if (_recordTruckDTO?.RecordTruck is not RecordTruck selectedRecordTruck)
-      {
-        using var popupMsg = new PopupConfirm("Vui lòng chọn biển số xe !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
-        popupMsg.ShowDialog();
-        return;
-      }
+      //if (_recordTruckDTO?.RecordTruck is not RecordTruck selectedRecordTruck)
+      //{
+      //  using var popupMsg = new PopupConfirm("Vui lòng chọn biển số xe !",
+      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+      //  popupMsg.ShowDialog();
+      //  return;
+      //}
 
       if (cbbProductGroup.SelectedItem is not ProductGroup selectedProductGroup)
       {
@@ -474,7 +481,7 @@ namespace LTP.Truck.Forms
         ProductId = selectedProduct.Id,
         CategoryTareId = selectedTare.Id,
         //RecordTruckId = selectedRecordTruck.Id,
-        Net = _msgDataWeight.ValueWeight,
+        Net = _msgDataWeight.Net,
         Tare = selectedTare.Value ?? 0.0,
         UserId = AppCore.Ins._userCurrent?.Id,
         StationId = AppCore.Ins._station?.Id,
@@ -487,7 +494,7 @@ namespace LTP.Truck.Forms
       try
       {
         await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
-        await LoadSumWeightAsync(selectedRecordTruck.Id);
+        await LoadSumWeightAsync(validLicense.Plate);
 
         ////In máy in
         //var printDTO = new DTOPrintLabel()
