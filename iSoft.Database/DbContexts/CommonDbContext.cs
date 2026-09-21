@@ -46,6 +46,15 @@ namespace iSoft.Database.DbContexts
         .Property(record => record.LicensePlate)
         .HasMaxLength(20);
 
+      modelBuilder.Entity<LicensePlate>()
+        .Property(licensePlate => licensePlate.Plate)
+        .HasMaxLength(20);
+
+      modelBuilder.Entity<LicensePlate>()
+        .HasIndex(licensePlate => licensePlate.Plate)
+        .IsUnique()
+        .HasDatabaseName("UX_LicensePlates_Name");
+
       modelBuilder.Entity<RecordTruck>()
         .HasIndex(record => new
         {

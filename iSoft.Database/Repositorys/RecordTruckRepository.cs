@@ -73,6 +73,11 @@ namespace iSoft.Database.Repositorys
       recordTruck.SyncFlag = false;
 
       await Context.Database.EnsureCreatedAsync();
+      recordTruck.LicensePlate = LicensePlateRepository.Normalize(recordTruck.LicensePlate);
+
+      var licensePlateRepository = new LicensePlateRepository((CommonDbContext)Context);
+      await licensePlateRepository.EnsureExistsAsync(recordTruck.LicensePlate);
+
       var records = Context.Set<RecordTruck>();
       var existingRecord = recordTruck.Id == Guid.Empty
         ? null

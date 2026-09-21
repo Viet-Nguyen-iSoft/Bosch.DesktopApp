@@ -8,7 +8,7 @@ namespace iSoft.Database.Models
 {
   public class LicensePlate : BaseModel
   {
-    public string? Name { get; set; }
+    public string? Plate { get; set; }
     public string? Description { get; set; }
   }
 }

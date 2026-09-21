@@ -101,7 +101,7 @@ namespace LTP.Truck.Popup
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(102, 55);
+      label4.Size = new Size(106, 55);
       label4.TabIndex = 17;
       label4.Text = "Tìm kiếm:";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -116,7 +116,7 @@ namespace LTP.Truck.Popup
       txtSearch.BorderSize = 2;
       txtSearch.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearch.ForeColor = Color.FromArgb(64, 64, 64);
-      txtSearch.Location = new Point(106, 7);
+      txtSearch.Location = new Point(110, 6);
       txtSearch.Margin = new Padding(4);
       txtSearch.Multiline = false;
       txtSearch.Name = "txtSearch";
@@ -124,7 +124,7 @@ namespace LTP.Truck.Popup
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(835, 40);
+      txtSearch.Size = new Size(832, 42);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;
@@ -169,8 +169,8 @@ namespace LTP.Truck.Popup
       tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel2.ColumnCount = 3;
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
       tableLayoutPanel2.Location = new Point(0, 666);
@@ -195,10 +195,10 @@ namespace LTP.Truck.Popup
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(1190, 3);
+      btnConfirm.Location = new Point(1150, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
-      btnConfirm.Size = new Size(154, 54);
+      btnConfirm.Size = new Size(174, 54);
       btnConfirm.TabIndex = 0;
       btnConfirm.Text = "       Xác nhận";
       btnConfirm.TextColor = Color.White;
@@ -219,10 +219,10 @@ namespace LTP.Truck.Popup
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(1350, 3);
+      btnClose.Location = new Point(1330, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
-      btnClose.Size = new Size(154, 54);
+      btnClose.Size = new Size(174, 54);
       btnClose.TabIndex = 1;
       btnClose.Text = "       Đóng";
       btnClose.TextColor = Color.White;
