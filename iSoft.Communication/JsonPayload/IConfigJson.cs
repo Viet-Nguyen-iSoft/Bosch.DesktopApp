@@ -28,7 +28,7 @@ namespace iSoft.Communication.JsonPayload
     [DisplayName("Chuẩn giải mã")]
     [JsonConverter(typeof(StringEnumConverter))]
     [Browsable(false)]
-    public eModeCommunication eModeCommunication { get; set; }
+    public EnumModeCommunication eModeCommunication { get; set; }
 
     [Browsable(false)]
     [DisplayName("Tự động kết nối")]

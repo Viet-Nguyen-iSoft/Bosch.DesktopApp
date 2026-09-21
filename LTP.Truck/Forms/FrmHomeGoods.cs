@@ -1,6 +1,7 @@
 ﻿using Common;
 using HelperManager;
 using iSoft.Communication.Interface;
+using iSoft.Communication.Mode;
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
@@ -17,7 +18,7 @@ namespace LTP.Truck.Forms
     private int _productGroupRefreshVersion;
     private int _tareRefreshVersion;
     private int _sumWeightLoadVersion;
-    private MessageDataOutput _msgDataWeight { get; set; } = new MessageDataOutput();
+    private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private RecordTruckDTO _recordTruckDTO { get; set; }
     private CategoryTare? _categoryTare { get; set; }
     public FrmHomeGoods()
@@ -108,7 +109,7 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void Ins_OnSendDataWeightGoods(object? sender, MessageDataOutput e)
+    private void Ins_OnSendDataWeightGoods(object? sender, DataWeightInterface e)
     {
       _msgDataWeight = e;
       SetDataWeight(e);
@@ -128,12 +129,12 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      _msgDataWeight = new MessageDataOutput();
+      _msgDataWeight = new DataWeightInterface();
       lbWeightValue.Text = "---";
       lbGross.Text = "---";
     }
 
-    private void SetDataWeight(MessageDataOutput messageData)
+    private void SetDataWeight(DataWeightInterface messageData)
     {
       if (this.InvokeRequired)
       {
@@ -144,16 +145,20 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.Net.ToString("F3");
+      //Net
+      lbWeightValue.Text = messageData.IndicatedWeight.ToString("F3");
+
+      //Tare
+      lbTareSrc.Text = messageData.TareWeight.ToString("F3");
 
       //Tare
       if (_categoryTare != null)
       {
-        lbGross.Text = (messageData.Net + (_categoryTare?.Value ?? 0.0)).ToString("F3");
+        lbGross.Text = (messageData.IndicatedWeight + (_categoryTare?.Value ?? 0.0)).ToString("F3");
       }
       else
       {
-        lbGross.Text = messageData.Net.ToString("F3");
+        lbGross.Text = messageData.IndicatedWeight.ToString("F3");
       }
     }
 
@@ -481,7 +486,7 @@ namespace LTP.Truck.Forms
         ProductId = selectedProduct.Id,
         CategoryTareId = selectedTare.Id,
         //RecordTruckId = selectedRecordTruck.Id,
-        Net = _msgDataWeight.Net,
+        Net = _msgDataWeight.IndicatedWeight,
         Tare = selectedTare.Value ?? 0.0,
         UserId = AppCore.Ins._userCurrent?.Id,
         StationId = AppCore.Ins._station?.Id,

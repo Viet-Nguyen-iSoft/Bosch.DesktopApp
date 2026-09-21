@@ -2,6 +2,7 @@
 using Common.Settings;
 using HelperManager;
 using iSoft.Communication.JsonPayload;
+using iSoft.Communication.Mode;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
@@ -582,7 +583,7 @@ namespace LTP.Truck.Forms
       popupMsg.ShowDialog(this);
     }
 
-    private void Ins_OnSendDataWeightTruck(object? sender, iSoft.Communication.Interface.MessageDataOutput e)
+    private void Ins_OnSendDataWeightTruck(object? sender, DataWeightInterface e)
     {
 
     }

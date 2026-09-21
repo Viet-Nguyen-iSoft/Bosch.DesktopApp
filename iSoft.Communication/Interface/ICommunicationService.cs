@@ -1,4 +1,5 @@
 using iSoft.Communication.JsonPayload;
+using iSoft.Communication.Mode;
 using static iSoft.Communication.EnumCommunication;
 
 namespace iSoft.Communication.Interface;
@@ -8,7 +9,7 @@ namespace iSoft.Communication.Interface;
 /// </summary>
 public interface ICommunicationService : IDisposable
 {
-  event EventHandler<MessageDataOutput>? DataReceived;
+  event EventHandler<DataWeightInterface>? DataWeightInterface;
   event EventHandler<CommunicationStatusChangedEventArgs>? ConnectionStatusChanged;
 
   IReadOnlyCollection<IScaleConnection> Connections { get; }

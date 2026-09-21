@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iSoft.Communication.Mode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,7 @@ namespace iSoft.Communication.Interface
   public class ConnectionManager
   {
     public List<IScaleConnection> _scales = new List<IScaleConnection>();
-    public event EventHandler<MessageDataOutput>? OnDataReceived;
+    public event EventHandler<DataWeightInterface>? OnDataReceived;
     public event EventHandler<bool>? OnConnectionStatusChanged;
 
     public IEnumerable<IScaleConnection> GetAll() => _scales;
@@ -22,7 +23,7 @@ namespace iSoft.Communication.Interface
       _scales.Add(scale);
     }
 
-    private void Scale_DataReceived(object? sender, MessageDataOutput e)
+    private void Scale_DataReceived(object? sender, DataWeightInterface e)
     {
       OnDataReceived?.Invoke(sender, e);
     }

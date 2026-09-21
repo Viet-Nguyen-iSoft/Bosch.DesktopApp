@@ -2,6 +2,7 @@
 using iSoft.Communication.Communication;
 using iSoft.Communication.Interface;
 using iSoft.Communication.JsonPayload;
+using iSoft.Communication.Mode;
 using iSoft.Database.Models;
 using System.Net.NetworkInformation;
 using static HelperManager.EnumData;
@@ -11,10 +12,10 @@ namespace LTP.Truck.Controls
 {
   public partial class AppCore
   {
-    public event EventHandler<MessageDataOutput>? OnSendDataWeightTruck;
+    public event EventHandler<DataWeightInterface>? OnSendDataWeightTruck;
     public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeightTruck;
 
-    public event EventHandler<MessageDataOutput>? OnSendDataWeightGoods;
+    public event EventHandler<DataWeightInterface>? OnSendDataWeightGoods;
     public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeightGoods;
 
     public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeight;
@@ -79,7 +80,7 @@ namespace LTP.Truck.Controls
       if (_communicationEventsSubscribed)
         return;
 
-      _communication.DataReceived += Communication_DataReceived;
+      _communication.DataWeightInterface += Communication_DataReceived;
       _communication.ConnectionStatusChanged += Communication_StatusChanged;
       _communicationEventsSubscribed = true;
     }
@@ -97,7 +98,7 @@ namespace LTP.Truck.Controls
         NameDevice = connection.Name ?? "Cân TCP",
         Host = configData.Host,
         Port = configData.Port,
-        eModeCommunication = eModeCommunication.SICS,
+        eModeCommunication = EnumModeCommunication.SICS,
         AutoConnect = configData.AutoConnect,
         TimeoutMs = configData.TimeoutMs,
         Request = configData.Request,
@@ -132,10 +133,10 @@ namespace LTP.Truck.Controls
 
     private void Communication_DataReceived(
        object? sender,
-       MessageDataOutput data)
+        DataWeightInterface dataWeightInterface)
     {
-      OnSendDataWeightTruck?.Invoke(sender, data);
-      OnSendDataWeightGoods?.Invoke(sender, data);
+      OnSendDataWeightTruck?.Invoke(sender, dataWeightInterface);
+      OnSendDataWeightGoods?.Invoke(sender, dataWeightInterface);
     }
 
     private void Communication_StatusChanged(

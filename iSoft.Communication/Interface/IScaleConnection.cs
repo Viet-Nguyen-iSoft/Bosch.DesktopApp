@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iSoft.Communication.Mode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,13 +16,13 @@ namespace iSoft.Communication.Interface
     bool IsRequestGetData { get; set; }
     bool AutoConnect { get; set; }
     int Timeout { get; set; }
-    eModeCommunication EModeCommunication { get; set; }
+    EnumModeCommunication EModeCommunication { get; set; }
     eDevice ETypeInput { get; set; }
     ActiveWeighingStatus ActiveWeighingStatus { get; set; }
 
 
 
-    event EventHandler<MessageDataOutput> DataReceived;
+    event EventHandler<DataWeightInterface> DataReceived;
     event EventHandler<bool> ConnectionStatusChanged;
     event EventHandler<ActiveWeighingStatus> OnActiveWeighingStatusChangeEvent;
 

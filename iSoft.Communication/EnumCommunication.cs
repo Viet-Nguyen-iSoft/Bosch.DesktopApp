@@ -56,7 +56,7 @@ namespace iSoft.Communication
       Number,
     }
 
-    public enum eModeCommunication
+    public enum EnumModeCommunication
     {
       [Description("None")]
       None,
@@ -111,7 +111,7 @@ namespace iSoft.Communication
     }
 
 
-    public enum eValueWeightType
+    public enum EnumValueWeightType
     {
       Tare,
       Net, 

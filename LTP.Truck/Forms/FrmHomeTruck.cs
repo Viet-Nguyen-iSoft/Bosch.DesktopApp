@@ -3,6 +3,7 @@ using ApiSyncData.Req;
 using Common;
 using HelperManager;
 using iSoft.Communication.Interface;
+using iSoft.Communication.Mode;
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
@@ -128,7 +129,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      _msgDataWeight = new MessageDataOutput();
+      _msgDataWeight = new DataWeightInterface();
       lbWeightValue.Text = "---";
     }
 
@@ -167,7 +168,7 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void Ins_OnSendDataWeightTruck(object? sender, MessageDataOutput e)
+    private void Ins_OnSendDataWeightTruck(object? sender, DataWeightInterface e)
     {
       _msgDataWeight = e;
       SetDataWeight(e);
@@ -250,7 +251,7 @@ namespace LTP.Truck.Forms
       rJTextBox.Texts = data;
     }
 
-    private void SetDataWeight(MessageDataOutput messageData)
+    private void SetDataWeight(DataWeightInterface messageData)
     {
       if (this.InvokeRequired)
       {
@@ -261,11 +262,11 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.Net.ToString("F3");
+      lbWeightValue.Text = messageData.IndicatedWeight.ToString("F3");
     }
 
     private RecordTruck _recordTruck { get; set; } = new RecordTruck();
-    private MessageDataOutput _msgDataWeight { get; set; } = new MessageDataOutput();
+    private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private int _weightGoodsLoadVersion;
     private void btnTriggerWeight_Click(object sender, EventArgs e)
     {
@@ -288,14 +289,14 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        if (_msgDataWeight.Net <= 0)
+        if (_msgDataWeight.IndicatedWeight <= 0)
         {
           PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupConfirm.ShowDialog();
           return;
         }
 
-        _recordTruck.NetTimeTemp = _msgDataWeight.Net;
+        _recordTruck.NetTimeTemp = _msgDataWeight.IndicatedWeight;
         if (_recordTruck.EnumTypeDataTruck == EnumTypeDataTruck.None)
         {
           _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.WeightedTime01;

@@ -52,7 +52,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel14 = new TableLayoutPanel();
       label16 = new Label();
       label12 = new Label();
-      label15 = new Label();
+      lbTareSrc = new Label();
       tableLayoutPanel17 = new TableLayoutPanel();
       label19 = new Label();
       label20 = new Label();
@@ -378,7 +378,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel14.Controls.Add(label16, 2, 0);
       tableLayoutPanel14.Controls.Add(label12, 0, 0);
-      tableLayoutPanel14.Controls.Add(label15, 1, 0);
+      tableLayoutPanel14.Controls.Add(lbTareSrc, 1, 0);
       tableLayoutPanel14.Location = new Point(3, 3);
       tableLayoutPanel14.Name = "tableLayoutPanel14";
       tableLayoutPanel14.RowCount = 1;
@@ -414,19 +414,19 @@ namespace LTP.Truck.Forms
       label12.Text = "Tare:";
       label12.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // label15
+      // lbTareSrc
       // 
-      label15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label15.AutoSize = true;
-      label15.BackColor = Color.Transparent;
-      label15.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
-      label15.Location = new Point(81, 0);
-      label15.Margin = new Padding(0);
-      label15.Name = "label15";
-      label15.Size = new Size(240, 64);
-      label15.TabIndex = 3;
-      label15.Text = "0.000";
-      label15.TextAlign = ContentAlignment.MiddleRight;
+      lbTareSrc.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbTareSrc.AutoSize = true;
+      lbTareSrc.BackColor = Color.Transparent;
+      lbTareSrc.Font = new Font("Roboto", 21.75F, FontStyle.Bold);
+      lbTareSrc.Location = new Point(81, 0);
+      lbTareSrc.Margin = new Padding(0);
+      lbTareSrc.Name = "lbTareSrc";
+      lbTareSrc.Size = new Size(240, 64);
+      lbTareSrc.TabIndex = 3;
+      lbTareSrc.Text = "0.000";
+      lbTareSrc.TextAlign = ContentAlignment.MiddleRight;
       // 
       // tableLayoutPanel17
       // 
@@ -1219,7 +1219,7 @@ namespace LTP.Truck.Forms
     private UserControls.UcTimeSearch ucTimeSearchFrom;
     private UserControls.UcTimeSearch ucTimeSearchTo;
     private Label label16;
-    private Label label15;
+    private Label lbTareSrc;
     private Label label12;
     private TableLayoutPanel tableLayoutPanel14;
     private TableLayoutPanel tableLayoutPanel15;

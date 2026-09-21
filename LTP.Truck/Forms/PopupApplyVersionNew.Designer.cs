@@ -122,10 +122,10 @@ namespace LTP.Truck.Forms
       btnDownload.ForeColor = Color.White;
       btnDownload.Image = (Image)resources.GetObject("btnDownload.Image");
       btnDownload.ImageAlign = ContentAlignment.MiddleLeft;
-      btnDownload.Location = new Point(304, 3);
+      btnDownload.Location = new Point(292, 3);
       btnDownload.Name = "btnDownload";
       btnDownload.Padding = new Padding(10, 0, 0, 0);
-      btnDownload.Size = new Size(158, 59);
+      btnDownload.Size = new Size(170, 59);
       btnDownload.TabIndex = 0;
       btnDownload.Text = "       Tải xuống";
       btnDownload.TextColor = Color.White;
@@ -170,7 +170,7 @@ namespace LTP.Truck.Forms
       btnApply.ForeColor = Color.White;
       btnApply.Image = (Image)resources.GetObject("btnApply.Image");
       btnApply.ImageAlign = ContentAlignment.MiddleLeft;
-      btnApply.Location = new Point(90, 3);
+      btnApply.Location = new Point(78, 3);
       btnApply.Name = "btnApply";
       btnApply.Padding = new Padding(10, 0, 0, 0);
       btnApply.Size = new Size(208, 59);

@@ -18,8 +18,8 @@ namespace iSoft.Communication.Serial
     public MessageDataInput _messageDataInput { get; set; } = new MessageDataInput();
     private System.Timers.Timer _timerSendStatusConnect = new System.Timers.Timer();
     private string[] _ports = new string[10];
-    private eValueWeightType _eValueWeightType = eValueWeightType.Net;
-    public SerialConnection(string id,Guid? machineId, eModeCommunication eModeCommunication, eDevice eTypeInput, string nameDevice,
+    private EnumValueWeightType _eValueWeightType = EnumValueWeightType.Net;
+    public SerialConnection(string id,Guid? machineId, EnumModeCommunication eModeCommunication, eDevice eTypeInput, string nameDevice,
                                       string portName, int baudRate, Parity parity, 
                                       int dataBits, StopBits stopBits, int timeout = 5000, bool autoConnect = true,
                                       bool requestGetData = false, int intervalRequestGetData=200)
@@ -32,7 +32,7 @@ namespace iSoft.Communication.Serial
       _messageDataInput.Source = id;
       _messageDataInput.NameDevice = nameDevice;
       _messageDataInput.eModeCommunication = eModeCommunication;
-      _messageDataInput.eValueWeightType = eValueWeightType.Net;
+      _messageDataInput.eValueWeightType = EnumValueWeightType.Net;
 
       _timerSendStatusConnect.Interval = 1000;
       _timerSendStatusConnect.Elapsed += TimerSendStatusConnect_Elapsed;
@@ -137,7 +137,7 @@ namespace iSoft.Communication.Serial
           _messageDataInput.DataAsString = recievedStringData;
           _messageDataInput.DataAsBytes = Encoding.UTF8.GetBytes(recievedStringData);
           _messageDataInput.SourceDateTime = DateTime.Now;
-          OnDataReceived(_messageDataInput);
+          OnDataReceived(_messageDataInput, EnumModeCommunication.SCOD);
         }
       }
       catch (Exception ex)
