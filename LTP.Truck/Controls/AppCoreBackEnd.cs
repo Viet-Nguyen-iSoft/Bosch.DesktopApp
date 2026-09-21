@@ -2,6 +2,7 @@
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
+using LTP.Truck.Services;
 using QRCoder;
 using System;
 using System.Collections.Generic;
@@ -69,6 +70,9 @@ namespace LTP.Truck.Controls
     public readonly PermissionService _permissionService = new();
     public readonly LicensePlateService _licensePlateService = new();
     public readonly ApiJobsService _apiJobsService = new();
+    private readonly ApiJobsBackgroundService _apiJobsBackgroundService = new();
+    private readonly CancellationTokenSource _apiJobsCancellation = new();
+    private Task? _apiJobsTask;
 
     public event Action<Station?>? OnChangeStation;
 
@@ -82,6 +86,11 @@ namespace LTP.Truck.Controls
 
         if (!Directory.Exists(_folderFileLog))
           Directory.CreateDirectory(_folderFileLog);
+
+        _apiJobsTask ??= _apiJobsBackgroundService.RunAsync(
+          _apiJobsCancellation.Token,
+          ex => LogHelper.LogErrorToFileLog(ex, _folderFileLog));
+        Application.ApplicationExit += (_, _) => _apiJobsCancellation.Cancel();
 
         StartShowUI();
       }

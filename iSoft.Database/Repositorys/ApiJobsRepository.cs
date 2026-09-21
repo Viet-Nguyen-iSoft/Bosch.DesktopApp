@@ -1,6 +1,7 @@
 using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using static HelperManager.EnumData;
 
 namespace iSoft.Database.Repositorys
 {
@@ -17,6 +18,17 @@ namespace iSoft.Database.Repositorys
         query = query.Where(apiJob => !apiJob.DeletedFlag);
 
       return query.ToListAsync();
+    }
+
+    public Task<List<ApiJobs>> GetCreatedAsync(
+      CancellationToken cancellationToken = default)
+    {
+      return Context.Set<ApiJobs>()
+        .Where(apiJob =>
+          !apiJob.DeletedFlag &&
+          apiJob.EnumStatusAPI == EnumStatusAPI.Created)
+        .OrderBy(apiJob => apiJob.CreatedAt)
+        .ToListAsync(cancellationToken);
     }
 
     public async Task<ApiJobs> AddOrUpdateAsync(ApiJobs apiJob)

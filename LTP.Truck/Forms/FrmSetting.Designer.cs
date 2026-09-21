@@ -307,9 +307,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
       tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
       tableLayoutPanel18.Controls.Add(label12, 0, 0);
       tableLayoutPanel18.Controls.Add(txtValueWeightPermit, 4, 0);
       tableLayoutPanel18.Controls.Add(label11, 3, 0);
@@ -345,7 +343,7 @@ namespace LTP.Truck.Forms
       txtValueWeightPermit.BorderSize = 2;
       txtValueWeightPermit.Font = new Font("Roboto", 16F);
       txtValueWeightPermit.ForeColor = Color.FromArgb(64, 64, 64);
-      txtValueWeightPermit.Location = new Point(645, 11);
+      txtValueWeightPermit.Location = new Point(695, 11);
       txtValueWeightPermit.Margin = new Padding(4);
       txtValueWeightPermit.Multiline = false;
       txtValueWeightPermit.Name = "txtValueWeightPermit";
@@ -353,7 +351,7 @@ namespace LTP.Truck.Forms
       txtValueWeightPermit.PasswordChar = false;
       txtValueWeightPermit.PlaceholderColor = Color.DarkGray;
       txtValueWeightPermit.PlaceholderText = "";
-      txtValueWeightPermit.Size = new Size(192, 42);
+      txtValueWeightPermit.Size = new Size(142, 42);
       txtValueWeightPermit.TabIndex = 4;
       txtValueWeightPermit.Texts = "";
       txtValueWeightPermit.UnderlinedStyle = false;
@@ -364,7 +362,7 @@ namespace LTP.Truck.Forms
       label11.AutoSize = true;
       label11.BackColor = Color.Transparent;
       label11.Font = new Font("Roboto", 16F);
-      label11.Location = new Point(315, 0);
+      label11.Location = new Point(365, 0);
       label11.Margin = new Padding(0);
       label11.Name = "label11";
       label11.Size = new Size(326, 64);

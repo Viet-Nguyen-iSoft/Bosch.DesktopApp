@@ -156,7 +156,7 @@ namespace LTP.Truck
       try
       {
         _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(_syncCts.Token);
-        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(_syncCts02.Token);
+        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(_syncCts02.Token, pathFolderSrc: Application.StartupPath);
         PeriodicRunner.EntityChanged += (sender, e) =>
         {
           if (e.EntityType == typeof(ProductGroup))

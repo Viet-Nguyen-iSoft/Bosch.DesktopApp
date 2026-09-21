@@ -1,8 +1,8 @@
-﻿using ApiSyncData.Resp;
+﻿using ApiSyncData.Req;
+using ApiSyncData.Resp;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.Net.Http.Headers;
-using WebDriverBiDi.Script;
 
 namespace ApiSyncData
 {
@@ -237,7 +237,7 @@ namespace ApiSyncData
     }
 
     public Task<string> UpsertLicensePlateAsync(
-      Req.LicensePlateUpsertRequest licensePlate,
+      LicensePlateUpsertRequest licensePlate,
       string lang = "vi",
       CancellationToken cancellationToken = default)
     {
@@ -648,7 +648,7 @@ namespace ApiSyncData
       return responseContent;
     }
 
-    public async Task<string> UploadReportTruckPdf(Guid? recordTruck,string pdfFilePath)
+    public async Task<string> UploadReportTruckPdf(Guid? recordTruck, string pdfFilePath)
     {
       try
       {

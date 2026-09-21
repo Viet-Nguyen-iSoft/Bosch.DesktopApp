@@ -1,10 +1,5 @@
 ﻿using ApiSyncData;
 using ApiSyncData.Req;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LTP.Truck.Controls
 {
@@ -82,7 +77,7 @@ namespace LTP.Truck.Controls
         var api = new ApiService();
         return await api.UpsertLicensePlateAsync(licensePlateUpsertRequest);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         throw;
       }

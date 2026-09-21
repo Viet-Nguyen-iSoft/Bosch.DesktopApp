@@ -3,6 +3,7 @@ using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ApiSyncData
 {
@@ -11,15 +12,17 @@ namespace ApiSyncData
     private static readonly SemaphoreSlim SyncLock = new(1, 1);
 
     public static int LastSynchronizedCount { get; private set; }
+    public static string? PathFolderSrc { get; private set; }
 
     /// <summary>
     /// Đồng bộ RecordTruck và RecordWeight local chưa được gửi lên server sau mỗi 5 giây.
     /// Bản ghi lỗi sẽ giữ SyncFlag = false để được thử lại ở chu kỳ tiếp theo.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
-      CancellationToken cancellationToken = default,
+      CancellationToken cancellationToken = default, string? pathFolderSrc = null,
       Action<Exception>? onError = null)
     {
+      PathFolderSrc = pathFolderSrc;
       var api = new ApiService();
       return PeriodicRunner.RunEvery5SecondsAsync(
         async token =>
@@ -93,6 +96,10 @@ namespace ApiSyncData
           {
             synchronizedCount++;
           }
+
+          //Đồng bộ pdf
+          string pathPdf = Path.Combine(PathFolderSrc + "Report", $"{record.Id.ToString().Replace("-", "").Replace(" ", "")}.pdf");
+          await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

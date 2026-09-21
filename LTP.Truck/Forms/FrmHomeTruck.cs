@@ -1,5 +1,4 @@
-﻿using Accessibility;
-using ApiSyncData;
+﻿using ApiSyncData;
 using ApiSyncData.Req;
 using Common;
 using HelperManager;
@@ -11,11 +10,9 @@ using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.Popup;
-using System;
 using System.Data;
 using System.Drawing.Drawing2D;
 using System.Globalization;
-using System.Threading.Tasks;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 using static iSoft.Database.EnumData;
@@ -353,10 +350,12 @@ namespace LTP.Truck.Forms
 
       var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
       //Push API biển số xe
-      if (rs.Exist==false)
+      if (rs.Exist == false)
       {
         LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
         licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
+        licensePlate.Id = rs.LicensePlate?.Id;
+        licensePlate.Description = rs.LicensePlate?.Description;
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(licensePlate);
@@ -364,7 +363,7 @@ namespace LTP.Truck.Forms
         apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
         apiJobs.CreatedAt = DateTime.UtcNow;
         await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
-      }  
+      }
 
       await LoadLicensePlateSuggestionsAsync();
       await LoadHistorical();
@@ -374,7 +373,7 @@ namespace LTP.Truck.Forms
       if (record != null)
       {
         var pathPdf = await DownloadReportTruck(DateTime.Now, record);
-        await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+        //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
       }
     }
 
@@ -422,7 +421,7 @@ namespace LTP.Truck.Forms
         if (record != null)
         {
           var pathPdf = await DownloadReportTruck(DateTime.Now, record);
-          await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+          //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
         }
       }
       catch (Exception)
@@ -829,7 +828,7 @@ namespace LTP.Truck.Forms
         recordTruck.UpdatedAt = DateTime.UtcNow;
         await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
         await LoadHistorical();
-      }  
+      }
     }
 
     public void SetDgvHistorical(List<RecordTruckDTO> dto)
@@ -1157,8 +1156,8 @@ namespace LTP.Truck.Forms
           PopupConfirm popupWarning = new PopupConfirm("Không tìm thấy thông tin !", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Warning);
           popupWarning.ShowDialog();
           return;
-        }  
-          
+        }
+
         var rs = await DownloadReportTruck(DateTime.Now, record);
 
         //POST PDF
@@ -1239,7 +1238,7 @@ namespace LTP.Truck.Forms
         {
           string tempTableDetal = table;
           tempTableDetal = tempTableDetal.Replace("{{no}}", (no).ToString("D2"));
-          tempTableDetal = tempTableDetal.Replace("{{name}}", recordWeightsByProduct[no-1].ProductName);
+          tempTableDetal = tempTableDetal.Replace("{{name}}", recordWeightsByProduct[no - 1].ProductName);
           tempTableDetal = tempTableDetal.Replace("{{code}}", recordWeightsByProduct[no - 1].ProductCode);
           tempTableDetal = tempTableDetal.Replace("{{quantity}}", recordWeightsByProduct[no - 1].SumNet.ToString("F3"));
           tempTableDetal = tempTableDetal.Replace("{{note}}", "");
@@ -1272,9 +1271,9 @@ namespace LTP.Truck.Forms
         }
 
         string template = File.ReadAllText(pathFileTemplate);
-        string company = "Công ty TNHH BOSCH Việt Nam";
-        string address = "Đường số 8, KCN Long Thành, An Phước, T. Đồng Nai";
-        string phone = " 0251.628.0340";
+        string company = AppCore.Ins._appConfig?.Company??string.Empty;
+        string address = AppCore.Ins._appConfig?.Address ?? string.Empty;
+        string phone = AppCore.Ins._appConfig?.Phone ?? string.Empty;
         string timePrint = dt.ToString(
                                         "HH:mm 'Ngày' dd 'tháng' MM 'năm' yyyy",
                                         CultureInfo.GetCultureInfo("vi-VN")
@@ -1289,7 +1288,7 @@ namespace LTP.Truck.Forms
         string tare = hasFirstWeight ? firstWeight.ToString("F3") : "...";
         string net = "...";
         string importExport = "Chưa xác định";
-        string timeTare = recordTruck.CreatedAt != null ? ((DateTime)(recordTruck.CreatedAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
+        string timeTare = recordTruck.WeighInAt != null ? ((DateTime)(recordTruck.WeighInAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
         string timeGross = "...";
 
         if (hasFirstWeight && hasSecondWeight)
@@ -1308,7 +1307,7 @@ namespace LTP.Truck.Forms
               ? "Nhập hàng"
               : "Chưa xác định";
 
-          timeGross = recordTruck.UpdatedAt != null ? ((DateTime)(recordTruck.UpdatedAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
+          timeGross = recordTruck.WeighOutAt != null ? ((DateTime)(recordTruck.WeighOutAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
         }
 
         string result = template.Replace("{company}", company)
@@ -1329,7 +1328,8 @@ namespace LTP.Truck.Forms
                                 .Replace("{note}", recordTruck.Document)
                                 ;
 
-        string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");
+        //string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");
+        string outputPath = Path.Combine(folderOutput, $"{recordTruck.Id.ToString().Replace("-", "").Replace(" ", "")}.html");
         File.WriteAllText(outputPath, result);
 
         return await CreateFile(outputPath);

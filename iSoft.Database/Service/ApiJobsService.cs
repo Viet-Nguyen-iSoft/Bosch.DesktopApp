@@ -13,6 +13,14 @@ namespace iSoft.Database.Service
       return await repository.GetAllAsync(isContainDelete).ConfigureAwait(false);
     }
 
+    public async Task<List<ApiJobs>> GetCreatedAsync(
+      CancellationToken cancellationToken = default)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new ApiJobsRepository(context);
+      return await repository.GetCreatedAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<ApiJobs> AddOrUpdateAsync(ApiJobs apiJob)
     {
       await using var context = new MySqlDbContext();
