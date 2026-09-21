@@ -52,8 +52,9 @@ namespace LTP.Truck
             {
               await db.AppConfigs.AddAsync(new AppConfig
               {
-                IpServer = "10.0.0.45", //"100.101.165.42",
-                PortServer = 6902,
+                IpServer = "100.101.160.94",
+                PortServer = 7902,
+                TimeoutConnectServer = 500,
                 Key = "A",
                 DeletedFlag = false,
                 EnableFlag = true,
