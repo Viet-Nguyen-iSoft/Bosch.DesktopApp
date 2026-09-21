@@ -619,28 +619,33 @@ namespace LTP.Truck.Forms
     private void ApplyRecordAccess(RecordTruck recordTruck)
     {
       bool canModify = CanModifyRecord(recordTruck);
+      bool hasCompletedSecondWeight =
+        recordTruck.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime02 ||
+        recordTruck.NetTime02 > 0 ||
+        recordTruck.WeighOutAt.HasValue;
+      bool canEditInformation = canModify && !hasCompletedSecondWeight;
 
       // Các nút phụ thuộc trạng thái chỉ bị khóa thêm; không bật lại
       // nếu trạng thái cân hiện tại không cho phép thao tác.
-      btnWeightTime01.Enabled &= canModify;
-      btnWeightTime02.Enabled &= canModify;
+      btnWeightTime01.Enabled &= canEditInformation;
+      btnWeightTime02.Enabled &= canEditInformation;
       btnPrint.Enabled &= canModify;
 
-      btnTriggerWeight.Enabled = canModify;
-      btnBack.Enabled = canModify;
-      btnZero.Enabled = canModify;
-      btnLoadClient.Enabled = canModify;
-      btnLoadTypeGoods.Enabled = canModify;
-      btnLoadWarehouse.Enabled = canModify;
+      btnTriggerWeight.Enabled = canEditInformation;
+      btnBack.Enabled = canEditInformation;
+      btnZero.Enabled = canEditInformation;
+      btnLoadClient.Enabled = canEditInformation;
+      btnLoadTypeGoods.Enabled = canEditInformation;
+      btnLoadWarehouse.Enabled = canEditInformation;
 
-      txtNoLabel.Enabled = canModify;
-      txtNameDriver.Enabled = canModify;
-      txtLicensePlate.Enabled = canModify;
-      txtIdCard.Enabled = canModify;
-      txtClient.Enabled = canModify;
-      txtTypeGoods.Enabled = canModify;
-      txtWareHouse.Enabled = canModify;
-      txtDocument.ReadOnly = !canModify;
+      txtNoLabel.Enabled = canEditInformation;
+      txtNameDriver.Enabled = canEditInformation;
+      txtLicensePlate.Enabled = canEditInformation;
+      txtIdCard.Enabled = canEditInformation;
+      txtClient.Enabled = canEditInformation;
+      txtTypeGoods.Enabled = canEditInformation;
+      txtWareHouse.Enabled = canEditInformation;
+      txtDocument.ReadOnly = !canEditInformation;
     }
 
     private void UpdateOffsetWeight(RecordTruck recordTruck)
