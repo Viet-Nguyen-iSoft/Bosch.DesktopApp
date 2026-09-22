@@ -38,6 +38,23 @@ namespace iSoft.Database.Service
       return await repository.GetDetailByIdAsync(id, isContainDelete).ConfigureAwait(false);
     }
 
+    public async Task<List<RecordTruck>> GetReportAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex = 0,
+      int typeFilterIndex = 0)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordTruckRepository(context);
+      return await repository.GetReportAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        statusFilterIndex,
+        typeFilterIndex).ConfigureAwait(false);
+    }
+
     public async Task<RecordTruck?> GetPendingByLicensePlateAsync(string licensePlate)
     {
       await using var context = new MySqlDbContext();

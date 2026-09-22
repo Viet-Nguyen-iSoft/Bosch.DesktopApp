@@ -14,6 +14,8 @@ namespace LTP.Truck.Forms
 {
   public partial class FrmReportGoods : Form
   {
+    private bool _isLoadingPage;
+
     public FrmReportGoods()
     {
       InitializeComponent();
@@ -21,6 +23,7 @@ namespace LTP.Truck.Forms
 
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       txtSearchKey.KeyPress += txtSearchKey_KeyPress;
+      ucPage1.PageChanged += ucPage1_PageChanged;
       Shown += FrmReportGoods_Shown;
     }
 
@@ -59,12 +62,12 @@ namespace LTP.Truck.Forms
     }
     private async void FrmReportGoods_Shown(object? sender, EventArgs e)
     {
-      await LoadHistorical();
+      await LoadHistorical(resetPage: true);
     }
 
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)
     {
-      await LoadHistorical();
+      await LoadHistorical(resetPage: true);
     }
 
     private async void txtSearchKey_KeyPress(object? sender, KeyPressEventArgs e)
@@ -73,13 +76,28 @@ namespace LTP.Truck.Forms
         return;
 
       e.Handled = true;
+      await LoadHistorical(resetPage: true);
+    }
+
+    private async void ucPage1_PageChanged(object? sender, UserControls.PageChangedEventArgs e)
+    {
       await LoadHistorical();
     }
 
-    private async Task LoadHistorical()
+    private async Task LoadHistorical(bool resetPage = false)
     {
+      if (_isLoadingPage)
+        return;
+
       try
       {
+        _isLoadingPage = true;
+        btnSearchHistorical.Enabled = false;
+        ucPage1.Enabled = false;
+
+        if (resetPage)
+          ucPage1.ResetToFirstPage();
+
         var fromDateTime = ucTimeSearchFrom.Value;
         var toDateTime = ucTimeSearchTo.Value;
         if (fromDateTime > toDateTime)
@@ -95,33 +113,23 @@ namespace LTP.Truck.Forms
         var fromUtc = fromDateTime.ToUniversalTime();
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
         var searchKey = txtSearchKey.Texts.Trim();
-        var records = await AppCore.Ins._recordWeightService.GetAllAsync();
+        var pageNumber = ucPage1.CurrentPage;
+        var pageSize = ucPage1.PageSize;
+        var (records, totalRecords) = await AppCore.Ins._recordWeightService.GetReportPageAsync(
+          fromUtc,
+          toUtcExclusive,
+          searchKey,
+          pageNumber,
+          pageSize);
 
-        var filteredRecords = records.Where(record =>
-        {
-          var createdAtUtc = record.CreatedAt?.ToUniversalTime();
-          return createdAtUtc >= fromUtc && createdAtUtc < toUtcExclusive;
-        });
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
+        var effectivePage = Math.Min(pageNumber, totalPages);
+        var recordsDto = DTOHelper.ConvertRecordWeightDTO(records);
+        for (var index = 0; index < recordsDto.Count; index++)
+          recordsDto[index].No = totalRecords - ((effectivePage - 1) * pageSize + index);
 
-        if (!string.IsNullOrWhiteSpace(searchKey))
-        {
-          filteredRecords = filteredRecords.Where(record => new[]
-          {
-            record.Product?.Code,
-            record.Product?.Name,
-            record.Product?.ProductGroup?.Code,
-            record.Product?.ProductGroup?.Name,
-            record.CategoryTare?.Code,
-            record.CategoryTare?.Name,
-            record.RecordTruck?.NoLabelAuto,
-            record.RecordTruck?.NoLabelManual,
-            record.LicensePlate,
-            record.RecordTruck?.NameDriver,
-            record.RecordTruck?.IdCard
-          }.Any(value => value?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) == true));
-        }
-
-        SetDgvHistorical(DTOHelper.ConvertRecordWeightDTO(filteredRecords.ToList()));
+        ucPage1.SetTotalRecords(totalRecords, effectivePage);
+        SetDgvHistorical(recordsDto);
       }
       catch (Exception ex)
       {
@@ -131,6 +139,12 @@ namespace LTP.Truck.Forms
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popup.ShowDialog(this);
+      }
+      finally
+      {
+        _isLoadingPage = false;
+        btnSearchHistorical.Enabled = true;
+        ucPage1.Enabled = true;
       }
     }
 
@@ -184,15 +198,7 @@ namespace LTP.Truck.Forms
 
     private async void btnExport_Click(object sender, EventArgs e)
     {
-      var exportData = dgv.Rows
-        .Cast<DataGridViewRow>()
-        .Where(row => !row.IsNewRow)
-        .Select(row => row.DataBoundItem as RecordWeightDTO)
-        .Where(record => record?.RecordWeight is not null)
-        .Cast<RecordWeightDTO>()
-        .ToList();
-
-      if (exportData.Count == 0)
+      if (ucPage1.TotalRecords == 0)
       {
         using var popup = new PopupConfirm(
           "Không có dữ liệu để xuất báo cáo.",
@@ -228,6 +234,15 @@ namespace LTP.Truck.Forms
       try
       {
         btnExport.Enabled = false;
+        var fromDateTime = ucTimeSearchFrom.Value;
+        var toDateTime = ucTimeSearchTo.Value;
+        var searchKey = txtSearchKey.Texts.Trim();
+        var exportRecords = await AppCore.Ins._recordWeightService.GetReportAsync(
+          fromDateTime.ToUniversalTime(),
+          toDateTime.AddMinutes(1).ToUniversalTime(),
+          searchKey);
+        var exportData = DTOHelper.ConvertRecordWeightDTO(exportRecords);
+
         var exporterName = AppCore.Ins._userCurrent?.DisplayName;
         if (string.IsNullOrWhiteSpace(exporterName))
           exporterName = AppCore.Ins._userCurrent?.FullName;
@@ -238,8 +253,8 @@ namespace LTP.Truck.Forms
           templatePath,
           saveDialog.FileName,
           exportData,
-          ucTimeSearchFrom.Value,
-          ucTimeSearchTo.Value,
+          fromDateTime,
+          toDateTime,
           exporterName));
 
         var openExportedFile = false;

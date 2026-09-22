@@ -28,9 +28,9 @@
     /// </summary>
     private void InitializeComponent()
     {
-      DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
       tableLayoutPanel7 = new TableLayoutPanel();
       dgv = new DataGridView();
       tableLayoutPanel10 = new TableLayoutPanel();
@@ -44,6 +44,7 @@
       btnExport = new LTP.Truck.Custom.RJButton();
       btnSearchHistorical = new LTP.Truck.Custom.RJButton();
       label27 = new Label();
+      ucPage1 = new LTP.Truck.UserControls.UcPage();
       tableLayoutPanel7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel10.SuspendLayout();
@@ -57,14 +58,16 @@
       tableLayoutPanel7.Controls.Add(dgv, 0, 2);
       tableLayoutPanel7.Controls.Add(tableLayoutPanel10, 0, 1);
       tableLayoutPanel7.Controls.Add(label27, 0, 0);
+      tableLayoutPanel7.Controls.Add(ucPage1, 0, 3);
       tableLayoutPanel7.Dock = DockStyle.Fill;
       tableLayoutPanel7.Location = new Point(0, 0);
       tableLayoutPanel7.Margin = new Padding(0);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
-      tableLayoutPanel7.RowCount = 3;
+      tableLayoutPanel7.RowCount = 4;
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 62F));
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel7.Size = new Size(1551, 550);
       tableLayoutPanel7.TabIndex = 3;
       // 
@@ -76,38 +79,38 @@
       dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
       dgv.BackgroundColor = Color.FromArgb(236, 236, 236);
       dgv.BorderStyle = BorderStyle.None;
-      dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle4.BackColor = SystemColors.Control;
-      dataGridViewCellStyle4.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = SystemColors.Control;
+      dataGridViewCellStyle1.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle5.BackColor = SystemColors.Window;
-      dataGridViewCellStyle5.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle5.ForeColor = SystemColors.ControlText;
-      dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
-      dgv.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle2.BackColor = SystemColors.Window;
+      dataGridViewCellStyle2.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+      dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+      dgv.DefaultCellStyle = dataGridViewCellStyle2;
       dgv.EnableHeadersVisualStyles = false;
       dgv.Location = new Point(3, 115);
       dgv.Name = "dgv";
       dgv.ReadOnly = true;
-      dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = SystemColors.Control;
-      dataGridViewCellStyle6.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = SystemColors.Control;
+      dataGridViewCellStyle3.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-      dgv.Size = new Size(1545, 432);
+      dgv.Size = new Size(1545, 372);
       dgv.TabIndex = 23;
       // 
       // tableLayoutPanel10
@@ -307,6 +310,14 @@
       label27.Text = "Danh sách dữ liệu cân";
       label27.TextAlign = ContentAlignment.MiddleLeft;
       // 
+      // ucPage1
+      // 
+      ucPage1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucPage1.Location = new Point(3, 493);
+      ucPage1.Name = "ucPage1";
+      ucPage1.Size = new Size(1545, 54);
+      ucPage1.TabIndex = 24;
+      // 
       // FrmReportTruck
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -338,5 +349,6 @@
     private Common.Custom.RJButton btnFilter;
     private Custom.RJButton btnSearchHistorical;
     private Label label27;
+    private UserControls.UcPage ucPage1;
   }
 }

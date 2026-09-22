@@ -18,6 +18,7 @@ namespace iSoft.Database.Repositorys
     public Task<List<RecordTruck>> GetAllAsync(bool IsContainDelete = false)
     {
       var query = Context.Set<RecordTruck>()
+        .AsNoTracking()
         .Include(x => x.Client)
         .Include(x => x.TypeGoods)
         .Include(x => x.Warehouse)
@@ -27,6 +28,61 @@ namespace iSoft.Database.Repositorys
       if (!IsContainDelete)
         query = query.Where(x => !x.DeletedFlag);
       return query.ToListAsync();
+    }
+
+    public Task<List<RecordTruck>> GetReportAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex = 0,
+      int typeFilterIndex = 0)
+    {
+      var query = Context.Set<RecordTruck>()
+        .AsNoTracking()
+        .Include(record => record.Client)
+        .Include(record => record.TypeGoods)
+        .Include(record => record.Warehouse)
+        .Include(record => record.User)
+        .Include(record => record.Station)
+        .Where(record => record.UpdatedAt >= fromUtc && record.UpdatedAt < toUtcExclusive);
+
+      query = typeFilterIndex switch
+      {
+        1 => query.Where(record => !record.DeletedFlag),
+        2 => query.Where(record => record.DeletedFlag),
+        _ => query
+      };
+
+      query = statusFilterIndex switch
+      {
+        1 => query.Where(record =>
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime01 ||
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime01 ||
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime02),
+        2 => query.Where(record =>
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime02),
+        _ => query
+      };
+
+      if (!string.IsNullOrWhiteSpace(searchKey))
+      {
+        query = query.Where(record =>
+          (record.NoLabelAuto != null && record.NoLabelAuto.Contains(searchKey)) ||
+          (record.NoLabelManual != null && record.NoLabelManual.Contains(searchKey)) ||
+          (record.LicensePlate != null && record.LicensePlate.Contains(searchKey)) ||
+          (record.NameDriver != null && record.NameDriver.Contains(searchKey)) ||
+          (record.IdCard != null && record.IdCard.Contains(searchKey)) ||
+          (record.Document != null && record.Document.Contains(searchKey)) ||
+          (record.Client != null && record.Client.Name != null && record.Client.Name.Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.Name != null && record.TypeGoods.Name.Contains(searchKey)) ||
+          (record.Warehouse != null && record.Warehouse.Name != null && record.Warehouse.Name.Contains(searchKey)) ||
+          (record.Station != null && record.Station.Name != null && record.Station.Name.Contains(searchKey)));
+      }
+
+      return query
+        .OrderByDescending(record => record.CreatedAt)
+        .ThenByDescending(record => record.Id)
+        .ToListAsync();
     }
 
     public Task<List<RecordTruck>> GetFirstWeighingRecordsAsync()

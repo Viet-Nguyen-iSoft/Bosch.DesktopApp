@@ -118,50 +118,14 @@ namespace LTP.Truck.Forms
         var fromUtc = fromDateTime.ToUniversalTime();
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
         var searchKey = txtSearchKey.Texts.Trim();
-        var records = await AppCore.Ins._recordTruckService.GetAllAsync(true);
+        var records = await AppCore.Ins._recordTruckService.GetReportAsync(
+          fromUtc,
+          toUtcExclusive,
+          searchKey,
+          _statusFilterIndex,
+          _typeFilterIndex);
 
-        var filteredRecords = records.Where(record =>
-        {
-          var updatedAtUtc = record.UpdatedAt?.ToUniversalTime();
-          return updatedAtUtc >= fromUtc && updatedAtUtc < toUtcExclusive;
-        });
-
-        filteredRecords = _typeFilterIndex switch
-        {
-          1 => filteredRecords.Where(record => !record.DeletedFlag),
-          2 => filteredRecords.Where(record => record.DeletedFlag),
-          _ => filteredRecords
-        };
-
-        filteredRecords = _statusFilterIndex switch
-        {
-          1 => filteredRecords.Where(record =>
-            record.EnumTypeDataTruck == EnumTypeDataTruck.WeightedTime01 ||
-            record.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime01 ||
-            record.EnumTypeDataTruck == EnumTypeDataTruck.WeightedTime02),
-          2 => filteredRecords.Where(record =>
-            record.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime02),
-          _ => filteredRecords
-        };
-
-        if (!string.IsNullOrWhiteSpace(searchKey))
-        {
-          filteredRecords = filteredRecords.Where(record => new[]
-          {
-            record.NoLabelAuto,
-            record.NoLabelManual,
-            record.LicensePlate,
-            record.NameDriver,
-            record.IdCard,
-            record.Document,
-            record.Client?.Name,
-            record.TypeGoods?.Name,
-            record.Warehouse?.Name,
-            record.Station?.Name
-          }.Any(value => value?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) == true));
-        }
-
-        SetDgvHistorical(DTOHelper.ConvertRecordTruckDTO(filteredRecords.ToList()));
+        SetDgvHistorical(DTOHelper.ConvertRecordTruckDTO(records));
       }
       catch (Exception ex)
       {

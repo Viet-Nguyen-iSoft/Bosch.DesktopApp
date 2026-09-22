@@ -43,6 +43,7 @@
       btnSearchHistorical = new LTP.Truck.Custom.RJButton();
       btnExport = new LTP.Truck.Custom.RJButton();
       label27 = new Label();
+      ucPage1 = new LTP.Truck.UserControls.UcPage();
       tableLayoutPanel9.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel11.SuspendLayout();
@@ -56,14 +57,16 @@
       tableLayoutPanel9.Controls.Add(dgv, 0, 2);
       tableLayoutPanel9.Controls.Add(tableLayoutPanel11, 0, 1);
       tableLayoutPanel9.Controls.Add(label27, 0, 0);
+      tableLayoutPanel9.Controls.Add(ucPage1, 0, 3);
       tableLayoutPanel9.Dock = DockStyle.Fill;
       tableLayoutPanel9.Location = new Point(0, 0);
       tableLayoutPanel9.Margin = new Padding(0);
       tableLayoutPanel9.Name = "tableLayoutPanel9";
-      tableLayoutPanel9.RowCount = 3;
+      tableLayoutPanel9.RowCount = 4;
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 62F));
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel9.Size = new Size(1661, 607);
       tableLayoutPanel9.TabIndex = 4;
       // 
@@ -106,7 +109,7 @@
       dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-      dgv.Size = new Size(1655, 489);
+      dgv.Size = new Size(1655, 429);
       dgv.TabIndex = 23;
       // 
       // tableLayoutPanel11
@@ -286,6 +289,14 @@
       label27.Text = "Lịch sử cân";
       label27.TextAlign = ContentAlignment.MiddleLeft;
       // 
+      // ucPage1
+      // 
+      ucPage1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucPage1.Location = new Point(3, 550);
+      ucPage1.Name = "ucPage1";
+      ucPage1.Size = new Size(1655, 54);
+      ucPage1.TabIndex = 24;
+      // 
       // FrmReportGoods
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -316,5 +327,6 @@
     private Custom.RJButton btnSearchHistorical;
     private Custom.RJButton btnExport;
     private Label label27;
+    private UserControls.UcPage ucPage1;
   }
 }

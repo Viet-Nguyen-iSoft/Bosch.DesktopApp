@@ -669,33 +669,12 @@ namespace LTP.Truck.Forms
       // Include records occurring anywhere within the selected ending minute.
       var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
       var searchKey = txtSearchKey.Texts.Trim();
-      var records = await AppCore.Ins._recordWeightService.GetAllAsync();
+      var records = await AppCore.Ins._recordWeightService.GetReportAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey);
 
-      var filteredRecords = records.Where(record =>
-      {
-        var createdAtUtc = record.CreatedAt?.ToUniversalTime();
-        return createdAtUtc >= fromUtc && createdAtUtc < toUtcExclusive;
-      });
-
-      if (!string.IsNullOrWhiteSpace(searchKey))
-      {
-        filteredRecords = filteredRecords.Where(record => new[]
-        {
-          record.Product?.Code,
-          record.Product?.Name,
-          record.Product?.ProductGroup?.Code,
-          record.Product?.ProductGroup?.Name,
-          record.CategoryTare?.Code,
-          record.CategoryTare?.Name,
-          record.RecordTruck?.NoLabelAuto,
-          record.RecordTruck?.NoLabelManual,
-          record.RecordTruck?.LicensePlate,
-          record.RecordTruck?.NameDriver,
-          record.RecordTruck?.IdCard
-        }.Any(value => value?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) == true));
-      }
-
-      SetDgvHistorical(DTOHelper.ConvertRecordWeightDTO(filteredRecords.ToList()));
+      SetDgvHistorical(DTOHelper.ConvertRecordWeightDTO(records));
     }
 
     private void SetDgvHistorical(List<RecordWeightDTO> records)

@@ -22,6 +22,36 @@ namespace iSoft.Database.Service
       return await repository.AddOrUpdateAsync(recordWeight).ConfigureAwait(false);
     }
 
+    public async Task<List<RecordWeight>> GetReportAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordWeightRepository(context);
+      return await repository.GetReportAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey).ConfigureAwait(false);
+    }
+
+    public async Task<(List<RecordWeight> Records, int TotalRecords)> GetReportPageAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int pageNumber,
+      int pageSize)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordWeightRepository(context);
+      return await repository.GetReportPageAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        pageNumber,
+        pageSize).ConfigureAwait(false);
+    }
+
     public async Task<double> SumNetByRecordTruckIdAsync(Guid recordTruckId)
     {
       await using var context = new MySqlDbContext();

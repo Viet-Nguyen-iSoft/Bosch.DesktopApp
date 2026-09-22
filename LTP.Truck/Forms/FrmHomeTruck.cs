@@ -776,43 +776,13 @@ namespace LTP.Truck.Forms
       var typeIndex = _typeFilterIndex;
       var searchKey = txtSearchKey.Texts.Trim();
 
-      // Hiển thị cả bản ghi đã xóa để người dùng có thể phục hồi.
-      var rs = await AppCore.Ins._recordTruckService.GetAllAsync(true);
-      var filtered = rs.Where(record =>
-      {
-        // Normalize both sides to UTC before comparing their clock values.
-        var updatedAtUtc = record.UpdatedAt?.ToUniversalTime();
-        return updatedAtUtc >= fromUtc && updatedAtUtc < toUtcExclusive;
-      });
-
-      filtered = typeIndex switch
-      {
-        1 => filtered.Where(record => !record.DeletedFlag),
-        2 => filtered.Where(record => record.DeletedFlag),
-        _ => filtered
-      };
-
-      filtered = statusIndex switch
-      {
-        1 => filtered.Where(record =>
-          record.EnumTypeDataTruck == EnumTypeDataTruck.WeightedTime01 ||
-          record.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime01 ||
-          record.EnumTypeDataTruck == EnumTypeDataTruck.WeightedTime02),
-        2 => filtered.Where(record => record.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime02),
-        _ => filtered
-      };
-
-      if (!string.IsNullOrEmpty(searchKey))
-      {
-        filtered = filtered.Where(record => new[]
-        {
-          record.NoLabelAuto, record.NoLabelManual, record.LicensePlate,
-          record.NameDriver, record.IdCard, record.Document,
-          record.Client?.Name, record.TypeGoods?.Name, record.Warehouse?.Name
-        }.Any(value => value?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) == true));
-      }
-
-      var dto = DTOHelper.ConvertRecordTruckDTO(filtered.ToList());
+      var records = await AppCore.Ins._recordTruckService.GetReportAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        statusIndex,
+        typeIndex);
+      var dto = DTOHelper.ConvertRecordTruckDTO(records);
       SetDgvHistorical(dto);
     }
 
