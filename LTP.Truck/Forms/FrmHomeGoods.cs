@@ -18,7 +18,6 @@ namespace LTP.Truck.Forms
   {
     private const string SelectColumnName = "SelectRecord";
     private List<Product> _products = new();
-    private List<RecordWeight> _exportData = new();
     private int _productGroupRefreshVersion;
     private int _tareRefreshVersion;
     private int _sumWeightLoadVersion;
@@ -84,7 +83,7 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
-      dgv.ReadOnly = false;
+      dgv.ReadOnly = true;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 107, 177);
       dgv.DefaultCellStyle.SelectionForeColor = Color.White;
@@ -95,11 +94,11 @@ namespace LTP.Truck.Forms
         HeaderText = string.Empty,
         Width = 50,
         AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-        ReadOnly = false,
+        ReadOnly = true,
         Frozen = true
       };
       dgv.Columns.Insert(0, selectColumn);
-      dgv.CurrentCellDirtyStateChanged += dgv_CurrentCellDirtyStateChanged;
+      dgv.CellClick += dgv_CellClick;
     }
 
     private async void FrmHomeGoods_Load(object? sender, EventArgs e)
@@ -711,9 +710,6 @@ namespace LTP.Truck.Forms
       dgv.ClearSelection();
       dgv.CurrentCell = null;
 
-      foreach (DataGridViewColumn column in dgv.Columns)
-        column.ReadOnly = column.Name != SelectColumnName;
-
       if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
 
@@ -766,17 +762,22 @@ namespace LTP.Truck.Forms
       RecordWeight selectedData = selectedRecord.RecordWeight;
     }
 
-    private void dgv_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
+    private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
     {
-      if (dgv.IsCurrentCellDirty && dgv.CurrentCell is DataGridViewCheckBoxCell)
-        dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
+      if (e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
+        return;
+
+      var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+      checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
     }
 
     private void btnExport_Click(object sender, EventArgs e)
     {
       dgv.EndEdit();
 
-      _exportData = dgv.Rows
+      List<RecordWeight> exportData = dgv.Rows
         .Cast<DataGridViewRow>()
         .Where(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value))
         .Select(row => row.DataBoundItem as RecordWeightDTO)
