@@ -18,6 +18,7 @@ namespace LTP.Truck.Forms
   {
     private int _statusFilterIndex;
     private int _typeFilterIndex;
+    private bool _isLoadingPage;
 
     public FrmReportTruck()
     {
@@ -28,6 +29,7 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       btnFilter.Click += btnFilter_Click;
       txtSearchKey.KeyPress += txtSearchKey_KeyPress;
+      ucPage1.PageChanged += ucPage1_PageChanged;
       Shown += FrmReportTruck_Shown;
       dgv.CellPainting += dgv_CellPainting;
     }
@@ -68,12 +70,12 @@ namespace LTP.Truck.Forms
 
     private async void FrmReportTruck_Shown(object? sender, EventArgs e)
     {
-      await LoadHistorical();
+      await LoadHistorical(resetPage: true);
     }
 
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)
     {
-      await LoadHistorical();
+      await LoadHistorical(resetPage: true);
     }
 
     private async void txtSearchKey_KeyPress(object? sender, KeyPressEventArgs e)
@@ -82,7 +84,7 @@ namespace LTP.Truck.Forms
         return;
 
       e.Handled = true;
-      await LoadHistorical();
+      await LoadHistorical(resetPage: true);
     }
 
     private void btnFilter_Click(object? sender, EventArgs e)
@@ -96,13 +98,29 @@ namespace LTP.Truck.Forms
     {
       _statusFilterIndex = statusIndex;
       _typeFilterIndex = typeIndex;
+      await LoadHistorical(resetPage: true);
+    }
+
+    private async void ucPage1_PageChanged(object? sender, UserControls.PageChangedEventArgs e)
+    {
       await LoadHistorical();
     }
 
-    private async Task LoadHistorical()
+    private async Task LoadHistorical(bool resetPage = false)
     {
+      if (_isLoadingPage)
+        return;
+
       try
       {
+        _isLoadingPage = true;
+        btnSearchHistorical.Enabled = false;
+        btnFilter.Enabled = false;
+        ucPage1.Enabled = false;
+
+        if (resetPage)
+          ucPage1.ResetToFirstPage();
+
         var fromDateTime = ucTimeSearchFrom.Value;
         var toDateTime = ucTimeSearchTo.Value;
         if (fromDateTime > toDateTime)
@@ -118,14 +136,25 @@ namespace LTP.Truck.Forms
         var fromUtc = fromDateTime.ToUniversalTime();
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
         var searchKey = txtSearchKey.Texts.Trim();
-        var records = await AppCore.Ins._recordTruckService.GetReportAsync(
+        var pageNumber = ucPage1.CurrentPage;
+        var pageSize = ucPage1.PageSize;
+        var (records, totalRecords) = await AppCore.Ins._recordTruckService.GetReportPageAsync(
           fromUtc,
           toUtcExclusive,
           searchKey,
           _statusFilterIndex,
-          _typeFilterIndex);
+          _typeFilterIndex,
+          pageNumber,
+          pageSize);
 
-        SetDgvHistorical(DTOHelper.ConvertRecordTruckDTO(records));
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
+        var effectivePage = Math.Min(pageNumber, totalPages);
+        var recordsDto = DTOHelper.ConvertRecordTruckDTO(records);
+        for (var index = 0; index < recordsDto.Count; index++)
+          recordsDto[index].No = totalRecords - ((effectivePage - 1) * pageSize + index);
+
+        ucPage1.SetTotalRecords(totalRecords, effectivePage);
+        SetDgvHistorical(recordsDto);
       }
       catch (Exception ex)
       {
@@ -135,6 +164,13 @@ namespace LTP.Truck.Forms
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popup.ShowDialog(this);
+      }
+      finally
+      {
+        _isLoadingPage = false;
+        btnSearchHistorical.Enabled = true;
+        btnFilter.Enabled = true;
+        ucPage1.Enabled = true;
       }
     }
 
@@ -175,6 +211,27 @@ namespace LTP.Truck.Forms
           dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
       }
 
+      var alignmentMiddleCenterColumns = new[]
+      {
+        nameof(RecordTruckDTO.No),
+      };
+      foreach (var columnName in alignmentMiddleCenterColumns)
+      {
+        if (dgv.Columns.Contains(columnName))
+          dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+      }
+
+      var alignmentMiddleRightColumns = new[]
+      {
+        nameof(RecordTruckDTO.NetTime01),
+        nameof(RecordTruckDTO.NetTime02),
+      };
+      foreach (var columnName in alignmentMiddleRightColumns)
+      {
+        if (dgv.Columns.Contains(columnName))
+          dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+      }
+
       if (dgv.Columns.Contains(nameof(RecordTruckDTO.Status)))
       {
         var statusColumn = dgv.Columns[nameof(RecordTruckDTO.Status)];
@@ -189,15 +246,7 @@ namespace LTP.Truck.Forms
 
     private async void btnExport_Click(object? sender, EventArgs e)
     {
-      var exportData = dgv.Rows
-        .Cast<DataGridViewRow>()
-        .Where(row => !row.IsNewRow)
-        .Select(row => row.DataBoundItem as RecordTruckDTO)
-        .Where(record => record?.RecordTruck is not null)
-        .Cast<RecordTruckDTO>()
-        .ToList();
-
-      if (exportData.Count == 0)
+      if (ucPage1.TotalRecords == 0)
       {
         using var popup = new PopupConfirm(
           "Không có dữ liệu để xuất báo cáo.",
@@ -233,6 +282,17 @@ namespace LTP.Truck.Forms
       try
       {
         btnExport.Enabled = false;
+        var fromDateTime = ucTimeSearchFrom.Value;
+        var toDateTime = ucTimeSearchTo.Value;
+        var searchKey = txtSearchKey.Texts.Trim();
+        var exportRecords = await AppCore.Ins._recordTruckService.GetReportAsync(
+          fromDateTime.ToUniversalTime(),
+          toDateTime.AddMinutes(1).ToUniversalTime(),
+          searchKey,
+          _statusFilterIndex,
+          _typeFilterIndex);
+        var exportData = DTOHelper.ConvertRecordTruckDTO(exportRecords);
+
         var exporterName = AppCore.Ins._userCurrent?.DisplayName;
         if (string.IsNullOrWhiteSpace(exporterName))
           exporterName = AppCore.Ins._userCurrent?.FullName;
@@ -243,8 +303,8 @@ namespace LTP.Truck.Forms
           templatePath,
           saveDialog.FileName,
           exportData,
-          ucTimeSearchFrom.Value,
-          ucTimeSearchTo.Value,
+          fromDateTime,
+          toDateTime,
           exporterName));
 
         var openExportedFile = false;

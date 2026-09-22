@@ -192,6 +192,20 @@ namespace LTP.Truck.Forms
             DataGridViewContentAlignment.MiddleRight;
       }
 
+      var middleCenterColumns = new[]
+      {
+        nameof(RecordWeightDTO.No),
+        nameof(RecordWeightDTO.Net),
+        nameof(RecordWeightDTO.Tare),
+        nameof(RecordWeightDTO.Gross)
+      };
+      foreach (var columnName in middleCenterColumns)
+      {
+        if (dgv.Columns.Contains(columnName))
+          dgv.Columns[columnName].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleCenter;
+      }
+
       dgv.ClearSelection();
       dgv.CurrentCell = null;
     }

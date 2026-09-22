@@ -37,6 +37,55 @@ namespace iSoft.Database.Repositorys
       int statusFilterIndex = 0,
       int typeFilterIndex = 0)
     {
+      return BuildReportQuery(
+          fromUtc,
+          toUtcExclusive,
+          searchKey,
+          statusFilterIndex,
+          typeFilterIndex)
+        .OrderByDescending(record => record.CreatedAt)
+        .ThenByDescending(record => record.Id)
+        .ToListAsync();
+    }
+
+    public async Task<(List<RecordTruck> Records, int TotalRecords)> GetReportPageAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex,
+      int typeFilterIndex,
+      int pageNumber,
+      int pageSize)
+    {
+      pageNumber = Math.Max(1, pageNumber);
+      pageSize = Math.Max(1, pageSize);
+
+      var query = BuildReportQuery(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        statusFilterIndex,
+        typeFilterIndex);
+      var totalRecords = await query.CountAsync();
+      var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
+      pageNumber = Math.Min(pageNumber, totalPages);
+      var records = await query
+        .OrderByDescending(record => record.CreatedAt)
+        .ThenByDescending(record => record.Id)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+      return (records, totalRecords);
+    }
+
+    private IQueryable<RecordTruck> BuildReportQuery(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex,
+      int typeFilterIndex)
+    {
       var query = Context.Set<RecordTruck>()
         .AsNoTracking()
         .Include(record => record.Client)
@@ -79,10 +128,7 @@ namespace iSoft.Database.Repositorys
           (record.Station != null && record.Station.Name != null && record.Station.Name.Contains(searchKey)));
       }
 
-      return query
-        .OrderByDescending(record => record.CreatedAt)
-        .ThenByDescending(record => record.Id)
-        .ToListAsync();
+      return query;
     }
 
     public Task<List<RecordTruck>> GetFirstWeighingRecordsAsync()

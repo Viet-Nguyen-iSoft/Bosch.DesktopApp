@@ -55,6 +55,27 @@ namespace iSoft.Database.Service
         typeFilterIndex).ConfigureAwait(false);
     }
 
+    public async Task<(List<RecordTruck> Records, int TotalRecords)> GetReportPageAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex,
+      int typeFilterIndex,
+      int pageNumber,
+      int pageSize)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordTruckRepository(context);
+      return await repository.GetReportPageAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        statusFilterIndex,
+        typeFilterIndex,
+        pageNumber,
+        pageSize).ConfigureAwait(false);
+    }
+
     public async Task<RecordTruck?> GetPendingByLicensePlateAsync(string licensePlate)
     {
       await using var context = new MySqlDbContext();
