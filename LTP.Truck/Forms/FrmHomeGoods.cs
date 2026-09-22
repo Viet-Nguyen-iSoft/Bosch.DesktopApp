@@ -82,8 +82,10 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
-      dgv.DefaultCellStyle.SelectionBackColor = dgv.DefaultCellStyle.BackColor;
-      dgv.DefaultCellStyle.SelectionForeColor = dgv.DefaultCellStyle.ForeColor;
+      dgv.ReadOnly = true;
+      dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+      dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 107, 177);
+      dgv.DefaultCellStyle.SelectionForeColor = Color.White;
     }
 
     private async void FrmHomeGoods_Load(object? sender, EventArgs e)
@@ -378,7 +380,7 @@ namespace LTP.Truck.Forms
           using var popupMsg = new PopupConfirm("Không thể tải danh sách phiếu cân lần 1. Vui lòng thử lại !",
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
           popupMsg.ShowDialog();
-        }  
+        }
       }
       finally
       {
@@ -468,11 +470,11 @@ namespace LTP.Truck.Forms
         }
 
         lbSumWeight.Text = "0.000";
-      }  
+      }
     }
 
 
-    private async void btnPrint_Click(object sender, EventArgs e)
+    private async void btnSaveData_Click(object sender, EventArgs e)
     {
       if (string.IsNullOrEmpty(txtLicensePlate.Texts.Trim()))
       {
@@ -538,7 +540,7 @@ namespace LTP.Truck.Forms
         EnableFlag = true
       };
 
-      btnPrint.Enabled = false;
+      btnSaveData.Enabled = false;
       try
       {
         var licensePlateResult = await AppCore.Ins._licensePlateService
@@ -609,7 +611,7 @@ namespace LTP.Truck.Forms
       finally
       {
         if (!IsDisposed && !Disposing)
-          btnPrint.Enabled = true;
+          btnSaveData.Enabled = true;
       }
     }
 
@@ -692,6 +694,8 @@ namespace LTP.Truck.Forms
       }
 
       dgv.DataSource = records;
+      dgv.ClearSelection();
+      dgv.CurrentCell = null;
 
       if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
@@ -705,6 +709,7 @@ namespace LTP.Truck.Forms
         nameof(RecordWeightDTO.CategoryTare),
         nameof(RecordWeightDTO.Net),
         nameof(RecordWeightDTO.Tare),
+        nameof(RecordWeightDTO.Gross),
       };
       foreach (var columnName in autoSizeColumns)
       {
@@ -716,6 +721,7 @@ namespace LTP.Truck.Forms
       {
         nameof(RecordWeightDTO.Net),
         nameof(RecordWeightDTO.Tare),
+        nameof(RecordWeightDTO.Gross),
       };
       foreach (var columnName in weightColumns)
       {
@@ -726,6 +732,21 @@ namespace LTP.Truck.Forms
       if (dgv.Columns.Contains(nameof(RecordWeightDTO.No)))
         dgv.Columns[nameof(RecordWeightDTO.No)].DefaultCellStyle.Alignment =
           DataGridViewContentAlignment.MiddleCenter;
+    }
+
+    private void btnPrint_Click(object sender, EventArgs e)
+    {
+      if (dgv.SelectedRows.Count == 0 ||
+          dgv.SelectedRows[0].DataBoundItem is not RecordWeightDTO selectedRecord ||
+          selectedRecord.RecordWeight is null)
+      {
+        using var popupMsg = new PopupConfirm("Vui lòng chọn phiếu cân cần in !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      RecordWeight selectedData = selectedRecord.RecordWeight;
     }
   }
 }

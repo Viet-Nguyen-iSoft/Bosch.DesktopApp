@@ -15,24 +15,31 @@ namespace iSoft.Database
     public static RecordTruckDTO ConvertRecordTruckDTO(RecordTruck recordTruck)
     {
       ArgumentNullException.ThrowIfNull(recordTruck);
+      string status = "Đã xóa";
+      if (recordTruck.DeletedFlag == false)
+      {
+        status = recordTruck.EnumTypeDataTruck switch
+        {
+          EnumTypeDataTruck.None => "Chưa cân",
+          EnumTypeDataTruck.WeightedTime01 => "Đang cân lần 1",
+          EnumTypeDataTruck.DoneTime01 => "Chưa hoàn thành",
+          EnumTypeDataTruck.WeightedTime02 => "Đã cân lần 2",
+          EnumTypeDataTruck.DoneTime02 => "Hoàn thành",
+          EnumTypeDataTruck.Delete => "Đã xóa",
+          _ => recordTruck.EnumTypeDataTruck.ToString()
+        };
+      }
 
       return new RecordTruckDTO
       {
         RecordTruck = recordTruck,
         No = 1,
-        NoLabelAuto = recordTruck.NoLabelAuto,
         NoLabelManual = recordTruck.NoLabelManual,
-        NetTime01 = recordTruck.NetTime01.ToString("F3"),
-        NetTime02 = recordTruck.NetTime02.ToString("F3"),
-        Status = recordTruck.EnumTypeDataTruck switch
-        {
-          EnumTypeDataTruck.None => "Chưa cân",
-          EnumTypeDataTruck.WeightedTime01 => "Đang cân lần 1",
-          EnumTypeDataTruck.DoneTime01 => "Đã cân lần 1",
-          EnumTypeDataTruck.WeightedTime02 => "Đã cân lần 1",
-          EnumTypeDataTruck.DoneTime02 => "Đã cân lần 2",
-          _ => recordTruck.EnumTypeDataTruck.ToString()
-        },
+        NetTime01 = recordTruck.NetTime01.ToString("F0") + " Kg",
+        NetTime02 = recordTruck.NetTime02.ToString("F0") + " Kg",
+        Time01 = recordTruck.WeighInAt!=null ? ((DateTime)recordTruck.WeighInAt).AddHours(utc).ToString("dd/MM/yyyy HH:mm:ss") : "---",
+        Time02 = recordTruck.WeighOutAt != null ? ((DateTime)recordTruck.WeighOutAt).AddHours(utc).ToString("dd/MM/yyyy HH:mm:ss") : "---",
+        Status = status,
         EnumTypeDataTruck = recordTruck.EnumTypeDataTruck,
         Client = recordTruck.Client?.Name,
         TypeGoods = recordTruck.TypeGoods?.Name,
@@ -41,7 +48,6 @@ namespace iSoft.Database
         IdCard = recordTruck.IdCard,
         LicensePlate = recordTruck.LicensePlate,
         Document = recordTruck.Document,
-        Datetime = ((DateTime)recordTruck.UpdatedAt).AddHours(utc).ToString("dd/MM/yyyy HH:mm:ss") ?? "",
         Station = recordTruck.Station?.Name,
       };
     }
@@ -84,6 +90,7 @@ namespace iSoft.Database
           ProductGroup = record?.Product?.ProductGroup?.Name,
           Product = record?.Product?.Name,
           CategoryTare = record?.CategoryTare?.Name,
+          Gross = ((record?.Net??0.0)+ (record?.Tare ?? 0.0)).ToString("F3"),
           Net = (record?.Net??0.0).ToString("F3"),
           Tare = (record?.Tare ?? 0.0).ToString("F3"),
         })

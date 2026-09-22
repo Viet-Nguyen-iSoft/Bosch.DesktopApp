@@ -31,6 +31,7 @@ namespace LTP.Truck.Forms
     private string _deleteReasonToolTipText = string.Empty;
     private int _statusFilterIndex = 1;
     private int _typeFilterIndex;
+    private string _formatStrWeight { get; } = "F0";
 
     public FrmHomeTruck()
     {
@@ -262,7 +263,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.IndicatedWeight.ToString("F0");
+      lbWeightValue.Text = messageData.IndicatedWeight.ToString(_formatStrWeight);
     }
 
     private RecordTruck _recordTruck { get; set; } = new RecordTruck();
@@ -482,7 +483,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString("F3");
+          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.WeightedTime02:
@@ -490,7 +491,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString("F3");
+          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.DoneTime02:
@@ -498,8 +499,8 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = false;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString("F3");
-          ucItemWeight02.Value = recordTruck.NetTime02.ToString("F3");
+          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
+          ucItemWeight02.Value = recordTruck.NetTime02.ToString(_formatStrWeight);
           break;
         default:
           break;
@@ -507,7 +508,7 @@ namespace LTP.Truck.Forms
 
       UpdateOffsetWeight(recordTruck);
       _ = LoadWeightGoodsAsync(recordTruck.Id);
-      lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString("F3");
+      lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString(_formatStrWeight);
       ApplyRecordAccess(recordTruck);
     }
 
@@ -545,7 +546,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString("F3");
+          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.WeightedTime02:
@@ -553,7 +554,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString("F3");
+          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.DoneTime02:
@@ -561,8 +562,8 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = false;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString("F3");
-          ucItemWeight02.Value = recordTruck.NetTime02.ToString("F3");
+          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
+          ucItemWeight02.Value = recordTruck.NetTime02.ToString(_formatStrWeight);
           break;
         default:
           break;
@@ -571,7 +572,7 @@ namespace LTP.Truck.Forms
       double valueGoods = (recordTruck.NetTime02 - recordTruck.NetTime01);
       UpdateOffsetWeight(recordTruck);
       _ = LoadWeightGoodsAsync(recordTruck.Id);
-      lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString("F3");
+      lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString(_formatStrWeight);
 
       if (valueGoods > 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
       {
@@ -657,7 +658,7 @@ namespace LTP.Truck.Forms
       }
 
       var offsetWeight = Math.Abs(recordTruck.NetTime02 - recordTruck.NetTime01);
-      ucItemOffsetWeight.Value = offsetWeight.ToString("F3");
+      ucItemOffsetWeight.Value = offsetWeight.ToString(_formatStrWeight);
     }
 
     private async Task LoadWeightGoodsAsync(Guid recordTruckId)
@@ -680,14 +681,14 @@ namespace LTP.Truck.Forms
           {
             if (loadVersion == _weightGoodsLoadVersion)
             {
-              ucItemWeightGoods.Value = totalNet.ToString("F3");
+              ucItemWeightGoods.Value = totalNet.ToString(_formatStrWeight);
               ucItemWeightGoods.Visible = hasWeightGoods;
             }
           }));
           return;
         }
 
-        ucItemWeightGoods.Value = totalNet.ToString("F3");
+        ucItemWeightGoods.Value = totalNet.ToString(_formatStrWeight);
         ucItemWeightGoods.Visible = hasWeightGoods;
       }
       catch (Exception ex)
@@ -713,9 +714,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      // Records are saved in UTC; the search controls represent local date and time.
       var fromUtc = fromDateTime.ToUniversalTime();
-      // Include records occurring anywhere within the selected ending minute.
       var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
       var statusIndex = _statusFilterIndex;
       var typeIndex = _typeFilterIndex;
@@ -924,13 +923,13 @@ namespace LTP.Truck.Forms
       var autoSizeColumns = new[]
       {
         nameof(RecordTruckDTO.No),
-        nameof(RecordTruckDTO.Datetime),
         nameof(RecordTruckDTO.LicensePlate),
         nameof(RecordTruckDTO.NameDriver),
         nameof(RecordTruckDTO.IdCard),
         nameof(RecordTruckDTO.NetTime01),
         nameof(RecordTruckDTO.NetTime02),
-        nameof(RecordTruckDTO.NoLabelAuto),
+        nameof(RecordTruckDTO.Time01),
+        nameof(RecordTruckDTO.Time02),
       };
       foreach (var columnName in autoSizeColumns)
       {
@@ -942,7 +941,7 @@ namespace LTP.Truck.Forms
       {
         var statusColumn = dgv.Columns[nameof(RecordTruckDTO.Status)];
         statusColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-        statusColumn.Width = 150;
+        statusColumn.Width = 200;
         statusColumn.Resizable = DataGridViewTriState.False;
       }
 
@@ -1066,6 +1065,9 @@ namespace LTP.Truck.Forms
             //Xanh dương
             borderColor = Color.FromArgb(30, 64, 175);
             backColor = Color.FromArgb(219, 234, 254);
+
+            //borderColor = Color.FromArgb(254, 206, 49);
+            //backColor = Color.FromArgb(249, 243, 220);
             textColor = borderColor;
             break;
           case EnumTypeDataTruck.WeightedTime02:
@@ -1255,7 +1257,7 @@ namespace LTP.Truck.Forms
         }
       }
 
-      result = result.Replace("{{totalQuantity}}", value.ToString("F3"));
+      result = result.Replace("{{totalQuantity}}", value.ToString(_formatStrWeight));
       result = result.Replace("{table}", tableDetails);
 
       string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
@@ -1291,7 +1293,7 @@ namespace LTP.Truck.Forms
         bool hasSecondWeight = secondWeight > 0;
 
         string gross = "...";
-        string tare = hasFirstWeight ? firstWeight.ToString("F3") : "...";
+        string tare = hasFirstWeight ? firstWeight.ToString(_formatStrWeight) : "...";
         string net = "...";
         string importExport = "Chưa xác định";
         string timeTare = recordTruck.WeighInAt != null ? ((DateTime)(recordTruck.WeighInAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
@@ -1304,9 +1306,9 @@ namespace LTP.Truck.Forms
           double tareWeight = Math.Min(firstWeight, secondWeight);
           double netWeight = grossWeight - tareWeight;
 
-          gross = grossWeight.ToString("F3");
-          tare = tareWeight.ToString("F3");
-          net = netWeight.ToString("F3");
+          gross = grossWeight.ToString(_formatStrWeight);
+          tare = tareWeight.ToString(_formatStrWeight);
+          net = netWeight.ToString(_formatStrWeight);
           importExport = secondWeight > firstWeight
             ? "Xuất hàng"
             : secondWeight < firstWeight

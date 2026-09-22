@@ -16,14 +16,16 @@ namespace iSoft.Database.DTO
     [DisplayName("Biển số xe")]
     public string? LicensePlate { get; set; }
 
-    [DisplayName("Nhóm SP")]
+    [DisplayName("Nhóm")]
     public string? ProductGroup { get; set; }
 
-    [DisplayName("Sản phẩm")]
+    [DisplayName("Phế phẩm")]
     public string? Product { get; set; }
 
     [DisplayName("Loại bì")]
     public string? CategoryTare { get; set; }
+    [DisplayName("Gross (Kg)")]
+    public string? Gross { get; set; }
 
     [DisplayName("Net (Kg)")]
     public string? Net { get; set; }
