@@ -21,6 +21,7 @@ namespace iSoft.Database.Repositorys
           .ThenInclude(product => product.ProductGroup)
         .Include(record => record.CategoryTare)
         .Include(record => record.RecordTruck)
+        .Include(record => record.User)
         .AsQueryable();
 
       if (!IsContainDelete)

@@ -17,6 +17,8 @@ namespace LTP.Truck
 
       HomeTruck,
       HomeGoods,
+      ReportTruck,
+      ReportGoods,
 
       MD_Client,
       MD_TypeGoods,

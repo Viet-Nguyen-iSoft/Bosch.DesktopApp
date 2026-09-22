@@ -21,6 +21,7 @@ namespace iSoft.Database.Repositorys
         .Include(x => x.Client)
         .Include(x => x.TypeGoods)
         .Include(x => x.Warehouse)
+        .Include(x => x.User)
         .Include(x => x.Station)
         .AsQueryable();
       if (!IsContainDelete)
@@ -60,6 +61,30 @@ namespace iSoft.Database.Repositorys
         query = query.Where(record => !record.DeletedFlag);
 
       return query.FirstOrDefaultAsync(record => record.Id == id);
+    }
+
+    public Task<RecordTruck?> GetPendingByLicensePlateAsync(string licensePlate)
+    {
+      var normalizedLicensePlate = LicensePlateRepository.Normalize(licensePlate);
+      if (normalizedLicensePlate == null)
+        return Task.FromResult<RecordTruck?>(null);
+
+      return Context.Set<RecordTruck>()
+        .AsNoTracking()
+        .Include(record => record.Client)
+        .Include(record => record.TypeGoods)
+        .Include(record => record.Warehouse)
+        .Include(record => record.User)
+        .Include(record => record.Station)
+        .Where(record => !record.DeletedFlag &&
+          record.LicensePlate == normalizedLicensePlate &&
+          record.NetTime01 > 0 &&
+          record.NetTime02 <= 0 &&
+          (record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime01 ||
+           record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime02))
+        .OrderByDescending(record => record.UpdatedAt)
+        .ThenByDescending(record => record.Id)
+        .FirstOrDefaultAsync();
     }
 
     public async Task<(RecordTruck Record, bool Exist, LicensePlate? LicensePlate)> AddOrUpdateAsync(RecordTruck recordTruck)

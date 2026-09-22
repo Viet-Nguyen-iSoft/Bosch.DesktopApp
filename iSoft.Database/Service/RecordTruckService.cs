@@ -38,6 +38,13 @@ namespace iSoft.Database.Service
       return await repository.GetDetailByIdAsync(id, isContainDelete).ConfigureAwait(false);
     }
 
+    public async Task<RecordTruck?> GetPendingByLicensePlateAsync(string licensePlate)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordTruckRepository(context);
+      return await repository.GetPendingByLicensePlateAsync(licensePlate).ConfigureAwait(false);
+    }
+
     public async Task<(RecordTruck Record, bool Exist, LicensePlate? LicensePlate)> AddOrUpdateAsync(RecordTruck recordTruck)
     {
       try

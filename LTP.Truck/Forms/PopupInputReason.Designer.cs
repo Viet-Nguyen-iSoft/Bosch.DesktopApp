@@ -79,8 +79,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel2.ColumnCount = 3;
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
       tableLayoutPanel2.Location = new Point(0, 385);
@@ -105,10 +105,10 @@ namespace LTP.Truck.Forms
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(483, 3);
+      btnConfirm.Location = new Point(443, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
-      btnConfirm.Size = new Size(154, 54);
+      btnConfirm.Size = new Size(174, 54);
       btnConfirm.TabIndex = 0;
       btnConfirm.Text = "       Xác nhận";
       btnConfirm.TextColor = Color.White;
@@ -129,23 +129,23 @@ namespace LTP.Truck.Forms
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(643, 3);
+      btnClose.Location = new Point(623, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
-      btnClose.Size = new Size(154, 54);
+      btnClose.Size = new Size(174, 54);
       btnClose.TabIndex = 1;
       btnClose.Text = "       Đóng";
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       btnClose.Click += btnClose_Click;
       // 
-      // textBox1
+      // txtReason
       // 
       txtReason.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       txtReason.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtReason.Location = new Point(3, 63);
       txtReason.Multiline = true;
-      txtReason.Name = "textBox1";
+      txtReason.Name = "txtReason";
       txtReason.Size = new Size(794, 319);
       txtReason.TabIndex = 24;
       // 

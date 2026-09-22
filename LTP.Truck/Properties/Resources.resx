@@ -163,6 +163,9 @@
   <data name="icon_print" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_print.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="icon_report" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>C:\Users\Admin\Downloads\icon_report.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="icon_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -195,6 +198,9 @@
   </data>
   <data name="icon_weight_log" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_weight_log.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_zero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_zero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Loading_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Loading_icon.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

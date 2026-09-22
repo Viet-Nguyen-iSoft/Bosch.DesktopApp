@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ApiCICD\ApiCICD.csproj" />
     <ProjectReference Include="..\ApiSyncData\ApiSyncData.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
@@ -54,6 +58,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
     </None>
     <None Update="Template\TemplateHtml.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\TemplateReport.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Template\TemplateTableHtml.html">

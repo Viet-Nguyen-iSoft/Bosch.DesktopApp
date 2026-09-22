@@ -15,8 +15,8 @@ namespace iSoft.Database.DTO
     public RecordTruck? RecordTruck { get; set; }
     [DisplayName("Stt")]
     public int No { get; set; }
-    //[DisplayName("Số phiếu")]
-    //public string? NoLabelAuto { get; set; }
+    [DisplayName("Số phiếu")]
+    public string? NoLabelAuto { get; set; }
     [DisplayName("Phiếu nhà máy")]
     public string? NoLabelManual { get; set; }
 

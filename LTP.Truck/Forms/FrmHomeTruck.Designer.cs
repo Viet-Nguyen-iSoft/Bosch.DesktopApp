@@ -48,13 +48,12 @@ namespace LTP.Truck.Forms
       label5 = new Label();
       label1 = new Label();
       tableLayoutPanel6 = new TableLayoutPanel();
-      btnCreate = new RJButton();
-      btnZero = new RJButton();
-      btnBack = new RJButton();
-      btnPrint = new RJButton();
       btnWeightTime02 = new RJButton();
       btnWeightTime01 = new RJButton();
       btnTriggerWeight = new RJButton();
+      btnBack = new RJButton();
+      btnZero = new RJButton();
+      btnCreate = new RJButton();
       tableLayoutPanel4 = new TableLayoutPanel();
       tableLayoutPanel8 = new TableLayoutPanel();
       label20 = new Label();
@@ -98,6 +97,7 @@ namespace LTP.Truck.Forms
       label4 = new Label();
       txtSearchKey = new RJTextBox();
       label17 = new Label();
+      btnPrint = new RJButton();
       label18 = new Label();
       btnSearchHistorical = new RJButton();
       ucTimeSearchFrom = new LTP.Truck.UserControls.UcTimeSearch();
@@ -321,18 +321,16 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel6
       // 
       tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel6.ColumnCount = 4;
+      tableLayoutPanel6.ColumnCount = 3;
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-      tableLayoutPanel6.Controls.Add(btnCreate, 3, 0);
-      tableLayoutPanel6.Controls.Add(btnZero, 2, 1);
-      tableLayoutPanel6.Controls.Add(btnBack, 1, 1);
-      tableLayoutPanel6.Controls.Add(btnPrint, 0, 1);
       tableLayoutPanel6.Controls.Add(btnWeightTime02, 2, 0);
       tableLayoutPanel6.Controls.Add(btnWeightTime01, 1, 0);
       tableLayoutPanel6.Controls.Add(btnTriggerWeight, 0, 0);
+      tableLayoutPanel6.Controls.Add(btnBack, 0, 1);
+      tableLayoutPanel6.Controls.Add(btnZero, 1, 1);
+      tableLayoutPanel6.Controls.Add(btnCreate, 2, 1);
       tableLayoutPanel6.Location = new Point(0, 376);
       tableLayoutPanel6.Margin = new Padding(0);
       tableLayoutPanel6.Name = "tableLayoutPanel6";
@@ -342,106 +340,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel6.Size = new Size(723, 125);
       tableLayoutPanel6.TabIndex = 2;
-      // 
-      // btnCreate
-      // 
-      btnCreate.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnCreate.BackColor = Color.FromArgb(64, 107, 177);
-      btnCreate.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnCreate.BorderColor = Color.White;
-      btnCreate.BorderRadius = 5;
-      btnCreate.BorderSize = 0;
-      btnCreate.FlatAppearance.BorderColor = Color.White;
-      btnCreate.FlatAppearance.BorderSize = 0;
-      btnCreate.FlatStyle = FlatStyle.Flat;
-      btnCreate.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnCreate.ForeColor = Color.White;
-      btnCreate.Image = Properties.Resources.icon_new;
-      btnCreate.ImageAlign = ContentAlignment.MiddleLeft;
-      btnCreate.Location = new Point(542, 3);
-      btnCreate.Name = "btnCreate";
-      btnCreate.Padding = new Padding(15, 0, 0, 0);
-      btnCreate.Size = new Size(173, 56);
-      btnCreate.TabIndex = 23;
-      btnCreate.Text = "       Phiếu mới";
-      btnCreate.TextAlign = ContentAlignment.MiddleLeft;
-      btnCreate.TextColor = Color.White;
-      btnCreate.UseVisualStyleBackColor = false;
-      btnCreate.Click += btnCreate_Click;
-      // 
-      // btnZero
-      // 
-      btnZero.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnZero.BackColor = Color.FromArgb(64, 107, 177);
-      btnZero.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnZero.BorderColor = Color.White;
-      btnZero.BorderRadius = 5;
-      btnZero.BorderSize = 0;
-      btnZero.FlatAppearance.BorderColor = Color.White;
-      btnZero.FlatAppearance.BorderSize = 0;
-      btnZero.FlatStyle = FlatStyle.Flat;
-      btnZero.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnZero.ForeColor = Color.White;
-      btnZero.Location = new Point(364, 65);
-      btnZero.Name = "btnZero";
-      btnZero.Size = new Size(172, 57);
-      btnZero.TabIndex = 22;
-      btnZero.Text = "Zero";
-      btnZero.TextColor = Color.White;
-      btnZero.UseVisualStyleBackColor = false;
-      btnZero.Click += btnZero_Click;
-      // 
-      // btnBack
-      // 
-      btnBack.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnBack.BackColor = Color.FromArgb(64, 107, 177);
-      btnBack.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnBack.BorderColor = Color.White;
-      btnBack.BorderRadius = 5;
-      btnBack.BorderSize = 0;
-      btnBack.FlatAppearance.BorderColor = Color.White;
-      btnBack.FlatAppearance.BorderSize = 0;
-      btnBack.FlatStyle = FlatStyle.Flat;
-      btnBack.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnBack.ForeColor = Color.White;
-      btnBack.Image = Properties.Resources.icon_back;
-      btnBack.ImageAlign = ContentAlignment.MiddleLeft;
-      btnBack.Location = new Point(186, 65);
-      btnBack.Name = "btnBack";
-      btnBack.Padding = new Padding(10, 0, 0, 0);
-      btnBack.Size = new Size(172, 57);
-      btnBack.TabIndex = 21;
-      btnBack.Text = "       Quay lại";
-      btnBack.TextAlign = ContentAlignment.MiddleLeft;
-      btnBack.TextColor = Color.White;
-      btnBack.UseVisualStyleBackColor = false;
-      btnBack.Click += btnBack_Click;
-      // 
-      // btnPrint
-      // 
-      btnPrint.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnPrint.BackColor = Color.FromArgb(64, 107, 177);
-      btnPrint.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnPrint.BorderColor = Color.White;
-      btnPrint.BorderRadius = 5;
-      btnPrint.BorderSize = 0;
-      btnPrint.FlatAppearance.BorderColor = Color.White;
-      btnPrint.FlatAppearance.BorderSize = 0;
-      btnPrint.FlatStyle = FlatStyle.Flat;
-      btnPrint.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnPrint.ForeColor = Color.White;
-      btnPrint.Image = Properties.Resources.icon_print;
-      btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnPrint.Location = new Point(8, 65);
-      btnPrint.Name = "btnPrint";
-      btnPrint.Padding = new Padding(10, 0, 0, 0);
-      btnPrint.Size = new Size(172, 57);
-      btnPrint.TabIndex = 20;
-      btnPrint.Text = "       In phiếu";
-      btnPrint.TextAlign = ContentAlignment.MiddleLeft;
-      btnPrint.TextColor = Color.White;
-      btnPrint.UseVisualStyleBackColor = false;
-      btnPrint.Click += btnPrint_Click;
       // 
       // btnWeightTime02
       // 
@@ -458,13 +356,12 @@ namespace LTP.Truck.Forms
       btnWeightTime02.ForeColor = Color.White;
       btnWeightTime02.Image = Properties.Resources.icon_weight;
       btnWeightTime02.ImageAlign = ContentAlignment.MiddleLeft;
-      btnWeightTime02.Location = new Point(364, 3);
+      btnWeightTime02.Location = new Point(482, 3);
       btnWeightTime02.Name = "btnWeightTime02";
       btnWeightTime02.Padding = new Padding(10, 0, 0, 0);
-      btnWeightTime02.Size = new Size(172, 56);
+      btnWeightTime02.Size = new Size(233, 56);
       btnWeightTime02.TabIndex = 19;
-      btnWeightTime02.Text = "       Cân lần 02";
-      btnWeightTime02.TextAlign = ContentAlignment.MiddleLeft;
+      btnWeightTime02.Text = "Cân lần 02";
       btnWeightTime02.TextColor = Color.White;
       btnWeightTime02.UseVisualStyleBackColor = false;
       btnWeightTime02.Click += btnWeightTime02_Click;
@@ -484,13 +381,12 @@ namespace LTP.Truck.Forms
       btnWeightTime01.ForeColor = Color.White;
       btnWeightTime01.Image = Properties.Resources.icon_weight;
       btnWeightTime01.ImageAlign = ContentAlignment.MiddleLeft;
-      btnWeightTime01.Location = new Point(186, 3);
+      btnWeightTime01.Location = new Point(245, 3);
       btnWeightTime01.Name = "btnWeightTime01";
       btnWeightTime01.Padding = new Padding(10, 0, 0, 0);
-      btnWeightTime01.Size = new Size(172, 56);
+      btnWeightTime01.Size = new Size(231, 56);
       btnWeightTime01.TabIndex = 18;
-      btnWeightTime01.Text = "       Cân lần 01";
-      btnWeightTime01.TextAlign = ContentAlignment.MiddleLeft;
+      btnWeightTime01.Text = "Cân lần 01";
       btnWeightTime01.TextColor = Color.White;
       btnWeightTime01.UseVisualStyleBackColor = false;
       btnWeightTime01.Click += btnWeightTime01_Click;
@@ -513,13 +409,87 @@ namespace LTP.Truck.Forms
       btnTriggerWeight.Location = new Point(8, 3);
       btnTriggerWeight.Name = "btnTriggerWeight";
       btnTriggerWeight.Padding = new Padding(10, 0, 0, 0);
-      btnTriggerWeight.Size = new Size(172, 55);
+      btnTriggerWeight.Size = new Size(231, 55);
       btnTriggerWeight.TabIndex = 17;
-      btnTriggerWeight.Text = "       Cân";
-      btnTriggerWeight.TextAlign = ContentAlignment.MiddleLeft;
+      btnTriggerWeight.Text = "Xác nhận cân";
       btnTriggerWeight.TextColor = Color.White;
       btnTriggerWeight.UseVisualStyleBackColor = false;
       btnTriggerWeight.Click += btnTriggerWeight_Click;
+      // 
+      // btnBack
+      // 
+      btnBack.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnBack.BackColor = Color.FromArgb(64, 107, 177);
+      btnBack.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnBack.BorderColor = Color.White;
+      btnBack.BorderRadius = 5;
+      btnBack.BorderSize = 0;
+      btnBack.FlatAppearance.BorderColor = Color.White;
+      btnBack.FlatAppearance.BorderSize = 0;
+      btnBack.FlatStyle = FlatStyle.Flat;
+      btnBack.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnBack.ForeColor = Color.White;
+      btnBack.Image = Properties.Resources.icon_back;
+      btnBack.ImageAlign = ContentAlignment.MiddleLeft;
+      btnBack.Location = new Point(8, 65);
+      btnBack.Name = "btnBack";
+      btnBack.Padding = new Padding(10, 0, 0, 0);
+      btnBack.Size = new Size(231, 57);
+      btnBack.TabIndex = 21;
+      btnBack.Text = "Quay lại";
+      btnBack.TextColor = Color.White;
+      btnBack.UseVisualStyleBackColor = false;
+      btnBack.Click += btnBack_Click;
+      // 
+      // btnZero
+      // 
+      btnZero.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnZero.BackColor = Color.FromArgb(64, 107, 177);
+      btnZero.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnZero.BorderColor = Color.White;
+      btnZero.BorderRadius = 5;
+      btnZero.BorderSize = 0;
+      btnZero.FlatAppearance.BorderColor = Color.White;
+      btnZero.FlatAppearance.BorderSize = 0;
+      btnZero.FlatStyle = FlatStyle.Flat;
+      btnZero.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnZero.ForeColor = Color.White;
+      btnZero.Image = Properties.Resources.icon_zero;
+      btnZero.ImageAlign = ContentAlignment.MiddleLeft;
+      btnZero.Location = new Point(245, 65);
+      btnZero.Name = "btnZero";
+      btnZero.Padding = new Padding(10, 0, 0, 0);
+      btnZero.Size = new Size(231, 57);
+      btnZero.TabIndex = 22;
+      btnZero.Text = "Zero";
+      btnZero.TextColor = Color.White;
+      btnZero.UseVisualStyleBackColor = false;
+      btnZero.Click += btnZero_Click;
+      // 
+      // btnCreate
+      // 
+      btnCreate.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnCreate.BackColor = Color.FromArgb(64, 107, 177);
+      btnCreate.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnCreate.BorderColor = Color.White;
+      btnCreate.BorderRadius = 5;
+      btnCreate.BorderSize = 0;
+      btnCreate.FlatAppearance.BorderColor = Color.White;
+      btnCreate.FlatAppearance.BorderSize = 0;
+      btnCreate.FlatStyle = FlatStyle.Flat;
+      btnCreate.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnCreate.ForeColor = Color.White;
+      btnCreate.Image = Properties.Resources.icon_new;
+      btnCreate.ImageAlign = ContentAlignment.MiddleLeft;
+      btnCreate.Location = new Point(482, 65);
+      btnCreate.Name = "btnCreate";
+      btnCreate.Padding = new Padding(15, 0, 0, 0);
+      btnCreate.Size = new Size(233, 57);
+      btnCreate.TabIndex = 23;
+      btnCreate.Text = "Phiếu mới";
+      btnCreate.TextColor = Color.White;
+      btnCreate.UseVisualStyleBackColor = false;
+      btnCreate.Click += btnCreate_Click;
       // 
       // tableLayoutPanel4
       // 
@@ -906,7 +876,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel11.Controls.Add(txtTypeWeight, 3, 0);
       tableLayoutPanel11.Controls.Add(label12, 2, 0);
       tableLayoutPanel11.Controls.Add(txtNoLabelAuto, 0, 0);
@@ -929,7 +899,7 @@ namespace LTP.Truck.Forms
       txtTypeWeight.Enabled = false;
       txtTypeWeight.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTypeWeight.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTypeWeight.Location = new Point(280, 4);
+      txtTypeWeight.Location = new Point(230, 4);
       txtTypeWeight.Margin = new Padding(4);
       txtTypeWeight.Multiline = false;
       txtTypeWeight.Name = "txtTypeWeight";
@@ -937,7 +907,7 @@ namespace LTP.Truck.Forms
       txtTypeWeight.PasswordChar = false;
       txtTypeWeight.PlaceholderColor = Color.DarkGray;
       txtTypeWeight.PlaceholderText = "";
-      txtTypeWeight.Size = new Size(142, 42);
+      txtTypeWeight.Size = new Size(192, 42);
       txtTypeWeight.TabIndex = 22;
       txtTypeWeight.Texts = "";
       txtTypeWeight.UnderlinedStyle = false;
@@ -948,7 +918,7 @@ namespace LTP.Truck.Forms
       label12.AutoSize = true;
       label12.BackColor = Color.Transparent;
       label12.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label12.Location = new Point(175, 0);
+      label12.Location = new Point(125, 0);
       label12.Margin = new Padding(0);
       label12.Name = "label12";
       label12.Size = new Size(101, 46);
@@ -975,7 +945,7 @@ namespace LTP.Truck.Forms
       txtNoLabelAuto.PasswordChar = false;
       txtNoLabelAuto.PlaceholderColor = Color.DarkGray;
       txtNoLabelAuto.PlaceholderText = "";
-      txtNoLabelAuto.Size = new Size(147, 42);
+      txtNoLabelAuto.Size = new Size(97, 42);
       txtNoLabelAuto.TabIndex = 15;
       txtNoLabelAuto.Texts = "";
       txtNoLabelAuto.UnderlinedStyle = false;
@@ -1248,7 +1218,7 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel10
       // 
       tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel10.ColumnCount = 10;
+      tableLayoutPanel10.ColumnCount = 11;
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
@@ -1259,11 +1229,13 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearchKey, 1, 0);
       tableLayoutPanel10.Controls.Add(label17, 3, 0);
+      tableLayoutPanel10.Controls.Add(btnPrint, 9, 0);
       tableLayoutPanel10.Controls.Add(label18, 5, 0);
-      tableLayoutPanel10.Controls.Add(btnSearchHistorical, 9, 0);
+      tableLayoutPanel10.Controls.Add(btnSearchHistorical, 10, 0);
       tableLayoutPanel10.Controls.Add(ucTimeSearchFrom, 4, 0);
       tableLayoutPanel10.Controls.Add(ucTimeSearchTo, 6, 0);
       tableLayoutPanel10.Controls.Add(btnFilter, 7, 0);
@@ -1307,7 +1279,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.PasswordChar = false;
       txtSearchKey.PlaceholderColor = Color.DarkGray;
       txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(344, 42);
+      txtSearchKey.Size = new Size(164, 42);
       txtSearchKey.TabIndex = 18;
       txtSearchKey.Texts = "";
       txtSearchKey.UnderlinedStyle = false;
@@ -1318,7 +1290,7 @@ namespace LTP.Truck.Forms
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(508, 0);
+      label17.Location = new Point(328, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
       label17.Size = new Size(38, 62);
@@ -1326,13 +1298,39 @@ namespace LTP.Truck.Forms
       label17.Text = "Từ";
       label17.TextAlign = ContentAlignment.MiddleLeft;
       // 
+      // btnPrint
+      // 
+      btnPrint.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnPrint.BackColor = Color.FromArgb(64, 107, 177);
+      btnPrint.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnPrint.BorderColor = Color.White;
+      btnPrint.BorderRadius = 5;
+      btnPrint.BorderSize = 0;
+      btnPrint.FlatAppearance.BorderColor = Color.White;
+      btnPrint.FlatAppearance.BorderSize = 0;
+      btnPrint.FlatStyle = FlatStyle.Flat;
+      btnPrint.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnPrint.ForeColor = Color.White;
+      btnPrint.Image = Properties.Resources.icon_print;
+      btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
+      btnPrint.Location = new Point(1168, 3);
+      btnPrint.Name = "btnPrint";
+      btnPrint.Padding = new Padding(10, 0, 0, 0);
+      btnPrint.Size = new Size(174, 56);
+      btnPrint.TabIndex = 20;
+      btnPrint.Text = "       In phiếu";
+      btnPrint.TextAlign = ContentAlignment.MiddleLeft;
+      btnPrint.TextColor = Color.White;
+      btnPrint.UseVisualStyleBackColor = false;
+      btnPrint.Click += btnPrint_Click;
+      // 
       // label18
       // 
       label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(866, 0);
+      label18.Location = new Point(686, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
       label18.Size = new Size(49, 62);
@@ -1369,7 +1367,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(549, 3);
+      ucTimeSearchFrom.Location = new Point(369, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 30;
@@ -1377,7 +1375,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchTo
       // 
       ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(918, 3);
+      ucTimeSearchTo.Location = new Point(738, 3);
       ucTimeSearchTo.Name = "ucTimeSearchTo";
       ucTimeSearchTo.Size = new Size(314, 56);
       ucTimeSearchTo.TabIndex = 31;
@@ -1394,7 +1392,7 @@ namespace LTP.Truck.Forms
       btnFilter.FlatStyle = FlatStyle.Flat;
       btnFilter.ForeColor = Color.White;
       btnFilter.Image = Properties.Resources.icon_filter;
-      btnFilter.Location = new Point(1238, 3);
+      btnFilter.Location = new Point(1058, 3);
       btnFilter.Name = "btnFilter";
       btnFilter.Size = new Size(54, 55);
       btnFilter.TabIndex = 32;

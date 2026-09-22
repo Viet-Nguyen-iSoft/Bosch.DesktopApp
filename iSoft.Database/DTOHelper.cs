@@ -34,6 +34,7 @@ namespace iSoft.Database
       {
         RecordTruck = recordTruck,
         No = 1,
+        NoLabelAuto = recordTruck.NoLabelAuto,
         NoLabelManual = recordTruck.NoLabelManual,
         NetTime01 = recordTruck.NetTime01.ToString("F0") + " Kg",
         NetTime02 = recordTruck.NetTime02.ToString("F0") + " Kg",
@@ -84,8 +85,7 @@ namespace iSoft.Database
         {
           RecordWeight = record,
           No = orderedRecords.Count - index,
-          Datetime = record.CreatedAt?.ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
-          //LicensePlate = record.RecordTruck?.LicensePlate,
+          Datetime = record.CreatedAt!=null ? ((DateTime)record.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") : string.Empty,
           LicensePlate = record?.LicensePlate,
           ProductGroup = record?.Product?.ProductGroup?.Name,
           Product = record?.Product?.Name,

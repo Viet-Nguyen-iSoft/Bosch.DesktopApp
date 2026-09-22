@@ -7,6 +7,7 @@ using iSoft.Communication.Mode;
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
+using iSoft.Database.Repositorys;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
@@ -31,12 +32,15 @@ namespace LTP.Truck.Forms
     private string _deleteReasonToolTipText = string.Empty;
     private int _statusFilterIndex = 1;
     private int _typeFilterIndex;
+    private int _licensePlateLookupVersion;
+    private bool _isLoadingRecordFromLicensePlate;
     private string _formatStrWeight { get; } = "F0";
 
     public FrmHomeTruck()
     {
       InitializeComponent();
       CustomUI();
+      txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       this.Load += FrmHome_Load;
       this.Shown += FrmHomeTruck_Shown;
       this.Disposed += (_, _) =>
@@ -269,7 +273,7 @@ namespace LTP.Truck.Forms
     private RecordTruck _recordTruck { get; set; } = new RecordTruck();
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private int _weightGoodsLoadVersion;
-    private void btnTriggerWeight_Click(object sender, EventArgs e)
+    private async void btnTriggerWeight_Click(object sender, EventArgs e)
     {
       try
       {
@@ -281,6 +285,8 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
           return;
         }
+
+        await LoadPendingRecordByLicensePlateAsync(rs.Plate);
 
         if (_recordTruck.TypeGoodsId == null)
         {
@@ -312,6 +318,56 @@ namespace LTP.Truck.Forms
       catch (Exception ex)
       {
 
+      }
+    }
+
+    private async void TxtLicensePlate__TextChanged(object? sender, EventArgs e)
+    {
+      if (_isLoadingRecordFromLicensePlate)
+        return;
+
+      var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
+      if (!validLicense.IsValid)
+        return;
+
+      var lookupVersion = ++_licensePlateLookupVersion;
+      await Task.Delay(300);
+
+      if (lookupVersion != _licensePlateLookupVersion ||
+          IsDisposed || Disposing)
+        return;
+
+      await LoadPendingRecordByLicensePlateAsync(validLicense.Plate, lookupVersion);
+    }
+
+    private async Task LoadPendingRecordByLicensePlateAsync(string licensePlate, int? lookupVersion = null)
+    {
+      var currentPlate = LicensePlateRepository.Normalize(_recordTruck.LicensePlate);
+      var normalizedPlate = LicensePlateRepository.Normalize(licensePlate);
+      if (_recordTruck.Id != Guid.Empty && currentPlate == normalizedPlate)
+        return;
+
+      try
+      {
+        var pendingRecord = await AppCore.Ins._recordTruckService
+          .GetPendingByLicensePlateAsync(licensePlate);
+
+        if (pendingRecord == null ||
+            (lookupVersion.HasValue && lookupVersion.Value != _licensePlateLookupVersion) ||
+            IsDisposed || Disposing)
+          return;
+
+        _isLoadingRecordFromLicensePlate = true;
+        _recordTruck = pendingRecord;
+        ShowDataHistorical(_recordTruck);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+      finally
+      {
+        _isLoadingRecordFromLicensePlate = false;
       }
     }
 
@@ -912,6 +968,7 @@ namespace LTP.Truck.Forms
         nameof(RecordTruckDTO.Warehouse),
         nameof(RecordTruckDTO.NameDriver),
         nameof(RecordTruckDTO.IdCard),
+        nameof(RecordTruckDTO.NoLabelAuto),
         nameof(RecordTruckDTO.Document)
       };
       foreach (var columnName in hiddenColumns)
@@ -1279,7 +1336,7 @@ namespace LTP.Truck.Forms
         }
 
         string template = File.ReadAllText(pathFileTemplate);
-        string company = AppCore.Ins._appConfig?.Company??string.Empty;
+        string company = AppCore.Ins._appConfig?.Company ?? string.Empty;
         string address = AppCore.Ins._appConfig?.Address ?? string.Empty;
         string phone = AppCore.Ins._appConfig?.Phone ?? string.Empty;
         string timePrint = dt.ToString(

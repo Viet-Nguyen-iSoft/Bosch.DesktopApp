@@ -62,6 +62,8 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
+      btnReportTruck = new RJButton();
+      btnReportGoods = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -171,6 +173,8 @@ namespace LTP.Truck.Forms
       flowLayoutPanel1.Controls.Add(btnGroupProduct);
       flowLayoutPanel1.Controls.Add(btnProduct);
       flowLayoutPanel1.Controls.Add(btnClient);
+      flowLayoutPanel1.Controls.Add(btnReportTruck);
+      flowLayoutPanel1.Controls.Add(btnReportGoods);
       flowLayoutPanel1.Location = new Point(0, 0);
       flowLayoutPanel1.Margin = new Padding(0);
       flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -629,6 +633,56 @@ namespace LTP.Truck.Forms
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
       // 
+      // btnReportTruck
+      // 
+      btnReportTruck.BackColor = Color.Silver;
+      btnReportTruck.BackgroundColor = Color.Silver;
+      btnReportTruck.BorderColor = Color.PaleVioletRed;
+      btnReportTruck.BorderRadius = 5;
+      btnReportTruck.BorderSize = 0;
+      btnReportTruck.Dock = DockStyle.Top;
+      btnReportTruck.FlatAppearance.BorderSize = 0;
+      btnReportTruck.FlatStyle = FlatStyle.Flat;
+      btnReportTruck.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportTruck.ForeColor = Color.Black;
+      btnReportTruck.Image = Properties.Resources.icon_report;
+      btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.Location = new Point(3, 583);
+      btnReportTruck.Name = "btnReportTruck";
+      btnReportTruck.Padding = new Padding(15, 0, 0, 0);
+      btnReportTruck.Size = new Size(242, 70);
+      btnReportTruck.TabIndex = 18;
+      btnReportTruck.Text = "        BÁO CÁO XE TẢI";
+      btnReportTruck.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.TextColor = Color.Black;
+      btnReportTruck.UseVisualStyleBackColor = false;
+      btnReportTruck.Click += btnReportTruck_Click;
+      // 
+      // btnReportGoods
+      // 
+      btnReportGoods.BackColor = Color.Silver;
+      btnReportGoods.BackgroundColor = Color.Silver;
+      btnReportGoods.BorderColor = Color.PaleVioletRed;
+      btnReportGoods.BorderRadius = 5;
+      btnReportGoods.BorderSize = 0;
+      btnReportGoods.Dock = DockStyle.Top;
+      btnReportGoods.FlatAppearance.BorderSize = 0;
+      btnReportGoods.FlatStyle = FlatStyle.Flat;
+      btnReportGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportGoods.ForeColor = Color.Black;
+      btnReportGoods.Image = Properties.Resources.icon_report;
+      btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.Location = new Point(3, 659);
+      btnReportGoods.Name = "btnReportGoods";
+      btnReportGoods.Padding = new Padding(15, 0, 0, 0);
+      btnReportGoods.Size = new Size(242, 70);
+      btnReportGoods.TabIndex = 19;
+      btnReportGoods.Text = "        BÁO CÁO CÂN HÀNG";
+      btnReportGoods.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.TextColor = Color.Black;
+      btnReportGoods.UseVisualStyleBackColor = false;
+      btnReportGoods.Click += btnReportGoods_Click;
+      // 
       // FrmOperation
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -688,5 +742,7 @@ namespace LTP.Truck.Forms
     private Label lbTime;
     private Common.Custom.RJButton btnLogout;
     private UserControls.UcLogin ucLogin;
+    private RJButton btnReportTruck;
+    private RJButton btnReportGoods;
   }
 }
