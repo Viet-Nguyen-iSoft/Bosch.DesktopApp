@@ -93,6 +93,7 @@ namespace LTP.Truck.Forms
       ucTimeSearchFrom = new LTP.Truck.UserControls.UcTimeSearch();
       ucTimeSearchTo = new LTP.Truck.UserControls.UcTimeSearch();
       btnSearchHistorical = new RJButton();
+      btnExport = new RJButton();
       label27 = new Label();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
@@ -991,10 +992,10 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel11.Controls.Add(btnPrint, 10, 0);
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 210F));
+      tableLayoutPanel11.Controls.Add(btnPrint, 9, 0);
       tableLayoutPanel11.Controls.Add(label9, 0, 0);
       tableLayoutPanel11.Controls.Add(txtSearchKey, 1, 0);
       tableLayoutPanel11.Controls.Add(label17, 3, 0);
@@ -1002,6 +1003,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.Controls.Add(ucTimeSearchFrom, 4, 0);
       tableLayoutPanel11.Controls.Add(ucTimeSearchTo, 6, 0);
       tableLayoutPanel11.Controls.Add(btnSearchHistorical, 8, 0);
+      tableLayoutPanel11.Controls.Add(btnExport, 10, 0);
       tableLayoutPanel11.Location = new Point(0, 50);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
@@ -1024,10 +1026,10 @@ namespace LTP.Truck.Forms
       btnPrint.ForeColor = Color.White;
       btnPrint.Image = (Image)resources.GetObject("btnPrint.Image");
       btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnPrint.Location = new Point(1328, 4);
+      btnPrint.Location = new Point(1158, 4);
       btnPrint.Name = "btnPrint";
       btnPrint.Padding = new Padding(10, 0, 0, 0);
-      btnPrint.Size = new Size(194, 54);
+      btnPrint.Size = new Size(154, 54);
       btnPrint.TabIndex = 1;
       btnPrint.Text = "        In phiếu";
       btnPrint.TextAlign = ContentAlignment.MiddleLeft;
@@ -1067,7 +1069,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.PasswordChar = false;
       txtSearchKey.PlaceholderColor = Color.DarkGray;
       txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(239, 42);
+      txtSearchKey.Size = new Size(94, 42);
       txtSearchKey.TabIndex = 18;
       txtSearchKey.Texts = "";
       txtSearchKey.UnderlinedStyle = false;
@@ -1078,7 +1080,7 @@ namespace LTP.Truck.Forms
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(373, 0);
+      label17.Location = new Point(228, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
       label17.Size = new Size(38, 62);
@@ -1092,7 +1094,7 @@ namespace LTP.Truck.Forms
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(731, 0);
+      label18.Location = new Point(586, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
       label18.Size = new Size(49, 62);
@@ -1103,7 +1105,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(414, 3);
+      ucTimeSearchFrom.Location = new Point(269, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 28;
@@ -1111,7 +1113,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchTo
       // 
       ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(783, 3);
+      ucTimeSearchTo.Location = new Point(638, 3);
       ucTimeSearchTo.Name = "ucTimeSearchTo";
       ucTimeSearchTo.Size = new Size(314, 56);
       ucTimeSearchTo.TabIndex = 29;
@@ -1131,15 +1133,41 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(1123, 3);
+      btnSearchHistorical.Location = new Point(978, 3);
       btnSearchHistorical.Name = "btnSearchHistorical";
       btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
-      btnSearchHistorical.Size = new Size(194, 55);
+      btnSearchHistorical.Size = new Size(174, 55);
       btnSearchHistorical.TabIndex = 27;
       btnSearchHistorical.Text = "        Tìm kiếm";
       btnSearchHistorical.TextAlign = ContentAlignment.MiddleLeft;
       btnSearchHistorical.TextColor = Color.White;
       btnSearchHistorical.UseVisualStyleBackColor = false;
+      // 
+      // btnExport
+      // 
+      btnExport.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnExport.BackColor = Color.Green;
+      btnExport.BackgroundColor = Color.Green;
+      btnExport.BorderColor = Color.PaleVioletRed;
+      btnExport.BorderRadius = 5;
+      btnExport.BorderSize = 0;
+      btnExport.FlatAppearance.BorderSize = 0;
+      btnExport.FlatStyle = FlatStyle.Flat;
+      btnExport.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnExport.ForeColor = Color.White;
+      btnExport.Image = Properties.Resources.icon_excel;
+      btnExport.ImageAlign = ContentAlignment.MiddleLeft;
+      btnExport.Location = new Point(1318, 4);
+      btnExport.Margin = new Padding(3, 3, 6, 3);
+      btnExport.Name = "btnExport";
+      btnExport.Padding = new Padding(10, 0, 0, 0);
+      btnExport.Size = new Size(201, 54);
+      btnExport.TabIndex = 30;
+      btnExport.Text = "        Xuất báo cáo";
+      btnExport.TextAlign = ContentAlignment.MiddleLeft;
+      btnExport.TextColor = Color.White;
+      btnExport.UseVisualStyleBackColor = false;
+      btnExport.Click += btnExport_Click;
       // 
       // label27
       // 
@@ -1258,5 +1286,6 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel19;
     private Label lbSumWeight;
     private RJButton btnPrint;
+    private RJButton btnExport;
   }
 }

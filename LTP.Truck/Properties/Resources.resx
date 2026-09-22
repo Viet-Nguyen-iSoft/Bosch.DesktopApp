@@ -142,6 +142,9 @@
   <data name="icon_confirm" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_confirm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="icon_excel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_excel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="icon_filter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_filter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
