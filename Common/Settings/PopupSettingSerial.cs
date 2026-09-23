@@ -23,6 +23,11 @@ namespace Common.Settings
       cbbComm.DataSource = SerialPort.GetPortNames()
         .OrderBy(port => port)
         .ToList();
+
+      cbbBaudRate.DataSource = new[] { 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200 };
+      cbbDataBits.DataSource = new[] { 5, 6, 7, 8 };
+      cbbStopBit.DataSource = new[] { StopBits.One, StopBits.OnePointFive, StopBits.Two };
+      cbbParity.DataSource = Enum.GetValues<Parity>();
     }
 
     public PopupSettingSerial(Connection connection) : this()
@@ -45,6 +50,10 @@ namespace Common.Settings
       }
 
       cbbComm.SelectedItem = portName;
+      cbbBaudRate.SelectedItem = config?.BaudRate ?? 9600;
+      cbbDataBits.SelectedItem = config?.DataBits ?? 8;
+      cbbStopBit.SelectedItem = config?.StopBits ?? StopBits.One;
+      cbbParity.SelectedItem = config?.Parity ?? Parity.None;
 
       var autoConnect = config?.AutoConnect ?? false;
       var sendRequest = config?.Request ?? false;
@@ -59,6 +68,10 @@ namespace Common.Settings
       var config = new JsonConfigTcpSerial
       {
         COM = cbbComm.SelectedItem?.ToString(),
+        BaudRate = cbbBaudRate.SelectedItem is int baudRate ? baudRate : 9600,
+        DataBits = cbbDataBits.SelectedItem is int dataBits ? dataBits : 8,
+        StopBits = cbbStopBit.SelectedItem is StopBits stopBits ? stopBits : StopBits.One,
+        Parity = cbbParity.SelectedItem is Parity parity ? parity : Parity.None,
         AutoConnect = iconAutoConnect.Tag is bool autoConnect && autoConnect,
         Request = iconSendReq.Tag is bool sendRequest && sendRequest,
         TimeRequest = 500

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO.Ports;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +22,20 @@ namespace iSoft.Communication.JsonPayload
 
     [DisplayName("COM")]
     public string? COM { get; set; }
+
+    [DisplayName("BaudRate")]
+    public int BaudRate { get; set; } = 9600;
+
+    [DisplayName("Data Bits")]
+    public int DataBits { get; set; } = 8;
+
+    [DisplayName("Stop Bits")]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public StopBits StopBits { get; set; } = StopBits.One;
+
+    [DisplayName("Parity")]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public Parity Parity { get; set; } = Parity.None;
 
 
     [DisplayName("Tự động kết nối")]

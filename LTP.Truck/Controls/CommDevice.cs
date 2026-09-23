@@ -118,6 +118,10 @@ namespace LTP.Truck.Controls
         Code = ScaleId,
         NameDevice = connection.Name ?? "Cân Serial",
         PortName = configData.COM,
+        BaudRate = configData.BaudRate,
+        DataBits = configData.DataBits,
+        StopBits = configData.StopBits,
+        Parity = configData.Parity,
         AutoConnect = configData.AutoConnect,
         Request = configData.Request,
         TimeRequest = configData.TimeRequest

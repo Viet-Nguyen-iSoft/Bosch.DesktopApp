@@ -40,11 +40,11 @@ namespace Common.Settings
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      cbbBaudRate = new Label();
+      labelBaudRate = new Label();
       label4 = new Label();
       label7 = new Label();
       label8 = new Label();
-      comboBox1 = new ComboBox();
+      cbbBaudRate = new ComboBox();
       cbbDataBits = new ComboBox();
       cbbStopBit = new ComboBox();
       cbbParity = new ComboBox();
@@ -85,8 +85,8 @@ namespace Common.Settings
       tableLayoutPanel1.Controls.Add(cbbParity, 1, 4);
       tableLayoutPanel1.Controls.Add(cbbStopBit, 1, 3);
       tableLayoutPanel1.Controls.Add(cbbDataBits, 1, 2);
-      tableLayoutPanel1.Controls.Add(comboBox1, 1, 1);
-      tableLayoutPanel1.Controls.Add(cbbBaudRate, 0, 1);
+      tableLayoutPanel1.Controls.Add(cbbBaudRate, 1, 1);
+      tableLayoutPanel1.Controls.Add(labelBaudRate, 0, 1);
       tableLayoutPanel1.Controls.Add(iconAutoConnect, 1, 6);
       tableLayoutPanel1.Controls.Add(cbbComm, 1, 0);
       tableLayoutPanel1.Controls.Add(label2, 0, 0);
@@ -266,19 +266,19 @@ namespace Common.Settings
       btnClose.UseVisualStyleBackColor = false;
       btnClose.Click += btnClose_Click;
       // 
-      // cbbBaudRate
+      // labelBaudRate
       // 
-      cbbBaudRate.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      cbbBaudRate.AutoSize = true;
-      cbbBaudRate.BackColor = Color.Transparent;
-      cbbBaudRate.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      cbbBaudRate.Location = new Point(0, 56);
-      cbbBaudRate.Margin = new Padding(0);
-      cbbBaudRate.Name = "cbbBaudRate";
-      cbbBaudRate.Size = new Size(178, 56);
-      cbbBaudRate.TabIndex = 13;
-      cbbBaudRate.Text = "BaudRate:";
-      cbbBaudRate.TextAlign = ContentAlignment.MiddleLeft;
+      labelBaudRate.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      labelBaudRate.AutoSize = true;
+      labelBaudRate.BackColor = Color.Transparent;
+      labelBaudRate.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      labelBaudRate.Location = new Point(0, 56);
+      labelBaudRate.Margin = new Padding(0);
+      labelBaudRate.Name = "labelBaudRate";
+      labelBaudRate.Size = new Size(178, 56);
+      labelBaudRate.TabIndex = 13;
+      labelBaudRate.Text = "BaudRate:";
+      labelBaudRate.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // label4
       // 
@@ -322,16 +322,16 @@ namespace Common.Settings
       label8.Text = "Parity:";
       label8.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // comboBox1
+      // cbbBaudRate
       // 
-      comboBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-      comboBox1.Font = new Font("Roboto", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      comboBox1.FormattingEnabled = true;
-      comboBox1.Location = new Point(181, 65);
-      comboBox1.Name = "comboBox1";
-      comboBox1.Size = new Size(330, 37);
-      comboBox1.TabIndex = 17;
+      cbbBaudRate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      cbbBaudRate.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbBaudRate.Font = new Font("Roboto", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbBaudRate.FormattingEnabled = true;
+      cbbBaudRate.Location = new Point(181, 65);
+      cbbBaudRate.Name = "cbbBaudRate";
+      cbbBaudRate.Size = new Size(330, 37);
+      cbbBaudRate.TabIndex = 17;
       // 
       // cbbDataBits
       // 
@@ -420,13 +420,13 @@ namespace Common.Settings
     private Label label5;
     private Label label6;
     private PictureBox iconSendReq;
-    private Label cbbBaudRate;
+    private Label labelBaudRate;
     private Label label4;
     private Label label7;
     private Label label8;
     private ComboBox cbbParity;
     private ComboBox cbbStopBit;
     private ComboBox cbbDataBits;
-    private ComboBox comboBox1;
+    private ComboBox cbbBaudRate;
   }
 }
