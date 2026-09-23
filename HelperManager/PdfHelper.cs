@@ -112,33 +112,50 @@ namespace HelperManager
 
     public static async Task HtmlToPdfWithoutConsoleAsync(string htmlFile, string pdfFile)
     {
-      // Use the full browser in headless mode instead of chrome-headless-shell.
+      // Chrome's DownloadAsync runs setup.exe even for cached installations.
+      // Headless Shell avoids that setup process; its own console is hidden below.
       var fetcher = new BrowserFetcher(new BrowserFetcherOptions
       {
-        Browser = SupportedBrowser.Chrome,
+        Browser = SupportedBrowser.ChromeHeadlessShell,
       });
       var installedBrowser = await fetcher.DownloadAsync();
-      await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+      using var launcher = new ChromeLauncher(installedBrowser.GetExecutablePath(), new LaunchOptions
       {
         ExecutablePath = installedBrowser.GetExecutablePath(),
         Headless = true,
-        HeadlessMode = HeadlessMode.True,
+        HeadlessMode = HeadlessMode.Shell,
         Args = new[] { "--disable-gpu", "--no-first-run", "--no-default-browser-check" },
       });
-      await using var page = await browser.NewPageAsync();
-      await page.GoToAsync(new Uri(Path.GetFullPath(htmlFile)).AbsoluteUri, WaitUntilNavigation.Load);
-      await page.PdfAsync(pdfFile, new PdfOptions
+      // Set these before StartAsync: hiding an already-started process can still flash.
+      launcher.Process.StartInfo.UseShellExecute = false;
+      launcher.Process.StartInfo.CreateNoWindow = true;
+      launcher.Process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+      try
       {
-        Format = PaperFormat.A4,
-        PrintBackground = true,
-        MarginOptions = new MarginOptions
+        await launcher.StartAsync();
+        await using var browser = await Puppeteer.ConnectAsync(new ConnectOptions
         {
-          Top = "10mm",
-          Bottom = "10mm",
-          Left = "10mm",
-          Right = "10mm",
-        },
-      });
+          BrowserWSEndpoint = launcher.EndPoint,
+        });
+        await using var page = await browser.NewPageAsync();
+        await page.GoToAsync(new Uri(Path.GetFullPath(htmlFile)).AbsoluteUri, WaitUntilNavigation.Load);
+        await page.PdfAsync(pdfFile, new PdfOptions
+        {
+          Format = PaperFormat.A4,
+          PrintBackground = true,
+          MarginOptions = new MarginOptions
+          {
+            Top = "10mm",
+            Bottom = "10mm",
+            Left = "10mm",
+            Right = "10mm",
+          },
+        });
+      }
+      finally
+      {
+        await launcher.KillAsync();
+      }
     }
 
     /// <summary>

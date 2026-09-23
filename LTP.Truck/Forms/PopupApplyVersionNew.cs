@@ -1,4 +1,4 @@
-﻿using ApiCICD;
+using ApiCICD;
 using LTP.Truck.Controls;
 using System;
 using System.Collections.Generic;
@@ -138,6 +138,7 @@ namespace LTP.Truck.Forms
 
     private async void btnDownload_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         LockByDownload(true);

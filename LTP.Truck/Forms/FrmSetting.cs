@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using Common.Settings;
 using HelperManager;
 using iSoft.Communication.JsonPayload;
@@ -265,6 +265,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveStation_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (cbbStations.SelectedItem is not Station selectedStation)
       {
         using var popupWarning = new PopupConfirm(
@@ -349,6 +350,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSavePrint_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (cbbPrint.SelectedItem is not string printerName ||
         string.IsNullOrWhiteSpace(printerName))
       {
@@ -526,6 +528,7 @@ namespace LTP.Truck.Forms
 
     private async void btnAddCommWeight_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (await HasWeightConnectionAsync())
       {
         ShowSingleWeightConnectionWarning();
@@ -590,6 +593,7 @@ namespace LTP.Truck.Forms
 
     private async void btnConfirm_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         AppCore.Ins._appConfig.IpServer = txtIpServer.Texts.Trim();
@@ -633,6 +637,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSavePermitCheckWeight_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       var appConfig = AppCore.Ins._appConfig;
       if (appConfig == null)
       {
@@ -688,6 +693,7 @@ namespace LTP.Truck.Forms
 
     private async void btnInforReport_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       var appConfig = AppCore.Ins._appConfig;
       if (appConfig == null)
       {

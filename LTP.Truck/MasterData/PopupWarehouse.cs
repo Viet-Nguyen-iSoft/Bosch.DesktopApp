@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using System;
@@ -68,6 +68,7 @@ namespace LTP.Truck.MasterData
 
     private async void BtnConfirm_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         if (string.IsNullOrEmpty(txtName.Texts))

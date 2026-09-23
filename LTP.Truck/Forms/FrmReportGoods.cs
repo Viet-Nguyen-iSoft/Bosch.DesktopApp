@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Common;
 using HelperManager;
 using iSoft.Database;
@@ -67,6 +67,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await LoadHistorical(resetPage: true);
     }
 
@@ -210,6 +211,7 @@ namespace LTP.Truck.Forms
 
     private async void btnExport_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (ucPage1.TotalRecords == 0)
       {
         using var popup = new PopupConfirm(

@@ -54,6 +54,7 @@ namespace LTP.Truck.MasterData
 
     private async void BtnConfirm_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         if (string.IsNullOrWhiteSpace(txtName.Texts))

@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using ApiSyncData.Req;
 using HelperManager;
 using iSoft.Communication.Interface;
@@ -382,6 +382,7 @@ namespace LTP.Truck.Forms
 
     private async void btnLoadLicensePlate_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       btnLoadLicensePlate.Enabled = false;
       try
       {
@@ -491,6 +492,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveData_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (string.IsNullOrEmpty(txtLicensePlate.Texts.Trim()))
       {
         PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn hoặc điền biển số xe !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
@@ -632,6 +634,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       btnSearchHistorical.Enabled = false;
       try
       {

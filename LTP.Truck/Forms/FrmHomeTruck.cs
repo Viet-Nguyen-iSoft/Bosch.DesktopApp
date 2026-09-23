@@ -185,6 +185,7 @@ namespace LTP.Truck.Forms
 
     private async void btnLoadClient_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       var clients = await AppCore.Ins._clientService.GetAllAsync(IsContainDelete: false);
       PopupLoadMD popupLoadMD = new PopupLoadMD();
       popupLoadMD.SetData(clients);
@@ -194,6 +195,7 @@ namespace LTP.Truck.Forms
 
     private async void btnLoadTypeGoods_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       var typeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync(IsContainDelete: false);
       PopupLoadMD popupLoadMD = new PopupLoadMD();
       popupLoadMD.SetData(typeGoods);
@@ -203,6 +205,7 @@ namespace LTP.Truck.Forms
 
     private async void btnLoadWarehouse_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       var warehouses = await AppCore.Ins._warehouseService.GetAllAsync(IsContainDelete: false);
       PopupLoadMD popupLoadMD = new PopupLoadMD();
       popupLoadMD.SetData(warehouses);
@@ -279,6 +282,7 @@ namespace LTP.Truck.Forms
     private int _weightGoodsLoadVersion;
     private async void btnTriggerWeight_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         var rs = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
@@ -413,6 +417,7 @@ namespace LTP.Truck.Forms
 
     private async void btnWeightTime01_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         if (_recordTruck.NetTimeTemp <= 0)
@@ -496,6 +501,7 @@ namespace LTP.Truck.Forms
 
     private async void btnWeightTime02_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         if (_recordTruck.NetTimeTemp <= 0)
@@ -817,6 +823,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSearchHistorical_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await LoadHistorical();
     }
 
@@ -1246,6 +1253,7 @@ namespace LTP.Truck.Forms
 
     private async void btnPrint_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
         RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id, true);

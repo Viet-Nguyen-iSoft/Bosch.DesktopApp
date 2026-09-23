@@ -1,4 +1,4 @@
-﻿using HelperManager;
+using HelperManager;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
 using LTP.Truck.UserControls;
@@ -331,40 +331,47 @@ namespace LTP.Truck.Forms
 
     private async void BtnProduct_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_Product);
     }
 
     private async void BtnGroupProduct_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_GroupProduct);
     }
 
     private async void BtnTare_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_Tare);
     }
 
     private async void BtnWarehouse_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_Warehouse);
     }
 
     private async void BtnTypeGoods_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_TypeGoods);
     }
     private async void BtnClient_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_Client);
     }
     private async void btnMasterData_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (_menuCollapsed)
       {
         SetMenuCollapsed(false);
@@ -380,14 +387,17 @@ namespace LTP.Truck.Forms
 
     private async void btnHomeTruck_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.HomeTruck);
     }
     private async void btnHomeGoods_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.HomeGoods);
     }
     private async void btnSetting_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.Setting);
     }
 
@@ -563,11 +573,13 @@ namespace LTP.Truck.Forms
 
     private async void btnReportTruck_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.ReportTruck);
     }
 
     private async void btnReportGoods_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.ReportGoods);
     }
   }

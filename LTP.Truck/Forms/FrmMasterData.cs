@@ -1,4 +1,4 @@
-﻿using ApiSyncData.Req;
+using ApiSyncData.Req;
 using Common;
 using HelperManager;
 using iSoft.Database;
@@ -157,6 +157,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSearch_Click(object sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
       await LoadData(_enumTypeMasterDataCurrent);
     }
 
