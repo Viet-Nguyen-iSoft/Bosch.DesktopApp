@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.UserControls
+namespace LTP.Truck.UserControls
 {
   partial class UcPage
   {
@@ -101,7 +101,7 @@
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto", 16F);
+      label2.Font = new Font("Roboto", 14F);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
@@ -115,7 +115,7 @@
       lbInforPage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbInforPage.AutoSize = true;
       lbInforPage.BackColor = Color.Transparent;
-      lbInforPage.Font = new Font("Roboto", 16F);
+      lbInforPage.Font = new Font("Roboto", 14F);
       lbInforPage.Location = new Point(585, 0);
       lbInforPage.Margin = new Padding(0);
       lbInforPage.Name = "lbInforPage";
@@ -135,7 +135,7 @@
       btnPrevious.FlatAppearance.BorderColor = Color.White;
       btnPrevious.FlatAppearance.BorderSize = 0;
       btnPrevious.FlatStyle = FlatStyle.Flat;
-      btnPrevious.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnPrevious.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnPrevious.ForeColor = Color.White;
       btnPrevious.ImageAlign = ContentAlignment.MiddleLeft;
       btnPrevious.Location = new Point(438, 3);
@@ -168,7 +168,7 @@
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.Transparent;
-      label1.Font = new Font("Roboto", 16F);
+      label1.Font = new Font("Roboto", 14F);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -199,7 +199,7 @@
       btnNext.FlatAppearance.BorderColor = Color.White;
       btnNext.FlatAppearance.BorderSize = 0;
       btnNext.FlatStyle = FlatStyle.Flat;
-      btnNext.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnNext.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnNext.ForeColor = Color.White;
       btnNext.ImageAlign = ContentAlignment.MiddleLeft;
       btnNext.Location = new Point(738, 3);

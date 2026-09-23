@@ -28,7 +28,7 @@ namespace LTP.Truck.Forms
       OwnerDraw = true,
       ShowAlways = true
     };
-    private readonly Font _deleteReasonToolTipFont = new("Segoe UI", 16F);
+    private readonly Font _deleteReasonToolTipFont = new("Segoe UI", 14F);
     private string _deleteReasonToolTipText = string.Empty;
     private int _statusFilterIndex = 1;
     private int _typeFilterIndex;

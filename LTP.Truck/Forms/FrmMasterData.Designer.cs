@@ -74,7 +74,7 @@ namespace LTP.Truck.Forms
       dgv.BorderStyle = BorderStyle.None;
       dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle7.BackColor = SystemColors.Control;
-      dataGridViewCellStyle7.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
@@ -83,7 +83,7 @@ namespace LTP.Truck.Forms
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle8.BackColor = SystemColors.Window;
-      dataGridViewCellStyle8.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle8.ForeColor = SystemColors.ControlText;
       dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
@@ -95,7 +95,7 @@ namespace LTP.Truck.Forms
       dgv.ReadOnly = true;
       dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle9.BackColor = SystemColors.Control;
-      dataGridViewCellStyle9.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle9.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle9.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
@@ -131,7 +131,7 @@ namespace LTP.Truck.Forms
       label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
-      label4.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
@@ -148,7 +148,7 @@ namespace LTP.Truck.Forms
       txtSearch.BorderFocusColor = Color.HotPink;
       txtSearch.BorderRadius = 5;
       txtSearch.BorderSize = 2;
-      txtSearch.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtSearch.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearch.ForeColor = Color.FromArgb(64, 64, 64);
       txtSearch.Location = new Point(106, 10);
       txtSearch.Margin = new Padding(4);
@@ -174,7 +174,7 @@ namespace LTP.Truck.Forms
       btnSearch.FlatAppearance.BorderColor = Color.White;
       btnSearch.FlatAppearance.BorderSize = 0;
       btnSearch.FlatStyle = FlatStyle.Flat;
-      btnSearch.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnSearch.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnSearch.ForeColor = Color.White;
       btnSearch.Location = new Point(1046, 3);
       btnSearch.Name = "btnSearch";
@@ -190,7 +190,7 @@ namespace LTP.Truck.Forms
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label27.AutoSize = true;
       label27.BackColor = Color.FromArgb(199, 199, 199);
-      label27.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label27.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label27.Location = new Point(0, 0);
       label27.Margin = new Padding(0);
       label27.Name = "label27";

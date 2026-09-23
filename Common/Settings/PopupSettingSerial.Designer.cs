@@ -120,7 +120,7 @@ namespace Common.Settings
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
@@ -134,7 +134,7 @@ namespace Common.Settings
       label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label5.AutoSize = true;
       label5.BackColor = Color.Transparent;
-      label5.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label5.Location = new Point(0, 61);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
@@ -148,7 +148,7 @@ namespace Common.Settings
       label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label6.AutoSize = true;
       label6.BackColor = Color.Transparent;
-      label6.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label6.Location = new Point(0, 122);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
@@ -174,7 +174,7 @@ namespace Common.Settings
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.FromArgb(199, 199, 199);
-      label1.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -210,7 +210,7 @@ namespace Common.Settings
       btnConfirm.BorderSize = 0;
       btnConfirm.FlatAppearance.BorderSize = 0;
       btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnConfirm.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = Properties.Resources.icon_confirm;
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
@@ -234,7 +234,7 @@ namespace Common.Settings
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = Properties.Resources.icon_close;
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
@@ -271,7 +271,7 @@ namespace Common.Settings
     {
       label.AutoSize = true;
       label.Dock = DockStyle.Fill;
-      label.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label.Margin = Padding.Empty;
       label.TabIndex = tabIndex;
       label.Text = text;
@@ -282,7 +282,7 @@ namespace Common.Settings
     {
       textBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       textBox.BorderStyle = BorderStyle.FixedSingle;
-      textBox.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      textBox.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       textBox.Margin = new Padding(3, 10, 3, 10);
       textBox.TabIndex = tabIndex;
       textBox.Text = text;

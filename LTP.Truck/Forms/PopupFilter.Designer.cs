@@ -43,7 +43,7 @@ namespace LTP.Truck.Forms
       label21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label21.AutoSize = true;
       label21.BackColor = Color.Transparent;
-      label21.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label21.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label21.Location = new Point(9, 76);
       label21.Margin = new Padding(0);
       label21.Name = "label21";
@@ -69,7 +69,7 @@ namespace LTP.Truck.Forms
       labelType.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       labelType.AutoSize = true;
       labelType.BackColor = Color.Transparent;
-      labelType.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      labelType.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       labelType.Location = new Point(9, 141);
       labelType.Margin = new Padding(0);
       labelType.Name = "labelType";
@@ -95,7 +95,7 @@ namespace LTP.Truck.Forms
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.Transparent;
-      label1.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(9, 9);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -114,7 +114,7 @@ namespace LTP.Truck.Forms
       btnConfirm.BorderSize = 0;
       btnConfirm.FlatAppearance.BorderSize = 0;
       btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnConfirm.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
@@ -137,7 +137,7 @@ namespace LTP.Truck.Forms
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
