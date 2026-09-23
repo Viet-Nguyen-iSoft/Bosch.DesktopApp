@@ -15,7 +15,7 @@ namespace iSoft.Communication.Mode
     public double? TareWeight;
     public UnitOfWeight Unit;
     public ActiveWeighingStatus ActiveWeighingStatus { get; set; }
-    public eValueWeightType EValueWeightType { get; set; }
+    public EnumValueWeightType EValueWeightType { get; set; }
 
     public static SicsOutputData? Decode(string message)
     {
@@ -31,7 +31,7 @@ namespace iSoft.Communication.Mode
 
         if (key == "S")
         {
-          sicsOutputData.EValueWeightType = eValueWeightType.Net;
+          sicsOutputData.EValueWeightType = EnumValueWeightType.Net;
           if (parts[1] == "S")
           {
             sicsOutputData.IndicatedWeight = double.Parse(parts[2]);
@@ -67,7 +67,7 @@ namespace iSoft.Communication.Mode
         }
         else if (key == "TA")
         {
-          sicsOutputData.EValueWeightType = eValueWeightType.Tare;
+          sicsOutputData.EValueWeightType = EnumValueWeightType.Tare;
           sicsOutputData.TareWeight = double.Parse(parts[2]);
         }  
 

@@ -2,6 +2,7 @@
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
+using LTP.Truck.Services;
 using QRCoder;
 using System;
 using System.Collections.Generic;
@@ -67,6 +68,11 @@ namespace LTP.Truck.Controls
     public readonly ConnectionService _connectionService = new();
     public readonly UserService _userService = new();
     public readonly PermissionService _permissionService = new();
+    public readonly LicensePlateService _licensePlateService = new();
+    public readonly ApiJobsService _apiJobsService = new();
+    private readonly ApiJobsBackgroundService _apiJobsBackgroundService = new();
+    private readonly CancellationTokenSource _apiJobsCancellation = new();
+    private Task? _apiJobsTask;
 
     public event Action<Station?>? OnChangeStation;
 
@@ -77,36 +83,14 @@ namespace LTP.Truck.Controls
       try
       {
         LoadDataConfig().Wait();
-        // _enableRabbit = (Environment.GetEnvironmentVariable("IS_ENABLE_RABBITMQ").ToLower() == "true");
-
-        // _hostAPI = Environment.GetEnvironmentVariable("HOST_API");
-        // _baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        // _apiKey = Environment.GetEnvironmentVariable("API_KEY");
-
-        // _isPrinterLabel = (Environment.GetEnvironmentVariable("IS_PRINTER_LABEL").ToLower() == "true");
-        // _delivery_permit_hour = int.Parse(Environment.GetEnvironmentVariable("HOUR_DELIVERY"));
-        // _isAdmin = (Environment.GetEnvironmentVariable("IS_ADMIN").ToLower() == "true");
-
-        // _timeout_backhome_minute = int.Parse(Environment.GetEnvironmentVariable("TIME_OUT_BACKHOME"));
-        // _alarm = (Environment.GetEnvironmentVariable("ALARM").ToLower() == "true");
 
         if (!Directory.Exists(_folderFileLog))
           Directory.CreateDirectory(_folderFileLog);
 
-        // _isTopMost = !_isAdmin;
-
-        // _dataManager.DataLogPrintLabel = new DataLogPrintLabel();
-        // _dataManager.DataLogDelivery = new DataLogDeliveryManager();
-        //_dataManager.Machine = _machineCurrent;
-
-        // _inforLine = _appConfig.Version + " - " + _machineCurrent?.Name ?? string.Empty;
-        // _ipPrintLabel = _appConfig?.NamePrinter ?? string.Empty;
-
-        // if (_alarm)
-        // {
-        //   _s7NetService = new S7NetService();
-        //   _s7NetService.Connect("192.168.3.202", 1000, 500, 1);
-        // }  
+        _apiJobsTask ??= _apiJobsBackgroundService.RunAsync(
+          _apiJobsCancellation.Token,
+          ex => LogHelper.LogErrorToFileLog(ex, _folderFileLog));
+        Application.ApplicationExit += (_, _) => _apiJobsCancellation.Cancel();
 
         StartShowUI();
       }

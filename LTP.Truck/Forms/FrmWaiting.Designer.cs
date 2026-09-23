@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class FrmWaiting
   {
@@ -31,8 +31,7 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmWaiting));
       tableLayoutPanel1 = new TableLayoutPanel();
       tableLayoutPanel2 = new TableLayoutPanel();
-      lbVersion = new Label();
-      lbStatusHID = new Label();
+      lbs = new Label();
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel4 = new TableLayoutPanel();
       ucPanelLogin1 = new LTP.Truck.UserControls.UcPanelLogin();
@@ -41,6 +40,7 @@
       label2 = new Label();
       lbTitle = new Label();
       btnMenu = new PictureBox();
+      lbVersion = new Label();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -69,12 +69,12 @@
       // 
       tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel2.BackColor = Color.Red;
-      tableLayoutPanel2.ColumnCount = 3;
+      tableLayoutPanel2.ColumnCount = 2;
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel2.Controls.Add(lbVersion, 0, 0);
-      tableLayoutPanel2.Controls.Add(lbStatusHID, 2, 0);
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel2.Controls.Add(lbVersion, 1, 0);
+      tableLayoutPanel2.Controls.Add(lbs, 0, 0);
       tableLayoutPanel2.Location = new Point(0, 991);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -83,34 +83,20 @@
       tableLayoutPanel2.Size = new Size(1886, 50);
       tableLayoutPanel2.TabIndex = 21;
       // 
-      // lbVersion
+      // lbs
       // 
-      lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      lbVersion.AutoSize = true;
-      lbVersion.Font = new Font("Microsoft Sans Serif", 20.25F, FontStyle.Bold);
-      lbVersion.ForeColor = Color.White;
-      lbVersion.Location = new Point(0, 0);
-      lbVersion.Margin = new Padding(0);
-      lbVersion.Name = "lbVersion";
-      lbVersion.Padding = new Padding(10, 0, 0, 0);
-      lbVersion.Size = new Size(866, 50);
-      lbVersion.TabIndex = 14;
-      lbVersion.Text = "Copyright @ 2026 i-Soft JSC. All rights reserved.  | Version 1.0.0";
-      lbVersion.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // lbStatusHID
-      // 
-      lbStatusHID.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      lbStatusHID.AutoSize = true;
-      lbStatusHID.Font = new Font("Microsoft Sans Serif", 20.25F, FontStyle.Italic);
-      lbStatusHID.ForeColor = Color.Red;
-      lbStatusHID.Location = new Point(1556, 0);
-      lbStatusHID.Name = "lbStatusHID";
-      lbStatusHID.Padding = new Padding(0, 0, 30, 0);
-      lbStatusHID.Size = new Size(327, 50);
-      lbStatusHID.TabIndex = 21;
-      lbStatusHID.Text = "Mất kết nối đọc thẻ HID";
-      lbStatusHID.TextAlign = ContentAlignment.MiddleRight;
+      lbs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbs.AutoSize = true;
+      lbs.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
+      lbs.ForeColor = Color.White;
+      lbs.Location = new Point(0, 0);
+      lbs.Margin = new Padding(0);
+      lbs.Name = "lbs";
+      lbs.Padding = new Padding(10, 0, 0, 0);
+      lbs.Size = new Size(693, 50);
+      lbs.TabIndex = 14;
+      lbs.Text = "Copyright @ 2026 i-Soft JSC. All rights reserved.  | ";
+      lbs.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel3
       // 
@@ -192,7 +178,7 @@
       // 
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
-      label2.Font = new Font("Segoe UI", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label2.Location = new Point(3, 575);
       label2.Name = "label2";
       label2.Size = new Size(849, 45);
@@ -204,7 +190,7 @@
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Segoe UI", 45.25F, FontStyle.Bold);
+      lbTitle.Font = new Font("Roboto", 45.25F, FontStyle.Bold);
       lbTitle.Location = new Point(3, 493);
       lbTitle.Name = "lbTitle";
       lbTitle.Size = new Size(849, 82);
@@ -224,6 +210,20 @@
       btnMenu.TabIndex = 20;
       btnMenu.TabStop = false;
       btnMenu.Click += btnMenu_Click;
+      // 
+      // lbVersion
+      // 
+      lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbVersion.AutoSize = true;
+      lbVersion.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
+      lbVersion.ForeColor = Color.White;
+      lbVersion.Location = new Point(693, 0);
+      lbVersion.Margin = new Padding(0);
+      lbVersion.Name = "lbVersion";
+      lbVersion.Padding = new Padding(10, 0, 0, 0);
+      lbVersion.Size = new Size(1193, 50);
+      lbVersion.TabIndex = 22;
+      lbVersion.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // FrmWaiting
       // 
@@ -249,8 +249,7 @@
 
     private TableLayoutPanel tableLayoutPanel1;
     private TableLayoutPanel tableLayoutPanel2;
-    private Label lbVersion;
-    private Label lbStatusHID;
+    private Label lbs;
     private TableLayoutPanel tableLayoutPanel3;
     private TableLayoutPanel tableLayoutPanel4;
     private TableLayoutPanel tableLayoutPanel5;
@@ -259,5 +258,6 @@
     private Label lbTitle;
     private PictureBox btnMenu;
     private UserControls.UcPanelLogin ucPanelLogin1;
+    private Label lbVersion;
   }
 }

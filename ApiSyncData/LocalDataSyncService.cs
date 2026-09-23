@@ -1,8 +1,10 @@
 using ApiSyncData.Record;
+using HelperManager;
 using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ApiSyncData
 {
@@ -11,15 +13,17 @@ namespace ApiSyncData
     private static readonly SemaphoreSlim SyncLock = new(1, 1);
 
     public static int LastSynchronizedCount { get; private set; }
+    public static string? PathFolderSrc { get; private set; }
 
     /// <summary>
     /// Đồng bộ RecordTruck và RecordWeight local chưa được gửi lên server sau mỗi 5 giây.
     /// Bản ghi lỗi sẽ giữ SyncFlag = false để được thử lại ở chu kỳ tiếp theo.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
-      CancellationToken cancellationToken = default,
+      CancellationToken cancellationToken = default, string? pathFolderSrc = null,
       Action<Exception>? onError = null)
     {
+      PathFolderSrc = pathFolderSrc;
       var api = new ApiService();
       return PeriodicRunner.RunEvery5SecondsAsync(
         async token =>
@@ -38,6 +42,12 @@ namespace ApiSyncData
       CancellationToken cancellationToken = default)
     {
       ArgumentNullException.ThrowIfNull(api);
+
+      if (!await CanReachServerAsync(cancellationToken).ConfigureAwait(false))
+      {
+        LastSynchronizedCount = 0;
+        return 0;
+      }
 
       await SyncLock.WaitAsync(cancellationToken).ConfigureAwait(false);
       try
@@ -62,6 +72,25 @@ namespace ApiSyncData
       {
         SyncLock.Release();
       }
+    }
+
+    private static async Task<bool> CanReachServerAsync(
+      CancellationToken cancellationToken)
+    {
+      await using var db = new MySqlDbContext();
+      var appConfig = await db.Set<AppConfig>()
+        .AsNoTracking()
+        .Where(config => !config.DeletedFlag)
+        .FirstOrDefaultAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      cancellationToken.ThrowIfCancellationRequested();
+
+      if (appConfig == null || string.IsNullOrWhiteSpace(appConfig.IpServer))
+        return false;
+
+      var pingTimeout = Math.Clamp(appConfig.TimeoutConnectServer ?? 500, 100, 1000);
+      return TcpHelper.IsPing(appConfig.IpServer.Trim(), pingTimeout);
     }
 
     private static async Task<int> SyncRecordTrucksAsync(
@@ -93,6 +122,10 @@ namespace ApiSyncData
           {
             synchronizedCount++;
           }
+
+          //Đồng bộ pdf
+          string pathPdf = Path.Combine(PathFolderSrc + "Report", $"{record.Id.ToString().Replace("-", "").Replace(" ", "")}.pdf");
+          await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -186,8 +219,7 @@ namespace ApiSyncData
     {
       await using var db = new MySqlDbContext();
       return await db.Set<RecordWeight>()
-        .Where(record => !record.SyncFlag &&
-          record.RecordTruckId.HasValue)
+        .Where(record => !record.SyncFlag)
         .Include(record => record.Station)
         .Include(record => record.User)
         .Include(record => record.Product)
@@ -241,6 +273,8 @@ namespace ApiSyncData
         CreatedAt = record.CreatedAt,
         UpdatedAt = record.UpdatedAt,
         DeletedFlag = record.DeletedFlag,
+        WeighInAt = record.WeighInAt,
+        WeighOutAt = record.WeighOutAt,
       };
     }
 
@@ -251,6 +285,7 @@ namespace ApiSyncData
         Id = record.Id,
         Net = record.Net,
         Tare = record.Tare,
+        LicensePlate = record.LicensePlate,
         StationId = GetSourceId(
           nameof(RecordWeight),
           record.Id,

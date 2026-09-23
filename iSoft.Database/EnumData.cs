@@ -54,6 +54,7 @@ namespace iSoft.Database
       DoneTime01,
       WeightedTime02, //KHông dùng
       DoneTime02,
+      Delete,
     }
   }
 }

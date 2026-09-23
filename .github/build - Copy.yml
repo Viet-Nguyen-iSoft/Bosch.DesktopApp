@@ -1,0 +1,71 @@
+name: Build WinForms
+
+on:
+  push:
+    branches:
+      - Release
+
+permissions:
+  contents: write
+
+env:
+  PROJECT_PATH: LTP.Truck/LTP.Truck.csproj
+  PUBLISH_DIR: publish
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ${{ env.PUBLISH_DIR }} --no-build
+
+      - name: Generate Version
+        shell: pwsh
+        run: |
+          $version = "v1.0.${{ github.run_number }}"
+          "VERSION=$version" >> $env:GITHUB_ENV
+          Set-Content -Path version.txt -Value $version -Encoding utf8NoBOM
+          Write-Host "Version = $version"
+
+      - name: Create Update.zip
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "${{ env.PUBLISH_DIR }}\*" -DestinationPath Update.zip -Force
+
+      - name: Create Git Tag
+        shell: pwsh
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git tag $env:VERSION
+          git push origin $env:VERSION
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          generate_release_notes: true
+          files: |
+            Update.zip
+            version.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -18,9 +18,9 @@ namespace iSoft.Communication.Interface
     public string? DataAsString { get; set; }
 
     public eDataType eDataType { get; }
-    public eModeCommunication eModeCommunication { get; set; }
+    public EnumModeCommunication eModeCommunication { get; set; }
 
-    public eValueWeightType eValueWeightType { get; set; }
+    public EnumValueWeightType eValueWeightType { get; set; }
 
     public DateTime SourceDateTime { get; set; }
   }

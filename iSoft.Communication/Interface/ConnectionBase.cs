@@ -11,18 +11,16 @@ namespace iSoft.Communication.Interface
     public bool IsConnected { get; protected set; }
     public bool AutoConnect { get; set; }
     public int Timeout { get; set; }
-    public eModeCommunication EModeCommunication { get; set; }
+    public EnumModeCommunication EModeCommunication { get; set; }
     public ActiveWeighingStatus ActiveWeighingStatus { get; set; }
     public eDevice ETypeInput { get; set; }
-    public eValueWeightType EValueWeightType { get; set; } = eValueWeightType.Net;
+    public EnumValueWeightType EValueWeightType { get; set; } = EnumValueWeightType.Net;
 
     public bool IsRequestGetData { get; set; } = false;
     public int IntervalRequestGetData { get; set; } = 200;
 
-    public MessageDataOutput MessageDataOutput { get; set; } = new MessageDataOutput();
-
-
-    public event EventHandler<MessageDataOutput> DataReceived;
+    public DataWeightInterface DataWeightInterface { get;set; } = new DataWeightInterface();
+    public event EventHandler<DataWeightInterface> DataWeightReceived;
     public event EventHandler<bool> ConnectionStatusChanged;
     public event EventHandler<ActiveWeighingStatus> OnActiveWeighingStatusChangeEvent;
 
@@ -30,7 +28,7 @@ namespace iSoft.Communication.Interface
     private System.Timers.Timer TimeRequestGetData = new System.Timers.Timer();
 
     private StandardContinuousOutputData _standardContinuousOutputData;
-    public ConnectionBase(string id, Guid? machineId, eModeCommunication eModeCommunication, eDevice eTypeInput, string nameDevice, int timeout = 5000, bool autoConnect = true, bool requestGetData = false, int intervalRequestGetData = 200)
+    public ConnectionBase(string id, Guid? machineId, EnumModeCommunication eModeCommunication, eDevice eTypeInput, string nameDevice, int timeout = 5000, bool autoConnect = true, bool requestGetData = false, int intervalRequestGetData = 200)
     {
       this.Id = id;
       this.MachineId = machineId;
@@ -44,6 +42,12 @@ namespace iSoft.Communication.Interface
 
       TimerAutoConnect.Elapsed += TimerAutoConnect_Elapsed;
       TimeRequestGetData.Elapsed += TimeRequestGetData_Elapsed;
+    }
+
+    event EventHandler<DataWeightInterface> IScaleConnection.DataReceived
+    {
+      add => DataWeightReceived += value;
+      remove => DataWeightReceived -= value;
     }
 
     public abstract void Connect();
@@ -127,15 +131,15 @@ namespace iSoft.Communication.Interface
         //  SendData("SXI\r\n");
         //  EValueWeightType = eValueWeightType.All;
         //}
-        if (EValueWeightType == eValueWeightType.Net)
+        if (EValueWeightType == EnumValueWeightType.Net)
         {
           SendData("SI\r\n");
-          EValueWeightType = eValueWeightType.Tare;
+          EValueWeightType = EnumValueWeightType.Tare;
         }
-        else if (EValueWeightType == eValueWeightType.Tare)
+        else if (EValueWeightType == EnumValueWeightType.Tare)
         {
           SendData("TA\r\n");
-          EValueWeightType = eValueWeightType.Net;
+          EValueWeightType = EnumValueWeightType.Net;
         }
       }
       catch (Exception)
@@ -148,56 +152,49 @@ namespace iSoft.Communication.Interface
       }
     }
 
-    protected virtual void OnDataReceived(MessageDataInput messageDataInput)
+    protected virtual void OnDataReceived(MessageDataInput messageDataInput, EnumModeCommunication eModeCommunication)
     {
       try
       {
-        var result = Processing(messageDataInput);
-        if (result!=null)
+        if (eModeCommunication == EnumModeCommunication.SICS)
         {
-          if (result.eValueWeight == eValueWeightType.Tare)
+          var data = SicsOutputData.Decode(messageDataInput?.DataAsString ?? string.Empty);
+          if (data != null)
           {
-            this.MessageDataOutput.Source = result.Source;
-            this.MessageDataOutput.MachineId = messageDataInput.MachineId;
-            this.MessageDataOutput.NameDevice = result.NameDevice;
-            this.MessageDataOutput.ValueTare = result.ValueTare;
-            this.MessageDataOutput.eValueWeight = result.eValueWeight;
-            this.MessageDataOutput.SourceDateTime = result.SourceDateTime;
-            this.MessageDataOutput.DataAsBytes = result.DataAsBytes;
-            this.MessageDataOutput.DataAsString = result.DataAsString;
+            if (data.EValueWeightType == EnumValueWeightType.Net)
+            {
+              DataWeightInterface.IndicatedWeight = data.IndicatedWeight ?? 0.0;
+            }
+            else if (data.EValueWeightType == EnumValueWeightType.Tare)
+            {
+              DataWeightInterface.TareWeight = data.TareWeight ?? 0.0;
+            }
+            else
+            {
+              DataWeightInterface.IndicatedWeight = 0.0;
+              DataWeightInterface.TareWeight = 0.0;
+            }
+            DataWeightInterface.Unit = data.Unit;
+            DataWeightInterface.ActiveWeighingStatus = data.ActiveWeighingStatus;
+            DataWeightReceived?.Invoke(this, DataWeightInterface);
           }
-          else if (result.eValueWeight == eValueWeightType.Net)
-          {
-            this.MessageDataOutput.Source = result.Source;
-            this.MessageDataOutput.MachineId = messageDataInput.MachineId;
-            this.MessageDataOutput.NameDevice = result.NameDevice;
-            this.MessageDataOutput.ValueWeight = result.ValueWeight;
-            this.MessageDataOutput.eValueWeight = result.eValueWeight;
-            this.MessageDataOutput.unitOfWeight = result.unitOfWeight;
-            this.MessageDataOutput.SourceDateTime = result.SourceDateTime;
-            this.MessageDataOutput.DataAsBytes = result.DataAsBytes;
-            this.MessageDataOutput.DataAsString = result.DataAsString;
-          }
-          else
-          {
-            this.MessageDataOutput.Source = result.Source;
-            this.MessageDataOutput.MachineId = messageDataInput.MachineId;
-            this.MessageDataOutput.NameDevice = result.NameDevice;
-            this.MessageDataOutput.ValueWeight = result.ValueWeight;
-            this.MessageDataOutput.ValueTare = result.ValueTare;
-            this.MessageDataOutput.eValueWeight = result.eValueWeight;
-            this.MessageDataOutput.unitOfWeight = result.unitOfWeight;
-            this.MessageDataOutput.SourceDateTime = result.SourceDateTime;
-            this.MessageDataOutput.DataAsBytes = result.DataAsBytes;
-            this.MessageDataOutput.DataAsString = result.DataAsString;
-          }  
         }  
-
-        DataReceived?.Invoke(this, this.MessageDataOutput);
+        else if (eModeCommunication == EnumModeCommunication.SCOD)
+        {
+          var data = StandardContinuousOutputData.Decode(messageDataInput?.DataAsBytes);
+          if (data != null)
+          {
+            DataWeightInterface.IndicatedWeight = data?.IndicatedWeight ?? 0.0;
+            DataWeightInterface.TareWeight = data?.TareWeight ?? 0.0;
+            DataWeightInterface.Unit = data?.Unit ?? UnitOfWeight.None;
+            DataWeightInterface.ActiveWeighingStatus = data?.StatusB.ActiveWeighingStatus?? ActiveWeighingStatus.Default;
+            DataWeightReceived?.Invoke(this, DataWeightInterface);
+          }
+        }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        //TODO
+        throw;
       }
     }
 
@@ -207,155 +204,5 @@ namespace iSoft.Communication.Interface
       ConnectionStatusChanged?.Invoke(this, isConnected);
     }
 
-    public MessageDataOutput? Processing(MessageDataInput messsage)
-    {
-      try
-      {
-        MessageDataOutput messageDataOutput = new MessageDataOutput();
-        double _IndicatedWeight = 0;
-        double _IndicatedTare = 0;
-
-        messageDataOutput.unitOfWeight = UnitOfWeight.Kilograms;
-
-        switch (messsage.eModeCommunication)
-        {
-          case eModeCommunication.None:
-            messageDataOutput.DataAsBytes = messsage?.DataAsBytes ?? new byte[255];
-            messageDataOutput.DataAsString = messsage?.DataAsString ?? string.Empty;
-            break;
-          case eModeCommunication.SICS:
-            messageDataOutput.DataAsBytes = messsage?.DataAsBytes ?? new byte[255];
-            messageDataOutput.DataAsString = messsage?.DataAsString ?? string.Empty;
-            var sicsFormatData = SicsOutputData.Decode(messageDataOutput?.DataAsString ?? string.Empty);
-            if (sicsFormatData != null)
-            {
-              if (sicsFormatData.EValueWeightType == eValueWeightType.All)
-              {
-                messageDataOutput.ValueWeight = sicsFormatData.IndicatedWeight ?? 0;
-                messageDataOutput.ValueTare = sicsFormatData.TareWeight ?? 0;
-                messageDataOutput.activeWeighingStatus = sicsFormatData.ActiveWeighingStatus;
-                messageDataOutput.unitOfWeight = sicsFormatData.Unit;
-              }
-              else if (sicsFormatData.EValueWeightType == eValueWeightType.Net)
-              {
-                messageDataOutput.ValueWeight = sicsFormatData.IndicatedWeight ?? 0.0;
-                messageDataOutput.activeWeighingStatus = sicsFormatData.ActiveWeighingStatus;
-                messageDataOutput.unitOfWeight = sicsFormatData.Unit;
-                messageDataOutput.eValueWeight = eValueWeightType.Net;
-              }
-              else if (sicsFormatData.EValueWeightType == eValueWeightType.Tare)
-              {
-                messageDataOutput.ValueTare = sicsFormatData.TareWeight ?? 0.0;
-                //messageDataOutput.activeWeighingStatus = sicsFormatData.ActiveWeighingStatus;
-                //messageDataOutput.unitOfWeight = sicsFormatData.Unit;
-                messageDataOutput.eValueWeight = eValueWeightType.Tare;
-              }
-            }
-            else
-            {
-              return null;
-            }
-            break;
-          case eModeCommunication.SCOD:
-            StandardContinuousOutputData newStandardContinuousOutputData = new StandardContinuousOutputData();
-            var dataBytes = messsage.DataAsBytes;
-            var len = dataBytes.Length;
-
-            newStandardContinuousOutputData = StandardContinuousOutputData.Decode(dataBytes, false);
-            if (newStandardContinuousOutputData != null)
-            {
-              _IndicatedWeight = (newStandardContinuousOutputData?.IndicatedWeight == null) ? 0 : (double)newStandardContinuousOutputData.IndicatedWeight;
-              _IndicatedTare = (newStandardContinuousOutputData?.TareWeight == null) ? 0 : (double)newStandardContinuousOutputData.TareWeight;
-
-              messageDataOutput.ValueWeight = _IndicatedWeight;
-              messageDataOutput.ValueTare = _IndicatedTare;
-
-              if (this.ActiveWeighingStatus != newStandardContinuousOutputData?.StatusB.ActiveWeighingStatus)
-                OnActiveWeighingStatusChangeEvent?.Invoke(this, newStandardContinuousOutputData.StatusB.ActiveWeighingStatus);
-
-              this._standardContinuousOutputData = newStandardContinuousOutputData;
-              this.ActiveWeighingStatus = _standardContinuousOutputData.StatusB.ActiveWeighingStatus;
-
-              messageDataOutput.unitOfWeight = _standardContinuousOutputData.Unit;
-              messageDataOutput.activeWeighingStatus = this.ActiveWeighingStatus;
-              messageDataOutput.DataAsBytes = messsage.DataAsBytes ?? new byte[0];
-              messageDataOutput.DataAsString = messsage.DataAsString ?? string.Empty;
-              messageDataOutput.eValueWeight = eValueWeightType.All;
-            }
-            break;
-          case eModeCommunication.OHAUS:
-          case eModeCommunication.Continuous:
-            // TOTO: 
-            //var continuousFomatData = ContinuousFomatData.Decode(dataReceived.DataAsString);
-
-            //if (continuousFomatData.Status != this.ActiveWeighingStatus)
-            //{
-            //  this.ActiveWeighingStatus = continuousFomatData.Status;
-            //  OnActiveWeighingStatusChangeEvent?.Invoke(this, this.ActiveWeighingStatus);
-            //}
-
-
-            //_unit = continuousFomatData.Unit;
-            //_IndicatedWeight = continuousFomatData.Indicated;
-            break;
-          case eModeCommunication.Digi:
-            // TOTO: 
-            //var digiFormatData = DigiFormatData.Decode(dataReceived.DataAsString);
-
-            //if (digiFormatData.Status != this.ActiveWeighingStatus)
-            //{
-            //  this.ActiveWeighingStatus = digiFormatData.Status;
-            //  OnActiveWeighingStatusChangeEvent?.Invoke(this, this.ActiveWeighingStatus);
-            //}
-
-
-            //_unit = digiFormatData.Unit;
-            //_IndicatedWeight = digiFormatData.Indicated;
-
-            break;
-          default:
-            break;
-        }
-
-        //switch (_unit)
-        //{
-        //  case UnitOfWeight.Kilograms:
-        //    this.Unit = WeighingUnit.Kilograms;
-        //    break;
-        //  case UnitOfWeight.Grams:
-        //    this.Unit = WeighingUnit.Grams;
-        //    break;
-        //  case UnitOfWeight.Pounds:
-        //    this.Unit = WeighingUnit.Pounds;
-        //    break;
-        //  case UnitOfWeight.Ounces:
-        //    this.Unit = WeighingUnit.Ounces;
-        //    break;
-        //  default:
-        //    this.Unit = WeighingUnit.Kilograms;
-        //    break;
-        //}
-        //receiveStopwatch.Restart();
-        //LastRecievedData = DateTime.Now;
-        //this.CountRecievedData++;
-        //LastIndicatedWeight = _IndicatedWeight;
-
-        //RecievedInterval.Enqueue(receiveStopwatch.Elapsed);
-        //if (RecievedInterval.Count > 100)
-        //  RecievedInterval.Dequeue();
-
-        messageDataOutput.Source = messsage.Source;
-        messageDataOutput.NameDevice = messsage.NameDevice;
-        messageDataOutput.SourceDateTime = messsage.SourceDateTime;
-        return messageDataOutput;
-      }
-      catch (Exception ex)
-      {
-        //TODO
-        string a = ex.StackTrace;
-        return null;
-      }
-      
-    }
   }
 }

@@ -167,5 +167,23 @@ namespace HelperManager
       Detail
     }
 
+    public enum EnumTypeAPI
+    {
+      [Description("None")]
+      None,
+      Plate,
+
+    }
+
+    public enum EnumStatusAPI
+    {
+      [Description("Created")]
+      Created,
+      [Description("Success")]
+      Success,
+      [Description("Fail")]
+      Fail,
+      
+    }
   }
 }

@@ -2,6 +2,7 @@
 using Common.Settings;
 using HelperManager;
 using iSoft.Communication.JsonPayload;
+using iSoft.Communication.Mode;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
@@ -136,12 +137,17 @@ namespace LTP.Truck.Forms
       ElipseControl elipseControl06 = new ElipseControl();
       elipseControl06.CornerRadius = 20;
       elipseControl06.TargetControl = tableLayoutPanel16;
+
+      ElipseControl elipseControl07 = new ElipseControl();
+      elipseControl07.CornerRadius = 20;
+      elipseControl07.TargetControl = tableLayoutPanel17;
     }
 
     private async void FrmSetting_Load(object? sender, EventArgs e)
     {
       LoadInstalledPrinters();
       LoadShowInformationServer(AppCore.Ins._appConfig);
+      LoadReportInformation(AppCore.Ins._appConfig);
       await LoadStationsAsync();
       await LoadWeightConnectionsAsync();
 
@@ -242,6 +248,19 @@ namespace LTP.Truck.Forms
       txtIpServer.Texts = appConfig?.IpServer ?? string.Empty;
       txtPortServer.Texts = appConfig?.PortServer?.ToString() ?? string.Empty;
       txtTimeoutServer.Texts = appConfig?.TimeoutConnectServer?.ToString() ?? string.Empty;
+    }
+
+    private void LoadReportInformation(AppConfig? appConfig)
+    {
+      if (InvokeRequired)
+      {
+        Invoke(new Action(() => LoadReportInformation(appConfig)));
+        return;
+      }
+
+      txtCompany.Texts = appConfig?.Company ?? string.Empty;
+      txtAddress.Texts = appConfig?.Address ?? string.Empty;
+      txtPhone.Texts = appConfig?.Phone ?? string.Empty;
     }
 
     private async void btnSaveStation_Click(object? sender, EventArgs e)
@@ -419,6 +438,7 @@ namespace LTP.Truck.Forms
         obj.DeletedFlag = true;
         obj.UpdatedAt = DateTime.UtcNow;
         await AppCore.Ins._connectionService.AddOrUpdateAsync(obj);
+        AppCore.Ins.DisconnectWeight();
 
         await LoadWeightConnectionsAsync();
       }
@@ -504,8 +524,14 @@ namespace LTP.Truck.Forms
     }
 
 
-    private void btnAddCommWeight_Click(object? sender, EventArgs e)
+    private async void btnAddCommWeight_Click(object? sender, EventArgs e)
     {
+      if (await HasWeightConnectionAsync())
+      {
+        ShowSingleWeightConnectionWarning();
+        return;
+      }
+
       PopupChooseComm popupChooseComm = new PopupChooseComm();
       popupChooseComm.OnSendConfirm += PopupChooseComm_OnSendConfirm;
       popupChooseComm.ShowDialog();
@@ -529,13 +555,35 @@ namespace LTP.Truck.Forms
 
     private async void Connection_OnSendConfirm(object? sender, Connection e)
     {
+      if (e.Id == Guid.Empty && await HasWeightConnectionAsync())
+      {
+        ShowSingleWeightConnectionWarning();
+        return;
+      }
+
       e.StationId = AppCore.Ins._station?.Id;
 
-      await AppCore.Ins._connectionService.AddOrUpdateAsync(e);
+      var savedConnection = await AppCore.Ins._connectionService.AddOrUpdateAsync(e);
+      AppCore.Ins.ConnectWeight(savedConnection);
       await LoadWeightConnectionsAsync();
     }
 
-    private void Ins_OnSendDataWeightTruck(object? sender, iSoft.Communication.Interface.MessageDataOutput e)
+    private async Task<bool> HasWeightConnectionAsync()
+    {
+      var connections = await AppCore.Ins._connectionService.GetAllAsync();
+      return connections.Any(connection => connection.EnumDevice == EnumDevice.Weight);
+    }
+
+    private void ShowSingleWeightConnectionWarning()
+    {
+      using var popupMsg = new PopupConfirm(
+        "Chỉ hỗ trợ 1 kết nối cân. Vui lòng xóa kết nối cũ rồi thêm mới hoặc cập nhật kết nối hiện tại.",
+        EnumTypeMsg.MessageManualClose,
+        EnumImageMsg.Warning);
+      popupMsg.ShowDialog(this);
+    }
+
+    private void Ins_OnSendDataWeightTruck(object? sender, DataWeightInterface e)
     {
 
     }
@@ -631,6 +679,49 @@ namespace LTP.Truck.Forms
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popupError = new PopupConfirm(
           "Không thể lưu thông tin cài đặt. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupError.ShowDialog(this);
+      }
+
+    }
+
+    private async void btnInforReport_Click(object sender, EventArgs e)
+    {
+      var appConfig = AppCore.Ins._appConfig;
+      if (appConfig == null)
+      {
+        using var popupWarning = new PopupConfirm(
+          "Không tìm thấy cấu hình ứng dụng !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupWarning.ShowDialog(this);
+        return;
+      }
+
+      try
+      {
+        appConfig.Company = txtCompany.Texts.Trim();
+        appConfig.Address = txtAddress.Texts.Trim();
+        appConfig.Phone = txtPhone.Texts.Trim();
+        appConfig.UpdatedAt = DateTime.UtcNow;
+
+        AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
+          .AddOrUpdateAsync(appConfig);
+
+        LoadReportInformation(AppCore.Ins._appConfig);
+
+        using var popupSuccess = new PopupConfirm(
+          "Đã lưu thông tin báo cáo thành công.",
+          EnumTypeMsg.MessageAutoClose,
+          EnumImageMsg.Information);
+        popupSuccess.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popupError = new PopupConfirm(
+          "Không thể lưu thông tin báo cáo. Vui lòng thử lại !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupError.ShowDialog(this);

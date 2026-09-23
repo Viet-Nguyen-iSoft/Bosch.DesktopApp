@@ -1,8 +1,8 @@
-﻿using ApiSyncData.Resp;
+﻿using ApiSyncData.Req;
+using ApiSyncData.Resp;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.Net.Http.Headers;
-using WebDriverBiDi.Script;
 
 namespace ApiSyncData
 {
@@ -237,7 +237,7 @@ namespace ApiSyncData
     }
 
     public Task<string> UpsertLicensePlateAsync(
-      Req.LicensePlateUpsertRequest licensePlate,
+      LicensePlateUpsertRequest licensePlate,
       string lang = "vi",
       CancellationToken cancellationToken = default)
     {
@@ -245,7 +245,7 @@ namespace ApiSyncData
 
       return PostUpsertMultiLangAsync(
         "LicensePlate",
-        licensePlate.Id,
+        null,
         licensePlate.LicensePlateCode,
         null,
         licensePlate.Description,
@@ -648,7 +648,63 @@ namespace ApiSyncData
       return responseContent;
     }
 
-    public async Task<string> UploadReportTruckPdf(Guid? recordTruck,string pdfFilePath)
+    public static async Task<string> PostUpsertMultiLangLicensePlateAsync(
+      string resource,
+      string licensePlate,
+      string description,
+      string lang,
+      CancellationToken cancellationToken,
+      IReadOnlyDictionary<string, string>? additionalFields = null)
+    {
+      ArgumentException.ThrowIfNullOrWhiteSpace(resource);
+      ArgumentException.ThrowIfNullOrWhiteSpace(licensePlate);
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/{resource}/upsert-multi-lang?lang={Uri.EscapeDataString(lang.Trim())}";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+      using var formData = new MultipartFormDataContent();
+
+      if (!string.IsNullOrWhiteSpace(licensePlate))
+        formData.Add(new StringContent(licensePlate.Trim()), "LicensePlateCode");
+
+      if (!string.IsNullOrWhiteSpace(description))
+        formData.Add(new StringContent(description.Trim()), "Description");
+
+      if (additionalFields != null)
+      {
+        foreach (var field in additionalFields)
+          formData.Add(new StringContent(field.Value), field.Key);
+      }
+
+      using var response = await httpClient.PostAsync(
+        apiUrl,
+        formData,
+        cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"Upsert{resource}. " +
+          $"URL: {apiUrl}. " +
+          $"HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). " +
+          $"Response: {responseContent}");
+      }
+
+      return responseContent;
+    }
+
+    public async Task<string> UploadReportTruckPdf(Guid? recordTruck, string pdfFilePath)
     {
       try
       {

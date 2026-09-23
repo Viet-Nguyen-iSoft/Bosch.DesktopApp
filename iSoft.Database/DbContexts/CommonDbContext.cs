@@ -25,6 +25,8 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<Client>? Clients { get; set; }
     public virtual DbSet<RecordTruck>? RecordTrucks { get; set; }
     public virtual DbSet<RecordWeight>? RecordWeights { get; set; }
+    public virtual DbSet<LicensePlate>? LicensePlates { get; set; }
+    public virtual DbSet<ApiJobs>? ApiJobs { get; set; }
     public virtual DbSet<User>? Users { get; set; }
     public virtual DbSet<Permission>? Permissions { get; set; }
 
@@ -44,6 +46,15 @@ namespace iSoft.Database.DbContexts
       modelBuilder.Entity<RecordTruck>()
         .Property(record => record.LicensePlate)
         .HasMaxLength(20);
+
+      modelBuilder.Entity<LicensePlate>()
+        .Property(licensePlate => licensePlate.Plate)
+        .HasMaxLength(20);
+
+      modelBuilder.Entity<LicensePlate>()
+        .HasIndex(licensePlate => licensePlate.Plate)
+        .IsUnique()
+        .HasDatabaseName("UX_LicensePlates_Name");
 
       modelBuilder.Entity<RecordTruck>()
         .HasIndex(record => new

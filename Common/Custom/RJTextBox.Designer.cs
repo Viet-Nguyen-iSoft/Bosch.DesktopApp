@@ -1,4 +1,4 @@
-﻿namespace Common.Custom
+namespace Common.Custom
 {
     partial class RJTextBox
     {
@@ -52,7 +52,7 @@
       AutoScaleMode = AutoScaleMode.None;
       BackColor = SystemColors.Window;
       Controls.Add(textBox1);
-      Font = new Font("Microsoft Sans Serif", 9.5F);
+      Font = new Font("Roboto", 9.5F);
       ForeColor = Color.FromArgb(64, 64, 64);
       Margin = new Padding(4);
       Name = "RJTextBox";

@@ -1,5 +1,6 @@
 using iSoft.Communication.Interface;
 using iSoft.Communication.JsonPayload;
+using iSoft.Communication.Mode;
 using static iSoft.Communication.EnumCommunication;
 
 namespace iSoft.Communication.Communication;
@@ -14,8 +15,9 @@ public sealed class CommunicationService : ICommunicationService
   private readonly object _syncRoot = new();
   private bool _disposed;
 
-  public event EventHandler<MessageDataOutput>? DataReceived;
+
   public event EventHandler<CommunicationStatusChangedEventArgs>? ConnectionStatusChanged;
+  public event EventHandler<DataWeightInterface>? DataWeightInterface;
 
   public IReadOnlyCollection<IScaleConnection> Connections
   {
@@ -114,8 +116,8 @@ public sealed class CommunicationService : ICommunicationService
   private IScaleConnection GetRequiredConnection(string id) =>
     GetConnection(id) ?? throw new KeyNotFoundException($"Connection '{id}' was not found.");
 
-  private void Connection_DataReceived(object? sender, MessageDataOutput data) =>
-    DataReceived?.Invoke(sender, data);
+  private void Connection_DataReceived(object? sender, DataWeightInterface data) =>
+    DataWeightInterface?.Invoke(sender, data);
 
   private void Connection_ConnectionStatusChanged(object? sender, bool isConnected)
   {

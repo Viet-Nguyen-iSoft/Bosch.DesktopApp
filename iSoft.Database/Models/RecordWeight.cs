@@ -13,6 +13,7 @@ namespace iSoft.Database.Models
   {
     public double Net { get; set; }
     public double Tare { get; set; }
+    public string? LicensePlate { get; set; }
 
 
     #region Mapping

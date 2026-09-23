@@ -1,4 +1,4 @@
-﻿namespace Common.Settings
+namespace Common.Settings
 {
   partial class PopupChooseComm
   {
@@ -67,7 +67,7 @@
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.FromArgb(199, 199, 199);
-      label1.Font = new Font("Roboto Condensed", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -98,11 +98,11 @@
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto Light", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
-      label2.Size = new Size(140, 80);
+      label2.Size = new Size(144, 80);
       label2.TabIndex = 1;
       label2.Text = "Chuẩn kết nối";
       label2.TextAlign = ContentAlignment.MiddleLeft;
@@ -111,11 +111,11 @@
       // 
       cbbConnectionType.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbConnectionType.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbConnectionType.Font = new Font("Roboto Condensed", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbConnectionType.Font = new Font("Roboto", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbConnectionType.FormattingEnabled = true;
-      cbbConnectionType.Location = new Point(143, 21);
+      cbbConnectionType.Location = new Point(147, 21);
       cbbConnectionType.Name = "cbbConnectionType";
-      cbbConnectionType.Size = new Size(368, 37);
+      cbbConnectionType.Size = new Size(364, 37);
       cbbConnectionType.TabIndex = 2;
       // 
       // tableLayoutPanel2
@@ -123,8 +123,8 @@
       tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel2.ColumnCount = 3;
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
       tableLayoutPanel2.Location = new Point(10, 171);
@@ -145,14 +145,14 @@
       btnConfirm.BorderSize = 0;
       btnConfirm.FlatAppearance.BorderSize = 0;
       btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnConfirm.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = Properties.Resources.icon_confirm;
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(197, 3);
+      btnConfirm.Location = new Point(157, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
-      btnConfirm.Size = new Size(154, 54);
+      btnConfirm.Size = new Size(174, 54);
       btnConfirm.TabIndex = 0;
       btnConfirm.Text = "       Xác nhận";
       btnConfirm.TextColor = Color.White;
@@ -169,14 +169,14 @@
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = Properties.Resources.icon_close;
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(357, 3);
+      btnClose.Location = new Point(337, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
-      btnClose.Size = new Size(154, 54);
+      btnClose.Size = new Size(174, 54);
       btnClose.TabIndex = 1;
       btnClose.Text = "       Đóng";
       btnClose.TextColor = Color.White;

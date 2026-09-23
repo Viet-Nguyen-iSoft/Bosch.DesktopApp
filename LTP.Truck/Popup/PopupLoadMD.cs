@@ -90,8 +90,6 @@ namespace LTP.Truck.Popup
         var autoSizeColumns = new[]
         {
             nameof(RecordTruckDTO.No),
-            nameof(RecordTruckDTO.Datetime),
-            nameof(RecordTruckDTO.NoLabelAuto),
             nameof(RecordTruckDTO.NoLabelManual),
           };
         foreach (var columnName in autoSizeColumns)

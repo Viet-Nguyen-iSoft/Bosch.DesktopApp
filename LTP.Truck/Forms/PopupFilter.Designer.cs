@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class PopupFilter
   {
@@ -43,11 +43,11 @@
       label21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label21.AutoSize = true;
       label21.BackColor = Color.Transparent;
-      label21.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label21.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label21.Location = new Point(9, 76);
       label21.Margin = new Padding(0);
       label21.Name = "label21";
-      label21.Size = new Size(105, 30);
+      label21.Size = new Size(108, 27);
       label21.TabIndex = 30;
       label21.Text = "Trạng thái";
       label21.TextAlign = ContentAlignment.MiddleLeft;
@@ -56,12 +56,12 @@
       // 
       cbbStatus.Anchor = AnchorStyles.Left;
       cbbStatus.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbStatus.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbStatus.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbStatus.FormattingEnabled = true;
-      cbbStatus.Items.AddRange(new object[] { "Tất cả", "Cân lần 01", "Cân lần 02" });
+      cbbStatus.Items.AddRange(new object[] { "Tất cả", "Chưa hoàn thành", "Hoàn thành" });
       cbbStatus.Location = new Point(126, 72);
       cbbStatus.Name = "cbbStatus";
-      cbbStatus.Size = new Size(314, 38);
+      cbbStatus.Size = new Size(314, 33);
       cbbStatus.TabIndex = 31;
       // 
       // labelType
@@ -69,11 +69,11 @@
       labelType.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       labelType.AutoSize = true;
       labelType.BackColor = Color.Transparent;
-      labelType.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      labelType.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       labelType.Location = new Point(9, 141);
       labelType.Margin = new Padding(0);
       labelType.Name = "labelType";
-      labelType.Size = new Size(79, 30);
+      labelType.Size = new Size(79, 27);
       labelType.TabIndex = 32;
       labelType.Text = "Dữ liệu";
       labelType.TextAlign = ContentAlignment.MiddleLeft;
@@ -82,12 +82,12 @@
       // 
       cbbType.Anchor = AnchorStyles.Left;
       cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbType.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbType.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbType.FormattingEnabled = true;
       cbbType.Items.AddRange(new object[] { "Tất cả", "Dữ liệu hiện hữu", "Dữ liệu xóa" });
       cbbType.Location = new Point(126, 140);
       cbbType.Name = "cbbType";
-      cbbType.Size = new Size(314, 38);
+      cbbType.Size = new Size(314, 33);
       cbbType.TabIndex = 33;
       // 
       // label1
@@ -95,11 +95,11 @@
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.Transparent;
-      label1.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(9, 9);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
-      label1.Size = new Size(116, 25);
+      label1.Size = new Size(118, 27);
       label1.TabIndex = 34;
       label1.Text = "Lọc dữ liệu";
       label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -114,7 +114,7 @@
       btnConfirm.BorderSize = 0;
       btnConfirm.FlatAppearance.BorderSize = 0;
       btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnConfirm.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
@@ -137,7 +137,7 @@
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;

@@ -38,7 +38,52 @@ namespace iSoft.Database.Service
       return await repository.GetDetailByIdAsync(id, isContainDelete).ConfigureAwait(false);
     }
 
-    public async Task<RecordTruck> AddOrUpdateAsync(RecordTruck recordTruck)
+    public async Task<List<RecordTruck>> GetReportAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex = 0,
+      int typeFilterIndex = 0)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordTruckRepository(context);
+      return await repository.GetReportAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        statusFilterIndex,
+        typeFilterIndex).ConfigureAwait(false);
+    }
+
+    public async Task<(List<RecordTruck> Records, int TotalRecords)> GetReportPageAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex,
+      int typeFilterIndex,
+      int pageNumber,
+      int pageSize)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordTruckRepository(context);
+      return await repository.GetReportPageAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        statusFilterIndex,
+        typeFilterIndex,
+        pageNumber,
+        pageSize).ConfigureAwait(false);
+    }
+
+    public async Task<RecordTruck?> GetPendingByLicensePlateAsync(string licensePlate)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new RecordTruckRepository(context);
+      return await repository.GetPendingByLicensePlateAsync(licensePlate).ConfigureAwait(false);
+    }
+
+    public async Task<(RecordTruck Record, bool Exist, LicensePlate? LicensePlate)> AddOrUpdateAsync(RecordTruck recordTruck)
     {
       try
       {

@@ -1,4 +1,4 @@
-﻿using LTP.Truck.Custom;
+using LTP.Truck.Custom;
 
 namespace LTP.Truck.Forms
 {
@@ -47,8 +47,10 @@ namespace LTP.Truck.Forms
       btnGroupProduct = new RJButton();
       btnProduct = new RJButton();
       btnClient = new RJButton();
+      btnReportTruck = new RJButton();
+      btnReportGoods = new RJButton();
       tableLayoutPanel7 = new TableLayoutPanel();
-      label3 = new Label();
+      lbVersion = new Label();
       pictureBox1 = new PictureBox();
       tableLayoutPanel2 = new TableLayoutPanel();
       tableLayoutPanel4 = new TableLayoutPanel();
@@ -171,6 +173,8 @@ namespace LTP.Truck.Forms
       flowLayoutPanel1.Controls.Add(btnGroupProduct);
       flowLayoutPanel1.Controls.Add(btnProduct);
       flowLayoutPanel1.Controls.Add(btnClient);
+      flowLayoutPanel1.Controls.Add(btnReportTruck);
+      flowLayoutPanel1.Controls.Add(btnReportGoods);
       flowLayoutPanel1.Location = new Point(0, 0);
       flowLayoutPanel1.Margin = new Padding(0);
       flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -187,7 +191,7 @@ namespace LTP.Truck.Forms
       btnHomeTruck.Dock = DockStyle.Top;
       btnHomeTruck.FlatAppearance.BorderSize = 0;
       btnHomeTruck.FlatStyle = FlatStyle.Flat;
-      btnHomeTruck.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnHomeTruck.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnHomeTruck.ForeColor = Color.Black;
       btnHomeTruck.Image = Properties.Resources.icon_truck;
       btnHomeTruck.ImageAlign = ContentAlignment.MiddleLeft;
@@ -196,7 +200,7 @@ namespace LTP.Truck.Forms
       btnHomeTruck.Padding = new Padding(15, 0, 0, 0);
       btnHomeTruck.Size = new Size(242, 70);
       btnHomeTruck.TabIndex = 0;
-      btnHomeTruck.Text = "         CÂN XE TẢI";
+      btnHomeTruck.Text = "        CÂN XE TẢI";
       btnHomeTruck.TextAlign = ContentAlignment.MiddleLeft;
       btnHomeTruck.TextColor = Color.Black;
       btnHomeTruck.UseVisualStyleBackColor = false;
@@ -212,7 +216,7 @@ namespace LTP.Truck.Forms
       btnHomeGoods.Dock = DockStyle.Top;
       btnHomeGoods.FlatAppearance.BorderSize = 0;
       btnHomeGoods.FlatStyle = FlatStyle.Flat;
-      btnHomeGoods.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnHomeGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnHomeGoods.ForeColor = Color.Black;
       btnHomeGoods.Image = Properties.Resources.icon_goods;
       btnHomeGoods.ImageAlign = ContentAlignment.MiddleLeft;
@@ -221,7 +225,7 @@ namespace LTP.Truck.Forms
       btnHomeGoods.Padding = new Padding(15, 0, 0, 0);
       btnHomeGoods.Size = new Size(242, 70);
       btnHomeGoods.TabIndex = 2;
-      btnHomeGoods.Text = "         CÂN HÀNG";
+      btnHomeGoods.Text = "        CÂN HÀNG";
       btnHomeGoods.TextAlign = ContentAlignment.MiddleLeft;
       btnHomeGoods.TextColor = Color.Black;
       btnHomeGoods.UseVisualStyleBackColor = false;
@@ -236,7 +240,7 @@ namespace LTP.Truck.Forms
       btnSetting.Dock = DockStyle.Top;
       btnSetting.FlatAppearance.BorderSize = 0;
       btnSetting.FlatStyle = FlatStyle.Flat;
-      btnSetting.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+      btnSetting.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnSetting.ForeColor = Color.Black;
       btnSetting.Image = (Image)resources.GetObject("btnSetting.Image");
       btnSetting.ImageAlign = ContentAlignment.MiddleLeft;
@@ -245,7 +249,7 @@ namespace LTP.Truck.Forms
       btnSetting.Padding = new Padding(15, 0, 0, 0);
       btnSetting.Size = new Size(242, 70);
       btnSetting.TabIndex = 6;
-      btnSetting.Text = "       CÀI ĐẶT";
+      btnSetting.Text = "        CÀI ĐẶT";
       btnSetting.TextAlign = ContentAlignment.MiddleLeft;
       btnSetting.TextColor = Color.Black;
       btnSetting.UseVisualStyleBackColor = false;
@@ -261,7 +265,7 @@ namespace LTP.Truck.Forms
       btnMasterData.Dock = DockStyle.Top;
       btnMasterData.FlatAppearance.BorderSize = 0;
       btnMasterData.FlatStyle = FlatStyle.Flat;
-      btnMasterData.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnMasterData.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnMasterData.ForeColor = Color.Black;
       btnMasterData.Image = Properties.Resources.icon_btn_masterdata;
       btnMasterData.ImageAlign = ContentAlignment.MiddleLeft;
@@ -270,7 +274,7 @@ namespace LTP.Truck.Forms
       btnMasterData.Padding = new Padding(15, 0, 0, 0);
       btnMasterData.Size = new Size(242, 70);
       btnMasterData.TabIndex = 7;
-      btnMasterData.Text = "         MASTERDATA";
+      btnMasterData.Text = "        MASTERDATA";
       btnMasterData.TextAlign = ContentAlignment.MiddleLeft;
       btnMasterData.TextColor = Color.Black;
       btnMasterData.UseVisualStyleBackColor = false;
@@ -286,7 +290,7 @@ namespace LTP.Truck.Forms
       btnWarehouse.Dock = DockStyle.Top;
       btnWarehouse.FlatAppearance.BorderSize = 0;
       btnWarehouse.FlatStyle = FlatStyle.Flat;
-      btnWarehouse.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnWarehouse.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnWarehouse.ForeColor = Color.Black;
       btnWarehouse.ImageAlign = ContentAlignment.MiddleLeft;
       btnWarehouse.Location = new Point(3, 307);
@@ -309,7 +313,7 @@ namespace LTP.Truck.Forms
       btnTare.Dock = DockStyle.Top;
       btnTare.FlatAppearance.BorderSize = 0;
       btnTare.FlatStyle = FlatStyle.Flat;
-      btnTare.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnTare.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnTare.ForeColor = Color.Black;
       btnTare.ImageAlign = ContentAlignment.MiddleLeft;
       btnTare.Location = new Point(3, 353);
@@ -332,7 +336,7 @@ namespace LTP.Truck.Forms
       btnTypeGoods.Dock = DockStyle.Top;
       btnTypeGoods.FlatAppearance.BorderSize = 0;
       btnTypeGoods.FlatStyle = FlatStyle.Flat;
-      btnTypeGoods.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnTypeGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnTypeGoods.ForeColor = Color.Black;
       btnTypeGoods.ImageAlign = ContentAlignment.MiddleLeft;
       btnTypeGoods.Location = new Point(3, 399);
@@ -355,7 +359,7 @@ namespace LTP.Truck.Forms
       btnGroupProduct.Dock = DockStyle.Top;
       btnGroupProduct.FlatAppearance.BorderSize = 0;
       btnGroupProduct.FlatStyle = FlatStyle.Flat;
-      btnGroupProduct.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnGroupProduct.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnGroupProduct.ForeColor = Color.Black;
       btnGroupProduct.ImageAlign = ContentAlignment.MiddleLeft;
       btnGroupProduct.Location = new Point(3, 445);
@@ -378,7 +382,7 @@ namespace LTP.Truck.Forms
       btnProduct.Dock = DockStyle.Top;
       btnProduct.FlatAppearance.BorderSize = 0;
       btnProduct.FlatStyle = FlatStyle.Flat;
-      btnProduct.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnProduct.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnProduct.ForeColor = Color.Black;
       btnProduct.ImageAlign = ContentAlignment.MiddleLeft;
       btnProduct.Location = new Point(3, 491);
@@ -401,7 +405,7 @@ namespace LTP.Truck.Forms
       btnClient.Dock = DockStyle.Top;
       btnClient.FlatAppearance.BorderSize = 0;
       btnClient.FlatStyle = FlatStyle.Flat;
-      btnClient.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnClient.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnClient.ForeColor = Color.Black;
       btnClient.ImageAlign = ContentAlignment.MiddleLeft;
       btnClient.Location = new Point(3, 537);
@@ -414,12 +418,62 @@ namespace LTP.Truck.Forms
       btnClient.TextColor = Color.Black;
       btnClient.UseVisualStyleBackColor = false;
       // 
+      // btnReportTruck
+      // 
+      btnReportTruck.BackColor = Color.Silver;
+      btnReportTruck.BackgroundColor = Color.Silver;
+      btnReportTruck.BorderColor = Color.PaleVioletRed;
+      btnReportTruck.BorderRadius = 5;
+      btnReportTruck.BorderSize = 0;
+      btnReportTruck.Dock = DockStyle.Top;
+      btnReportTruck.FlatAppearance.BorderSize = 0;
+      btnReportTruck.FlatStyle = FlatStyle.Flat;
+      btnReportTruck.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportTruck.ForeColor = Color.Black;
+      btnReportTruck.Image = Properties.Resources.icon_report;
+      btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.Location = new Point(3, 583);
+      btnReportTruck.Name = "btnReportTruck";
+      btnReportTruck.Padding = new Padding(15, 0, 0, 0);
+      btnReportTruck.Size = new Size(242, 70);
+      btnReportTruck.TabIndex = 18;
+      btnReportTruck.Text = "        BÁO CÁO";
+      btnReportTruck.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.TextColor = Color.Black;
+      btnReportTruck.UseVisualStyleBackColor = false;
+      btnReportTruck.Click += btnReportTruck_Click;
+      // 
+      // btnReportGoods
+      // 
+      btnReportGoods.BackColor = Color.Silver;
+      btnReportGoods.BackgroundColor = Color.Silver;
+      btnReportGoods.BorderColor = Color.PaleVioletRed;
+      btnReportGoods.BorderRadius = 5;
+      btnReportGoods.BorderSize = 0;
+      btnReportGoods.Dock = DockStyle.Top;
+      btnReportGoods.FlatAppearance.BorderSize = 0;
+      btnReportGoods.FlatStyle = FlatStyle.Flat;
+      btnReportGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportGoods.ForeColor = Color.Black;
+      btnReportGoods.Image = Properties.Resources.icon_report;
+      btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.Location = new Point(3, 659);
+      btnReportGoods.Name = "btnReportGoods";
+      btnReportGoods.Padding = new Padding(15, 0, 0, 0);
+      btnReportGoods.Size = new Size(242, 70);
+      btnReportGoods.TabIndex = 19;
+      btnReportGoods.Text = "        BÁO CÁO";
+      btnReportGoods.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.TextColor = Color.Black;
+      btnReportGoods.UseVisualStyleBackColor = false;
+      btnReportGoods.Click += btnReportGoods_Click;
+      // 
       // tableLayoutPanel7
       // 
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel7.ColumnCount = 1;
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel7.Controls.Add(label3, 0, 1);
+      tableLayoutPanel7.Controls.Add(lbVersion, 0, 1);
       tableLayoutPanel7.Controls.Add(pictureBox1, 0, 0);
       tableLayoutPanel7.Location = new Point(3, 768);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -430,18 +484,18 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.Size = new Size(244, 85);
       tableLayoutPanel7.TabIndex = 1;
       // 
-      // label3
+      // lbVersion
       // 
-      label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label3.AutoSize = true;
-      label3.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label3.Location = new Point(0, 50);
-      label3.Margin = new Padding(0);
-      label3.Name = "label3";
-      label3.Size = new Size(244, 30);
-      label3.TabIndex = 4;
-      label3.Text = "Version: 1.0.0";
-      label3.TextAlign = ContentAlignment.MiddleCenter;
+      lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbVersion.AutoSize = true;
+      lbVersion.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbVersion.Location = new Point(0, 53);
+      lbVersion.Margin = new Padding(0);
+      lbVersion.Name = "lbVersion";
+      lbVersion.Size = new Size(244, 27);
+      lbVersion.TabIndex = 4;
+      lbVersion.Text = "Version: 1.0.0";
+      lbVersion.TextAlign = ContentAlignment.MiddleCenter;
       // 
       // pictureBox1
       // 
@@ -450,7 +504,7 @@ namespace LTP.Truck.Forms
       pictureBox1.Location = new Point(10, 0);
       pictureBox1.Margin = new Padding(10, 0, 10, 0);
       pictureBox1.Name = "pictureBox1";
-      pictureBox1.Size = new Size(224, 50);
+      pictureBox1.Size = new Size(224, 53);
       pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
       pictureBox1.TabIndex = 0;
       pictureBox1.TabStop = false;
@@ -481,7 +535,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel4.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel4.ColumnCount = 3;
       tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 280F));
       tableLayoutPanel4.Controls.Add(tableLayoutPanel3, 0, 0);
       tableLayoutPanel4.Controls.Add(btnLogout, 1, 0);
@@ -506,18 +560,18 @@ namespace LTP.Truck.Forms
       tableLayoutPanel3.RowCount = 2;
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle());
-      tableLayoutPanel3.Size = new Size(547, 74);
+      tableLayoutPanel3.Size = new Size(527, 74);
       tableLayoutPanel3.TabIndex = 22;
       // 
       // lbTitlePage
       // 
       lbTitlePage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitlePage.AutoSize = true;
-      lbTitlePage.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      lbTitlePage.Location = new Point(5, 44);
+      lbTitlePage.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitlePage.Location = new Point(5, 47);
       lbTitlePage.Margin = new Padding(5, 0, 0, 0);
       lbTitlePage.Name = "lbTitlePage";
-      lbTitlePage.Size = new Size(542, 30);
+      lbTitlePage.Size = new Size(522, 27);
       lbTitlePage.TabIndex = 4;
       lbTitlePage.Text = "Trang chính";
       lbTitlePage.TextAlign = ContentAlignment.MiddleLeft;
@@ -526,11 +580,11 @@ namespace LTP.Truck.Forms
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Segoe UI", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(547, 44);
+      lbTitle.Size = new Size(527, 47);
       lbTitle.TabIndex = 3;
       lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -545,15 +599,15 @@ namespace LTP.Truck.Forms
       btnLogout.BorderSize = 0;
       btnLogout.FlatAppearance.BorderSize = 0;
       btnLogout.FlatStyle = FlatStyle.Flat;
-      btnLogout.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnLogout.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLogout.ForeColor = Color.White;
       btnLogout.Image = Properties.Resources.icon_logout;
       btnLogout.ImageAlign = ContentAlignment.MiddleLeft;
-      btnLogout.Location = new Point(556, 10);
+      btnLogout.Location = new Point(536, 10);
       btnLogout.Margin = new Padding(3, 3, 10, 3);
       btnLogout.Name = "btnLogout";
       btnLogout.Padding = new Padding(5, 0, 0, 0);
-      btnLogout.Size = new Size(167, 60);
+      btnLogout.Size = new Size(187, 60);
       btnLogout.TabIndex = 23;
       btnLogout.Text = "        Đăng xuất";
       btnLogout.TextAlign = ContentAlignment.MiddleLeft;
@@ -586,9 +640,9 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel8.ColumnCount = 5;
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 260F));
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 280F));
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 3F));
-      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 260F));
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 280F));
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250F));
       tableLayoutPanel8.Controls.Add(ucStatusConnectServer, 1, 0);
       tableLayoutPanel8.Controls.Add(ucStatusConnectWeight, 3, 0);
@@ -604,24 +658,24 @@ namespace LTP.Truck.Forms
       // ucStatusConnectServer
       // 
       ucStatusConnectServer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucStatusConnectServer.Location = new Point(243, 3);
+      ucStatusConnectServer.Location = new Point(203, 3);
       ucStatusConnectServer.Name = "ucStatusConnectServer";
-      ucStatusConnectServer.Size = new Size(254, 44);
+      ucStatusConnectServer.Size = new Size(274, 44);
       ucStatusConnectServer.TabIndex = 0;
       // 
       // ucStatusConnectWeight
       // 
       ucStatusConnectWeight.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucStatusConnectWeight.Location = new Point(506, 3);
+      ucStatusConnectWeight.Location = new Point(486, 3);
       ucStatusConnectWeight.Name = "ucStatusConnectWeight";
-      ucStatusConnectWeight.Size = new Size(254, 44);
+      ucStatusConnectWeight.Size = new Size(274, 44);
       ucStatusConnectWeight.TabIndex = 1;
       // 
       // lbTime
       // 
       lbTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTime.AutoSize = true;
-      lbTime.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTime.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTime.Location = new Point(766, 0);
       lbTime.Name = "lbTime";
       lbTime.Size = new Size(244, 50);
@@ -664,7 +718,7 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel6;
     private FlowLayoutPanel flowLayoutPanel1;
     private TableLayoutPanel tableLayoutPanel7;
-    private Label label3;
+    private Label lbVersion;
     private PictureBox pictureBox1;
     private TableLayoutPanel tableLayoutPanel2;
     private TableLayoutPanel tableLayoutPanel4;
@@ -688,5 +742,7 @@ namespace LTP.Truck.Forms
     private Label lbTime;
     private Common.Custom.RJButton btnLogout;
     private UserControls.UcLogin ucLogin;
+    private RJButton btnReportTruck;
+    private RJButton btnReportGoods;
   }
 }

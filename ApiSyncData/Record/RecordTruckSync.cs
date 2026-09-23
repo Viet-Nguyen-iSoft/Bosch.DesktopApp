@@ -23,5 +23,8 @@ namespace ApiSyncData.Record
     public DateTime? UpdatedAt { get; set; }
     public bool? DeletedFlag { get; set; }
     public string? ReasonDelete { get; set; }
+
+    public DateTime? WeighInAt { get; set; }
+    public DateTime? WeighOutAt { get; set; }
   }
 }

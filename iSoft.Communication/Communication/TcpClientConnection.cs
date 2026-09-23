@@ -19,7 +19,7 @@ namespace iSoft.Communication.Communication
     public event EventHandler<ConnectionEventArgs> OnConnectionEventRaise;
     public event EventHandler<DataReceivedEventArgs> OnDataReceive;
     public MessageDataInput _messageDataInput { get; set; } = new MessageDataInput();
-    public TcpClientConnection(string id, Guid? machineId, eModeCommunication eModeCommunication, eDevice eDevice, string nameDevice,
+    public TcpClientConnection(string id, Guid? machineId, EnumModeCommunication eModeCommunication, eDevice eDevice, string nameDevice,
                               string host, int port, bool requestGetData, int intervalRequestGetData, bool ssl = false,
                               int timeout = 5000, bool autoConnect = true
                               ) : base(id, machineId, eModeCommunication, eDevice, nameDevice, timeout, autoConnect, requestGetData, intervalRequestGetData)
@@ -142,13 +142,14 @@ namespace iSoft.Communication.Communication
           _messageDataInput.DataAsString = fullMessage;
           _messageDataInput.DataAsBytes = dataByte;
           _messageDataInput.SourceDateTime = DateTime.Now;
-          _messageDataInput.eValueWeightType = eValueWeightType.Tare;
+          _messageDataInput.eValueWeightType = EnumValueWeightType.Tare;
           _messageDataInput.eModeCommunication = this.EModeCommunication;
-          OnDataReceived(_messageDataInput);
+
+          OnDataReceived(_messageDataInput, EnumModeCommunication.SICS);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-          throw ex;
+          throw;
         }
         
       }
@@ -159,7 +160,7 @@ namespace iSoft.Communication.Communication
 
 
 
-
+    
 
 
 

@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.UserControls
+namespace LTP.Truck.UserControls
 {
   partial class UcLogin
   {
@@ -68,7 +68,7 @@
       // 
       lbAccount.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbAccount.AutoSize = true;
-      lbAccount.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbAccount.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbAccount.ForeColor = Color.Black;
       lbAccount.Location = new Point(62, 0);
       lbAccount.Name = "lbAccount";

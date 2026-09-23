@@ -2,6 +2,8 @@
 using iSoft.Communication.Communication;
 using iSoft.Communication.Interface;
 using iSoft.Communication.JsonPayload;
+using iSoft.Communication.Mode;
+using iSoft.Database.Models;
 using System.Net.NetworkInformation;
 using static HelperManager.EnumData;
 using static iSoft.Communication.EnumCommunication;
@@ -10,10 +12,10 @@ namespace LTP.Truck.Controls
 {
   public partial class AppCore
   {
-    public event EventHandler<MessageDataOutput>? OnSendDataWeightTruck;
+    public event EventHandler<DataWeightInterface>? OnSendDataWeightTruck;
     public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeightTruck;
 
-    public event EventHandler<MessageDataOutput>? OnSendDataWeightGoods;
+    public event EventHandler<DataWeightInterface>? OnSendDataWeightGoods;
     public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeightGoods;
 
     public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeight;
@@ -22,43 +24,119 @@ namespace LTP.Truck.Controls
 
     private readonly ICommunicationService _communication =
         new CommunicationService();
-    public void ConnectWeight()
+    private bool _communicationEventsSubscribed;
+
+    public void ConnectWeight(Connection? connection = null)
     {
-      _communication.DataReceived += Communication_DataReceived;
-      _communication.ConnectionStatusChanged += Communication_StatusChanged;
+      SubscribeCommunicationEvents();
 
-      if (AppCore.Ins._connection != null)
+      _communication.RemoveConnection(ScaleId);
+      if (connection != null)
+        _connection = connection;
+
+      if (_connection == null)
       {
-        var configData = JsonHelper.FromJson<JsonConfigTcpClient>(AppCore.Ins._connection.JsonStrConfig ?? string.Empty);
-        if (configData == null)
-          return;
+        SendWeightConnectionStatus(false);
+        return;
+      }
 
-        var config = new ConfigTcpClient
+      try
+      {
+        IConfigJson? config = _connection.EnumCommunicationType switch
         {
-          Code = ScaleId,
-          NameDevice = "Cân TCP",
-          Host = configData.Host,
-          Port = configData.Port,
-          eModeCommunication = eModeCommunication.SICS,
-          AutoConnect = configData.AutoConnect,
-          TimeoutMs = configData.TimeoutMs,
-          Request = configData.Request,
-          TimeRequest = configData.TimeRequest
+          EnumCommunicationType.TcpClient => CreateTcpWeightConfig(_connection),
+          EnumCommunicationType.SerialPort => CreateSerialWeightConfig(_connection),
+          _ => null
         };
+
+        if (config == null)
+        {
+          SendWeightConnectionStatus(false);
+          return;
+        }
 
         _communication.AddConnection(
           config,
           machineId: null,
           device: eDevice.Weight);
-      }  
+      }
+      catch (Exception ex)
+      {
+        _communication.RemoveConnection(ScaleId);
+        SendWeightConnectionStatus(false);
+        LogHelper.LogErrorToFileLog(ex, _folderFileLog);
+      }
+    }
+
+    public void DisconnectWeight()
+    {
+      _communication.RemoveConnection(ScaleId);
+      _connection = null;
+      SendWeightConnectionStatus(false);
+    }
+
+    private void SubscribeCommunicationEvents()
+    {
+      if (_communicationEventsSubscribed)
+        return;
+
+      _communication.DataWeightInterface += Communication_DataReceived;
+      _communication.ConnectionStatusChanged += Communication_StatusChanged;
+      _communicationEventsSubscribed = true;
+    }
+
+    private static ConfigTcpClient? CreateTcpWeightConfig(Connection connection)
+    {
+      var configData = JsonHelper.FromJson<JsonConfigTcpClient>(
+        connection.JsonStrConfig ?? string.Empty);
+      if (configData == null)
+        return null;
+
+      return new ConfigTcpClient
+      {
+        Code = ScaleId,
+        NameDevice = connection.Name ?? "Cân TCP",
+        Host = configData.Host,
+        Port = configData.Port,
+        eModeCommunication = EnumModeCommunication.SICS,
+        AutoConnect = configData.AutoConnect,
+        TimeoutMs = configData.TimeoutMs,
+        Request = configData.Request,
+        TimeRequest = configData.TimeRequest
+      };
+    }
+
+    private static ConfigSerialPort? CreateSerialWeightConfig(Connection connection)
+    {
+      var configData = JsonHelper.FromJson<JsonConfigTcpSerial>(
+        connection.JsonStrConfig ?? string.Empty);
+      if (configData == null || string.IsNullOrWhiteSpace(configData.COM))
+        return null;
+
+      return new ConfigSerialPort
+      {
+        Code = ScaleId,
+        NameDevice = connection.Name ?? "Cân Serial",
+        PortName = configData.COM,
+        AutoConnect = configData.AutoConnect,
+        Request = configData.Request,
+        TimeRequest = configData.TimeRequest
+      };
+    }
+
+    private void SendWeightConnectionStatus(bool isConnected)
+    {
+      Communication_StatusChanged(
+        this,
+        new CommunicationStatusChangedEventArgs(ScaleId, isConnected));
     }
 
     private void Communication_DataReceived(
        object? sender,
-       MessageDataOutput data)
+        DataWeightInterface dataWeightInterface)
     {
-      OnSendDataWeightTruck?.Invoke(sender, data);
-      OnSendDataWeightGoods?.Invoke(sender, data);
+      OnSendDataWeightTruck?.Invoke(sender, dataWeightInterface);
+      OnSendDataWeightGoods?.Invoke(sender, dataWeightInterface);
     }
 
     private void Communication_StatusChanged(

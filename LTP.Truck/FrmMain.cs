@@ -156,7 +156,7 @@ namespace LTP.Truck
       try
       {
         _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(_syncCts.Token);
-        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(_syncCts02.Token);
+        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(_syncCts02.Token, pathFolderSrc: Application.StartupPath);
         PeriodicRunner.EntityChanged += (sender, e) =>
         {
           if (e.EntityType == typeof(ProductGroup))
@@ -175,7 +175,7 @@ namespace LTP.Truck
 
         AppCore.Ins.CheckConnectServer();
         AppCore.Ins.ConnectWeight();
-        CheckOpenMulApp();
+        //CheckOpenMulApp();
         ChangePage(EnumScreen.Waiting);
       }
       catch (Exception ex)

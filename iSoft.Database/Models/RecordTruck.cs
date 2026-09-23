@@ -26,6 +26,9 @@ namespace iSoft.Database.Models
     public string? Document { get; set; }
     public string? ReasonDelete { get; set; }
 
+    public DateTime? WeighInAt { get; set; }
+    public DateTime? WeighOutAt { get; set; }
+
     #region Mapping
     public Guid? ClientId { get; set; }
     public Client? Client { get; set; }

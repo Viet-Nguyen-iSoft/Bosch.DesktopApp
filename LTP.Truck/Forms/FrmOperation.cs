@@ -45,7 +45,7 @@ namespace LTP.Truck.Forms
     {
       Button[] menuButtons =
       {
-        btnHomeTruck, btnHomeGoods, btnSetting, btnMasterData,
+        btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
         btnClient, btnTypeGoods, btnWarehouse, btnTare, btnGroupProduct, btnProduct
       };
 
@@ -62,7 +62,10 @@ namespace LTP.Truck.Forms
 
     private Button[] GetMainMenuButtons()
     {
-      return new[] { btnHomeTruck, btnHomeGoods, btnSetting, btnMasterData };
+      return new[]
+      {
+        btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData
+      };
     }
 
     private void MenuButton_Click(object? sender, EventArgs e)
@@ -186,12 +189,13 @@ namespace LTP.Truck.Forms
 
     private void FrmOperation_Load(object? sender, EventArgs e)
     {
+      lbVersion.Text = $"Version {AppCore.Ins._appConfig?.Version ?? string.Empty}";
       LoadStation(AppCore.Ins._station);
       //LoadAccount(AppCore.Ins._userCurrent);
 
       this.btnHomeTruck.Click += btnHomeTruck_Click;
       this.btnHomeGoods.Click += btnHomeGoods_Click;
-      
+
       this.btnClient.Click += BtnClient_Click;
       this.btnTypeGoods.Click += BtnTypeGoods_Click;
       this.btnWarehouse.Click += BtnWarehouse_Click;
@@ -204,18 +208,31 @@ namespace LTP.Truck.Forms
 
     private void LoadConfig()
     {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(() =>
+        {
+          LoadConfig();
+        }));
+        return;
+      }
+
       var station = Environment.GetEnvironmentVariable("STATION");
-      if (station=="1")
+      if (station == "1")
       {
         btnHomeGoods.Visible = false;
+        btnReportGoods.Visible = false;
         btnHomeTruck.Visible = true;
+        btnReportTruck.Visible = true;
 
         this.btnHomeTruck.PerformClick();
       }
       else
       {
         btnHomeGoods.Visible = true;
+        btnReportGoods.Visible = true;
         btnHomeTruck.Visible = false;
+        btnReportTruck.Visible = false;
 
         this.btnHomeGoods.PerformClick();
       }
@@ -252,7 +269,8 @@ namespace LTP.Truck.Forms
 
       if (station != null)
       {
-        if (station?.Code == "1")
+        var stationKey = Environment.GetEnvironmentVariable("STATION");
+        if (stationKey == "1")
         {
           lbTitle.Text = $"HỆ THỐNG CÂN XE TẢI - {station.Name}";
         }
@@ -389,6 +407,12 @@ namespace LTP.Truck.Forms
           case EnumScreen.Setting:
             OpenChildForm(appModulSupport, FrmSetting.Instance);
             break;
+          case EnumScreen.ReportTruck:
+            OpenChildForm(appModulSupport, FrmReportTruck.Instance);
+            break;
+          case EnumScreen.ReportGoods:
+            OpenChildForm(appModulSupport, FrmReportGoods.Instance);
+            break;
           case EnumScreen.MD_Client:
             OpenChildForm(appModulSupport, FrmMasterData.Instance);
             await FrmMasterData.Instance.LoadData(EnumTypeMasterData.Client);
@@ -435,6 +459,8 @@ namespace LTP.Truck.Forms
       {
         EnumScreen.HomeTruck => "Trang chính > Cân xe tải",
         EnumScreen.HomeGoods => "Trang chính > Cân hàng",
+        EnumScreen.ReportTruck => "Trang chính > Báo cáo xe tải",
+        EnumScreen.ReportGoods => "Trang chính > Báo cáo cân hàng",
         EnumScreen.Setting => "Trang chính > Cài đặt",
         EnumScreen.MD_Client => "Trang chính > Dữ liệu gốc > Khách hàng",
         EnumScreen.MD_TypeGoods => "Trang chính > Dữ liệu gốc > Loại hàng",
@@ -531,6 +557,16 @@ namespace LTP.Truck.Forms
       AppCore.Ins._userCurrent = null;
       LoadAccount(null);
       FrmMain.Instance.ChangePage(EnumScreen.Waiting);
+    }
+
+    private async void btnReportTruck_Click(object sender, EventArgs e)
+    {
+      await ChangePage(EnumScreen.ReportTruck);
+    }
+
+    private async void btnReportGoods_Click(object sender, EventArgs e)
+    {
+      await ChangePage(EnumScreen.ReportGoods);
     }
   }
 }

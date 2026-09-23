@@ -61,6 +61,16 @@ namespace LTP.Truck.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] icon_app_bosch {
+            get {
+                object obj = ResourceManager.GetObject("icon_app_bosch", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap icon_back {
@@ -133,6 +143,16 @@ namespace LTP.Truck.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icon_excel {
+            get {
+                object obj = ResourceManager.GetObject("icon_excel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icon_filter {
             get {
                 object obj = ResourceManager.GetObject("icon_filter", resourceCulture);
@@ -186,6 +206,16 @@ namespace LTP.Truck.Properties {
         internal static System.Drawing.Bitmap icon_print {
             get {
                 object obj = ResourceManager.GetObject("icon_print", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icon_report {
+            get {
+                object obj = ResourceManager.GetObject("icon_report", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -296,6 +326,16 @@ namespace LTP.Truck.Properties {
         internal static System.Drawing.Bitmap icon_weight_log {
             get {
                 object obj = ResourceManager.GetObject("icon_weight_log", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icon_zero {
+            get {
+                object obj = ResourceManager.GetObject("icon_zero", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

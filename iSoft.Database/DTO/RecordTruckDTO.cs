@@ -17,7 +17,7 @@ namespace iSoft.Database.DTO
     public int No { get; set; }
     [DisplayName("Số phiếu")]
     public string? NoLabelAuto { get; set; }
-    [DisplayName("Số phiếu nhà máy")]
+    [DisplayName("Phiếu nhà máy")]
     public string? NoLabelManual { get; set; }
 
     [DisplayName("Biển số xe")]
@@ -29,11 +29,17 @@ namespace iSoft.Database.DTO
 
 
 
-    [DisplayName("Cân lần 1 (Kg)")]
+    [DisplayName("Cân lần 1")]
     public string? NetTime01 { get; set; }
 
-    [DisplayName("Cân lần 2 (Kg)")]
+    [DisplayName("Cân lần 2")]
     public string? NetTime02 { get; set; }
+
+    [DisplayName("Thời gian cân lần 1")]
+    public string? Time01 { get; set; }
+
+    [DisplayName("Thời gian cân lần 2")]
+    public string? Time02 { get; set; }
 
     [DisplayName("Trạng thái")]
     public string? Status { get; set; }
@@ -51,9 +57,6 @@ namespace iSoft.Database.DTO
     
     [DisplayName("Chứng từ")]
     public string? Document { get; set; }
-
-    [DisplayName("Thời gian")]
-    public string? Datetime { get; set; }
 
     [DisplayName("Trạm cân")]
     public string? Station { get; set; }

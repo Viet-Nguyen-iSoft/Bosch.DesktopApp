@@ -19,5 +19,9 @@ namespace iSoft.Database.Models
     public string? NamePrint { get; set; }
     public bool PermitCheckWeight { get; set; } = false;
     public double ValueCheckWeight { get; set; } = 0;
+
+    public string? Company { get; set; }
+    public string? Address { get; set; }
+    public string? Phone { get; set; }
   }
 }

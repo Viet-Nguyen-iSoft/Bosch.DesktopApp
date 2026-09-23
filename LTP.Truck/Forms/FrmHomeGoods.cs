@@ -1,5 +1,8 @@
 ﻿using Common;
+using ApiSyncData.Req;
+using HelperManager;
 using iSoft.Communication.Interface;
+using iSoft.Communication.Mode;
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
@@ -7,16 +10,18 @@ using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using System.Data;
 using static Common.EnumData;
+using static HelperManager.EnumData;
 
 namespace LTP.Truck.Forms
 {
   public partial class FrmHomeGoods : Form
   {
+    private const string SelectColumnName = "SelectRecord";
     private List<Product> _products = new();
     private int _productGroupRefreshVersion;
     private int _tareRefreshVersion;
     private int _sumWeightLoadVersion;
-    private MessageDataOutput _msgDataWeight { get; set; } = new MessageDataOutput();
+    private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private RecordTruckDTO _recordTruckDTO { get; set; }
     private CategoryTare? _categoryTare { get; set; }
     public FrmHomeGoods()
@@ -26,6 +31,7 @@ namespace LTP.Truck.Forms
 
       cbbTare.SelectedValueChanged += cbbTare_SelectedValueChanged;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
+      txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       lbTare.Text = "0.000";
       this.Load += FrmHomeGoods_Load;
     }
@@ -77,8 +83,22 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
-      dgv.DefaultCellStyle.SelectionBackColor = dgv.DefaultCellStyle.BackColor;
-      dgv.DefaultCellStyle.SelectionForeColor = dgv.DefaultCellStyle.ForeColor;
+      dgv.ReadOnly = true;
+      dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+      dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 107, 177);
+      dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+
+      var selectColumn = new DataGridViewCheckBoxColumn
+      {
+        Name = SelectColumnName,
+        HeaderText = string.Empty,
+        Width = 50,
+        AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+        ReadOnly = true,
+        Frozen = true
+      };
+      dgv.Columns.Insert(0, selectColumn);
+      dgv.CellClick += dgv_CellClick;
     }
 
     private async void FrmHomeGoods_Load(object? sender, EventArgs e)
@@ -87,6 +107,7 @@ namespace LTP.Truck.Forms
       {
         await LoadDataFirst();
         await LoadHistorical();
+        await LoadLicensePlateSuggestionsAsync();
 
         cbbProductGroup.SelectedIndex = -1;
         cbbTare.SelectedIndex = -1;
@@ -107,7 +128,23 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void Ins_OnSendDataWeightGoods(object? sender, MessageDataOutput e)
+    private async Task LoadLicensePlateSuggestionsAsync()
+    {
+      try
+      {
+        var licensePlates = await AppCore.Ins._licensePlateService
+          .GetAllAsync(IsContainDelete: false);
+
+        txtLicensePlate.SetAutoCompleteSource(
+          licensePlates.Select(licensePlate => licensePlate.Plate));
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    private void Ins_OnSendDataWeightGoods(object? sender, DataWeightInterface e)
     {
       _msgDataWeight = e;
       SetDataWeight(e);
@@ -127,12 +164,12 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      _msgDataWeight = new MessageDataOutput();
+      _msgDataWeight = new DataWeightInterface();
       lbWeightValue.Text = "---";
       lbGross.Text = "---";
     }
 
-    private void SetDataWeight(MessageDataOutput messageData)
+    private void SetDataWeight(DataWeightInterface messageData)
     {
       if (this.InvokeRequired)
       {
@@ -143,16 +180,20 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.ValueWeight.ToString("F3");
+      //Net
+      lbWeightValue.Text = messageData.IndicatedWeight.ToString("F3");
+
+      //Tare
+      lbTareSrc.Text = messageData.TareWeight.ToString("F3");
 
       //Tare
       if (_categoryTare != null)
       {
-        lbGross.Text = (messageData.ValueWeight + (_categoryTare?.Value ?? 0.0)).ToString("F3");
+        lbGross.Text = (messageData.IndicatedWeight + (_categoryTare?.Value ?? 0.0)).ToString("F3");
       }
       else
       {
-        lbGross.Text = messageData.ValueWeight.ToString("F3");
+        lbGross.Text = messageData.IndicatedWeight.ToString("F3");
       }
     }
 
@@ -352,7 +393,7 @@ namespace LTP.Truck.Forms
           using var popupMsg = new PopupConfirm("Không thể tải danh sách phiếu cân lần 1. Vui lòng thử lại !",
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
           popupMsg.ShowDialog();
-        }  
+        }
       }
       finally
       {
@@ -386,20 +427,20 @@ namespace LTP.Truck.Forms
           txtLicensePlate.Texts = selectedRecord.LicensePlate ?? string.Empty;
           txtNameDriver.Texts = selectedRecord.NameDriver ?? string.Empty;
           txtIdCard.Texts = selectedRecord.IdCard ?? string.Empty;
-          await LoadSumWeightAsync(selectedRecord.RecordTruck?.Id ?? Guid.Empty);
+          await LoadSumWeightAsync(selectedRecord.RecordTruck?.LicensePlate ?? string.Empty);
         }
       };
       popup.ShowDialog(this);
     }
 
-    private async Task LoadSumWeightAsync(Guid recordTruckId)
+    private async Task LoadSumWeightAsync(string plate)
     {
       var loadVersion = ++_sumWeightLoadVersion;
 
       try
       {
-        var totalWeight = recordTruckId != Guid.Empty
-          ? await AppCore.Ins._recordWeightService.SumNetByRecordTruckIdAsync(recordTruckId)
+        var totalWeight = !string.IsNullOrEmpty(plate)
+          ? await AppCore.Ins._recordWeightService.SumNetByRecordTruckIdAsync(plate)
           : 0.0;
 
         if (IsDisposed || Disposing || loadVersion != _sumWeightLoadVersion)
@@ -423,15 +464,53 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void btnPrint_Click(object sender, EventArgs e)
+    private async void TxtLicensePlate__TextChanged(object? sender, EventArgs e)
     {
-      if (_recordTruckDTO?.RecordTruck is not RecordTruck selectedRecordTruck)
+      var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts.Trim());
+      if (validLicense.IsValid)
       {
-        using var popupMsg = new PopupConfirm("Vui lòng chọn biển số xe !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
-        popupMsg.ShowDialog();
+        await LoadSumWeightAsync(validLicense.Plate);
+      }
+      else
+      {
+        if (InvokeRequired)
+        {
+          BeginInvoke(new Action(() =>
+          {
+            lbSumWeight.Text = "0.000";
+          }));
+          return;
+        }
+
+        lbSumWeight.Text = "0.000";
+      }
+    }
+
+
+    private async void btnSaveData_Click(object sender, EventArgs e)
+    {
+      if (string.IsNullOrEmpty(txtLicensePlate.Texts.Trim()))
+      {
+        PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn hoặc điền biển số xe !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
         return;
       }
+
+      var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts.Trim());
+      if (!validLicense.IsValid)
+      {
+        PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
+        return;
+      }
+
+      //if (_recordTruckDTO?.RecordTruck is not RecordTruck selectedRecordTruck)
+      //{
+      //  using var popupMsg = new PopupConfirm("Vui lòng chọn biển số xe !",
+      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+      //  popupMsg.ShowDialog();
+      //  return;
+      //}
 
       if (cbbProductGroup.SelectedItem is not ProductGroup selectedProductGroup)
       {
@@ -464,20 +543,45 @@ namespace LTP.Truck.Forms
       {
         ProductId = selectedProduct.Id,
         CategoryTareId = selectedTare.Id,
-        RecordTruckId = selectedRecordTruck.Id,
-        Net = _msgDataWeight.ValueWeight,
+        //RecordTruckId = selectedRecordTruck.Id,
+        Net = _msgDataWeight.IndicatedWeight,
         Tare = selectedTare.Value ?? 0.0,
         UserId = AppCore.Ins._userCurrent?.Id,
         StationId = AppCore.Ins._station?.Id,
+        LicensePlate = validLicense.Plate,
         CreatedAt = DateTime.UtcNow,
         EnableFlag = true
       };
 
-      btnPrint.Enabled = false;
+      btnSaveData.Enabled = false;
       try
       {
+        var licensePlateResult = await AppCore.Ins._licensePlateService
+          .EnsureExistsAsync(validLicense.Plate);
+
+        if (!licensePlateResult.Exist)
+        {
+          var licensePlateRequest = new LicensePlateUpsertRequest
+          {
+            Id = licensePlateResult.LicensePlate?.Id,
+            LicensePlateCode = licensePlateResult.LicensePlate?.Plate ?? string.Empty,
+            Description = licensePlateResult.LicensePlate?.Description
+          };
+
+          var apiJob = new ApiJobs
+          {
+            Json = JsonHelper.ToJson(licensePlateRequest),
+            EnumTypeAPI = EnumTypeAPI.Plate,
+            EnumStatusAPI = EnumStatusAPI.Created,
+            CreatedAt = DateTime.UtcNow
+          };
+
+          await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
+          await LoadLicensePlateSuggestionsAsync();
+        }
+
         await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
-        await LoadSumWeightAsync(selectedRecordTruck.Id);
+        await LoadSumWeightAsync(validLicense.Plate);
 
         ////In máy in
         //var printDTO = new DTOPrintLabel()
@@ -520,7 +624,7 @@ namespace LTP.Truck.Forms
       finally
       {
         if (!IsDisposed && !Disposing)
-          btnPrint.Enabled = true;
+          btnSaveData.Enabled = true;
       }
     }
 
@@ -565,33 +669,12 @@ namespace LTP.Truck.Forms
       // Include records occurring anywhere within the selected ending minute.
       var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
       var searchKey = txtSearchKey.Texts.Trim();
-      var records = await AppCore.Ins._recordWeightService.GetAllAsync();
+      var records = await AppCore.Ins._recordWeightService.GetReportAsync(
+        fromUtc,
+        toUtcExclusive,
+        searchKey);
 
-      var filteredRecords = records.Where(record =>
-      {
-        var createdAtUtc = record.CreatedAt?.ToUniversalTime();
-        return createdAtUtc >= fromUtc && createdAtUtc < toUtcExclusive;
-      });
-
-      if (!string.IsNullOrWhiteSpace(searchKey))
-      {
-        filteredRecords = filteredRecords.Where(record => new[]
-        {
-          record.Product?.Code,
-          record.Product?.Name,
-          record.Product?.ProductGroup?.Code,
-          record.Product?.ProductGroup?.Name,
-          record.CategoryTare?.Code,
-          record.CategoryTare?.Name,
-          record.RecordTruck?.NoLabelAuto,
-          record.RecordTruck?.NoLabelManual,
-          record.RecordTruck?.LicensePlate,
-          record.RecordTruck?.NameDriver,
-          record.RecordTruck?.IdCard
-        }.Any(value => value?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) == true));
-      }
-
-      SetDgvHistorical(DTOHelper.ConvertRecordWeightDTO(filteredRecords.ToList()));
+      SetDgvHistorical(DTOHelper.ConvertRecordWeightDTO(records));
     }
 
     private void SetDgvHistorical(List<RecordWeightDTO> records)
@@ -603,6 +686,8 @@ namespace LTP.Truck.Forms
       }
 
       dgv.DataSource = records;
+      dgv.ClearSelection();
+      dgv.CurrentCell = null;
 
       if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
@@ -616,6 +701,7 @@ namespace LTP.Truck.Forms
         nameof(RecordWeightDTO.CategoryTare),
         nameof(RecordWeightDTO.Net),
         nameof(RecordWeightDTO.Tare),
+        nameof(RecordWeightDTO.Gross),
       };
       foreach (var columnName in autoSizeColumns)
       {
@@ -627,6 +713,7 @@ namespace LTP.Truck.Forms
       {
         nameof(RecordWeightDTO.Net),
         nameof(RecordWeightDTO.Tare),
+        nameof(RecordWeightDTO.Gross),
       };
       foreach (var columnName in weightColumns)
       {
@@ -637,6 +724,45 @@ namespace LTP.Truck.Forms
       if (dgv.Columns.Contains(nameof(RecordWeightDTO.No)))
         dgv.Columns[nameof(RecordWeightDTO.No)].DefaultCellStyle.Alignment =
           DataGridViewContentAlignment.MiddleCenter;
+    }
+
+    private void btnPrint_Click(object sender, EventArgs e)
+    {
+      if (dgv.SelectedRows.Count == 0 ||
+          dgv.SelectedRows[0].DataBoundItem is not RecordWeightDTO selectedRecord ||
+          selectedRecord.RecordWeight is null)
+      {
+        using var popupMsg = new PopupConfirm("Vui lòng chọn phiếu cân cần in !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      RecordWeight selectedData = selectedRecord.RecordWeight;
+    }
+
+    private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
+    {
+      if (e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
+        return;
+
+      var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+      checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
+    }
+
+    private void btnExport_Click(object sender, EventArgs e)
+    {
+      dgv.EndEdit();
+
+      List<RecordWeight> exportData = dgv.Rows
+        .Cast<DataGridViewRow>()
+        .Where(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value))
+        .Select(row => row.DataBoundItem as RecordWeightDTO)
+        .Where(dto => dto?.RecordWeight is not null)
+        .Select(dto => dto!.RecordWeight!)
+        .ToList();
     }
   }
 }

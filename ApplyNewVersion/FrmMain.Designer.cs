@@ -1,4 +1,4 @@
-﻿namespace ApplyNewVersion
+namespace ApplyNewVersion
 {
   partial class FrmMain
   {
@@ -86,7 +86,7 @@
       // btnCancel
       // 
       btnCancel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnCancel.Font = new Font("Segoe UI", 15.75F);
+      btnCancel.Font = new Font("Roboto", 16F);
       btnCancel.Location = new Point(498, 3);
       btnCancel.Name = "btnCancel";
       btnCancel.Size = new Size(154, 54);
@@ -99,7 +99,7 @@
       // 
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
-      label2.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label2.Location = new Point(3, 0);
       label2.Name = "label2";
       label2.Size = new Size(649, 60);
@@ -142,7 +142,7 @@
       // 
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
-      label1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(103, 197);
       label1.Name = "label1";
       label1.Size = new Size(443, 60);

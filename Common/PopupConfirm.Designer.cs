@@ -1,4 +1,4 @@
-﻿namespace Common
+namespace Common
 {
   partial class PopupConfirm
   {
@@ -102,7 +102,7 @@
       // 
       lbInformation.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbInformation.AutoSize = true;
-      lbInformation.Font = new Font("Microsoft Sans Serif", 20.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbInformation.Font = new Font("Roboto", 20.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbInformation.ForeColor = Color.Black;
       lbInformation.Location = new Point(143, 0);
       lbInformation.Name = "lbInformation";
@@ -149,7 +149,7 @@
       btnConfirm.BorderSize = 0;
       btnConfirm.FlatAppearance.BorderSize = 0;
       btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnConfirm.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = Properties.Resources.icon_confirm;
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
@@ -172,7 +172,7 @@
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = Properties.Resources.icon_close;
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace LTP.Truck.Custom
@@ -369,6 +370,34 @@ namespace LTP.Truck.Custom
     public void ReadOnly()
     {
       this.textBox1.ReadOnly = true;
+    }
+
+    public void SetAutoCompleteSource(
+      IEnumerable<string?> values,
+      string fontFamily = "Roboto",
+      float fontSize = 16F)
+    {
+      if (!string.Equals(textBox1.Font.FontFamily.Name, fontFamily,
+          StringComparison.OrdinalIgnoreCase) ||
+        Math.Abs(textBox1.Font.SizeInPoints - fontSize) > 0.01F ||
+        textBox1.Font.Style != FontStyle.Regular)
+      {
+        var autoCompleteFont = new Font(
+          fontFamily, fontSize, FontStyle.Regular, GraphicsUnit.Point);
+        Font = autoCompleteFont;
+      }
+
+      var source = new AutoCompleteStringCollection();
+      source.AddRange(values
+        .Where(value => !string.IsNullOrWhiteSpace(value))
+        .Select(value => value!)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(value => value)
+        .ToArray());
+
+      textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+      textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+      textBox1.AutoCompleteCustomSource = source;
     }
   }
 }

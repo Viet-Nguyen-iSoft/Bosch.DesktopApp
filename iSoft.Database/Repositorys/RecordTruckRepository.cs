@@ -18,14 +18,117 @@ namespace iSoft.Database.Repositorys
     public Task<List<RecordTruck>> GetAllAsync(bool IsContainDelete = false)
     {
       var query = Context.Set<RecordTruck>()
+        .AsNoTracking()
         .Include(x => x.Client)
         .Include(x => x.TypeGoods)
         .Include(x => x.Warehouse)
+        .Include(x => x.User)
         .Include(x => x.Station)
         .AsQueryable();
       if (!IsContainDelete)
         query = query.Where(x => !x.DeletedFlag);
       return query.ToListAsync();
+    }
+
+    public Task<List<RecordTruck>> GetReportAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex = 0,
+      int typeFilterIndex = 0)
+    {
+      return BuildReportQuery(
+          fromUtc,
+          toUtcExclusive,
+          searchKey,
+          statusFilterIndex,
+          typeFilterIndex)
+        .OrderByDescending(record => record.CreatedAt)
+        .ThenByDescending(record => record.Id)
+        .ToListAsync();
+    }
+
+    public async Task<(List<RecordTruck> Records, int TotalRecords)> GetReportPageAsync(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex,
+      int typeFilterIndex,
+      int pageNumber,
+      int pageSize)
+    {
+      pageNumber = Math.Max(1, pageNumber);
+      pageSize = Math.Max(1, pageSize);
+
+      var query = BuildReportQuery(
+        fromUtc,
+        toUtcExclusive,
+        searchKey,
+        statusFilterIndex,
+        typeFilterIndex);
+      var totalRecords = await query.CountAsync();
+      var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
+      pageNumber = Math.Min(pageNumber, totalPages);
+      var records = await query
+        .OrderByDescending(record => record.CreatedAt)
+        .ThenByDescending(record => record.Id)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+      return (records, totalRecords);
+    }
+
+    private IQueryable<RecordTruck> BuildReportQuery(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex,
+      int typeFilterIndex)
+    {
+      var query = Context.Set<RecordTruck>()
+        .AsNoTracking()
+        .Include(record => record.Client)
+        .Include(record => record.TypeGoods)
+        .Include(record => record.Warehouse)
+        .Include(record => record.User)
+        .Include(record => record.Station)
+        .Where(record => record.UpdatedAt >= fromUtc && record.UpdatedAt < toUtcExclusive);
+
+      query = typeFilterIndex switch
+      {
+        1 => query.Where(record => !record.DeletedFlag),
+        2 => query.Where(record => record.DeletedFlag),
+        _ => query
+      };
+
+      query = statusFilterIndex switch
+      {
+        1 => query.Where(record =>
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime01 ||
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime01 ||
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime02),
+        2 => query.Where(record =>
+          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime02),
+        _ => query
+      };
+
+      if (!string.IsNullOrWhiteSpace(searchKey))
+      {
+        query = query.Where(record =>
+          (record.NoLabelAuto != null && record.NoLabelAuto.Contains(searchKey)) ||
+          (record.NoLabelManual != null && record.NoLabelManual.Contains(searchKey)) ||
+          (record.LicensePlate != null && record.LicensePlate.Contains(searchKey)) ||
+          (record.NameDriver != null && record.NameDriver.Contains(searchKey)) ||
+          (record.IdCard != null && record.IdCard.Contains(searchKey)) ||
+          (record.Document != null && record.Document.Contains(searchKey)) ||
+          (record.Client != null && record.Client.Name != null && record.Client.Name.Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.Name != null && record.TypeGoods.Name.Contains(searchKey)) ||
+          (record.Warehouse != null && record.Warehouse.Name != null && record.Warehouse.Name.Contains(searchKey)) ||
+          (record.Station != null && record.Station.Name != null && record.Station.Name.Contains(searchKey)));
+      }
+
+      return query;
     }
 
     public Task<List<RecordTruck>> GetFirstWeighingRecordsAsync()
@@ -62,7 +165,31 @@ namespace iSoft.Database.Repositorys
       return query.FirstOrDefaultAsync(record => record.Id == id);
     }
 
-    public async Task<RecordTruck> AddOrUpdateAsync(RecordTruck recordTruck)
+    public Task<RecordTruck?> GetPendingByLicensePlateAsync(string licensePlate)
+    {
+      var normalizedLicensePlate = LicensePlateRepository.Normalize(licensePlate);
+      if (normalizedLicensePlate == null)
+        return Task.FromResult<RecordTruck?>(null);
+
+      return Context.Set<RecordTruck>()
+        .AsNoTracking()
+        .Include(record => record.Client)
+        .Include(record => record.TypeGoods)
+        .Include(record => record.Warehouse)
+        .Include(record => record.User)
+        .Include(record => record.Station)
+        .Where(record => !record.DeletedFlag &&
+          record.LicensePlate == normalizedLicensePlate &&
+          record.NetTime01 > 0 &&
+          record.NetTime02 <= 0 &&
+          (record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime01 ||
+           record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime02))
+        .OrderByDescending(record => record.UpdatedAt)
+        .ThenByDescending(record => record.Id)
+        .FirstOrDefaultAsync();
+    }
+
+    public async Task<(RecordTruck Record, bool Exist, LicensePlate? LicensePlate)> AddOrUpdateAsync(RecordTruck recordTruck)
     {
       if (recordTruck == null)
       {
@@ -73,6 +200,11 @@ namespace iSoft.Database.Repositorys
       recordTruck.SyncFlag = false;
 
       await Context.Database.EnsureCreatedAsync();
+      recordTruck.LicensePlate = LicensePlateRepository.Normalize(recordTruck.LicensePlate);
+
+      var licensePlateRepository = new LicensePlateRepository((CommonDbContext)Context);
+      var rsLicensePlate = await licensePlateRepository.EnsureExistsAsync(recordTruck.LicensePlate);
+
       var records = Context.Set<RecordTruck>();
       var existingRecord = recordTruck.Id == Guid.Empty
         ? null
@@ -88,7 +220,7 @@ namespace iSoft.Database.Repositorys
       }
 
       await Context.SaveChangesAsync();
-      return existingRecord ?? recordTruck;
+      return (existingRecord ?? recordTruck, rsLicensePlate.Exist, rsLicensePlate.LicensePlate);
     }
   }
 }

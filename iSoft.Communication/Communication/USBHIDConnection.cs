@@ -24,7 +24,7 @@ namespace iSoft.Communication.Communication
     public MessageDataInput _messageDataInput { get; set; } = new MessageDataInput();
     public USBHIDConnection(string id, 
                               Guid? machineId,
-                              EnumCommunication.eModeCommunication eModeCommunication, 
+                              EnumCommunication.EnumModeCommunication eModeCommunication, 
                               eDevice eTypeInput,
                               string nameDevice, 
                               int timeout = 5000, 
@@ -35,7 +35,7 @@ namespace iSoft.Communication.Communication
 
       _messageDataInput.Source = id;
       _messageDataInput.eModeCommunication = eModeCommunication;
-      _messageDataInput.eValueWeightType = eValueWeightType.Net;
+      _messageDataInput.eValueWeightType = EnumValueWeightType.Net;
 
       this.NameDevice = nameDevice;
       this.AutoConnect = autoConnect;
@@ -75,12 +75,12 @@ namespace iSoft.Communication.Communication
         string recievedStringData = e?.DataAsString;
         if (!string.IsNullOrEmpty(recievedStringData))
         { 
-          _messageDataInput.DataAsString = recievedStringData;
-          _messageDataInput.MachineId = this.MachineId;
-          _messageDataInput.DataAsBytes = Encoding.UTF8.GetBytes(recievedStringData);
-          _messageDataInput.SourceDateTime = DateTime.Now;
+          //_messageDataInput.DataAsString = recievedStringData;
+          //_messageDataInput.MachineId = this.MachineId;
+          //_messageDataInput.DataAsBytes = Encoding.UTF8.GetBytes(recievedStringData);
+          //_messageDataInput.SourceDateTime = DateTime.Now;
 
-          OnDataReceived(_messageDataInput);
+          //OnDataReceived(_messageDataInput);
         }
       }
       catch (Exception ex)

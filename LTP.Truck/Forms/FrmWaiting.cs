@@ -137,6 +137,7 @@ namespace LTP.Truck.Forms
 
     private void FrmWaiting_Load(object? sender, EventArgs e)
     {
+      lbVersion.Text = $"Version {AppCore.Ins._appConfig?.Version ?? string.Empty}";
       ucPanelLogin1.Account = "Bosch";
       ucPanelLogin1.Password = "Hsf@2026";
       ucPanelLogin1.Account = "admin";

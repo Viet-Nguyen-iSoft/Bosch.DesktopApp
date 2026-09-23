@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class PopupApplyVersionNew
   {
@@ -118,14 +118,14 @@
       btnDownload.BorderSize = 0;
       btnDownload.FlatAppearance.BorderSize = 0;
       btnDownload.FlatStyle = FlatStyle.Flat;
-      btnDownload.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnDownload.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnDownload.ForeColor = Color.White;
       btnDownload.Image = (Image)resources.GetObject("btnDownload.Image");
       btnDownload.ImageAlign = ContentAlignment.MiddleLeft;
-      btnDownload.Location = new Point(304, 3);
+      btnDownload.Location = new Point(292, 3);
       btnDownload.Name = "btnDownload";
       btnDownload.Padding = new Padding(10, 0, 0, 0);
-      btnDownload.Size = new Size(158, 59);
+      btnDownload.Size = new Size(170, 59);
       btnDownload.TabIndex = 0;
       btnDownload.Text = "       Tải xuống";
       btnDownload.TextColor = Color.White;
@@ -142,7 +142,7 @@
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
@@ -166,11 +166,11 @@
       btnApply.BorderSize = 0;
       btnApply.FlatAppearance.BorderSize = 0;
       btnApply.FlatStyle = FlatStyle.Flat;
-      btnApply.Font = new Font("Roboto", 15.75F, FontStyle.Bold);
+      btnApply.Font = new Font("Roboto", 16F, FontStyle.Bold);
       btnApply.ForeColor = Color.White;
       btnApply.Image = (Image)resources.GetObject("btnApply.Image");
       btnApply.ImageAlign = ContentAlignment.MiddleLeft;
-      btnApply.Location = new Point(90, 3);
+      btnApply.Location = new Point(78, 3);
       btnApply.Name = "btnApply";
       btnApply.Padding = new Padding(10, 0, 0, 0);
       btnApply.Size = new Size(208, 59);
@@ -203,7 +203,7 @@
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
       lbTitle.BackColor = Color.White;
-      lbTitle.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
@@ -247,7 +247,7 @@
       lbVersionCurrent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersionCurrent.AutoSize = true;
       lbVersionCurrent.BackColor = Color.White;
-      lbVersionCurrent.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbVersionCurrent.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbVersionCurrent.Location = new Point(280, 0);
       lbVersionCurrent.Margin = new Padding(0);
       lbVersionCurrent.Name = "lbVersionCurrent";
@@ -260,7 +260,7 @@
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.White;
-      label1.Font = new Font("Roboto", 15.75F);
+      label1.Font = new Font("Roboto", 16F);
       label1.Location = new Point(60, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -283,7 +283,7 @@
       // txtCommit
       // 
       txtCommit.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      txtCommit.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtCommit.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtCommit.Location = new Point(13, 213);
       txtCommit.Multiline = true;
       txtCommit.Name = "txtCommit";
@@ -322,7 +322,7 @@
       lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersion.AutoSize = true;
       lbVersion.BackColor = Color.White;
-      lbVersion.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbVersion.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbVersion.Location = new Point(280, 0);
       lbVersion.Margin = new Padding(0);
       lbVersion.Name = "lbVersion";
@@ -335,7 +335,7 @@
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.White;
-      label2.Font = new Font("Roboto", 15.75F);
+      label2.Font = new Font("Roboto", 16F);
       label2.Location = new Point(60, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
