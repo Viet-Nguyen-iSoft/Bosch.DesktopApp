@@ -123,6 +123,8 @@ namespace ApiSyncData
 
       if (!string.IsNullOrWhiteSpace(warehouse.Description))
         formData.Add(new StringContent(warehouse.Description.Trim()), "Description");
+      else
+        formData.Add(new StringContent("Description"), "DeleteFields");
 
       formData.Add(
         new StringContent(warehouse.DeletedFlag.ToString().ToLowerInvariant()),
@@ -626,8 +628,10 @@ namespace ApiSyncData
         if (!string.IsNullOrWhiteSpace(code))
           formData.Add(new StringContent(code.Trim()), "SerialCode");
 
-        if (description!=null)
+        if (!string.IsNullOrWhiteSpace(description))
           formData.Add(new StringContent(description.Trim()), "Description");
+        else
+          formData.Add(new StringContent("Description"), "DeleteFields");
 
         formData.Add(
           new StringContent(deletedFlag.ToString().ToLowerInvariant()),
@@ -691,8 +695,10 @@ namespace ApiSyncData
       if (!string.IsNullOrWhiteSpace(licensePlate))
         formData.Add(new StringContent(licensePlate.Trim()), "LicensePlateCode");
 
-      if (!string.IsNullOrWhiteSpace(description))
-        formData.Add(new StringContent(description.Trim()), "Description");
+        if (!string.IsNullOrWhiteSpace(description))
+          formData.Add(new StringContent(description.Trim()), "Description");
+        else
+          formData.Add(new StringContent("Description"), "DeleteFields");
 
       if (additionalFields != null)
       {
