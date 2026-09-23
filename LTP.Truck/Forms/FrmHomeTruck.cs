@@ -1244,7 +1244,7 @@ namespace LTP.Truck.Forms
         var rs = await DownloadReportTruck(DateTime.Now, record);
 
         //POST PDF
-        await (new ApiService()).UploadReportTruckPdf(record.Id, rs);
+        //await (new ApiService()).UploadReportTruckPdf(record.Id, rs);
 
 
         //var recordWeightsByProduct = (record.RecordWeights ?? Enumerable.Empty<RecordWeight>())
@@ -1343,6 +1343,7 @@ namespace LTP.Truck.Forms
 
     private async Task<string> DownloadReportTruck(DateTime dt, RecordTruck recordTruck)
     {
+      return "";
       try
       {
         //PdfHelper.InitAsync().GetAwaiter().GetResult();
