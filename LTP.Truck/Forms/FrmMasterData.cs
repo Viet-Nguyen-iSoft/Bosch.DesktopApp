@@ -1,4 +1,5 @@
 ﻿using ApiSyncData.Req;
+using Common;
 using HelperManager;
 using iSoft.Database;
 using iSoft.Database.DTO;
@@ -9,6 +10,7 @@ using LTP.Truck.MasterData;
 using System.ComponentModel;
 using System.Data;
 using System.Threading.Tasks;
+using static Common.EnumData;
 using static HelperManager.EnumData;
 using static LTP.Truck.EnumData;
 
@@ -16,8 +18,10 @@ namespace LTP.Truck.Forms
 {
   public partial class FrmMasterData : Form
   {
-    private CancellationTokenSource? _searchDebounceCancellation;
+    private const string EditButtonColumnName = "btnEdit";
+    private const string DeleteButtonColumnName = "btnDelete";
 
+    private CancellationTokenSource? _searchDebounceCancellation;
     private ApiJobsService _apiJobsService { get; set; } 
     public FrmMasterData()
     {
@@ -27,6 +31,7 @@ namespace LTP.Truck.Forms
       RegisterService();
 
       txtSearch._TextChanged += txtSearch_TextChanged;
+      dgv.CellContentClick += dgv_CellContentClick;
     }
 
     private void RegisterService()
@@ -164,7 +169,7 @@ namespace LTP.Truck.Forms
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
       {
         PopupAddClient popupAddClient = new PopupAddClient();
-        popupAddClient.OnSendAddSuccess += PopupAddClient_OnSendAddSuccess;
+        popupAddClient.OnSendSuccess += PopupAddClient_OnSendAddSuccess;
         popupAddClient.ShowDialog();
       }  
     }
@@ -196,6 +201,7 @@ namespace LTP.Truck.Forms
     {
       dgv.DataSource = null;
       dgv.DataSource = values;
+      EnsureActionColumns();
 
       if (enumTypeMasterData == EnumTypeMasterData.Client)
       {
@@ -401,6 +407,107 @@ namespace LTP.Truck.Forms
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
       }
+    }
+
+    private void EnsureActionColumns()
+    {
+      if (!dgv.Columns.Contains(EditButtonColumnName))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = EditButtonColumnName,
+          HeaderText = "",
+          Text = "Chỉnh sửa",
+          UseColumnTextForButtonValue = true,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 130,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+
+      if (!dgv.Columns.Contains(DeleteButtonColumnName))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = DeleteButtonColumnName,
+          HeaderText = "",
+          Text = "Xóa",
+          UseColumnTextForButtonValue = true,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 100,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+
+      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
+      dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 1;
+    }
+
+    private async void dgv_CellContentClick(object? sender, DataGridViewCellEventArgs e)
+    {
+      if (e.RowIndex < 0 || e.ColumnIndex < 0)
+        return;
+
+      var columnName = dgv.Columns[e.ColumnIndex].Name;
+      var rowData = dgv.Rows[e.RowIndex].DataBoundItem;
+
+      if (columnName == EditButtonColumnName)
+        await EditMasterDataAsync(rowData);
+      else if (columnName == DeleteButtonColumnName)
+        await DeleteMasterDataAsync(rowData);
+    }
+
+    private Task EditMasterDataAsync(object? rowData)
+    {
+      if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
+      {
+        var data = rowData as ClientDTO;
+        if (data?.Client != null)
+        {
+          PopupAddClient popupUpdateClient = new PopupAddClient(data.Client);
+          popupUpdateClient.OnSendSuccess += PopupUpdateClient_OnSendAddSuccess;
+          popupUpdateClient.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }  
+      }
+
+
+      return Task.CompletedTask;
+    }
+
+    private async void PopupUpdateClient_OnSendAddSuccess(Client client)
+    {
+      try
+      {
+        ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
+        clientUpsertRequest.Id = client.Id;
+        clientUpsertRequest.Name = client?.Name ?? string.Empty;
+        clientUpsertRequest.Description = client?.Description ?? string.Empty;
+
+        ApiJobs apiJobs = new ApiJobs();
+        apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
+        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+        apiJobs.EnumTypeAPI = EnumTypeAPI.MD_Client;
+        apiJobs.CreatedAt = DateTime.UtcNow;
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+      }
+      catch (Exception ex)
+      {
+
+      }
+    }
+
+    private Task DeleteMasterDataAsync(object? rowData)
+    {
+      return Task.CompletedTask;
     }
   }
 }

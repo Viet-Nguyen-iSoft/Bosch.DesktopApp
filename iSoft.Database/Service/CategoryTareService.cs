@@ -17,5 +17,11 @@ namespace iSoft.Database.Service
       var repository = new CategoryTareRepository(context);
       return await repository.GetAllAsync(IsContainDelete).ConfigureAwait(false);
     }
+
+    public async Task<CategoryTare> AddOrUpdateAsync(CategoryTare categoryTare)
+    {
+      await using var context = new MySqlDbContext();
+      return await MasterDataUpsertHelper.AddOrUpdateAsync(context, categoryTare).ConfigureAwait(false);
+    }
   }
 }

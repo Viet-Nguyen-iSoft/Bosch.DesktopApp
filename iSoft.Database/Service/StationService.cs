@@ -24,5 +24,11 @@ namespace iSoft.Database.Service
       var repository = new StationRepository(context);
       return await repository.GetByCodeAsync(id).ConfigureAwait(false);
     }
+
+    public async Task<Station> AddOrUpdateAsync(Station station)
+    {
+      await using var context = new MySqlDbContext();
+      return await MasterDataUpsertHelper.AddOrUpdateAsync(context, station).ConfigureAwait(false);
+    }
   }
 }

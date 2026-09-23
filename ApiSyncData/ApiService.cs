@@ -582,6 +582,7 @@ namespace ApiSyncData
       string? name,
       string? code,
       string? description,
+      bool deletedFlag,
       string? lang,
       CancellationToken cancellationToken,
       IReadOnlyDictionary<string, string>? additionalFields = null,

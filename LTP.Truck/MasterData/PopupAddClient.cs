@@ -10,13 +10,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TestConnectPrinter;
 using static Common.EnumData;
+using static LTP.Truck.EnumData;
 
 namespace LTP.Truck.MasterData
 {
   public partial class PopupAddClient : Form
   {
-    public event Action<Client>? OnSendAddSuccess;
+    public event Action<Client>? OnSendSuccess;
+
+    private ClientService _clientService { get; set; }
+    private Client _clientUpdate { get; set; }
+    private EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     public PopupAddClient()
     {
       InitializeComponent();
@@ -25,12 +31,35 @@ namespace LTP.Truck.MasterData
       this.btnClose.Click += BtnClose_Click;
     }
 
-    private ClientService _clientService { get; set; }
+    public PopupAddClient(Client client) : this()
+    {
+      _clientUpdate = client;
+      _enumTypePopup = EnumTypePopup.Update;
+      btnConfirm.Text = "Cập nhật";
+
+      LoadDataUpdate(client);
+    }
 
     private void PopupAddClient_Load(object? sender, EventArgs e)
     {
       _clientService = new ClientService();
     }
+
+    private void LoadDataUpdate(Client client)
+    {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(() =>
+        {
+          LoadDataUpdate(client);
+        }));
+        return;
+      }
+
+     txtName.Texts = client?.Name??string.Empty;
+     txtDescription.Texts = client?.Description ?? string.Empty;
+    }
+
 
     private void BtnClose_Click(object? sender, EventArgs e)
     {
@@ -49,18 +78,36 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        Client client = new Client();
-        client.Name = txtName.Texts.Trim();
-        client.Description = txtDescription.Texts.Trim();
-        client.CreatedAt = DateTime.UtcNow;
-        var rs = await _clientService.AddAsync(client);
+        if (_enumTypePopup == EnumTypePopup.Add )
+        {
+          Client client = new Client();
+          client.Name = txtName.Texts.Trim();
+          client.Description = txtDescription.Texts.Trim();
+          client.CreatedAt = DateTime.UtcNow;
+          var rs = await _clientService.AddOrUpdateAsync(client);
 
-        using var popupMsg = new PopupConfirm("Thêm thành công.",
-            EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-        popupMsg.ShowDialog(this);
+          using var popupMsg = new PopupConfirm("Thêm thành công.",
+              EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+          popupMsg.ShowDialog(this);
 
-        OnSendAddSuccess?.Invoke(rs);
-        this.Close();
+          OnSendSuccess?.Invoke(rs);
+          this.Close();
+        }  
+        else if (_enumTypePopup == EnumTypePopup.Update)
+        {
+          _clientUpdate.Name = txtName.Texts.Trim();
+          _clientUpdate.Description = txtDescription.Texts.Trim();
+          _clientUpdate.CreatedAt = DateTime.UtcNow;
+          var rs = await _clientService.AddOrUpdateAsync(_clientUpdate);
+
+          using var popupMsg = new PopupConfirm("Cập nhật thành công.",
+              EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+          popupMsg.ShowDialog(this);
+
+          OnSendSuccess?.Invoke(rs);
+          this.Close();
+        }
+
       }
       catch (Exception)
       {

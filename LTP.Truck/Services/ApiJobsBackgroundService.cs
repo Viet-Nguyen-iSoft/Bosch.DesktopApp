@@ -52,9 +52,6 @@ namespace LTP.Truck.Services
                 var rs = await api.UpsertClientAsync(client);
               }  
               break;
-            default:
-              throw new NotSupportedException(
-                $"Chưa hỗ trợ loại API job: {apiJob.EnumTypeAPI}.");
           }
 
           apiJob.EnumStatusAPI = EnumStatusAPI.Success;

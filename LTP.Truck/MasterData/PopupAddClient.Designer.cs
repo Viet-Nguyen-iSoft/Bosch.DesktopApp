@@ -30,18 +30,18 @@
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupAddClient));
       tableLayoutPanel3 = new TableLayoutPanel();
-      lbTitle = new Label();
-      tableLayoutPanel2 = new TableLayoutPanel();
-      btnConfirm = new Common.Custom.RJButton();
-      btnClose = new Common.Custom.RJButton();
       tableLayoutPanel5 = new TableLayoutPanel();
       txtDescription = new Common.Custom.RJTextBox();
       label3 = new Label();
       label4 = new Label();
       txtName = new Common.Custom.RJTextBox();
+      lbTitle = new Label();
+      tableLayoutPanel2 = new TableLayoutPanel();
+      btnConfirm = new Common.Custom.RJButton();
+      btnClose = new Common.Custom.RJButton();
       tableLayoutPanel3.SuspendLayout();
-      tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
+      tableLayoutPanel2.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -65,83 +65,6 @@
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
       tableLayoutPanel3.Size = new Size(621, 274);
       tableLayoutPanel3.TabIndex = 3;
-      // 
-      // lbTitle
-      // 
-      lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      lbTitle.AutoSize = true;
-      lbTitle.BackColor = Color.FromArgb(199, 199, 199);
-      lbTitle.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      lbTitle.Location = new Point(5, 5);
-      lbTitle.Margin = new Padding(0);
-      lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(611, 60);
-      lbTitle.TabIndex = 0;
-      lbTitle.Text = "Khách hàng";
-      lbTitle.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // tableLayoutPanel2
-      // 
-      tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel2.ColumnCount = 3;
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-      tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
-      tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(5, 204);
-      tableLayoutPanel2.Margin = new Padding(0);
-      tableLayoutPanel2.Name = "tableLayoutPanel2";
-      tableLayoutPanel2.RowCount = 1;
-      tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.Size = new Size(611, 60);
-      tableLayoutPanel2.TabIndex = 5;
-      // 
-      // btnConfirm
-      // 
-      btnConfirm.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnConfirm.BackColor = Color.FromArgb(51, 108, 181);
-      btnConfirm.BackgroundColor = Color.FromArgb(51, 108, 181);
-      btnConfirm.BorderColor = Color.PaleVioletRed;
-      btnConfirm.BorderRadius = 4;
-      btnConfirm.BorderSize = 0;
-      btnConfirm.FlatAppearance.BorderSize = 0;
-      btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      btnConfirm.ForeColor = Color.White;
-      btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
-      btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(254, 3);
-      btnConfirm.Name = "btnConfirm";
-      btnConfirm.Padding = new Padding(10, 0, 0, 0);
-      btnConfirm.Size = new Size(174, 54);
-      btnConfirm.TabIndex = 0;
-      btnConfirm.Text = "       Xác nhận";
-      btnConfirm.TextColor = Color.White;
-      btnConfirm.UseVisualStyleBackColor = false;
-      // 
-      // btnClose
-      // 
-      btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnClose.BackColor = Color.Tomato;
-      btnClose.BackgroundColor = Color.Tomato;
-      btnClose.BorderColor = Color.PaleVioletRed;
-      btnClose.BorderRadius = 4;
-      btnClose.BorderSize = 0;
-      btnClose.FlatAppearance.BorderSize = 0;
-      btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      btnClose.ForeColor = Color.White;
-      btnClose.Image = (Image)resources.GetObject("btnClose.Image");
-      btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(434, 3);
-      btnClose.Name = "btnClose";
-      btnClose.Padding = new Padding(10, 0, 0, 0);
-      btnClose.Size = new Size(174, 54);
-      btnClose.TabIndex = 1;
-      btnClose.Text = "       Đóng";
-      btnClose.TextColor = Color.White;
-      btnClose.UseVisualStyleBackColor = false;
       // 
       // tableLayoutPanel5
       // 
@@ -236,6 +159,83 @@
       txtName.Texts = "";
       txtName.UnderlinedStyle = false;
       // 
+      // lbTitle
+      // 
+      lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbTitle.AutoSize = true;
+      lbTitle.BackColor = Color.FromArgb(199, 199, 199);
+      lbTitle.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Location = new Point(5, 5);
+      lbTitle.Margin = new Padding(0);
+      lbTitle.Name = "lbTitle";
+      lbTitle.Size = new Size(611, 60);
+      lbTitle.TabIndex = 0;
+      lbTitle.Text = "Khách hàng";
+      lbTitle.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // tableLayoutPanel2
+      // 
+      tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel2.ColumnCount = 3;
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
+      tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
+      tableLayoutPanel2.Location = new Point(5, 204);
+      tableLayoutPanel2.Margin = new Padding(0);
+      tableLayoutPanel2.Name = "tableLayoutPanel2";
+      tableLayoutPanel2.RowCount = 1;
+      tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel2.Size = new Size(611, 60);
+      tableLayoutPanel2.TabIndex = 5;
+      // 
+      // btnConfirm
+      // 
+      btnConfirm.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnConfirm.BackColor = Color.FromArgb(51, 108, 181);
+      btnConfirm.BackgroundColor = Color.FromArgb(51, 108, 181);
+      btnConfirm.BorderColor = Color.PaleVioletRed;
+      btnConfirm.BorderRadius = 4;
+      btnConfirm.BorderSize = 0;
+      btnConfirm.FlatAppearance.BorderSize = 0;
+      btnConfirm.FlatStyle = FlatStyle.Flat;
+      btnConfirm.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnConfirm.ForeColor = Color.White;
+      btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
+      btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
+      btnConfirm.Location = new Point(254, 3);
+      btnConfirm.Name = "btnConfirm";
+      btnConfirm.Padding = new Padding(10, 0, 0, 0);
+      btnConfirm.Size = new Size(174, 54);
+      btnConfirm.TabIndex = 0;
+      btnConfirm.Text = "       Xác nhận";
+      btnConfirm.TextColor = Color.White;
+      btnConfirm.UseVisualStyleBackColor = false;
+      // 
+      // btnClose
+      // 
+      btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnClose.BackColor = Color.Tomato;
+      btnClose.BackgroundColor = Color.Tomato;
+      btnClose.BorderColor = Color.PaleVioletRed;
+      btnClose.BorderRadius = 4;
+      btnClose.BorderSize = 0;
+      btnClose.FlatAppearance.BorderSize = 0;
+      btnClose.FlatStyle = FlatStyle.Flat;
+      btnClose.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnClose.ForeColor = Color.White;
+      btnClose.Image = (Image)resources.GetObject("btnClose.Image");
+      btnClose.ImageAlign = ContentAlignment.MiddleLeft;
+      btnClose.Location = new Point(434, 3);
+      btnClose.Name = "btnClose";
+      btnClose.Padding = new Padding(10, 0, 0, 0);
+      btnClose.Size = new Size(174, 54);
+      btnClose.TabIndex = 1;
+      btnClose.Text = "       Đóng";
+      btnClose.TextColor = Color.White;
+      btnClose.UseVisualStyleBackColor = false;
+      // 
       // PopupAddClient
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -247,9 +247,9 @@
       StartPosition = FormStartPosition.CenterParent;
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
-      tableLayoutPanel2.ResumeLayout(false);
       tableLayoutPanel5.ResumeLayout(false);
       tableLayoutPanel5.PerformLayout();
+      tableLayoutPanel2.ResumeLayout(false);
       ResumeLayout(false);
     }
 

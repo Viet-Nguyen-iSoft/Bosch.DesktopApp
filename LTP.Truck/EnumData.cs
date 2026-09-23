@@ -90,5 +90,12 @@ namespace LTP.Truck
       Truck,
       Goods,
     }
+
+    public enum EnumTypePopup
+    {
+      None = 0,
+      Add,
+      Update,
+    }
   }
 }

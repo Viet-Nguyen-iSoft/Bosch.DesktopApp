@@ -18,5 +18,11 @@ namespace iSoft.Database.Service
       var repository = new WarehouseRepository(context);
       return await repository.GetAllAsync(IsContainDelete).ConfigureAwait(false);
     }
+
+    public async Task<Warehouse> AddOrUpdateAsync(Warehouse warehouse)
+    {
+      await using var context = new MySqlDbContext();
+      return await MasterDataUpsertHelper.AddOrUpdateAsync(context, warehouse).ConfigureAwait(false);
+    }
   }
 }

@@ -18,11 +18,10 @@ namespace iSoft.Database.Service
       return await repository.GetAllAsync(IsContainDelete).ConfigureAwait(false);
     }
 
-    public async Task<Client> AddAsync(Client client)
+    public async Task<Client> AddOrUpdateAsync(Client client)
     {
       await using var context = new MySqlDbContext();
-      var repository = new ClientRepository(context);
-      return await repository.AddAsync(client).ConfigureAwait(false);
+      return await MasterDataUpsertHelper.AddOrUpdateAsync(context, client).ConfigureAwait(false);
     }
   }
 }
