@@ -124,6 +124,10 @@ namespace ApiSyncData
       if (!string.IsNullOrWhiteSpace(warehouse.Description))
         formData.Add(new StringContent(warehouse.Description.Trim()), "Description");
 
+      formData.Add(
+        new StringContent(warehouse.DeletedFlag.ToString().ToLowerInvariant()),
+        "DeletedFlag");
+
       using var response = await httpClient.PostAsync(
         apiUrl,
         formData,
@@ -167,6 +171,7 @@ namespace ApiSyncData
         categoryTare.Name,
         categoryTare.SerialCode,
         categoryTare.Description,
+        categoryTare.DeletedFlag,
         lang,
         cancellationToken,
         additionalFields);
@@ -185,6 +190,7 @@ namespace ApiSyncData
         typeGoods.Name,
         typeGoods.SerialCode,
         typeGoods.Description,
+        typeGoods.DeletedFlag,
         lang,
         cancellationToken);
     }
@@ -202,6 +208,7 @@ namespace ApiSyncData
         productGroup.Name,
         productGroup.SerialCode,
         productGroup.Description,
+        productGroup.DeletedFlag,
         lang,
         cancellationToken);
     }
@@ -222,6 +229,7 @@ namespace ApiSyncData
           client.Name,
           string.Empty,
           client.Description,
+          client.DeletedFlag,
           lang,
           cancellationToken,
           additionalFields);
@@ -245,6 +253,7 @@ namespace ApiSyncData
         licensePlate.LicensePlateCode,
         null,
         licensePlate.Description,
+        licensePlate.DeletedFlag,
         lang,
         cancellationToken,
         nameField: "LicensePlateCode");
@@ -619,6 +628,10 @@ namespace ApiSyncData
 
         if (!string.IsNullOrWhiteSpace(description))
           formData.Add(new StringContent(description.Trim()), "Description");
+
+        formData.Add(
+          new StringContent(deletedFlag.ToString().ToLowerInvariant()),
+          "DeletedFlag");
 
         if (additionalFields != null)
         {

@@ -10,5 +10,6 @@ namespace ApiSyncData.Req
     public string Name { get; set; } = string.Empty;
     public string? SerialCode { get; set; }
     public string? Description { get; set; }
+    public bool DeletedFlag { get; set; }
   }
 }

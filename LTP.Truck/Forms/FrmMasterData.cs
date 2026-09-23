@@ -23,6 +23,7 @@ namespace LTP.Truck.Forms
 
     private CancellationTokenSource? _searchDebounceCancellation;
     private ApiJobsService _apiJobsService { get; set; } 
+    private ClientService _clientService { get; set; }
     public FrmMasterData()
     {
       InitializeComponent();
@@ -37,6 +38,7 @@ namespace LTP.Truck.Forms
     private void RegisterService()
     {
       _apiJobsService = new ApiJobsService();
+      _clientService = new ClientService();
     }
     #region Instance
     private static FrmMasterData _Instance = null;
@@ -182,6 +184,7 @@ namespace LTP.Truck.Forms
         clientUpsertRequest.Id = client.Id;
         clientUpsertRequest.Name = client?.Name??string.Empty;
         clientUpsertRequest.Description = client?.Description ?? string.Empty;
+        clientUpsertRequest.DeletedFlag = false;
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -441,8 +444,9 @@ namespace LTP.Truck.Forms
         });
       }
 
-      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
+      // Đặt cột cuối trước để DataGridView không dịch cột dữ liệu vào giữa hai nút.
       dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 1;
+      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
     }
 
     private async void dgv_CellContentClick(object? sender, DataGridViewCellEventArgs e)
@@ -490,6 +494,7 @@ namespace LTP.Truck.Forms
         clientUpsertRequest.Id = client.Id;
         clientUpsertRequest.Name = client?.Name ?? string.Empty;
         clientUpsertRequest.Description = client?.Description ?? string.Empty;
+        clientUpsertRequest.DeletedFlag = false;
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -507,7 +512,62 @@ namespace LTP.Truck.Forms
 
     private Task DeleteMasterDataAsync(object? rowData)
     {
+      if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
+      {
+        var data = rowData as ClientDTO;
+        if (data?.Client != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Client);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
+
       return Task.CompletedTask;
+    }
+
+    private async void PopupMsg_OnSendConfirm(object? sender, ResponMsg e)
+    {
+      try
+      {
+        if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
+        {
+          var client = e.Obj as Client;
+          if (client != null)
+          {
+            client.DeletedFlag = true;
+            await _clientService.AddOrUpdateAsync(client);
+
+            ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
+            clientUpsertRequest.Id = client.IdSrc!=null ? client.IdSrc : client.Id;
+            clientUpsertRequest.Name = client?.Name ?? string.Empty;
+            clientUpsertRequest.Description = client?.Description ?? string.Empty;
+            clientUpsertRequest.DeletedFlag = client?.DeletedFlag??false;
+
+            ApiJobs apiJobs = new ApiJobs();
+            apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
+            apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+            apiJobs.EnumTypeAPI = EnumTypeAPI.MD_Client;
+            apiJobs.CreatedAt = DateTime.UtcNow;
+
+            await _apiJobsService.AddOrUpdateAsync(apiJobs);
+          }
+        }
+
+       
+      }
+      catch (Exception ex)
+      {
+
+      }
+      
     }
   }
 }
