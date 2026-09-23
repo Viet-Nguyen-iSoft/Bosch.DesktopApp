@@ -30,7 +30,6 @@ namespace LTP.Truck.Forms
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmHomeGoods));
       DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
       DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
       DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
@@ -39,8 +38,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel3 = new TableLayoutPanel();
       label1 = new Label();
       tableLayoutPanel6 = new TableLayoutPanel();
-      rjButton1 = new RJButton();
-      rjButton2 = new RJButton();
       tableLayoutPanel12 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
       label5 = new Label();
@@ -60,8 +57,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel4 = new TableLayoutPanel();
       tableLayoutPanel8 = new TableLayoutPanel();
       tableLayoutPanel7 = new TableLayoutPanel();
-      txtLicensePlate = new RJTextBox();
-      btnLoadLicensePlate = new RJButton();
       label2 = new Label();
       cbbProduct = new ComboBox();
       label6 = new Label();
@@ -71,9 +66,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup = new ComboBox();
       label3 = new Label();
       tableLayoutPanel16 = new TableLayoutPanel();
-      txtNameDriver = new RJTextBox();
       label14 = new Label();
-      txtIdCard = new RJTextBox();
       tableLayoutPanel19 = new TableLayoutPanel();
       lbTare = new Label();
       label11 = new Label();
@@ -81,24 +74,16 @@ namespace LTP.Truck.Forms
       lbSumWeight = new Label();
       label10 = new Label();
       tableLayoutPanel10 = new TableLayoutPanel();
-      btnSaveData = new RJButton();
       tableLayoutPanel9 = new TableLayoutPanel();
       dgv = new DataGridView();
       tableLayoutPanel11 = new TableLayoutPanel();
-      btnPrint = new RJButton();
       label9 = new Label();
-      txtSearchKey = new RJTextBox();
       label17 = new Label();
       label18 = new Label();
-      ucTimeSearchFrom = new LTP.Truck.UserControls.UcTimeSearch();
-      ucTimeSearchTo = new LTP.Truck.UserControls.UcTimeSearch();
-      btnSearchHistorical = new RJButton();
-      btnExport = new RJButton();
       label27 = new Label();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
-      tableLayoutPanel6.SuspendLayout();
       tableLayoutPanel12.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel18.SuspendLayout();
@@ -107,10 +92,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel17.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel8.SuspendLayout();
-      tableLayoutPanel7.SuspendLayout();
       tableLayoutPanel16.SuspendLayout();
       tableLayoutPanel19.SuspendLayout();
-      tableLayoutPanel10.SuspendLayout();
       tableLayoutPanel9.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel11.SuspendLayout();
@@ -196,8 +179,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel6.Controls.Add(rjButton1, 3, 0);
-      tableLayoutPanel6.Controls.Add(rjButton2, 2, 0);
       tableLayoutPanel6.Location = new Point(0, 347);
       tableLayoutPanel6.Margin = new Padding(0);
       tableLayoutPanel6.Name = "tableLayoutPanel6";
@@ -205,46 +186,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel6.Size = new Size(760, 62);
       tableLayoutPanel6.TabIndex = 2;
-      // 
-      // rjButton1
-      // 
-      rjButton1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      rjButton1.BackColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BackgroundColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BorderColor = Color.PaleVioletRed;
-      rjButton1.BorderRadius = 5;
-      rjButton1.BorderSize = 0;
-      rjButton1.FlatAppearance.BorderSize = 0;
-      rjButton1.FlatStyle = FlatStyle.Flat;
-      rjButton1.Font = new Font("Roboto", 16F, FontStyle.Bold);
-      rjButton1.ForeColor = Color.White;
-      rjButton1.Image = (Image)resources.GetObject("rjButton1.Image");
-      rjButton1.Location = new Point(578, 3);
-      rjButton1.Name = "rjButton1";
-      rjButton1.Size = new Size(174, 55);
-      rjButton1.TabIndex = 0;
-      rjButton1.TextColor = Color.White;
-      rjButton1.UseVisualStyleBackColor = false;
-      // 
-      // rjButton2
-      // 
-      rjButton2.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      rjButton2.BackColor = Color.FromArgb(64, 107, 177);
-      rjButton2.BackgroundColor = Color.FromArgb(64, 107, 177);
-      rjButton2.BorderColor = Color.PaleVioletRed;
-      rjButton2.BorderRadius = 5;
-      rjButton2.BorderSize = 0;
-      rjButton2.FlatAppearance.BorderSize = 0;
-      rjButton2.FlatStyle = FlatStyle.Flat;
-      rjButton2.Font = new Font("Roboto", 16F, FontStyle.Bold);
-      rjButton2.ForeColor = Color.White;
-      rjButton2.Image = (Image)resources.GetObject("rjButton2.Image");
-      rjButton2.Location = new Point(398, 3);
-      rjButton2.Name = "rjButton2";
-      rjButton2.Size = new Size(174, 55);
-      rjButton2.TabIndex = 1;
-      rjButton2.TextColor = Color.White;
-      rjButton2.UseVisualStyleBackColor = false;
       // 
       // tableLayoutPanel12
       // 
@@ -551,8 +492,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300F));
-      tableLayoutPanel7.Controls.Add(txtLicensePlate, 0, 0);
-      tableLayoutPanel7.Controls.Add(btnLoadLicensePlate, 2, 0);
       tableLayoutPanel7.Location = new Point(197, 0);
       tableLayoutPanel7.Margin = new Padding(0);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -560,51 +499,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel7.Size = new Size(552, 47);
       tableLayoutPanel7.TabIndex = 23;
-      // 
-      // txtLicensePlate
-      // 
-      txtLicensePlate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtLicensePlate.BackColor = SystemColors.Window;
-      txtLicensePlate.BorderColor = Color.Black;
-      txtLicensePlate.BorderFocusColor = Color.HotPink;
-      txtLicensePlate.BorderRadius = 5;
-      txtLicensePlate.BorderSize = 2;
-      txtLicensePlate.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtLicensePlate.ForeColor = Color.FromArgb(64, 64, 64);
-      txtLicensePlate.Location = new Point(4, 4);
-      txtLicensePlate.Margin = new Padding(4);
-      txtLicensePlate.Multiline = false;
-      txtLicensePlate.Name = "txtLicensePlate";
-      txtLicensePlate.Padding = new Padding(10, 7, 10, 7);
-      txtLicensePlate.PasswordChar = false;
-      txtLicensePlate.PlaceholderColor = Color.DarkGray;
-      txtLicensePlate.PlaceholderText = "";
-      txtLicensePlate.Size = new Size(179, 42);
-      txtLicensePlate.TabIndex = 15;
-      txtLicensePlate.Texts = "";
-      txtLicensePlate.UnderlinedStyle = false;
-      // 
-      // btnLoadLicensePlate
-      // 
-      btnLoadLicensePlate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnLoadLicensePlate.BackColor = Color.White;
-      btnLoadLicensePlate.BackgroundColor = Color.White;
-      btnLoadLicensePlate.BorderColor = Color.Black;
-      btnLoadLicensePlate.BorderRadius = 5;
-      btnLoadLicensePlate.BorderSize = 0;
-      btnLoadLicensePlate.FlatAppearance.BorderColor = Color.Black;
-      btnLoadLicensePlate.FlatAppearance.BorderSize = 3;
-      btnLoadLicensePlate.FlatStyle = FlatStyle.Flat;
-      btnLoadLicensePlate.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnLoadLicensePlate.ForeColor = Color.Black;
-      btnLoadLicensePlate.Location = new Point(195, 4);
-      btnLoadLicensePlate.Name = "btnLoadLicensePlate";
-      btnLoadLicensePlate.Size = new Size(54, 38);
-      btnLoadLicensePlate.TabIndex = 17;
-      btnLoadLicensePlate.Text = "...";
-      btnLoadLicensePlate.TextColor = Color.Black;
-      btnLoadLicensePlate.UseVisualStyleBackColor = false;
-      btnLoadLicensePlate.Click += btnLoadLicensePlate_Click;
       // 
       // label2
       // 
@@ -719,9 +613,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel16.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel16.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
       tableLayoutPanel16.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel16.Controls.Add(txtNameDriver, 0, 0);
       tableLayoutPanel16.Controls.Add(label14, 1, 0);
-      tableLayoutPanel16.Controls.Add(txtIdCard, 2, 0);
       tableLayoutPanel16.Location = new Point(197, 47);
       tableLayoutPanel16.Margin = new Padding(0);
       tableLayoutPanel16.Name = "tableLayoutPanel16";
@@ -729,30 +621,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel16.Size = new Size(552, 48);
       tableLayoutPanel16.TabIndex = 22;
-      // 
-      // txtNameDriver
-      // 
-      txtNameDriver.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtNameDriver.BackColor = SystemColors.Window;
-      txtNameDriver.BorderColor = Color.Black;
-      txtNameDriver.BorderFocusColor = Color.HotPink;
-      txtNameDriver.BorderRadius = 5;
-      txtNameDriver.BorderSize = 2;
-      txtNameDriver.Enabled = false;
-      txtNameDriver.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtNameDriver.ForeColor = Color.FromArgb(64, 64, 64);
-      txtNameDriver.Location = new Point(4, 4);
-      txtNameDriver.Margin = new Padding(4);
-      txtNameDriver.Multiline = false;
-      txtNameDriver.Name = "txtNameDriver";
-      txtNameDriver.Padding = new Padding(10, 7, 10, 7);
-      txtNameDriver.PasswordChar = false;
-      txtNameDriver.PlaceholderColor = Color.DarkGray;
-      txtNameDriver.PlaceholderText = "";
-      txtNameDriver.Size = new Size(244, 42);
-      txtNameDriver.TabIndex = 15;
-      txtNameDriver.Texts = "";
-      txtNameDriver.UnderlinedStyle = false;
       // 
       // label14
       // 
@@ -767,30 +635,6 @@ namespace LTP.Truck.Forms
       label14.TabIndex = 17;
       label14.Text = "CCCD:";
       label14.TextAlign = ContentAlignment.MiddleRight;
-      // 
-      // txtIdCard
-      // 
-      txtIdCard.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtIdCard.BackColor = SystemColors.Window;
-      txtIdCard.BorderColor = Color.Black;
-      txtIdCard.BorderFocusColor = Color.HotPink;
-      txtIdCard.BorderRadius = 5;
-      txtIdCard.BorderSize = 2;
-      txtIdCard.Enabled = false;
-      txtIdCard.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtIdCard.ForeColor = Color.FromArgb(64, 64, 64);
-      txtIdCard.Location = new Point(356, 4);
-      txtIdCard.Margin = new Padding(4);
-      txtIdCard.Multiline = false;
-      txtIdCard.Name = "txtIdCard";
-      txtIdCard.Padding = new Padding(10, 7, 10, 7);
-      txtIdCard.PasswordChar = false;
-      txtIdCard.PlaceholderColor = Color.DarkGray;
-      txtIdCard.PlaceholderText = "";
-      txtIdCard.Size = new Size(192, 42);
-      txtIdCard.TabIndex = 18;
-      txtIdCard.Texts = "";
-      txtIdCard.UnderlinedStyle = false;
       // 
       // tableLayoutPanel19
       // 
@@ -885,7 +729,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel10.Controls.Add(btnSaveData, 1, 0);
       tableLayoutPanel10.Location = new Point(0, 349);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -893,31 +736,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel10.Size = new Size(760, 60);
       tableLayoutPanel10.TabIndex = 2;
-      // 
-      // btnSaveData
-      // 
-      btnSaveData.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnSaveData.BackColor = Color.FromArgb(64, 107, 177);
-      btnSaveData.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnSaveData.BorderColor = Color.PaleVioletRed;
-      btnSaveData.BorderRadius = 5;
-      btnSaveData.BorderSize = 0;
-      btnSaveData.FlatAppearance.BorderSize = 0;
-      btnSaveData.FlatStyle = FlatStyle.Flat;
-      btnSaveData.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnSaveData.ForeColor = Color.White;
-      btnSaveData.Image = Properties.Resources.icon_save;
-      btnSaveData.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSaveData.Location = new Point(558, 3);
-      btnSaveData.Name = "btnSaveData";
-      btnSaveData.Padding = new Padding(10, 0, 0, 0);
-      btnSaveData.Size = new Size(194, 54);
-      btnSaveData.TabIndex = 0;
-      btnSaveData.Text = "        Lưu dữ liệu";
-      btnSaveData.TextAlign = ContentAlignment.MiddleLeft;
-      btnSaveData.TextColor = Color.White;
-      btnSaveData.UseVisualStyleBackColor = false;
-      btnSaveData.Click += btnSaveData_Click;
       // 
       // tableLayoutPanel9
       // 
@@ -995,15 +813,9 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 210F));
-      tableLayoutPanel11.Controls.Add(btnPrint, 9, 0);
       tableLayoutPanel11.Controls.Add(label9, 0, 0);
-      tableLayoutPanel11.Controls.Add(txtSearchKey, 1, 0);
       tableLayoutPanel11.Controls.Add(label17, 3, 0);
       tableLayoutPanel11.Controls.Add(label18, 5, 0);
-      tableLayoutPanel11.Controls.Add(ucTimeSearchFrom, 4, 0);
-      tableLayoutPanel11.Controls.Add(ucTimeSearchTo, 6, 0);
-      tableLayoutPanel11.Controls.Add(btnSearchHistorical, 8, 0);
-      tableLayoutPanel11.Controls.Add(btnExport, 10, 0);
       tableLayoutPanel11.Location = new Point(0, 50);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
@@ -1011,31 +823,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.Size = new Size(1525, 62);
       tableLayoutPanel11.TabIndex = 22;
-      // 
-      // btnPrint
-      // 
-      btnPrint.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnPrint.BackColor = Color.FromArgb(64, 107, 177);
-      btnPrint.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnPrint.BorderColor = Color.PaleVioletRed;
-      btnPrint.BorderRadius = 5;
-      btnPrint.BorderSize = 0;
-      btnPrint.FlatAppearance.BorderSize = 0;
-      btnPrint.FlatStyle = FlatStyle.Flat;
-      btnPrint.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnPrint.ForeColor = Color.White;
-      btnPrint.Image = (Image)resources.GetObject("btnPrint.Image");
-      btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnPrint.Location = new Point(1158, 4);
-      btnPrint.Name = "btnPrint";
-      btnPrint.Padding = new Padding(10, 0, 0, 0);
-      btnPrint.Size = new Size(154, 54);
-      btnPrint.TabIndex = 1;
-      btnPrint.Text = "        In phiếu";
-      btnPrint.TextAlign = ContentAlignment.MiddleLeft;
-      btnPrint.TextColor = Color.White;
-      btnPrint.UseVisualStyleBackColor = false;
-      btnPrint.Click += btnPrint_Click;
       // 
       // label9
       // 
@@ -1050,29 +837,6 @@ namespace LTP.Truck.Forms
       label9.TabIndex = 17;
       label9.Text = "Tìm kiếm:";
       label9.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtSearchKey
-      // 
-      txtSearchKey.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtSearchKey.BackColor = SystemColors.Window;
-      txtSearchKey.BorderColor = Color.Black;
-      txtSearchKey.BorderFocusColor = Color.HotPink;
-      txtSearchKey.BorderRadius = 5;
-      txtSearchKey.BorderSize = 2;
-      txtSearchKey.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtSearchKey.ForeColor = Color.FromArgb(64, 64, 64);
-      txtSearchKey.Location = new Point(110, 10);
-      txtSearchKey.Margin = new Padding(4);
-      txtSearchKey.Multiline = false;
-      txtSearchKey.Name = "txtSearchKey";
-      txtSearchKey.Padding = new Padding(10, 7, 10, 7);
-      txtSearchKey.PasswordChar = false;
-      txtSearchKey.PlaceholderColor = Color.DarkGray;
-      txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(94, 42);
-      txtSearchKey.TabIndex = 18;
-      txtSearchKey.Texts = "";
-      txtSearchKey.UnderlinedStyle = false;
       // 
       // label17
       // 
@@ -1102,73 +866,6 @@ namespace LTP.Truck.Forms
       label18.Text = "đến";
       label18.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // ucTimeSearchFrom
-      // 
-      ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(269, 3);
-      ucTimeSearchFrom.Name = "ucTimeSearchFrom";
-      ucTimeSearchFrom.Size = new Size(314, 56);
-      ucTimeSearchFrom.TabIndex = 28;
-      // 
-      // ucTimeSearchTo
-      // 
-      ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(638, 3);
-      ucTimeSearchTo.Name = "ucTimeSearchTo";
-      ucTimeSearchTo.Size = new Size(314, 56);
-      ucTimeSearchTo.TabIndex = 29;
-      // 
-      // btnSearchHistorical
-      // 
-      btnSearchHistorical.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnSearchHistorical.BackColor = Color.FromArgb(64, 107, 177);
-      btnSearchHistorical.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnSearchHistorical.BorderColor = Color.White;
-      btnSearchHistorical.BorderRadius = 5;
-      btnSearchHistorical.BorderSize = 0;
-      btnSearchHistorical.FlatAppearance.BorderColor = Color.White;
-      btnSearchHistorical.FlatAppearance.BorderSize = 0;
-      btnSearchHistorical.FlatStyle = FlatStyle.Flat;
-      btnSearchHistorical.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnSearchHistorical.ForeColor = Color.White;
-      btnSearchHistorical.Image = Properties.Resources.icon_search;
-      btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(978, 3);
-      btnSearchHistorical.Name = "btnSearchHistorical";
-      btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
-      btnSearchHistorical.Size = new Size(174, 55);
-      btnSearchHistorical.TabIndex = 27;
-      btnSearchHistorical.Text = "        Tìm kiếm";
-      btnSearchHistorical.TextAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.TextColor = Color.White;
-      btnSearchHistorical.UseVisualStyleBackColor = false;
-      // 
-      // btnExport
-      // 
-      btnExport.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnExport.BackColor = Color.Green;
-      btnExport.BackgroundColor = Color.Green;
-      btnExport.BorderColor = Color.PaleVioletRed;
-      btnExport.BorderRadius = 5;
-      btnExport.BorderSize = 0;
-      btnExport.FlatAppearance.BorderSize = 0;
-      btnExport.FlatStyle = FlatStyle.Flat;
-      btnExport.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnExport.ForeColor = Color.White;
-      btnExport.Image = Properties.Resources.icon_excel;
-      btnExport.ImageAlign = ContentAlignment.MiddleLeft;
-      btnExport.Location = new Point(1318, 4);
-      btnExport.Margin = new Padding(3, 3, 6, 3);
-      btnExport.Name = "btnExport";
-      btnExport.Padding = new Padding(10, 0, 0, 0);
-      btnExport.Size = new Size(201, 54);
-      btnExport.TabIndex = 30;
-      btnExport.Text = "        Xuất báo cáo";
-      btnExport.TextAlign = ContentAlignment.MiddleLeft;
-      btnExport.TextColor = Color.White;
-      btnExport.UseVisualStyleBackColor = false;
-      btnExport.Click += btnExport_Click;
-      // 
       // label27
       // 
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -1195,7 +892,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel2.ResumeLayout(false);
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
-      tableLayoutPanel6.ResumeLayout(false);
       tableLayoutPanel12.ResumeLayout(false);
       tableLayoutPanel5.ResumeLayout(false);
       tableLayoutPanel5.PerformLayout();
@@ -1210,12 +906,10 @@ namespace LTP.Truck.Forms
       tableLayoutPanel4.PerformLayout();
       tableLayoutPanel8.ResumeLayout(false);
       tableLayoutPanel8.PerformLayout();
-      tableLayoutPanel7.ResumeLayout(false);
       tableLayoutPanel16.ResumeLayout(false);
       tableLayoutPanel16.PerformLayout();
       tableLayoutPanel19.ResumeLayout(false);
       tableLayoutPanel19.PerformLayout();
-      tableLayoutPanel10.ResumeLayout(false);
       tableLayoutPanel9.ResumeLayout(false);
       tableLayoutPanel9.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).EndInit();
