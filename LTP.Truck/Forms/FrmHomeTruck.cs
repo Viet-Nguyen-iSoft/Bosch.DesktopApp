@@ -165,7 +165,8 @@ namespace LTP.Truck.Forms
         var licensePlates = await AppCore.Ins._licensePlateService
           .GetAllAsync(IsContainDelete: false);
         txtLicensePlate.SetAutoCompleteSource(
-          licensePlates.Select(licensePlate => licensePlate.Plate));
+          licensePlates.Select(licensePlate => licensePlate.Plate),
+          autoCompleteMode: AutoCompleteMode.Suggest);
       }
       catch (Exception ex)
       {
@@ -326,11 +327,34 @@ namespace LTP.Truck.Forms
       if (_isLoadingRecordFromLicensePlate)
         return;
 
+      // Invalidate every outstanding lookup as soon as the user changes the text,
+      // including while the new plate is still incomplete or invalid.
+      var lookupVersion = ++_licensePlateLookupVersion;
+      var enteredPlate = txtLicensePlate.Texts;
+      var normalizedEnteredPlate = LicensePlateRepository.Normalize(enteredPlate);
+      var normalizedRecordPlate = LicensePlateRepository.Normalize(_recordTruck.LicensePlate);
+
+      // A pending ticket loaded for another plate must not remain on screen while
+      // the operator is typing a replacement plate.
+      if (_recordTruck.Id != Guid.Empty && normalizedEnteredPlate != normalizedRecordPlate)
+      {
+        _isLoadingRecordFromLicensePlate = true;
+        try
+        {
+          _recordTruck = new RecordTruck();
+          ShowDataHistorical(_recordTruck);
+          txtLicensePlate.Texts = enteredPlate;
+        }
+        finally
+        {
+          _isLoadingRecordFromLicensePlate = false;
+        }
+      }
+
       var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
       if (!validLicense.IsValid)
         return;
 
-      var lookupVersion = ++_licensePlateLookupVersion;
       await Task.Delay(300);
 
       if (lookupVersion != _licensePlateLookupVersion ||
@@ -1184,7 +1208,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
+        RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id, true);
 
         if (record == null)
         {

@@ -375,7 +375,8 @@ namespace LTP.Truck.Custom
     public void SetAutoCompleteSource(
       IEnumerable<string?> values,
       string fontFamily = "Roboto",
-      float fontSize = 16F)
+      float fontSize = 16F,
+      AutoCompleteMode autoCompleteMode = AutoCompleteMode.SuggestAppend)
     {
       if (!string.Equals(textBox1.Font.FontFamily.Name, fontFamily,
           StringComparison.OrdinalIgnoreCase) ||
@@ -395,7 +396,7 @@ namespace LTP.Truck.Custom
         .OrderBy(value => value)
         .ToArray());
 
-      textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+      textBox1.AutoCompleteMode = autoCompleteMode;
       textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
       textBox1.AutoCompleteCustomSource = source;
     }
