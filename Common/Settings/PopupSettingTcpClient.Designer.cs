@@ -69,7 +69,7 @@ namespace Common.Settings
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 10F));
-      tableLayoutPanel3.Size = new Size(534, 505);
+      tableLayoutPanel3.Size = new Size(534, 534);
       tableLayoutPanel3.TabIndex = 4;
       // 
       // label1
@@ -118,7 +118,7 @@ namespace Common.Settings
       // 
       iconAutoConnect.Anchor = AnchorStyles.Left;
       iconAutoConnect.Image = Properties.Resources.switch_off;
-      iconAutoConnect.Location = new Point(202, 285);
+      iconAutoConnect.Location = new Point(181, 285);
       iconAutoConnect.Name = "iconAutoConnect";
       iconAutoConnect.Size = new Size(104, 62);
       iconAutoConnect.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -136,7 +136,7 @@ namespace Common.Settings
       txtTimeout.BorderSize = 2;
       txtTimeout.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTimeout.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTimeout.Location = new Point(203, 154);
+      txtTimeout.Location = new Point(182, 156);
       txtTimeout.Margin = new Padding(4);
       txtTimeout.Multiline = false;
       txtTimeout.Name = "txtTimeout";
@@ -144,7 +144,7 @@ namespace Common.Settings
       txtTimeout.PasswordChar = false;
       txtTimeout.PlaceholderColor = Color.DarkGray;
       txtTimeout.PlaceholderText = "";
-      txtTimeout.Size = new Size(307, 42);
+      txtTimeout.Size = new Size(328, 38);
       txtTimeout.TabIndex = 10;
       txtTimeout.Texts = "";
       txtTimeout.UnderlinedStyle = false;
@@ -159,7 +159,7 @@ namespace Common.Settings
       txtPort.BorderSize = 2;
       txtPort.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtPort.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPort.Location = new Point(203, 84);
+      txtPort.Location = new Point(182, 86);
       txtPort.Margin = new Padding(4);
       txtPort.Multiline = false;
       txtPort.Name = "txtPort";
@@ -167,7 +167,7 @@ namespace Common.Settings
       txtPort.PasswordChar = false;
       txtPort.PlaceholderColor = Color.DarkGray;
       txtPort.PlaceholderText = "";
-      txtPort.Size = new Size(307, 42);
+      txtPort.Size = new Size(328, 38);
       txtPort.TabIndex = 9;
       txtPort.Texts = "";
       txtPort.UnderlinedStyle = false;
@@ -181,7 +181,7 @@ namespace Common.Settings
       label3.Location = new Point(0, 70);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
-      label3.Size = new Size(199, 70);
+      label3.Size = new Size(178, 70);
       label3.TabIndex = 3;
       label3.Text = "Port:";
       label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -195,7 +195,7 @@ namespace Common.Settings
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
-      label2.Size = new Size(199, 70);
+      label2.Size = new Size(178, 70);
       label2.TabIndex = 1;
       label2.Text = "Địa chỉ IP:";
       label2.TextAlign = ContentAlignment.MiddleLeft;
@@ -209,7 +209,7 @@ namespace Common.Settings
       label5.Location = new Point(0, 210);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
-      label5.Size = new Size(199, 72);
+      label5.Size = new Size(178, 72);
       label5.TabIndex = 5;
       label5.Text = "Gửi lệnh lấy dữ liệu:";
       label5.TextAlign = ContentAlignment.MiddleLeft;
@@ -223,7 +223,7 @@ namespace Common.Settings
       label4.Location = new Point(0, 140);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(199, 70);
+      label4.Size = new Size(178, 70);
       label4.TabIndex = 4;
       label4.Text = "Timeout (s):";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -237,7 +237,7 @@ namespace Common.Settings
       label6.Location = new Point(0, 282);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(199, 68);
+      label6.Size = new Size(178, 68);
       label6.TabIndex = 6;
       label6.Text = "Tự động kết nối:";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -252,7 +252,7 @@ namespace Common.Settings
       txtIP.BorderSize = 2;
       txtIP.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtIP.ForeColor = Color.FromArgb(64, 64, 64);
-      txtIP.Location = new Point(203, 14);
+      txtIP.Location = new Point(182, 16);
       txtIP.Margin = new Padding(4);
       txtIP.Multiline = false;
       txtIP.Name = "txtIP";
@@ -260,7 +260,7 @@ namespace Common.Settings
       txtIP.PasswordChar = false;
       txtIP.PlaceholderColor = Color.DarkGray;
       txtIP.PlaceholderText = "";
-      txtIP.Size = new Size(307, 42);
+      txtIP.Size = new Size(328, 38);
       txtIP.TabIndex = 8;
       txtIP.Texts = "";
       txtIP.UnderlinedStyle = false;
@@ -269,7 +269,7 @@ namespace Common.Settings
       // 
       iconSendReq.Anchor = AnchorStyles.Left;
       iconSendReq.Image = Properties.Resources.switch_off;
-      iconSendReq.Location = new Point(202, 213);
+      iconSendReq.Location = new Point(181, 213);
       iconSendReq.Name = "iconSendReq";
       iconSendReq.Size = new Size(104, 66);
       iconSendReq.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -286,7 +286,7 @@ namespace Common.Settings
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(10, 435);
+      tableLayoutPanel2.Location = new Point(10, 464);
       tableLayoutPanel2.Margin = new Padding(10, 0, 10, 0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
@@ -347,7 +347,7 @@ namespace Common.Settings
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(534, 505);
+      ClientSize = new Size(534, 534);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupSettingTcpClient";
