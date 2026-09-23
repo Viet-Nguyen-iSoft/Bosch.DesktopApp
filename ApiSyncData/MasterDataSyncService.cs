@@ -90,8 +90,9 @@ namespace ApiSyncData
         await using var db = new MySqlDbContext();
         if (prepare != null)
           await prepare(db).ConfigureAwait(false);
+        var sourceIds = rows!.Select(row => row.Id!.Value).ToList();
         var locals = await db.Set<TEntity>()
-          .Where(x => x.IdSrc.HasValue && x.IdSrc != Guid.Empty)
+          .Where(x => (x.IdSrc.HasValue && x.IdSrc != Guid.Empty) || sourceIds.Contains(x.Id))
           .ToListAsync(token).ConfigureAwait(false);
         var rowsToSync = shouldSync == null
           ? rows!

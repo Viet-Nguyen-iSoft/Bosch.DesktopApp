@@ -27,6 +27,10 @@ namespace ApiSyncData
     {
       var linked = locals.Where(x => x.IdSrc.HasValue && x.IdSrc != Guid.Empty).ToList();
       var byId = linked.ToDictionary(x => x.IdSrc!.Value);
+      var unlinkedByLocalId = locals
+        .Where(x => !x.IdSrc.HasValue || x.IdSrc == Guid.Empty)
+        .Where(x => x.Id != Guid.Empty)
+        .ToDictionary(x => x.Id);
       var ids = snapshotIds?.ToHashSet() ?? new HashSet<Guid>();
       var added = new List<TEntity>();
       foreach (var row in rows)
@@ -36,9 +40,16 @@ namespace ApiSyncData
         ids.Add(id);
         if (!byId.TryGetValue(id, out var local))
         {
-          local = new TEntity { IdSrc = id };
+          // Dữ liệu cũ có thể đã dùng Id từ server làm khóa chính nhưng chưa gắn IdSrc.
+          // Nhận lại bản ghi đó để update, tránh insert trùng khóa chính.
+          if (unlinkedByLocalId.Remove(id, out local))
+            local.IdSrc = id;
+          else
+          {
+            local = new TEntity { IdSrc = id };
+            added.Add(local);
+          }
           byId.Add(id, local);
-          added.Add(local);
         }
         map(row, local);
         // Database lưu timestamp tới microsecond; chuẩn hóa để EF không nhận
