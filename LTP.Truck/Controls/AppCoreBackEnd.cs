@@ -220,12 +220,12 @@ namespace LTP.Truck.Controls
           i++;
 
           e.Graphics.DrawString("Net (Kg) :", fontTilte, brush, new PointF(startX + offsetQR, startY + offsetY * i));
-          e.Graphics.DrawString(dTOPrintLabel.Net.ToString("F3"), fontValue, brush, new PointF(startX + offsetQR + 20, startY + offsetY * i));
+          e.Graphics.DrawString(WeightFormatHelper.Format(dTOPrintLabel.Net, 3), fontValue, brush, new PointF(startX + offsetQR + 20, startY + offsetY * i));
 
           i++;
 
           e.Graphics.DrawString("Tare (Kg) :", fontTilte, brush, new PointF(startX + offsetQR, startY + offsetY * i));
-          e.Graphics.DrawString(dTOPrintLabel.Tare.ToString("F3"), fontValue, brush, new PointF(startX + offsetQR + 20, startY + offsetY * i));
+          e.Graphics.DrawString(WeightFormatHelper.Format(dTOPrintLabel.Tare, 3), fontValue, brush, new PointF(startX + offsetQR + 20, startY + offsetY * i));
 
           i++;
 

@@ -36,8 +36,8 @@ namespace iSoft.Database
         No = 1,
         NoLabelAuto = recordTruck.NoLabelAuto,
         NoLabelManual = recordTruck.NoLabelManual,
-        NetTime01 = recordTruck.NetTime01.ToString("F0") + " Kg",
-        NetTime02 = recordTruck.NetTime02.ToString("F0") + " Kg",
+        NetTime01 = WeightFormatHelper.Format(recordTruck.NetTime01) + " Kg",
+        NetTime02 = WeightFormatHelper.Format(recordTruck.NetTime02) + " Kg",
         Time01 = recordTruck.WeighInAt!=null ? ((DateTime)recordTruck.WeighInAt).AddHours(utc).ToString("dd/MM/yyyy HH:mm:ss") : "---",
         Time02 = recordTruck.WeighOutAt != null ? ((DateTime)recordTruck.WeighOutAt).AddHours(utc).ToString("dd/MM/yyyy HH:mm:ss") : "---",
         Status = status,
@@ -90,9 +90,9 @@ namespace iSoft.Database
           ProductGroup = record?.Product?.ProductGroup?.Name,
           Product = record?.Product?.Name,
           CategoryTare = record?.CategoryTare?.Name,
-          Gross = ((record?.Net??0.0)+ (record?.Tare ?? 0.0)).ToString("F3"),
-          Net = (record?.Net??0.0).ToString("F3"),
-          Tare = (record?.Tare ?? 0.0).ToString("F3"),
+          Gross = WeightFormatHelper.Format((record?.Net ?? 0.0) + (record?.Tare ?? 0.0), 3),
+          Net = WeightFormatHelper.Format(record?.Net ?? 0.0, 3),
+          Tare = WeightFormatHelper.Format(record?.Tare ?? 0.0, 3),
         })
         .ToList();
     }
@@ -178,7 +178,7 @@ namespace iSoft.Database
             Code = e.Code,
             Name = e.Name,
             Description = e.Description,
-            Value = (e?.Value??0.0).ToString("F3"),
+            Value = WeightFormatHelper.Format(e?.Value ?? 0.0, 3),
             UpdatedAt = e?.UpdatedAt != null ? (((DateTime)e?.UpdatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? "") :
                                               (((DateTime)e?.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? ""),
           })

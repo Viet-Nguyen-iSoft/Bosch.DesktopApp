@@ -181,19 +181,19 @@ namespace LTP.Truck.Forms
       }
 
       //Net
-      lbWeightValue.Text = messageData.IndicatedWeight.ToString("F3");
+      lbWeightValue.Text = WeightFormatHelper.Format(messageData.IndicatedWeight, 3);
 
       //Tare
-      lbTareSrc.Text = messageData.TareWeight.ToString("F3");
+      lbTareSrc.Text = WeightFormatHelper.Format(messageData.TareWeight, 3);
 
       //Tare
       if (_categoryTare != null)
       {
-        lbGross.Text = (messageData.IndicatedWeight + (_categoryTare?.Value ?? 0.0)).ToString("F3");
+        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight + (_categoryTare?.Value ?? 0.0), 3);
       }
       else
       {
-        lbGross.Text = messageData.IndicatedWeight.ToString("F3");
+        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight, 3);
       }
     }
 
@@ -321,11 +321,13 @@ namespace LTP.Truck.Forms
       _categoryTare = cbbTare.SelectedItem as CategoryTare;
       if (_categoryTare != null)
       {
-        lbTare.Text = _categoryTare?.Value?.ToString("0.000") ?? string.Empty;
+        lbTare.Text = _categoryTare?.Value is double tareValue
+          ? WeightFormatHelper.Format(tareValue, 3)
+          : string.Empty;
       }
       else
       {
-        lbTare.Text = 0.0.ToString("0.000") ?? string.Empty;
+        lbTare.Text = WeightFormatHelper.Format(0.0, 3);
       }
     }
 
@@ -451,12 +453,12 @@ namespace LTP.Truck.Forms
           BeginInvoke(new Action(() =>
           {
             if (loadVersion == _sumWeightLoadVersion)
-              lbSumWeight.Text = totalWeight.ToString("F3");
+              lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 3);
           }));
           return;
         }
 
-        lbSumWeight.Text = totalWeight.ToString("F3");
+        lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 3);
       }
       catch (Exception ex)
       {

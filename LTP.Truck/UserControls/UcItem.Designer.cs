@@ -47,10 +47,11 @@ namespace LTP.Truck.UserControls
       tableLayoutPanel1.Location = new Point(0, 0);
       tableLayoutPanel1.Name = "tableLayoutPanel1";
       tableLayoutPanel1.Padding = new Padding(5);
-      tableLayoutPanel1.RowCount = 3;
+      tableLayoutPanel1.RowCount = 4;
       tableLayoutPanel1.RowStyles.Add(new RowStyle());
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle());
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 10F));
       tableLayoutPanel1.Size = new Size(257, 144);
       tableLayoutPanel1.TabIndex = 0;
       // 
@@ -59,9 +60,9 @@ namespace LTP.Truck.UserControls
       lbTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTime.AutoSize = true;
       lbTime.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      lbTime.Location = new Point(8, 105);
+      lbTime.Location = new Point(8, 104);
       lbTime.Name = "lbTime";
-      lbTime.Size = new Size(241, 34);
+      lbTime.Size = new Size(241, 25);
       lbTime.TabIndex = 5;
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
@@ -73,7 +74,7 @@ namespace LTP.Truck.UserControls
       lbValue.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbValue.Location = new Point(8, 28);
       lbValue.Name = "lbValue";
-      lbValue.Size = new Size(241, 77);
+      lbValue.Size = new Size(241, 76);
       lbValue.TabIndex = 4;
       lbValue.Text = "0.000";
       lbValue.TextAlign = ContentAlignment.MiddleCenter;

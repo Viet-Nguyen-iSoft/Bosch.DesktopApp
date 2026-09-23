@@ -52,5 +52,13 @@ namespace LTP.Truck.UserControls
       }
     }
 
+    public bool VisibleTime
+    {
+      set
+      {
+        lbTime.Visible = value;
+      }
+    }
+
   }
 }

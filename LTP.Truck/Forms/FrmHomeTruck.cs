@@ -35,7 +35,10 @@ namespace LTP.Truck.Forms
     private int _licensePlateLookupVersion;
     private bool _isLoadingRecordFromLicensePlate;
     private bool _isViewingHistoricalDetail;
-    private string _formatStrWeight { get; } = "F0";
+    private static string FormatWeight(double value)
+    {
+      return WeightFormatHelper.Format(value);
+    }
 
     public FrmHomeTruck()
     {
@@ -71,6 +74,7 @@ namespace LTP.Truck.Forms
       ucItemWeight01.Title = "KL cân lần 1";
       ucItemWeight02.Title = "KL cân lần 2";
       ucItemOffsetWeight.Title = "KL chênh lệch xe";
+      ucItemOffsetWeight.VisibleTime = false;
 
       ElipseControl elipseControl = new ElipseControl();
       elipseControl.TargetControl = tableLayoutPanel3;
@@ -267,7 +271,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      lbWeightValue.Text = messageData.IndicatedWeight.ToString(_formatStrWeight);
+      lbWeightValue.Text = FormatWeight(messageData.IndicatedWeight);
     }
 
     private RecordTruck _recordTruck { get; set; } = new RecordTruck();
@@ -287,6 +291,9 @@ namespace LTP.Truck.Forms
         }
 
         await LoadPendingRecordByLicensePlateAsync(rs.Plate);
+
+        if (!ValidateWarehouseSelected())
+          return;
 
         if (_recordTruck.TypeGoodsId == null)
         {
@@ -431,6 +438,9 @@ namespace LTP.Truck.Forms
           return;
         }
 
+        if (!ValidateWarehouseSelected())
+          return;
+
         _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
         _recordTruck.NetTimeTemp = 0.0;
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
@@ -511,6 +521,9 @@ namespace LTP.Truck.Forms
           return;
         }
 
+        if (!ValidateWarehouseSelected())
+          return;
+
         _recordTruck.NetTime02 = _recordTruck.NetTimeTemp;
         _recordTruck.NetTimeTemp = 0.0;
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime02;
@@ -564,6 +577,22 @@ namespace LTP.Truck.Forms
       }
     }
 
+    private bool ValidateWarehouseSelected()
+    {
+      if (!string.IsNullOrWhiteSpace(txtWareHouse.Texts) &&
+          _recordTruck.WarehouseId.HasValue)
+      {
+        return true;
+      }
+
+      using var popupMsg = new PopupConfirm(
+        "Vui lòng chọn Kho hàng trước khi cân !",
+        EnumTypeMsg.MessageManualClose,
+        EnumImageMsg.Warning);
+      popupMsg.ShowDialog(this);
+      return false;
+    }
+
     private void CheckShowStatusButton(RecordTruck recordTruck)
     {
       if (this.InvokeRequired)
@@ -598,7 +627,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
+          ucItemWeight01.Value = FormatWeight(recordTruck.NetTime01);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.WeightedTime02:
@@ -606,7 +635,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
+          ucItemWeight01.Value = FormatWeight(recordTruck.NetTime01);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.DoneTime02:
@@ -614,8 +643,8 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = false;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
-          ucItemWeight02.Value = recordTruck.NetTime02.ToString(_formatStrWeight);
+          ucItemWeight01.Value = FormatWeight(recordTruck.NetTime01);
+          ucItemWeight02.Value = FormatWeight(recordTruck.NetTime02);
           break;
         default:
           break;
@@ -623,7 +652,7 @@ namespace LTP.Truck.Forms
 
       ShowWeightTimes(recordTruck);
       UpdateOffsetWeight(recordTruck);
-      lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString(_formatStrWeight);
+      lbWeightTrigger.Text = FormatWeight(recordTruck.NetTimeTemp);
       ApplyRecordAccess(recordTruck);
     }
 
@@ -661,7 +690,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
+          ucItemWeight01.Value = FormatWeight(recordTruck.NetTime01);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.WeightedTime02:
@@ -669,7 +698,7 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = true;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
+          ucItemWeight01.Value = FormatWeight(recordTruck.NetTime01);
           ucItemWeight02.Value = "...";
           break;
         case iSoft.Database.EnumData.EnumTypeDataTruck.DoneTime02:
@@ -677,8 +706,8 @@ namespace LTP.Truck.Forms
           btnWeightTime02.Enabled = false;
           btnPrint.Enabled = true;
 
-          ucItemWeight01.Value = recordTruck.NetTime01.ToString(_formatStrWeight);
-          ucItemWeight02.Value = recordTruck.NetTime02.ToString(_formatStrWeight);
+          ucItemWeight01.Value = FormatWeight(recordTruck.NetTime01);
+          ucItemWeight02.Value = FormatWeight(recordTruck.NetTime02);
           break;
         default:
           break;
@@ -687,7 +716,7 @@ namespace LTP.Truck.Forms
       ShowWeightTimes(recordTruck);
       double valueGoods = (recordTruck.NetTime02 - recordTruck.NetTime01);
       UpdateOffsetWeight(recordTruck);
-      lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString(_formatStrWeight);
+      lbWeightTrigger.Text = FormatWeight(recordTruck.NetTimeTemp);
 
       if (valueGoods > 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
       {
@@ -771,9 +800,6 @@ namespace LTP.Truck.Forms
       txtNameDriver.Enabled = canEditInformation;
       txtLicensePlate.Enabled = canEditInformation && !_isViewingHistoricalDetail;
       txtIdCard.Enabled = canEditInformation;
-      txtClient.Enabled = canEditInformation;
-      txtTypeGoods.Enabled = canEditInformation;
-      txtWareHouse.Enabled = canEditInformation;
       txtDocument.ReadOnly = !canEditInformation;
     }
 
@@ -786,7 +812,7 @@ namespace LTP.Truck.Forms
       }
 
       var offsetWeight = Math.Abs(recordTruck.NetTime02 - recordTruck.NetTime01);
-      ucItemOffsetWeight.Value = offsetWeight.ToString(_formatStrWeight);
+      ucItemOffsetWeight.Value = FormatWeight(offsetWeight);
     }
 
     private async void btnSearchHistorical_Click(object sender, EventArgs e)
@@ -1323,7 +1349,7 @@ namespace LTP.Truck.Forms
           tempTableDetal = tempTableDetal.Replace("{{no}}", (no).ToString("D2"));
           tempTableDetal = tempTableDetal.Replace("{{name}}", recordWeightsByProduct[no - 1].ProductName);
           tempTableDetal = tempTableDetal.Replace("{{code}}", recordWeightsByProduct[no - 1].ProductCode);
-          tempTableDetal = tempTableDetal.Replace("{{quantity}}", recordWeightsByProduct[no - 1].SumNet.ToString("F3"));
+          tempTableDetal = tempTableDetal.Replace("{{quantity}}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
           tempTableDetal = tempTableDetal.Replace("{{note}}", "");
 
 
@@ -1332,7 +1358,7 @@ namespace LTP.Truck.Forms
         }
       }
 
-      result = result.Replace("{{totalQuantity}}", value.ToString(_formatStrWeight));
+      result = result.Replace("{{totalQuantity}}", FormatWeight(value));
       result = result.Replace("{table}", tableDetails);
 
       string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
@@ -1369,7 +1395,7 @@ namespace LTP.Truck.Forms
         bool hasSecondWeight = secondWeight > 0;
 
         string gross = "...";
-        string tare = hasFirstWeight ? firstWeight.ToString(_formatStrWeight) : "...";
+        string tare = hasFirstWeight ? FormatWeight(firstWeight) : "...";
         string net = "...";
         string importExport = "Chưa xác định";
         string timeTare = recordTruck.WeighInAt != null ? ((DateTime)(recordTruck.WeighInAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
@@ -1382,9 +1408,9 @@ namespace LTP.Truck.Forms
           double tareWeight = Math.Min(firstWeight, secondWeight);
           double netWeight = grossWeight - tareWeight;
 
-          gross = grossWeight.ToString(_formatStrWeight);
-          tare = tareWeight.ToString(_formatStrWeight);
-          net = netWeight.ToString(_formatStrWeight);
+          gross = FormatWeight(grossWeight);
+          tare = FormatWeight(tareWeight);
+          net = FormatWeight(netWeight);
           importExport = secondWeight > firstWeight
             ? "Xuất hàng"
             : secondWeight < firstWeight
