@@ -59,6 +59,13 @@ namespace LTP.Truck.Services
                 var rs = await api.UpsertWarehouseAsync(warehouseUpsert);
               }
               break;
+            case EnumTypeAPI.MD_TypeGoods:
+              var typeGoodsUpsertRequest = JsonHelper.FromJson<TypeGoodsUpsertRequest>(apiJob?.Json ?? string.Empty);
+              if (typeGoodsUpsertRequest != null)
+              {
+                var rs = await api.UpsertTypeGoodsAsync(typeGoodsUpsertRequest);
+              }
+              break;
           }
 
           apiJob.EnumStatusAPI = EnumStatusAPI.Success;

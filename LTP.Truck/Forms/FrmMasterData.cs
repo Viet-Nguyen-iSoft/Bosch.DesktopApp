@@ -25,6 +25,7 @@ namespace LTP.Truck.Forms
     private ApiJobsService _apiJobsService { get; set; } 
     private ClientService _clientService { get; set; }
     private WarehouseService _warehouseService { get; set; }
+    private TypeGoodsService _typeGoodsService { get; set; }
     public FrmMasterData()
     {
       InitializeComponent();
@@ -40,6 +41,8 @@ namespace LTP.Truck.Forms
     {
       _apiJobsService = new ApiJobsService();
       _clientService = new ClientService();
+      _warehouseService = new WarehouseService();
+      _typeGoodsService = new TypeGoodsService();
     }
     #region Instance
     private static FrmMasterData _Instance = null;
@@ -180,6 +183,39 @@ namespace LTP.Truck.Forms
         PopupWarehouse  popupWarehouse = new PopupWarehouse();
         popupWarehouse.OnSendSuccess += PopupWarehouse_OnSendSuccess;
         popupWarehouse.ShowDialog();
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
+      {
+        PopupTypeGoods  popupTypeGoods = new PopupTypeGoods();
+        popupTypeGoods.OnSendSuccess += PopupTypeGoods_OnSendSuccess;
+        popupTypeGoods.ShowDialog();
+      }
+    }
+
+    private async void PopupTypeGoods_OnSendSuccess(TypeGoods obj)
+    {
+      try
+      {
+        TypeGoodsUpsertRequest  typeGoodsUpsertRequest = new TypeGoodsUpsertRequest();
+        typeGoodsUpsertRequest.Id = obj.Id;
+        typeGoodsUpsertRequest.SerialCode = obj?.Code ?? string.Empty;
+        typeGoodsUpsertRequest.Name = obj?.Name ?? string.Empty;
+        typeGoodsUpsertRequest.Description = obj?.Description ?? string.Empty;
+        typeGoodsUpsertRequest.DeletedFlag = false;
+
+        ApiJobs apiJobs = new ApiJobs();
+        apiJobs.Json = JsonHelper.ToJson(typeGoodsUpsertRequest);
+        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+        apiJobs.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
+        apiJobs.CreatedAt = DateTime.UtcNow;
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+        await LoadData(_enumTypeMasterDataCurrent);
+      }
+      catch (Exception ex)
+      {
+
       }
     }
 
@@ -532,9 +568,52 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
+      {
+        var data = rowData as TypeGoodsDTO;
+        if (data?.TypeGoods != null)
+        {
+          PopupTypeGoods popupTypeGoods = new PopupTypeGoods(data.TypeGoods);
+          popupTypeGoods.OnSendSuccess += PopupUpdateTypeGoods_OnSendSuccess;
+          popupTypeGoods.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
 
 
       return Task.CompletedTask;
+    }
+
+    private async void PopupUpdateTypeGoods_OnSendSuccess(TypeGoods obj)
+    {
+      try
+      {
+        TypeGoodsUpsertRequest typeGoodsUpsertRequest = new TypeGoodsUpsertRequest();
+        typeGoodsUpsertRequest.Id = obj.Id;
+        typeGoodsUpsertRequest.SerialCode = obj?.Code ?? string.Empty;
+        typeGoodsUpsertRequest.Name = obj?.Name ?? string.Empty;
+        typeGoodsUpsertRequest.Description = obj?.Description ?? string.Empty;
+        typeGoodsUpsertRequest.DeletedFlag = false;
+
+        ApiJobs apiJobs = new ApiJobs();
+        apiJobs.Json = JsonHelper.ToJson(typeGoodsUpsertRequest);
+        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+        apiJobs.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
+        apiJobs.CreatedAt = DateTime.UtcNow;
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+        await LoadData(_enumTypeMasterDataCurrent);
+      }
+      catch (Exception ex)
+      {
+
+      }
     }
 
     private async void PopupUpdateWarehouse_OnSendSuccess(Warehouse obj)
@@ -627,6 +706,24 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
+      {
+        var data = rowData as TypeGoodsDTO;
+        if (data?.TypeGoods != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.TypeGoods);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
 
       return Task.CompletedTask;
     }
@@ -685,7 +782,32 @@ namespace LTP.Truck.Forms
             await LoadData(_enumTypeMasterDataCurrent);
           }
         }
+        else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
+        {
+          var  typeGoods = e.Obj as TypeGoods;
+          if (typeGoods != null)
+          {
+            typeGoods.DeletedFlag = true;
+            await _typeGoodsService.AddOrUpdateAsync(typeGoods);
 
+            WarehouseUpsertRequest warehouseUpsertRequest = new WarehouseUpsertRequest();
+            warehouseUpsertRequest.Id = typeGoods.IdSrc != null ? typeGoods.IdSrc : typeGoods.Id;
+            warehouseUpsertRequest.SerialCode = typeGoods?.Code ?? string.Empty;
+            warehouseUpsertRequest.Name = typeGoods?.Name ?? string.Empty;
+            warehouseUpsertRequest.Description = typeGoods?.Description ?? string.Empty;
+            warehouseUpsertRequest.DeletedFlag = typeGoods?.DeletedFlag ?? false;
+
+            ApiJobs apiJobs = new ApiJobs();
+            apiJobs.Json = JsonHelper.ToJson(warehouseUpsertRequest);
+            apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+            apiJobs.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
+            apiJobs.CreatedAt = DateTime.UtcNow;
+
+            await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+            await LoadData(_enumTypeMasterDataCurrent);
+          }
+        }
       }
       catch (Exception ex)
       {
