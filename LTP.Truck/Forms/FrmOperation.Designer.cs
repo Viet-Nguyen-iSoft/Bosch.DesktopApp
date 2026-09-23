@@ -47,6 +47,8 @@ namespace LTP.Truck.Forms
       btnGroupProduct = new RJButton();
       btnProduct = new RJButton();
       btnClient = new RJButton();
+      btnReportTruck = new RJButton();
+      btnReportGoods = new RJButton();
       tableLayoutPanel7 = new TableLayoutPanel();
       lbVersion = new Label();
       pictureBox1 = new PictureBox();
@@ -62,8 +64,6 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
-      btnReportTruck = new RJButton();
-      btnReportGoods = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -418,6 +418,56 @@ namespace LTP.Truck.Forms
       btnClient.TextColor = Color.Black;
       btnClient.UseVisualStyleBackColor = false;
       // 
+      // btnReportTruck
+      // 
+      btnReportTruck.BackColor = Color.Silver;
+      btnReportTruck.BackgroundColor = Color.Silver;
+      btnReportTruck.BorderColor = Color.PaleVioletRed;
+      btnReportTruck.BorderRadius = 5;
+      btnReportTruck.BorderSize = 0;
+      btnReportTruck.Dock = DockStyle.Top;
+      btnReportTruck.FlatAppearance.BorderSize = 0;
+      btnReportTruck.FlatStyle = FlatStyle.Flat;
+      btnReportTruck.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportTruck.ForeColor = Color.Black;
+      btnReportTruck.Image = Properties.Resources.icon_report;
+      btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.Location = new Point(3, 583);
+      btnReportTruck.Name = "btnReportTruck";
+      btnReportTruck.Padding = new Padding(15, 0, 0, 0);
+      btnReportTruck.Size = new Size(242, 70);
+      btnReportTruck.TabIndex = 18;
+      btnReportTruck.Text = "        BÁO CÁO";
+      btnReportTruck.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.TextColor = Color.Black;
+      btnReportTruck.UseVisualStyleBackColor = false;
+      btnReportTruck.Click += btnReportTruck_Click;
+      // 
+      // btnReportGoods
+      // 
+      btnReportGoods.BackColor = Color.Silver;
+      btnReportGoods.BackgroundColor = Color.Silver;
+      btnReportGoods.BorderColor = Color.PaleVioletRed;
+      btnReportGoods.BorderRadius = 5;
+      btnReportGoods.BorderSize = 0;
+      btnReportGoods.Dock = DockStyle.Top;
+      btnReportGoods.FlatAppearance.BorderSize = 0;
+      btnReportGoods.FlatStyle = FlatStyle.Flat;
+      btnReportGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportGoods.ForeColor = Color.Black;
+      btnReportGoods.Image = Properties.Resources.icon_report;
+      btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.Location = new Point(3, 659);
+      btnReportGoods.Name = "btnReportGoods";
+      btnReportGoods.Padding = new Padding(15, 0, 0, 0);
+      btnReportGoods.Size = new Size(242, 70);
+      btnReportGoods.TabIndex = 19;
+      btnReportGoods.Text = "        BÁO CÁO";
+      btnReportGoods.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.TextColor = Color.Black;
+      btnReportGoods.UseVisualStyleBackColor = false;
+      btnReportGoods.Click += btnReportGoods_Click;
+      // 
       // tableLayoutPanel7
       // 
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -485,7 +535,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel4.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel4.ColumnCount = 3;
       tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 280F));
       tableLayoutPanel4.Controls.Add(tableLayoutPanel3, 0, 0);
       tableLayoutPanel4.Controls.Add(btnLogout, 1, 0);
@@ -510,7 +560,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel3.RowCount = 2;
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle());
-      tableLayoutPanel3.Size = new Size(547, 74);
+      tableLayoutPanel3.Size = new Size(527, 74);
       tableLayoutPanel3.TabIndex = 22;
       // 
       // lbTitlePage
@@ -521,7 +571,7 @@ namespace LTP.Truck.Forms
       lbTitlePage.Location = new Point(5, 47);
       lbTitlePage.Margin = new Padding(5, 0, 0, 0);
       lbTitlePage.Name = "lbTitlePage";
-      lbTitlePage.Size = new Size(542, 27);
+      lbTitlePage.Size = new Size(522, 27);
       lbTitlePage.TabIndex = 4;
       lbTitlePage.Text = "Trang chính";
       lbTitlePage.TextAlign = ContentAlignment.MiddleLeft;
@@ -534,7 +584,7 @@ namespace LTP.Truck.Forms
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(547, 47);
+      lbTitle.Size = new Size(527, 47);
       lbTitle.TabIndex = 3;
       lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -553,11 +603,11 @@ namespace LTP.Truck.Forms
       btnLogout.ForeColor = Color.White;
       btnLogout.Image = Properties.Resources.icon_logout;
       btnLogout.ImageAlign = ContentAlignment.MiddleLeft;
-      btnLogout.Location = new Point(556, 10);
+      btnLogout.Location = new Point(536, 10);
       btnLogout.Margin = new Padding(3, 3, 10, 3);
       btnLogout.Name = "btnLogout";
       btnLogout.Padding = new Padding(5, 0, 0, 0);
-      btnLogout.Size = new Size(167, 60);
+      btnLogout.Size = new Size(187, 60);
       btnLogout.TabIndex = 23;
       btnLogout.Text = "        Đăng xuất";
       btnLogout.TextAlign = ContentAlignment.MiddleLeft;
@@ -632,56 +682,6 @@ namespace LTP.Truck.Forms
       lbTime.TabIndex = 2;
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
-      // 
-      // btnReportTruck
-      // 
-      btnReportTruck.BackColor = Color.Silver;
-      btnReportTruck.BackgroundColor = Color.Silver;
-      btnReportTruck.BorderColor = Color.PaleVioletRed;
-      btnReportTruck.BorderRadius = 5;
-      btnReportTruck.BorderSize = 0;
-      btnReportTruck.Dock = DockStyle.Top;
-      btnReportTruck.FlatAppearance.BorderSize = 0;
-      btnReportTruck.FlatStyle = FlatStyle.Flat;
-      btnReportTruck.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnReportTruck.ForeColor = Color.Black;
-      btnReportTruck.Image = Properties.Resources.icon_report;
-      btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
-      btnReportTruck.Location = new Point(3, 583);
-      btnReportTruck.Name = "btnReportTruck";
-      btnReportTruck.Padding = new Padding(15, 0, 0, 0);
-      btnReportTruck.Size = new Size(242, 70);
-      btnReportTruck.TabIndex = 18;
-      btnReportTruck.Text = "        BÁO CÁO XE TẢI";
-      btnReportTruck.TextAlign = ContentAlignment.MiddleLeft;
-      btnReportTruck.TextColor = Color.Black;
-      btnReportTruck.UseVisualStyleBackColor = false;
-      btnReportTruck.Click += btnReportTruck_Click;
-      // 
-      // btnReportGoods
-      // 
-      btnReportGoods.BackColor = Color.Silver;
-      btnReportGoods.BackgroundColor = Color.Silver;
-      btnReportGoods.BorderColor = Color.PaleVioletRed;
-      btnReportGoods.BorderRadius = 5;
-      btnReportGoods.BorderSize = 0;
-      btnReportGoods.Dock = DockStyle.Top;
-      btnReportGoods.FlatAppearance.BorderSize = 0;
-      btnReportGoods.FlatStyle = FlatStyle.Flat;
-      btnReportGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnReportGoods.ForeColor = Color.Black;
-      btnReportGoods.Image = Properties.Resources.icon_report;
-      btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
-      btnReportGoods.Location = new Point(3, 659);
-      btnReportGoods.Name = "btnReportGoods";
-      btnReportGoods.Padding = new Padding(15, 0, 0, 0);
-      btnReportGoods.Size = new Size(242, 70);
-      btnReportGoods.TabIndex = 19;
-      btnReportGoods.Text = "        BÁO CÁO CÂN HÀNG";
-      btnReportGoods.TextAlign = ContentAlignment.MiddleLeft;
-      btnReportGoods.TextColor = Color.Black;
-      btnReportGoods.UseVisualStyleBackColor = false;
-      btnReportGoods.Click += btnReportGoods_Click;
       // 
       // FrmOperation
       // 

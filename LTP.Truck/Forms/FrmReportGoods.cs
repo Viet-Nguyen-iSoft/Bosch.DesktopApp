@@ -195,9 +195,7 @@ namespace LTP.Truck.Forms
       var middleCenterColumns = new[]
       {
         nameof(RecordWeightDTO.No),
-        nameof(RecordWeightDTO.Net),
-        nameof(RecordWeightDTO.Tare),
-        nameof(RecordWeightDTO.Gross)
+        nameof(RecordWeightDTO.ProductGroup),
       };
       foreach (var columnName in middleCenterColumns)
       {
