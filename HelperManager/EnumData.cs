@@ -175,6 +175,7 @@ namespace HelperManager
       MD_Client,
       MD_WareHouse,
       MD_TypeGoods,
+      MD_Tare,
     }
 
     public enum EnumStatusAPI

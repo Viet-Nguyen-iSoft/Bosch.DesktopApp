@@ -66,6 +66,13 @@ namespace LTP.Truck.Services
                 var rs = await api.UpsertTypeGoodsAsync(typeGoodsUpsertRequest);
               }
               break;
+            case EnumTypeAPI.MD_Tare:
+              var categoryTareUpsertRequest = JsonHelper.FromJson<CategoryTareUpsertRequest>(apiJob?.Json ?? string.Empty);
+              if (categoryTareUpsertRequest != null)
+              {
+                await api.UpsertCategoryTareAsync(categoryTareUpsertRequest);
+              }
+              break;
           }
 
           apiJob.EnumStatusAPI = EnumStatusAPI.Success;
