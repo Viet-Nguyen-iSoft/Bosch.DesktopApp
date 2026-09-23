@@ -626,7 +626,7 @@ namespace LTP.Truck.Forms
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(200, 149);
+      cbbProduct.Location = new Point(200, 150);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(546, 33);
       cbbProduct.TabIndex = 7;
@@ -693,7 +693,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(200, 101);
+      cbbProductGroup.Location = new Point(200, 102);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(240, 33);
       cbbProductGroup.TabIndex = 6;
@@ -845,7 +845,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 6);
+      cbbTare.Location = new Point(3, 7);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(201, 33);
       cbbTare.TabIndex = 8;

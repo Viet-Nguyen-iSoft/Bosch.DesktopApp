@@ -427,11 +427,10 @@ namespace LTP.Truck.Forms
       // 
       tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel2.ColumnCount = 4;
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 10F));
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel2.Controls.Add(tableLayoutPanel3, 3, 0);
       tableLayoutPanel2.Controls.Add(tableLayoutPanel11, 0, 0);
       tableLayoutPanel2.Controls.Add(tableLayoutPanel4, 1, 0);
@@ -545,7 +544,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel11.Size = new Size(423, 300);
+      tableLayoutPanel11.Size = new Size(508, 300);
       tableLayoutPanel11.TabIndex = 4;
       // 
       // tableLayoutPanel12
@@ -562,7 +561,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel12.Name = "tableLayoutPanel12";
       tableLayoutPanel12.RowCount = 1;
       tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel12.Size = new Size(423, 60);
+      tableLayoutPanel12.Size = new Size(508, 60);
       tableLayoutPanel12.TabIndex = 6;
       // 
       // btnSaveStation
@@ -579,7 +578,7 @@ namespace LTP.Truck.Forms
       btnSaveStation.ForeColor = Color.White;
       btnSaveStation.Image = Properties.Resources.icon_save;
       btnSaveStation.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSaveStation.Location = new Point(221, 3);
+      btnSaveStation.Location = new Point(306, 3);
       btnSaveStation.Name = "btnSaveStation";
       btnSaveStation.Padding = new Padding(10, 0, 0, 0);
       btnSaveStation.Size = new Size(194, 54);
@@ -597,7 +596,7 @@ namespace LTP.Truck.Forms
       label8.Location = new Point(0, 0);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(423, 60);
+      label8.Size = new Size(508, 60);
       label8.TabIndex = 0;
       label8.Text = "Thông tin trạm cân";
       label8.TextAlign = ContentAlignment.MiddleLeft;
@@ -617,7 +616,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel13.Size = new Size(417, 164);
+      tableLayoutPanel13.Size = new Size(502, 164);
       tableLayoutPanel13.TabIndex = 7;
       // 
       // label9
@@ -642,7 +641,7 @@ namespace LTP.Truck.Forms
       cbbStations.FormattingEnabled = true;
       cbbStations.Location = new Point(111, 6);
       cbbStations.Name = "cbbStations";
-      cbbStations.Size = new Size(298, 41);
+      cbbStations.Size = new Size(383, 41);
       cbbStations.TabIndex = 2;
       // 
       // tableLayoutPanel4
@@ -654,7 +653,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel4.Controls.Add(tableLayoutPanel6, 0, 3);
       tableLayoutPanel4.Controls.Add(label2, 0, 0);
       tableLayoutPanel4.Controls.Add(tableLayoutPanel5, 0, 1);
-      tableLayoutPanel4.Location = new Point(433, 0);
+      tableLayoutPanel4.Location = new Point(518, 0);
       tableLayoutPanel4.Margin = new Padding(10, 0, 0, 0);
       tableLayoutPanel4.Name = "tableLayoutPanel4";
       tableLayoutPanel4.RowCount = 5;
@@ -663,7 +662,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel4.Size = new Size(413, 300);
+      tableLayoutPanel4.Size = new Size(328, 300);
       tableLayoutPanel4.TabIndex = 1;
       // 
       // tableLayoutPanel6
@@ -680,7 +679,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.Name = "tableLayoutPanel6";
       tableLayoutPanel6.RowCount = 1;
       tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel6.Size = new Size(413, 60);
+      tableLayoutPanel6.Size = new Size(328, 60);
       tableLayoutPanel6.TabIndex = 6;
       // 
       // btnConfirm
@@ -697,7 +696,7 @@ namespace LTP.Truck.Forms
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = Properties.Resources.icon_save;
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(211, 3);
+      btnConfirm.Location = new Point(126, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
       btnConfirm.Size = new Size(194, 54);
@@ -716,7 +715,7 @@ namespace LTP.Truck.Forms
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
-      label2.Size = new Size(413, 60);
+      label2.Size = new Size(328, 60);
       label2.TabIndex = 0;
       label2.Text = "Thông tin kết nối Server";
       label2.TextAlign = ContentAlignment.MiddleLeft;
@@ -739,7 +738,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel5.Size = new Size(407, 164);
+      tableLayoutPanel5.Size = new Size(322, 164);
       tableLayoutPanel5.TabIndex = 7;
       // 
       // txtTimeoutServer
@@ -760,7 +759,7 @@ namespace LTP.Truck.Forms
       txtTimeoutServer.PasswordChar = false;
       txtTimeoutServer.PlaceholderColor = Color.DarkGray;
       txtTimeoutServer.PlaceholderText = "";
-      txtTimeoutServer.Size = new Size(249, 42);
+      txtTimeoutServer.Size = new Size(164, 42);
       txtTimeoutServer.TabIndex = 6;
       txtTimeoutServer.Texts = "";
       txtTimeoutServer.UnderlinedStyle = false;
@@ -797,7 +796,7 @@ namespace LTP.Truck.Forms
       txtPortServer.PasswordChar = false;
       txtPortServer.PlaceholderColor = Color.DarkGray;
       txtPortServer.PlaceholderText = "";
-      txtPortServer.Size = new Size(249, 42);
+      txtPortServer.Size = new Size(164, 42);
       txtPortServer.TabIndex = 4;
       txtPortServer.Texts = "";
       txtPortServer.UnderlinedStyle = false;
@@ -848,7 +847,7 @@ namespace LTP.Truck.Forms
       txtIpServer.PasswordChar = false;
       txtIpServer.PlaceholderColor = Color.DarkGray;
       txtIpServer.PlaceholderText = "";
-      txtIpServer.Size = new Size(249, 42);
+      txtIpServer.Size = new Size(164, 42);
       txtIpServer.TabIndex = 3;
       txtIpServer.Texts = "";
       txtIpServer.UnderlinedStyle = false;
