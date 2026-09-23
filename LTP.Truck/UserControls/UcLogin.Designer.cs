@@ -68,7 +68,7 @@ namespace LTP.Truck.UserControls
       // 
       lbAccount.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbAccount.AutoSize = true;
-      lbAccount.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbAccount.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbAccount.ForeColor = Color.Black;
       lbAccount.Location = new Point(62, 0);
       lbAccount.Name = "lbAccount";

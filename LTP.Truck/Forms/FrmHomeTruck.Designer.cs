@@ -223,11 +223,11 @@ namespace LTP.Truck.Forms
       lbWeightTrigger.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbWeightTrigger.AutoSize = true;
       lbWeightTrigger.BackColor = Color.Transparent;
-      lbWeightTrigger.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      lbWeightTrigger.Location = new Point(252, 0);
+      lbWeightTrigger.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbWeightTrigger.Location = new Point(222, 0);
       lbWeightTrigger.Margin = new Padding(0);
       lbWeightTrigger.Name = "lbWeightTrigger";
-      lbWeightTrigger.Size = new Size(471, 50);
+      lbWeightTrigger.Size = new Size(501, 50);
       lbWeightTrigger.TabIndex = 4;
       lbWeightTrigger.Text = "0.000";
       lbWeightTrigger.TextAlign = ContentAlignment.BottomLeft;
@@ -237,11 +237,11 @@ namespace LTP.Truck.Forms
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label2.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
-      label2.Size = new Size(252, 50);
+      label2.Size = new Size(222, 50);
       label2.TabIndex = 3;
       label2.Text = "Giá trị cân xác nhận(Kg):";
       label2.TextAlign = ContentAlignment.BottomLeft;
@@ -295,7 +295,7 @@ namespace LTP.Truck.Forms
       label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label5.AutoSize = true;
       label5.BackColor = Color.Transparent;
-      label5.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label5.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label5.Location = new Point(0, 50);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
@@ -309,7 +309,7 @@ namespace LTP.Truck.Forms
       label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label1.AutoSize = true;
       label1.BackColor = Color.FromArgb(199, 199, 199);
-      label1.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
@@ -352,7 +352,7 @@ namespace LTP.Truck.Forms
       btnWeightTime02.FlatAppearance.BorderColor = Color.White;
       btnWeightTime02.FlatAppearance.BorderSize = 0;
       btnWeightTime02.FlatStyle = FlatStyle.Flat;
-      btnWeightTime02.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnWeightTime02.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnWeightTime02.ForeColor = Color.White;
       btnWeightTime02.Image = Properties.Resources.icon_weight;
       btnWeightTime02.ImageAlign = ContentAlignment.MiddleLeft;
@@ -377,7 +377,7 @@ namespace LTP.Truck.Forms
       btnWeightTime01.FlatAppearance.BorderColor = Color.White;
       btnWeightTime01.FlatAppearance.BorderSize = 0;
       btnWeightTime01.FlatStyle = FlatStyle.Flat;
-      btnWeightTime01.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnWeightTime01.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnWeightTime01.ForeColor = Color.White;
       btnWeightTime01.Image = Properties.Resources.icon_weight;
       btnWeightTime01.ImageAlign = ContentAlignment.MiddleLeft;
@@ -402,7 +402,7 @@ namespace LTP.Truck.Forms
       btnTriggerWeight.FlatAppearance.BorderColor = Color.White;
       btnTriggerWeight.FlatAppearance.BorderSize = 0;
       btnTriggerWeight.FlatStyle = FlatStyle.Flat;
-      btnTriggerWeight.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnTriggerWeight.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnTriggerWeight.ForeColor = Color.White;
       btnTriggerWeight.Image = Properties.Resources.icon_weight_log;
       btnTriggerWeight.ImageAlign = ContentAlignment.MiddleLeft;
@@ -427,7 +427,7 @@ namespace LTP.Truck.Forms
       btnBack.FlatAppearance.BorderColor = Color.White;
       btnBack.FlatAppearance.BorderSize = 0;
       btnBack.FlatStyle = FlatStyle.Flat;
-      btnBack.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnBack.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnBack.ForeColor = Color.White;
       btnBack.Image = Properties.Resources.icon_back;
       btnBack.ImageAlign = ContentAlignment.MiddleLeft;
@@ -452,7 +452,7 @@ namespace LTP.Truck.Forms
       btnZero.FlatAppearance.BorderColor = Color.White;
       btnZero.FlatAppearance.BorderSize = 0;
       btnZero.FlatStyle = FlatStyle.Flat;
-      btnZero.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnZero.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnZero.ForeColor = Color.White;
       btnZero.Image = Properties.Resources.icon_zero;
       btnZero.ImageAlign = ContentAlignment.MiddleLeft;
@@ -477,7 +477,7 @@ namespace LTP.Truck.Forms
       btnCreate.FlatAppearance.BorderColor = Color.White;
       btnCreate.FlatAppearance.BorderSize = 0;
       btnCreate.FlatStyle = FlatStyle.Flat;
-      btnCreate.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnCreate.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnCreate.ForeColor = Color.White;
       btnCreate.Image = Properties.Resources.icon_new;
       btnCreate.ImageAlign = ContentAlignment.MiddleLeft;
@@ -553,11 +553,11 @@ namespace LTP.Truck.Forms
       label20.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label20.AutoSize = true;
       label20.BackColor = Color.Transparent;
-      label20.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label20.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label20.Location = new Point(0, 46);
       label20.Margin = new Padding(0);
       label20.Name = "label20";
-      label20.Size = new Size(159, 46);
+      label20.Size = new Size(139, 46);
       label20.TabIndex = 24;
       label20.Text = "Phiếu nhà máy:";
       label20.TextAlign = ContentAlignment.MiddleRight;
@@ -570,9 +570,9 @@ namespace LTP.Truck.Forms
       txtNameDriver.BorderFocusColor = Color.HotPink;
       txtNameDriver.BorderRadius = 5;
       txtNameDriver.BorderSize = 2;
-      txtNameDriver.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtNameDriver.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtNameDriver.ForeColor = Color.FromArgb(64, 64, 64);
-      txtNameDriver.Location = new Point(163, 234);
+      txtNameDriver.Location = new Point(143, 234);
       txtNameDriver.Margin = new Padding(4);
       txtNameDriver.Multiline = false;
       txtNameDriver.Name = "txtNameDriver";
@@ -580,7 +580,7 @@ namespace LTP.Truck.Forms
       txtNameDriver.PasswordChar = false;
       txtNameDriver.PlaceholderColor = Color.DarkGray;
       txtNameDriver.PlaceholderText = "";
-      txtNameDriver.Size = new Size(418, 42);
+      txtNameDriver.Size = new Size(438, 38);
       txtNameDriver.TabIndex = 15;
       txtNameDriver.Texts = "";
       txtNameDriver.UnderlinedStyle = false;
@@ -593,9 +593,9 @@ namespace LTP.Truck.Forms
       txtNoLabel.BorderFocusColor = Color.HotPink;
       txtNoLabel.BorderRadius = 5;
       txtNoLabel.BorderSize = 2;
-      txtNoLabel.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtNoLabel.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtNoLabel.ForeColor = Color.FromArgb(64, 64, 64);
-      txtNoLabel.Location = new Point(163, 50);
+      txtNoLabel.Location = new Point(143, 50);
       txtNoLabel.Margin = new Padding(4);
       txtNoLabel.Multiline = false;
       txtNoLabel.Name = "txtNoLabel";
@@ -603,7 +603,7 @@ namespace LTP.Truck.Forms
       txtNoLabel.PasswordChar = false;
       txtNoLabel.PlaceholderColor = Color.DarkGray;
       txtNoLabel.PlaceholderText = "";
-      txtNoLabel.Size = new Size(418, 42);
+      txtNoLabel.Size = new Size(438, 38);
       txtNoLabel.TabIndex = 16;
       txtNoLabel.Texts = "";
       txtNoLabel.UnderlinedStyle = false;
@@ -613,11 +613,11 @@ namespace LTP.Truck.Forms
       label19.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label19.AutoSize = true;
       label19.BackColor = Color.Transparent;
-      label19.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label19.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label19.Location = new Point(0, 327);
       label19.Margin = new Padding(0);
       label19.Name = "label19";
-      label19.Size = new Size(159, 123);
+      label19.Size = new Size(139, 123);
       label19.TabIndex = 17;
       label19.Text = "Ghi chú:";
       // 
@@ -631,12 +631,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel15.Controls.Add(txtWareHouse, 0, 0);
       tableLayoutPanel15.Controls.Add(btnLoadWarehouse, 1, 0);
-      tableLayoutPanel15.Location = new Point(159, 184);
+      tableLayoutPanel15.Location = new Point(139, 184);
       tableLayoutPanel15.Margin = new Padding(0);
       tableLayoutPanel15.Name = "tableLayoutPanel15";
       tableLayoutPanel15.RowCount = 1;
       tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel15.Size = new Size(426, 46);
+      tableLayoutPanel15.Size = new Size(446, 46);
       tableLayoutPanel15.TabIndex = 20;
       // 
       // txtWareHouse
@@ -648,7 +648,7 @@ namespace LTP.Truck.Forms
       txtWareHouse.BorderRadius = 5;
       txtWareHouse.BorderSize = 2;
       txtWareHouse.Enabled = false;
-      txtWareHouse.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtWareHouse.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtWareHouse.ForeColor = Color.FromArgb(64, 64, 64);
       txtWareHouse.Location = new Point(4, 4);
       txtWareHouse.Margin = new Padding(4);
@@ -658,7 +658,7 @@ namespace LTP.Truck.Forms
       txtWareHouse.PasswordChar = false;
       txtWareHouse.PlaceholderColor = Color.DarkGray;
       txtWareHouse.PlaceholderText = "";
-      txtWareHouse.Size = new Size(358, 42);
+      txtWareHouse.Size = new Size(378, 38);
       txtWareHouse.TabIndex = 15;
       txtWareHouse.Texts = "";
       txtWareHouse.UnderlinedStyle = false;
@@ -674,9 +674,9 @@ namespace LTP.Truck.Forms
       btnLoadWarehouse.FlatAppearance.BorderColor = Color.Black;
       btnLoadWarehouse.FlatAppearance.BorderSize = 3;
       btnLoadWarehouse.FlatStyle = FlatStyle.Flat;
-      btnLoadWarehouse.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnLoadWarehouse.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadWarehouse.ForeColor = Color.Black;
-      btnLoadWarehouse.Location = new Point(369, 4);
+      btnLoadWarehouse.Location = new Point(389, 4);
       btnLoadWarehouse.Name = "btnLoadWarehouse";
       btnLoadWarehouse.Size = new Size(54, 38);
       btnLoadWarehouse.TabIndex = 16;
@@ -695,12 +695,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel14.Controls.Add(txtTypeGoods, 0, 0);
       tableLayoutPanel14.Controls.Add(btnLoadTypeGoods, 1, 0);
-      tableLayoutPanel14.Location = new Point(159, 138);
+      tableLayoutPanel14.Location = new Point(139, 138);
       tableLayoutPanel14.Margin = new Padding(0);
       tableLayoutPanel14.Name = "tableLayoutPanel14";
       tableLayoutPanel14.RowCount = 1;
       tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel14.Size = new Size(426, 46);
+      tableLayoutPanel14.Size = new Size(446, 46);
       tableLayoutPanel14.TabIndex = 19;
       // 
       // txtTypeGoods
@@ -712,7 +712,7 @@ namespace LTP.Truck.Forms
       txtTypeGoods.BorderRadius = 5;
       txtTypeGoods.BorderSize = 2;
       txtTypeGoods.Enabled = false;
-      txtTypeGoods.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtTypeGoods.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTypeGoods.ForeColor = Color.FromArgb(64, 64, 64);
       txtTypeGoods.Location = new Point(4, 4);
       txtTypeGoods.Margin = new Padding(4);
@@ -722,7 +722,7 @@ namespace LTP.Truck.Forms
       txtTypeGoods.PasswordChar = false;
       txtTypeGoods.PlaceholderColor = Color.DarkGray;
       txtTypeGoods.PlaceholderText = "";
-      txtTypeGoods.Size = new Size(358, 42);
+      txtTypeGoods.Size = new Size(378, 38);
       txtTypeGoods.TabIndex = 15;
       txtTypeGoods.Texts = "";
       txtTypeGoods.UnderlinedStyle = false;
@@ -738,9 +738,9 @@ namespace LTP.Truck.Forms
       btnLoadTypeGoods.FlatAppearance.BorderColor = Color.Black;
       btnLoadTypeGoods.FlatAppearance.BorderSize = 3;
       btnLoadTypeGoods.FlatStyle = FlatStyle.Flat;
-      btnLoadTypeGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnLoadTypeGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadTypeGoods.ForeColor = Color.Black;
-      btnLoadTypeGoods.Location = new Point(369, 4);
+      btnLoadTypeGoods.Location = new Point(389, 4);
       btnLoadTypeGoods.Name = "btnLoadTypeGoods";
       btnLoadTypeGoods.Size = new Size(54, 38);
       btnLoadTypeGoods.TabIndex = 16;
@@ -759,12 +759,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel13.Controls.Add(txtClient, 0, 0);
       tableLayoutPanel13.Controls.Add(btnLoadClient, 1, 0);
-      tableLayoutPanel13.Location = new Point(159, 92);
+      tableLayoutPanel13.Location = new Point(139, 92);
       tableLayoutPanel13.Margin = new Padding(0);
       tableLayoutPanel13.Name = "tableLayoutPanel13";
       tableLayoutPanel13.RowCount = 1;
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel13.Size = new Size(426, 46);
+      tableLayoutPanel13.Size = new Size(446, 46);
       tableLayoutPanel13.TabIndex = 18;
       // 
       // txtClient
@@ -776,7 +776,7 @@ namespace LTP.Truck.Forms
       txtClient.BorderRadius = 5;
       txtClient.BorderSize = 2;
       txtClient.Enabled = false;
-      txtClient.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtClient.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtClient.ForeColor = Color.FromArgb(64, 64, 64);
       txtClient.Location = new Point(4, 4);
       txtClient.Margin = new Padding(4);
@@ -786,7 +786,7 @@ namespace LTP.Truck.Forms
       txtClient.PasswordChar = false;
       txtClient.PlaceholderColor = Color.DarkGray;
       txtClient.PlaceholderText = "";
-      txtClient.Size = new Size(358, 42);
+      txtClient.Size = new Size(378, 38);
       txtClient.TabIndex = 15;
       txtClient.Texts = "";
       txtClient.UnderlinedStyle = false;
@@ -802,9 +802,9 @@ namespace LTP.Truck.Forms
       btnLoadClient.FlatAppearance.BorderColor = Color.Black;
       btnLoadClient.FlatAppearance.BorderSize = 3;
       btnLoadClient.FlatStyle = FlatStyle.Flat;
-      btnLoadClient.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnLoadClient.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadClient.ForeColor = Color.Black;
-      btnLoadClient.Location = new Point(369, 4);
+      btnLoadClient.Location = new Point(389, 4);
       btnLoadClient.Name = "btnLoadClient";
       btnLoadClient.Size = new Size(54, 38);
       btnLoadClient.TabIndex = 16;
@@ -818,11 +818,11 @@ namespace LTP.Truck.Forms
       label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label6.AutoSize = true;
       label6.BackColor = Color.Transparent;
-      label6.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label6.Location = new Point(0, 0);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(159, 46);
+      label6.Size = new Size(139, 46);
       label6.TabIndex = 1;
       label6.Text = "Số phiếu:";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -832,11 +832,11 @@ namespace LTP.Truck.Forms
       label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label8.AutoSize = true;
       label8.BackColor = Color.Transparent;
-      label8.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label8.Location = new Point(0, 92);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(159, 46);
+      label8.Size = new Size(139, 46);
       label8.TabIndex = 3;
       label8.Text = "Khách hàng:";
       label8.TextAlign = ContentAlignment.MiddleLeft;
@@ -846,11 +846,11 @@ namespace LTP.Truck.Forms
       label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label9.AutoSize = true;
       label9.BackColor = Color.Transparent;
-      label9.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label9.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label9.Location = new Point(0, 138);
       label9.Margin = new Padding(0);
       label9.Name = "label9";
-      label9.Size = new Size(159, 46);
+      label9.Size = new Size(139, 46);
       label9.TabIndex = 4;
       label9.Text = "Loại hàng:";
       label9.TextAlign = ContentAlignment.MiddleLeft;
@@ -860,11 +860,11 @@ namespace LTP.Truck.Forms
       label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label11.AutoSize = true;
       label11.BackColor = Color.Transparent;
-      label11.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label11.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label11.Location = new Point(0, 184);
       label11.Margin = new Padding(0);
       label11.Name = "label11";
-      label11.Size = new Size(159, 46);
+      label11.Size = new Size(139, 46);
       label11.TabIndex = 5;
       label11.Text = "Kho hàng:";
       label11.TextAlign = ContentAlignment.MiddleLeft;
@@ -876,16 +876,16 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel11.Controls.Add(txtTypeWeight, 3, 0);
       tableLayoutPanel11.Controls.Add(label12, 2, 0);
       tableLayoutPanel11.Controls.Add(txtNoLabelAuto, 0, 0);
-      tableLayoutPanel11.Location = new Point(159, 0);
+      tableLayoutPanel11.Location = new Point(139, 0);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
       tableLayoutPanel11.RowCount = 1;
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel11.Size = new Size(426, 46);
+      tableLayoutPanel11.Size = new Size(446, 46);
       tableLayoutPanel11.TabIndex = 16;
       // 
       // txtTypeWeight
@@ -897,9 +897,9 @@ namespace LTP.Truck.Forms
       txtTypeWeight.BorderRadius = 5;
       txtTypeWeight.BorderSize = 2;
       txtTypeWeight.Enabled = false;
-      txtTypeWeight.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtTypeWeight.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTypeWeight.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTypeWeight.Location = new Point(230, 4);
+      txtTypeWeight.Location = new Point(270, 4);
       txtTypeWeight.Margin = new Padding(4);
       txtTypeWeight.Multiline = false;
       txtTypeWeight.Name = "txtTypeWeight";
@@ -907,7 +907,7 @@ namespace LTP.Truck.Forms
       txtTypeWeight.PasswordChar = false;
       txtTypeWeight.PlaceholderColor = Color.DarkGray;
       txtTypeWeight.PlaceholderText = "";
-      txtTypeWeight.Size = new Size(192, 42);
+      txtTypeWeight.Size = new Size(172, 38);
       txtTypeWeight.TabIndex = 22;
       txtTypeWeight.Texts = "";
       txtTypeWeight.UnderlinedStyle = false;
@@ -917,11 +917,11 @@ namespace LTP.Truck.Forms
       label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label12.AutoSize = true;
       label12.BackColor = Color.Transparent;
-      label12.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label12.Location = new Point(125, 0);
+      label12.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label12.Location = new Point(178, 0);
       label12.Margin = new Padding(0);
       label12.Name = "label12";
-      label12.Size = new Size(101, 46);
+      label12.Size = new Size(88, 46);
       label12.TabIndex = 17;
       label12.Text = "Kiểu cân:";
       label12.TextAlign = ContentAlignment.MiddleRight;
@@ -935,7 +935,7 @@ namespace LTP.Truck.Forms
       txtNoLabelAuto.BorderRadius = 5;
       txtNoLabelAuto.BorderSize = 2;
       txtNoLabelAuto.Enabled = false;
-      txtNoLabelAuto.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtNoLabelAuto.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtNoLabelAuto.ForeColor = Color.FromArgb(64, 64, 64);
       txtNoLabelAuto.Location = new Point(4, 4);
       txtNoLabelAuto.Margin = new Padding(4);
@@ -945,7 +945,7 @@ namespace LTP.Truck.Forms
       txtNoLabelAuto.PasswordChar = false;
       txtNoLabelAuto.PlaceholderColor = Color.DarkGray;
       txtNoLabelAuto.PlaceholderText = "";
-      txtNoLabelAuto.Size = new Size(97, 42);
+      txtNoLabelAuto.Size = new Size(150, 38);
       txtNoLabelAuto.TabIndex = 15;
       txtNoLabelAuto.Texts = "";
       txtNoLabelAuto.UnderlinedStyle = false;
@@ -955,11 +955,11 @@ namespace LTP.Truck.Forms
       label16.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label16.AutoSize = true;
       label16.BackColor = Color.Transparent;
-      label16.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label16.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label16.Location = new Point(0, 230);
       label16.Margin = new Padding(0);
       label16.Name = "label16";
-      label16.Size = new Size(159, 46);
+      label16.Size = new Size(139, 46);
       label16.TabIndex = 12;
       label16.Text = "Tên lái xe:";
       label16.TextAlign = ContentAlignment.MiddleLeft;
@@ -969,11 +969,11 @@ namespace LTP.Truck.Forms
       label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label7.AutoSize = true;
       label7.BackColor = Color.Transparent;
-      label7.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label7.Location = new Point(0, 276);
       label7.Margin = new Padding(0);
       label7.Name = "label7";
-      label7.Size = new Size(159, 46);
+      label7.Size = new Size(139, 46);
       label7.TabIndex = 2;
       label7.Text = "Biển số:";
       label7.TextAlign = ContentAlignment.MiddleLeft;
@@ -989,12 +989,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel16.Controls.Add(txtLicensePlate, 0, 0);
       tableLayoutPanel16.Controls.Add(label13, 2, 0);
       tableLayoutPanel16.Controls.Add(txtIdCard, 3, 0);
-      tableLayoutPanel16.Location = new Point(159, 276);
+      tableLayoutPanel16.Location = new Point(139, 276);
       tableLayoutPanel16.Margin = new Padding(0);
       tableLayoutPanel16.Name = "tableLayoutPanel16";
       tableLayoutPanel16.RowCount = 1;
       tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel16.Size = new Size(426, 46);
+      tableLayoutPanel16.Size = new Size(446, 46);
       tableLayoutPanel16.TabIndex = 21;
       // 
       // txtLicensePlate
@@ -1005,7 +1005,7 @@ namespace LTP.Truck.Forms
       txtLicensePlate.BorderFocusColor = Color.HotPink;
       txtLicensePlate.BorderRadius = 5;
       txtLicensePlate.BorderSize = 2;
-      txtLicensePlate.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtLicensePlate.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtLicensePlate.ForeColor = Color.FromArgb(64, 64, 64);
       txtLicensePlate.Location = new Point(4, 4);
       txtLicensePlate.Margin = new Padding(4);
@@ -1015,7 +1015,7 @@ namespace LTP.Truck.Forms
       txtLicensePlate.PasswordChar = false;
       txtLicensePlate.PlaceholderColor = Color.DarkGray;
       txtLicensePlate.PlaceholderText = "";
-      txtLicensePlate.Size = new Size(192, 42);
+      txtLicensePlate.Size = new Size(192, 38);
       txtLicensePlate.TabIndex = 15;
       txtLicensePlate.Texts = "";
       txtLicensePlate.UnderlinedStyle = false;
@@ -1025,11 +1025,11 @@ namespace LTP.Truck.Forms
       label13.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label13.AutoSize = true;
       label13.BackColor = Color.Transparent;
-      label13.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label13.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label13.Location = new Point(220, 0);
       label13.Margin = new Padding(0);
       label13.Name = "label13";
-      label13.Size = new Size(73, 46);
+      label13.Size = new Size(63, 46);
       label13.TabIndex = 17;
       label13.Text = "CCCD:";
       label13.TextAlign = ContentAlignment.MiddleLeft;
@@ -1042,9 +1042,9 @@ namespace LTP.Truck.Forms
       txtIdCard.BorderFocusColor = Color.HotPink;
       txtIdCard.BorderRadius = 5;
       txtIdCard.BorderSize = 2;
-      txtIdCard.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtIdCard.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtIdCard.ForeColor = Color.FromArgb(64, 64, 64);
-      txtIdCard.Location = new Point(297, 4);
+      txtIdCard.Location = new Point(287, 4);
       txtIdCard.Margin = new Padding(4);
       txtIdCard.Multiline = false;
       txtIdCard.Name = "txtIdCard";
@@ -1052,7 +1052,7 @@ namespace LTP.Truck.Forms
       txtIdCard.PasswordChar = false;
       txtIdCard.PlaceholderColor = Color.DarkGray;
       txtIdCard.PlaceholderText = "";
-      txtIdCard.Size = new Size(125, 42);
+      txtIdCard.Size = new Size(155, 38);
       txtIdCard.TabIndex = 18;
       txtIdCard.Texts = "";
       txtIdCard.UnderlinedStyle = false;
@@ -1060,11 +1060,11 @@ namespace LTP.Truck.Forms
       // txtDocument
       // 
       txtDocument.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      txtDocument.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtDocument.Location = new Point(162, 330);
+      txtDocument.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtDocument.Location = new Point(142, 330);
       txtDocument.Multiline = true;
       txtDocument.Name = "txtDocument";
-      txtDocument.Size = new Size(420, 117);
+      txtDocument.Size = new Size(440, 117);
       txtDocument.TabIndex = 25;
       // 
       // label10
@@ -1072,7 +1072,7 @@ namespace LTP.Truck.Forms
       label10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label10.AutoSize = true;
       label10.BackColor = Color.FromArgb(199, 199, 199);
-      label10.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label10.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label10.Location = new Point(0, 0);
       label10.Margin = new Padding(0);
       label10.Name = "label10";
@@ -1118,7 +1118,7 @@ namespace LTP.Truck.Forms
       label14.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label14.AutoSize = true;
       label14.BackColor = Color.FromArgb(199, 199, 199);
-      label14.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label14.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label14.Location = new Point(0, 0);
       label14.Margin = new Padding(0);
       label14.Name = "label14";
@@ -1183,7 +1183,7 @@ namespace LTP.Truck.Forms
       dgv.BorderStyle = BorderStyle.None;
       dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle1.BackColor = SystemColors.Control;
-      dataGridViewCellStyle1.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
@@ -1192,7 +1192,7 @@ namespace LTP.Truck.Forms
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle2.BackColor = SystemColors.Window;
-      dataGridViewCellStyle2.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
       dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
@@ -1204,7 +1204,7 @@ namespace LTP.Truck.Forms
       dgv.ReadOnly = true;
       dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle3.BackColor = SystemColors.Control;
-      dataGridViewCellStyle3.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
@@ -1252,11 +1252,11 @@ namespace LTP.Truck.Forms
       label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
-      label4.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(106, 62);
+      label4.Size = new Size(95, 62);
       label4.TabIndex = 17;
       label4.Text = "Tìm kiếm:";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -1269,9 +1269,9 @@ namespace LTP.Truck.Forms
       txtSearchKey.BorderFocusColor = Color.HotPink;
       txtSearchKey.BorderRadius = 5;
       txtSearchKey.BorderSize = 2;
-      txtSearchKey.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtSearchKey.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearchKey.ForeColor = Color.FromArgb(64, 64, 64);
-      txtSearchKey.Location = new Point(110, 10);
+      txtSearchKey.Location = new Point(99, 12);
       txtSearchKey.Margin = new Padding(4);
       txtSearchKey.Multiline = false;
       txtSearchKey.Name = "txtSearchKey";
@@ -1279,7 +1279,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.PasswordChar = false;
       txtSearchKey.PlaceholderColor = Color.DarkGray;
       txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(164, 42);
+      txtSearchKey.Size = new Size(188, 38);
       txtSearchKey.TabIndex = 18;
       txtSearchKey.Texts = "";
       txtSearchKey.UnderlinedStyle = false;
@@ -1289,11 +1289,11 @@ namespace LTP.Truck.Forms
       label17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
-      label17.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(328, 0);
+      label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label17.Location = new Point(341, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
-      label17.Size = new Size(38, 62);
+      label17.Size = new Size(32, 62);
       label17.TabIndex = 21;
       label17.Text = "Từ";
       label17.TextAlign = ContentAlignment.MiddleLeft;
@@ -1309,7 +1309,7 @@ namespace LTP.Truck.Forms
       btnPrint.FlatAppearance.BorderColor = Color.White;
       btnPrint.FlatAppearance.BorderSize = 0;
       btnPrint.FlatStyle = FlatStyle.Flat;
-      btnPrint.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnPrint.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnPrint.ForeColor = Color.White;
       btnPrint.Image = Properties.Resources.icon_print;
       btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
@@ -1329,11 +1329,11 @@ namespace LTP.Truck.Forms
       label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
-      label18.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(686, 0);
+      label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label18.Location = new Point(693, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
-      label18.Size = new Size(49, 62);
+      label18.Size = new Size(42, 62);
       label18.TabIndex = 22;
       label18.Text = "đến";
       label18.TextAlign = ContentAlignment.MiddleLeft;
@@ -1349,7 +1349,7 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.FlatAppearance.BorderColor = Color.White;
       btnSearchHistorical.FlatAppearance.BorderSize = 0;
       btnSearchHistorical.FlatStyle = FlatStyle.Flat;
-      btnSearchHistorical.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnSearchHistorical.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
@@ -1367,7 +1367,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(369, 3);
+      ucTimeSearchFrom.Location = new Point(376, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 30;
@@ -1404,7 +1404,7 @@ namespace LTP.Truck.Forms
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label27.AutoSize = true;
       label27.BackColor = Color.FromArgb(199, 199, 199);
-      label27.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label27.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label27.Location = new Point(0, 0);
       label27.Margin = new Padding(0);
       label27.Name = "label27";

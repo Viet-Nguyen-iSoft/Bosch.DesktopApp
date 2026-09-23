@@ -65,7 +65,7 @@ namespace LTP.Truck.Forms
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
       lbTitle.BackColor = Color.FromArgb(199, 199, 199);
-      lbTitle.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
@@ -101,7 +101,7 @@ namespace LTP.Truck.Forms
       btnConfirm.BorderSize = 0;
       btnConfirm.FlatAppearance.BorderSize = 0;
       btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnConfirm.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
@@ -125,7 +125,7 @@ namespace LTP.Truck.Forms
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
@@ -142,7 +142,7 @@ namespace LTP.Truck.Forms
       // txtReason
       // 
       txtReason.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      txtReason.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtReason.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtReason.Location = new Point(3, 63);
       txtReason.Multiline = true;
       txtReason.Name = "txtReason";

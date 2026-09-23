@@ -1,4 +1,4 @@
-﻿namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms
 {
   partial class FrmReportGoods
   {
@@ -80,7 +80,7 @@
       dgv.BorderStyle = BorderStyle.None;
       dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle1.BackColor = SystemColors.Control;
-      dataGridViewCellStyle1.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
@@ -89,7 +89,7 @@
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle2.BackColor = SystemColors.Window;
-      dataGridViewCellStyle2.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
       dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
@@ -101,7 +101,7 @@
       dgv.ReadOnly = true;
       dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle3.BackColor = SystemColors.Control;
-      dataGridViewCellStyle3.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
       dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
       dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
@@ -148,7 +148,7 @@
       label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label9.AutoSize = true;
       label9.BackColor = Color.Transparent;
-      label9.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label9.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label9.Location = new Point(0, 0);
       label9.Margin = new Padding(0);
       label9.Name = "label9";
@@ -165,7 +165,7 @@
       txtSearchKey.BorderFocusColor = Color.HotPink;
       txtSearchKey.BorderRadius = 5;
       txtSearchKey.BorderSize = 2;
-      txtSearchKey.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtSearchKey.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearchKey.ForeColor = Color.FromArgb(64, 64, 64);
       txtSearchKey.Location = new Point(110, 10);
       txtSearchKey.Margin = new Padding(4);
@@ -185,7 +185,7 @@
       label17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
-      label17.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label17.Location = new Point(324, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
@@ -199,7 +199,7 @@
       label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
-      label18.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       label18.Location = new Point(682, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
@@ -235,7 +235,7 @@
       btnSearchHistorical.FlatAppearance.BorderColor = Color.White;
       btnSearchHistorical.FlatAppearance.BorderSize = 0;
       btnSearchHistorical.FlatStyle = FlatStyle.Flat;
-      btnSearchHistorical.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnSearchHistorical.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
@@ -259,7 +259,7 @@
       btnExport.BorderSize = 0;
       btnExport.FlatAppearance.BorderSize = 0;
       btnExport.FlatStyle = FlatStyle.Flat;
-      btnExport.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnExport.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnExport.ForeColor = Color.White;
       btnExport.Image = Properties.Resources.icon_excel;
       btnExport.ImageAlign = ContentAlignment.MiddleLeft;
@@ -280,7 +280,7 @@
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label27.AutoSize = true;
       label27.BackColor = Color.FromArgb(199, 199, 199);
-      label27.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label27.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label27.Location = new Point(0, 0);
       label27.Margin = new Padding(0);
       label27.Name = "label27";

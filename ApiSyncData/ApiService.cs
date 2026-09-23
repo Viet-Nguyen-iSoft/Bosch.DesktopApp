@@ -212,24 +212,13 @@ namespace ApiSyncData
       CancellationToken cancellationToken = default)
     {
       ArgumentNullException.ThrowIfNull(client);
-
-      if (client.Type.HasValue && client.Type is < 1 or > 3)
-        throw new ArgumentOutOfRangeException(nameof(client), "Client Type phải là 1, 2 hoặc 3.");
-
       Dictionary<string, string>? additionalFields = null;
-      if (client.Type.HasValue)
-      {
-        additionalFields = new Dictionary<string, string>
-        {
-          ["Type"] = client.Type.Value.ToString(CultureInfo.InvariantCulture)
-        };
-      }
 
       return PostUpsertMultiLangAsync(
         "Client",
         client.Id,
         client.Name,
-        client.SerialCode,
+        string.Empty,
         client.Description,
         lang,
         cancellationToken,
@@ -583,10 +572,10 @@ namespace ApiSyncData
     private static async Task<string> PostUpsertMultiLangAsync(
       string resource,
       Guid? id,
-      string name,
-      string? serialCode,
+      string? name,
+      string? code,
       string? description,
-      string lang,
+      string? lang,
       CancellationToken cancellationToken,
       IReadOnlyDictionary<string, string>? additionalFields = null,
       string nameField = "Name")
@@ -615,8 +604,8 @@ namespace ApiSyncData
 
       formData.Add(new StringContent(name.Trim()), nameField);
 
-      if (!string.IsNullOrWhiteSpace(serialCode))
-        formData.Add(new StringContent(serialCode.Trim()), "SerialCode");
+      if (!string.IsNullOrWhiteSpace(code))
+        formData.Add(new StringContent(code.Trim()), "SerialCode");
 
       if (!string.IsNullOrWhiteSpace(description))
         formData.Add(new StringContent(description.Trim()), "Description");

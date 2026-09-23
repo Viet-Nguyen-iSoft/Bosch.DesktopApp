@@ -26,6 +26,7 @@ namespace LTP.Truck.Forms
     public FrmOperation()
     {
       InitializeComponent();
+      AppTheme.Apply(this);
       InitializeMenuSelection();
       SetMasterDataExpanded(false);
       SetMenuCollapsed(true);
@@ -76,7 +77,7 @@ namespace LTP.Truck.Forms
 
     private void CheckMenuButton(Button selectedButton)
     {
-      Color choose = Color.FromArgb(255, 204, 204);
+      Color choose = AppTheme.Primary;
       bool selectedChild = IsMasterDataChild(selectedButton);
       Button selectedMainButton = selectedChild ? btnMasterData : selectedButton;
 
@@ -90,8 +91,8 @@ namespace LTP.Truck.Forms
         bool mainSelected = button == selectedMainButton;
         bool childSelected = button == selectedChildButton;
         button.BackColor = mainSelected ? choose : originalColors.BackColor;
-        button.ForeColor = mainSelected ? Color.Red
-          : childSelected ? Color.Red : originalColors.ForeColor;
+        button.ForeColor = mainSelected ? Color.White
+          : childSelected ? AppTheme.Primary : originalColors.ForeColor;
         button.FlatAppearance.MouseOverBackColor = mainSelected ? choose : originalColors.MouseOverColor;
         button.FlatAppearance.MouseDownBackColor = mainSelected ? choose : originalColors.MouseDownColor;
       }
@@ -509,6 +510,7 @@ namespace LTP.Truck.Forms
         childForm.FormBorderStyle = FormBorderStyle.None;
         childForm.Dock = DockStyle.Fill;
         childForm.BringToFront();
+        AppTheme.Apply(childForm);
         this.panelMain.Controls.Add(childForm);
         childForm.Show();
       }

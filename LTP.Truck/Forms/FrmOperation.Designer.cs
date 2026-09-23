@@ -191,7 +191,7 @@ namespace LTP.Truck.Forms
       btnHomeTruck.Dock = DockStyle.Top;
       btnHomeTruck.FlatAppearance.BorderSize = 0;
       btnHomeTruck.FlatStyle = FlatStyle.Flat;
-      btnHomeTruck.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnHomeTruck.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnHomeTruck.ForeColor = Color.Black;
       btnHomeTruck.Image = Properties.Resources.icon_truck;
       btnHomeTruck.ImageAlign = ContentAlignment.MiddleLeft;
@@ -216,7 +216,7 @@ namespace LTP.Truck.Forms
       btnHomeGoods.Dock = DockStyle.Top;
       btnHomeGoods.FlatAppearance.BorderSize = 0;
       btnHomeGoods.FlatStyle = FlatStyle.Flat;
-      btnHomeGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnHomeGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnHomeGoods.ForeColor = Color.Black;
       btnHomeGoods.Image = Properties.Resources.icon_goods;
       btnHomeGoods.ImageAlign = ContentAlignment.MiddleLeft;
@@ -240,7 +240,7 @@ namespace LTP.Truck.Forms
       btnSetting.Dock = DockStyle.Top;
       btnSetting.FlatAppearance.BorderSize = 0;
       btnSetting.FlatStyle = FlatStyle.Flat;
-      btnSetting.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnSetting.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnSetting.ForeColor = Color.Black;
       btnSetting.Image = (Image)resources.GetObject("btnSetting.Image");
       btnSetting.ImageAlign = ContentAlignment.MiddleLeft;
@@ -265,7 +265,7 @@ namespace LTP.Truck.Forms
       btnMasterData.Dock = DockStyle.Top;
       btnMasterData.FlatAppearance.BorderSize = 0;
       btnMasterData.FlatStyle = FlatStyle.Flat;
-      btnMasterData.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnMasterData.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnMasterData.ForeColor = Color.Black;
       btnMasterData.Image = Properties.Resources.icon_btn_masterdata;
       btnMasterData.ImageAlign = ContentAlignment.MiddleLeft;
@@ -290,7 +290,7 @@ namespace LTP.Truck.Forms
       btnWarehouse.Dock = DockStyle.Top;
       btnWarehouse.FlatAppearance.BorderSize = 0;
       btnWarehouse.FlatStyle = FlatStyle.Flat;
-      btnWarehouse.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnWarehouse.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnWarehouse.ForeColor = Color.Black;
       btnWarehouse.ImageAlign = ContentAlignment.MiddleLeft;
       btnWarehouse.Location = new Point(3, 307);
@@ -313,7 +313,7 @@ namespace LTP.Truck.Forms
       btnTare.Dock = DockStyle.Top;
       btnTare.FlatAppearance.BorderSize = 0;
       btnTare.FlatStyle = FlatStyle.Flat;
-      btnTare.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnTare.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnTare.ForeColor = Color.Black;
       btnTare.ImageAlign = ContentAlignment.MiddleLeft;
       btnTare.Location = new Point(3, 353);
@@ -336,7 +336,7 @@ namespace LTP.Truck.Forms
       btnTypeGoods.Dock = DockStyle.Top;
       btnTypeGoods.FlatAppearance.BorderSize = 0;
       btnTypeGoods.FlatStyle = FlatStyle.Flat;
-      btnTypeGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnTypeGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnTypeGoods.ForeColor = Color.Black;
       btnTypeGoods.ImageAlign = ContentAlignment.MiddleLeft;
       btnTypeGoods.Location = new Point(3, 399);
@@ -359,7 +359,7 @@ namespace LTP.Truck.Forms
       btnGroupProduct.Dock = DockStyle.Top;
       btnGroupProduct.FlatAppearance.BorderSize = 0;
       btnGroupProduct.FlatStyle = FlatStyle.Flat;
-      btnGroupProduct.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnGroupProduct.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnGroupProduct.ForeColor = Color.Black;
       btnGroupProduct.ImageAlign = ContentAlignment.MiddleLeft;
       btnGroupProduct.Location = new Point(3, 445);
@@ -382,7 +382,7 @@ namespace LTP.Truck.Forms
       btnProduct.Dock = DockStyle.Top;
       btnProduct.FlatAppearance.BorderSize = 0;
       btnProduct.FlatStyle = FlatStyle.Flat;
-      btnProduct.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnProduct.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnProduct.ForeColor = Color.Black;
       btnProduct.ImageAlign = ContentAlignment.MiddleLeft;
       btnProduct.Location = new Point(3, 491);
@@ -405,7 +405,7 @@ namespace LTP.Truck.Forms
       btnClient.Dock = DockStyle.Top;
       btnClient.FlatAppearance.BorderSize = 0;
       btnClient.FlatStyle = FlatStyle.Flat;
-      btnClient.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnClient.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnClient.ForeColor = Color.Black;
       btnClient.ImageAlign = ContentAlignment.MiddleLeft;
       btnClient.Location = new Point(3, 537);
@@ -428,9 +428,9 @@ namespace LTP.Truck.Forms
       btnReportTruck.Dock = DockStyle.Top;
       btnReportTruck.FlatAppearance.BorderSize = 0;
       btnReportTruck.FlatStyle = FlatStyle.Flat;
-      btnReportTruck.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportTruck.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnReportTruck.ForeColor = Color.Black;
-      btnReportTruck.Image = Properties.Resources.icon_report;
+      btnReportTruck.Image = Properties.Resources.icon_btn_report;
       btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
       btnReportTruck.Location = new Point(3, 583);
       btnReportTruck.Name = "btnReportTruck";
@@ -453,9 +453,9 @@ namespace LTP.Truck.Forms
       btnReportGoods.Dock = DockStyle.Top;
       btnReportGoods.FlatAppearance.BorderSize = 0;
       btnReportGoods.FlatStyle = FlatStyle.Flat;
-      btnReportGoods.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnReportGoods.ForeColor = Color.Black;
-      btnReportGoods.Image = Properties.Resources.icon_report;
+      btnReportGoods.Image = Properties.Resources.icon_btn_report;
       btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
       btnReportGoods.Location = new Point(3, 659);
       btnReportGoods.Name = "btnReportGoods";
@@ -488,7 +488,7 @@ namespace LTP.Truck.Forms
       // 
       lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersion.AutoSize = true;
-      lbVersion.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbVersion.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       lbVersion.Location = new Point(0, 53);
       lbVersion.Margin = new Padding(0);
       lbVersion.Name = "lbVersion";
@@ -567,7 +567,7 @@ namespace LTP.Truck.Forms
       // 
       lbTitlePage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitlePage.AutoSize = true;
-      lbTitlePage.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitlePage.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitlePage.Location = new Point(5, 47);
       lbTitlePage.Margin = new Padding(5, 0, 0, 0);
       lbTitlePage.Name = "lbTitlePage";
@@ -599,7 +599,7 @@ namespace LTP.Truck.Forms
       btnLogout.BorderSize = 0;
       btnLogout.FlatAppearance.BorderSize = 0;
       btnLogout.FlatStyle = FlatStyle.Flat;
-      btnLogout.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnLogout.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLogout.ForeColor = Color.White;
       btnLogout.Image = Properties.Resources.icon_logout;
       btnLogout.ImageAlign = ContentAlignment.MiddleLeft;
@@ -675,7 +675,7 @@ namespace LTP.Truck.Forms
       // 
       lbTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTime.AutoSize = true;
-      lbTime.Font = new Font("Roboto", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTime.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTime.Location = new Point(766, 0);
       lbTime.Name = "lbTime";
       lbTime.Size = new Size(244, 50);

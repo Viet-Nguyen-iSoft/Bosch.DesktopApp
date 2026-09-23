@@ -149,7 +149,7 @@ namespace Common
       btnConfirm.BorderSize = 0;
       btnConfirm.FlatAppearance.BorderSize = 0;
       btnConfirm.FlatStyle = FlatStyle.Flat;
-      btnConfirm.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnConfirm.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = Properties.Resources.icon_confirm;
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
@@ -172,7 +172,7 @@ namespace Common
       btnClose.BorderSize = 0;
       btnClose.FlatAppearance.BorderSize = 0;
       btnClose.FlatStyle = FlatStyle.Flat;
-      btnClose.Font = new Font("Roboto", 16F, FontStyle.Bold);
+      btnClose.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnClose.ForeColor = Color.White;
       btnClose.Image = Properties.Resources.icon_close;
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;

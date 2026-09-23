@@ -28,7 +28,7 @@ namespace LTP.Truck.Forms
       OwnerDraw = true,
       ShowAlways = true
     };
-    private readonly Font _deleteReasonToolTipFont = new("Segoe UI", 16F);
+    private readonly Font _deleteReasonToolTipFont = new("Segoe UI", 14F);
     private string _deleteReasonToolTipText = string.Empty;
     private int _statusFilterIndex = 1;
     private int _typeFilterIndex;
@@ -1190,6 +1190,16 @@ namespace LTP.Truck.Forms
         {
           PopupConfirm popupWarning = new PopupConfirm("Không tìm thấy thông tin !", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Warning);
           popupWarning.ShowDialog();
+          return;
+        }
+
+        if (record.DeletedFlag == true)
+        {
+          using var popup = new PopupConfirm(
+            "Không thể in dữ liệu đã xóa!",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Warning);
+          popup.ShowDialog(this);
           return;
         }
 
