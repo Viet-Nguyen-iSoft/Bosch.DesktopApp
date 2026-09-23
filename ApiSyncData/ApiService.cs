@@ -215,6 +215,32 @@ namespace ApiSyncData
         cancellationToken);
     }
 
+    public Task<string> UpsertProductAsync(
+      Req.ProductUpsertRequest product,
+      string lang = "vi",
+      CancellationToken cancellationToken = default)
+    {
+      ArgumentNullException.ThrowIfNull(product);
+
+      IReadOnlyDictionary<string, string>? additionalFields = product.ProductGroupId.HasValue
+        ? new Dictionary<string, string>
+        {
+          ["ProductGroupId"] = product.ProductGroupId.Value.ToString(),
+        }
+        : null;
+
+      return PostUpsertMultiLangAsync(
+        "ProductFood",
+        product.Id,
+        product.Name,
+        product.SerialCode,
+        product.Description,
+        product.DeletedFlag,
+        lang,
+        cancellationToken,
+        additionalFields);
+    }
+
     public Task<string> UpsertClientAsync(
       Req.ClientUpsertRequest client,
       string lang = "vi",

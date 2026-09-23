@@ -110,6 +110,37 @@ namespace HelperManager
       await page.CloseAsync();
     }
 
+    public static async Task HtmlToPdfWithoutConsoleAsync(string htmlFile, string pdfFile)
+    {
+      // Use the full browser in headless mode instead of chrome-headless-shell.
+      var fetcher = new BrowserFetcher(new BrowserFetcherOptions
+      {
+        Browser = SupportedBrowser.Chrome,
+      });
+      var installedBrowser = await fetcher.DownloadAsync();
+      await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+      {
+        ExecutablePath = installedBrowser.GetExecutablePath(),
+        Headless = true,
+        HeadlessMode = HeadlessMode.True,
+        Args = new[] { "--disable-gpu", "--no-first-run", "--no-default-browser-check" },
+      });
+      await using var page = await browser.NewPageAsync();
+      await page.GoToAsync(new Uri(Path.GetFullPath(htmlFile)).AbsoluteUri, WaitUntilNavigation.Load);
+      await page.PdfAsync(pdfFile, new PdfOptions
+      {
+        Format = PaperFormat.A4,
+        PrintBackground = true,
+        MarginOptions = new MarginOptions
+        {
+          Top = "10mm",
+          Bottom = "10mm",
+          Left = "10mm",
+          Right = "10mm",
+        },
+      });
+    }
+
     /// <summary>
     /// Đóng Chromium khi thoát chương trình
     /// </summary>

@@ -1198,9 +1198,9 @@ namespace LTP.Truck.Forms
       label13.Location = new Point(220, 0);
       label13.Margin = new Padding(0);
       label13.Name = "label13";
-      label13.Size = new Size(63, 46);
+      label13.Size = new Size(58, 46);
       label13.TabIndex = 17;
-      label13.Text = "CCCD:";
+      label13.Text = "CCCD";
       label13.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtIdCard
@@ -1213,7 +1213,7 @@ namespace LTP.Truck.Forms
       txtIdCard.BorderSize = 2;
       txtIdCard.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtIdCard.ForeColor = Color.FromArgb(64, 64, 64);
-      txtIdCard.Location = new Point(287, 4);
+      txtIdCard.Location = new Point(282, 4);
       txtIdCard.Margin = new Padding(4);
       txtIdCard.Multiline = false;
       txtIdCard.Name = "txtIdCard";
@@ -1221,7 +1221,7 @@ namespace LTP.Truck.Forms
       txtIdCard.PasswordChar = false;
       txtIdCard.PlaceholderColor = Color.DarkGray;
       txtIdCard.PlaceholderText = "";
-      txtIdCard.Size = new Size(196, 38);
+      txtIdCard.Size = new Size(201, 38);
       txtIdCard.TabIndex = 18;
       txtIdCard.Texts = "";
       txtIdCard.UnderlinedStyle = false;

@@ -6,10 +6,13 @@ using iSoft.Database.DTO;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
+using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
+using LTP.Truck.UserControls;
 using System.ComponentModel;
 using System.Data;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 using static LTP.Truck.EnumData;
@@ -27,6 +30,8 @@ namespace LTP.Truck.Forms
     private WarehouseService _warehouseService { get; set; }
     private TypeGoodsService _typeGoodsService { get; set; }
     private CategoryTareService _categoryTareService { get; set; }
+    private ProductGroupService _productGroupService { get; set; }
+    private ProductService _productService { get; set; }
     public FrmMasterData()
     {
       InitializeComponent();
@@ -45,6 +50,8 @@ namespace LTP.Truck.Forms
       _warehouseService = new WarehouseService();
       _typeGoodsService = new TypeGoodsService();
       _categoryTareService = new CategoryTareService();
+      _productGroupService = new ProductGroupService();
+      _productService = new ProductService();
     }
     #region Instance
     private static FrmMasterData _Instance = null;
@@ -61,6 +68,14 @@ namespace LTP.Truck.Forms
 
     private void CustomUI()
     {
+      ElipseControl elipseControl = new ElipseControl();
+      elipseControl.TargetControl = this;
+      elipseControl.CornerRadius = 20;
+
+      ElipseControl elipseControl01 = new ElipseControl();
+      elipseControl01.TargetControl = tableLayoutPanel7;
+      elipseControl01.CornerRadius = 20;
+
       dgv.EnableHeadersVisualStyles = false;
       dgv.ColumnHeadersHeight = 50;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -197,6 +212,88 @@ namespace LTP.Truck.Forms
         PopupTypeTare popupTypeTare = new PopupTypeTare();
         popupTypeTare.OnSendSuccess += PopupTypeTare_OnSendSuccess;
         popupTypeTare.ShowDialog();
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
+      {
+        PopupProductGroup popupProductGroup = new PopupProductGroup();
+        popupProductGroup.OnSendSuccess += PopupProductGroup_OnSendSuccess;
+        popupProductGroup.ShowDialog();
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Product)
+      {
+        PopupProduct popupProduct = new PopupProduct();
+        popupProduct.OnSendSuccess += PopupProduct_OnSendSuccess;
+        popupProduct.ShowDialog();
+      }
+    }
+
+    private async void PopupProduct_OnSendSuccess(Product obj)
+    {
+      try
+      {
+        var apiJobs = new ApiJobs
+        {
+          Json = JsonHelper.ToJson(await CreateProductUpsertRequestAsync(obj)),
+          EnumTypeAPI = EnumTypeAPI.MD_Product,
+          EnumStatusAPI = EnumStatusAPI.Created,
+          CreatedAt = DateTime.UtcNow,
+        };
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+        await LoadData(_enumTypeMasterDataCurrent);
+      }
+      catch (Exception ex)
+      {
+      }
+    }
+
+    private async Task<ProductUpsertRequest> CreateProductUpsertRequestAsync(Product product)
+    {
+      Guid? productGroupId = product.ProductGroupId;
+      if (product.ProductGroupId.HasValue)
+      {
+        var productGroup = (await _productGroupService.GetAllAsync(true))
+          .FirstOrDefault(item => item.Id == product.ProductGroupId.Value);
+        productGroupId = productGroup?.IdSrc ?? product.ProductGroupId;
+      }
+
+      return new ProductUpsertRequest
+      {
+        Id = product.IdSrc ?? product.Id,
+        SerialCode = product.Code ?? string.Empty,
+        Name = product.Name ?? string.Empty,
+        Description = product.Description,
+        ProductGroupId = productGroupId,
+        DeletedFlag = product.DeletedFlag,
+      };
+    }
+
+    private async void PopupProductGroup_OnSendSuccess(ProductGroup obj)
+    {
+      try
+      {
+        var productGroupUpsertRequest = new ProductGroupUpsertRequest
+        {
+          Id = obj.IdSrc ?? obj.Id,
+          SerialCode = obj.Code ?? string.Empty,
+          Name = obj.Name ?? string.Empty,
+          Description = obj.Description ?? string.Empty,
+          DeletedFlag = obj.DeletedFlag,
+        };
+
+        var apiJobs = new ApiJobs
+        {
+          Json = JsonHelper.ToJson(productGroupUpsertRequest),
+          EnumStatusAPI = EnumStatusAPI.Created,
+          EnumTypeAPI = EnumTypeAPI.MD_ProductGroup,
+          CreatedAt = DateTime.UtcNow,
+        };
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+        await LoadData(_enumTypeMasterDataCurrent);
+      }
+      catch (Exception ex)
+      {
       }
     }
 
@@ -638,6 +735,38 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
+      {
+        var data = rowData as ProductGroupDTO;
+        if (data?.ProductGroup != null)
+        {
+          PopupProductGroup popupProductGroup = new PopupProductGroup(data.ProductGroup);
+          popupProductGroup.OnSendSuccess += PopupProductGroup_OnSendSuccess;
+          popupProductGroup.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Product)
+      {
+        var data = rowData as ProductDTO;
+        if (data?.Product != null)
+        {
+          PopupProduct popupProduct = new PopupProduct(data.Product);
+          popupProduct.OnSendSuccess += PopupProduct_OnSendSuccess;
+          popupProduct.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
 
 
       return Task.CompletedTask;
@@ -796,6 +925,42 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
+      {
+        var data = rowData as ProductGroupDTO;
+        if (data?.ProductGroup != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.ProductGroup);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Product)
+      {
+        var data = rowData as ProductDTO;
+        if (data?.Product != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Product);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
 
       return Task.CompletedTask;
     }
@@ -905,6 +1070,55 @@ namespace LTP.Truck.Forms
               Json = JsonHelper.ToJson(categoryTareUpsertRequest),
               EnumStatusAPI = EnumStatusAPI.Created,
               EnumTypeAPI = EnumTypeAPI.MD_Tare,
+              CreatedAt = DateTime.UtcNow,
+            };
+
+            await _apiJobsService.AddOrUpdateAsync(apiJobs);
+            await LoadData(_enumTypeMasterDataCurrent);
+          }
+        }
+        else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
+        {
+          var productGroup = e.Obj as ProductGroup;
+          if (productGroup != null)
+          {
+            productGroup.DeletedFlag = true;
+            await _productGroupService.AddOrUpdateAsync(productGroup);
+
+            var productGroupUpsertRequest = new ProductGroupUpsertRequest
+            {
+              Id = productGroup.IdSrc ?? productGroup.Id,
+              SerialCode = productGroup.Code ?? string.Empty,
+              Name = productGroup.Name ?? string.Empty,
+              Description = productGroup.Description ?? string.Empty,
+              DeletedFlag = true,
+            };
+
+            var apiJobs = new ApiJobs
+            {
+              Json = JsonHelper.ToJson(productGroupUpsertRequest),
+              EnumStatusAPI = EnumStatusAPI.Created,
+              EnumTypeAPI = EnumTypeAPI.MD_ProductGroup,
+              CreatedAt = DateTime.UtcNow,
+            };
+
+            await _apiJobsService.AddOrUpdateAsync(apiJobs);
+            await LoadData(_enumTypeMasterDataCurrent);
+          }
+        }
+        else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Product)
+        {
+          var product = e.Obj as Product;
+          if (product != null)
+          {
+            product.DeletedFlag = true;
+            await _productService.AddOrUpdateAsync(product);
+
+            var apiJobs = new ApiJobs
+            {
+              Json = JsonHelper.ToJson(await CreateProductUpsertRequestAsync(product)),
+              EnumTypeAPI = EnumTypeAPI.MD_Product,
+              EnumStatusAPI = EnumStatusAPI.Created,
               CreatedAt = DateTime.UtcNow,
             };
 

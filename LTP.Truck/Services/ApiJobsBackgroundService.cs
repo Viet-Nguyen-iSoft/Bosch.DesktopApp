@@ -73,6 +73,20 @@ namespace LTP.Truck.Services
                 await api.UpsertCategoryTareAsync(categoryTareUpsertRequest);
               }
               break;
+            case EnumTypeAPI.MD_ProductGroup:
+              var productGroupUpsertRequest = JsonHelper.FromJson<ProductGroupUpsertRequest>(apiJob?.Json ?? string.Empty);
+              if (productGroupUpsertRequest != null)
+              {
+                await api.UpsertProductGroupAsync(productGroupUpsertRequest);
+              }
+              break;
+            case EnumTypeAPI.MD_Product:
+              var productUpsertRequest = JsonHelper.FromJson<ProductUpsertRequest>(apiJob?.Json ?? string.Empty);
+              if (productUpsertRequest != null)
+              {
+                await api.UpsertProductAsync(productUpsertRequest);
+              }
+              break;
           }
 
           apiJob.EnumStatusAPI = EnumStatusAPI.Success;

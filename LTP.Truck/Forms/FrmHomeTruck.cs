@@ -483,7 +483,7 @@ namespace LTP.Truck.Forms
         RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
         if (record != null)
         {
-          var pathPdf = await DownloadReportTruck(DateTime.Now, record);
+          var pathPdf = await DownloadReportTruck02(DateTime.Now, record);
           //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
         }
       }
@@ -548,7 +548,7 @@ namespace LTP.Truck.Forms
         RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
         if (record != null)
         {
-          var pathPdf = await DownloadReportTruck(DateTime.Now, record);
+          var pathPdf = await DownloadReportTruck02(DateTime.Now, record);
           //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
         }
       }
@@ -1267,7 +1267,7 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        var rs = await DownloadReportTruck(DateTime.Now, record);
+        var rs = await DownloadReportTruck02(DateTime.Now, record);
 
         //POST PDF
         //await (new ApiService()).UploadReportTruckPdf(record.Id, rs);
@@ -1367,9 +1367,14 @@ namespace LTP.Truck.Forms
       await CreateFile(outputPath);
     }
 
-    private async Task<string> DownloadReportTruck(DateTime dt, RecordTruck recordTruck)
+    private Task<string> DownloadReportTruck(DateTime dt, RecordTruck recordTruck)
+      => DownloadReportTruckCoreAsync(dt, recordTruck, false);
+
+    private Task<string> DownloadReportTruck02(DateTime dt, RecordTruck recordTruck)
+      => DownloadReportTruckCoreAsync(dt, recordTruck, true);
+
+    private async Task<string> DownloadReportTruckCoreAsync(DateTime dt, RecordTruck recordTruck, bool withoutConsole)
     {
-      return "";
       try
       {
         //PdfHelper.InitAsync().GetAwaiter().GetResult();
@@ -1441,6 +1446,13 @@ namespace LTP.Truck.Forms
         //string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");
         string outputPath = Path.Combine(folderOutput, $"{recordTruck.Id.ToString().Replace("-", "").Replace(" ", "")}.html");
         File.WriteAllText(outputPath, result);
+
+        if (withoutConsole)
+        {
+          string pdfPath = Path.ChangeExtension(outputPath, ".pdf");
+          await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath);
+          return pdfPath;
+        }
 
         return await CreateFile(outputPath);
       }
