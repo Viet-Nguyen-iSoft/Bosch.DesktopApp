@@ -13,6 +13,6 @@ namespace iSoft.Database.Models
     public string? Description { get; set; }
     public EnumTypeAPI? EnumTypeAPI { get; set; }
     public EnumStatusAPI? EnumStatusAPI { get; set; }
-    public int? Retry { get; set; }
+    public int? Retry { get; set; } = 0;
   }
 }

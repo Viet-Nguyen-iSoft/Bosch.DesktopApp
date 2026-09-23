@@ -1,8 +1,15 @@
-﻿using iSoft.Database;
+﻿using ApiSyncData.Req;
+using HelperManager;
+using iSoft.Database;
 using iSoft.Database.DTO;
+using iSoft.Database.Models;
+using iSoft.Database.Service;
 using LTP.Truck.Controls;
+using LTP.Truck.MasterData;
 using System.ComponentModel;
 using System.Data;
+using System.Threading.Tasks;
+using static HelperManager.EnumData;
 using static LTP.Truck.EnumData;
 
 namespace LTP.Truck.Forms
@@ -11,13 +18,21 @@ namespace LTP.Truck.Forms
   {
     private CancellationTokenSource? _searchDebounceCancellation;
 
+    private ApiJobsService _apiJobsService { get; set; } 
     public FrmMasterData()
     {
       InitializeComponent();
       CustomUI();
+
+      RegisterService();
+
       txtSearch._TextChanged += txtSearch_TextChanged;
     }
 
+    private void RegisterService()
+    {
+      _apiJobsService = new ApiJobsService();
+    }
     #region Instance
     private static FrmMasterData _Instance = null;
     public static FrmMasterData Instance
@@ -141,6 +156,39 @@ namespace LTP.Truck.Forms
           _searchDebounceCancellation.Dispose();
           _searchDebounceCancellation = null;
         }
+      }
+    }
+
+    private void btnAddnew_Click(object sender, EventArgs e)
+    {
+      if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
+      {
+        PopupAddClient popupAddClient = new PopupAddClient();
+        popupAddClient.OnSendAddSuccess += PopupAddClient_OnSendAddSuccess;
+        popupAddClient.ShowDialog();
+      }  
+    }
+
+    private async void PopupAddClient_OnSendAddSuccess(Client client)
+    {
+      try
+      {
+        ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
+        clientUpsertRequest.Id = client.Id;
+        clientUpsertRequest.Name = client?.Name??string.Empty;
+        clientUpsertRequest.Description = client?.Description ?? string.Empty;
+
+        ApiJobs apiJobs = new ApiJobs();
+        apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
+        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+        apiJobs.EnumTypeAPI = EnumTypeAPI.MD_Client;
+        apiJobs.CreatedAt = DateTime.UtcNow;
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+      }
+      catch (Exception ex)
+      {
+
       }
     }
 

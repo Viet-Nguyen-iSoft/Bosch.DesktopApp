@@ -172,7 +172,7 @@ namespace HelperManager
       [Description("None")]
       None,
       Plate,
-
+      MD_Client,
     }
 
     public enum EnumStatusAPI

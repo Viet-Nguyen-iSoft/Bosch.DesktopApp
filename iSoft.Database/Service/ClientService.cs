@@ -13,10 +13,16 @@ namespace iSoft.Database.Service
   {
     public async Task<List<Client>> GetAllAsync(bool IsContainDelete = false)
     {
-      // Mỗi lần gọi dùng context riêng và giải phóng sau khi đọc xong.
       await using var context = new MySqlDbContext();
       var repository = new ClientRepository(context);
       return await repository.GetAllAsync(IsContainDelete).ConfigureAwait(false);
+    }
+
+    public async Task<Client> AddAsync(Client client)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new ClientRepository(context);
+      return await repository.AddAsync(client).ConfigureAwait(false);
     }
   }
 }

@@ -1,6 +1,7 @@
 using ApiSyncData;
 using ApiSyncData.Req;
 using HelperManager;
+using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using static HelperManager.EnumData;
@@ -34,24 +35,30 @@ namespace LTP.Truck.Services
 
         try
         {
+          var api = new ApiService();
           switch (apiJob.EnumTypeAPI)
           {
             case EnumTypeAPI.Plate:
-              var licensePlate = JsonHelper.FromJson<LicensePlateUpsertRequest>(
-                apiJob.Json ?? throw new InvalidOperationException("API job không có dữ liệu JSON."));
-              if (licensePlate == null)
-                throw new InvalidOperationException("Không thể đọc dữ liệu biển số từ API job.");
-
-              var api = new ApiService();
-              await api.UpsertLicensePlateAsync(licensePlate);
+              var licensePlate = JsonHelper.FromJson<LicensePlateUpsertRequest>(apiJob.Json ?? string.Empty);
+              if (licensePlate != null)
+              {
+                await api.UpsertLicensePlateAsync(licensePlate);
+              }  
               break;
-
+            case EnumTypeAPI.MD_Client:
+              var client = JsonHelper.FromJson<ClientUpsertRequest>(apiJob?.Json??string.Empty);
+              if (client != null)
+              {
+                var rs = await api.UpsertClientAsync(client);
+              }  
+              break;
             default:
               throw new NotSupportedException(
                 $"Chưa hỗ trợ loại API job: {apiJob.EnumTypeAPI}.");
           }
 
           apiJob.EnumStatusAPI = EnumStatusAPI.Success;
+          apiJob.UpdatedAt = DateTime.UtcNow;
           await _apiJobsService.AddOrUpdateAsync(apiJob).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
