@@ -1,6 +1,6 @@
 ﻿namespace LTP.Truck.MasterData
 {
-  partial class PopupAddClient
+  partial class PopupWarehouse
   {
     /// <summary>
     /// Required designer variable.
@@ -28,7 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupAddClient));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupWarehouse));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
       txtDescription = new Common.Custom.RJTextBox();
@@ -63,8 +63,8 @@
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(621, 274);
-      tableLayoutPanel3.TabIndex = 3;
+      tableLayoutPanel3.Size = new Size(624, 251);
+      tableLayoutPanel3.TabIndex = 4;
       // 
       // tableLayoutPanel5
       // 
@@ -82,7 +82,7 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel5.Size = new Size(605, 133);
+      tableLayoutPanel5.Size = new Size(608, 110);
       tableLayoutPanel5.TabIndex = 8;
       // 
       // txtDescription
@@ -95,7 +95,7 @@
       txtDescription.BorderSize = 2;
       txtDescription.Font = new Font("Roboto", 14F);
       txtDescription.ForeColor = Color.FromArgb(64, 64, 64);
-      txtDescription.Location = new Point(154, 80);
+      txtDescription.Location = new Point(154, 63);
       txtDescription.Margin = new Padding(4);
       txtDescription.Multiline = false;
       txtDescription.Name = "txtDescription";
@@ -103,7 +103,7 @@
       txtDescription.PasswordChar = false;
       txtDescription.PlaceholderColor = Color.DarkGray;
       txtDescription.PlaceholderText = "";
-      txtDescription.Size = new Size(447, 38);
+      txtDescription.Size = new Size(450, 38);
       txtDescription.TabIndex = 4;
       txtDescription.Texts = "";
       txtDescription.UnderlinedStyle = false;
@@ -117,7 +117,7 @@
       label3.Location = new Point(0, 0);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
-      label3.Size = new Size(150, 66);
+      label3.Size = new Size(150, 55);
       label3.TabIndex = 1;
       label3.Text = "Tên";
       label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -128,10 +128,10 @@
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
       label4.Font = new Font("Roboto", 14F);
-      label4.Location = new Point(0, 66);
+      label4.Location = new Point(0, 55);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(150, 67);
+      label4.Size = new Size(150, 55);
       label4.TabIndex = 2;
       label4.Text = "Mô tả";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -146,7 +146,7 @@
       txtName.BorderSize = 2;
       txtName.Font = new Font("Roboto", 14F);
       txtName.ForeColor = Color.FromArgb(64, 64, 64);
-      txtName.Location = new Point(154, 14);
+      txtName.Location = new Point(154, 8);
       txtName.Margin = new Padding(4);
       txtName.Multiline = false;
       txtName.Name = "txtName";
@@ -154,7 +154,7 @@
       txtName.PasswordChar = false;
       txtName.PlaceholderColor = Color.DarkGray;
       txtName.PlaceholderText = "";
-      txtName.Size = new Size(447, 38);
+      txtName.Size = new Size(450, 38);
       txtName.TabIndex = 3;
       txtName.Texts = "";
       txtName.UnderlinedStyle = false;
@@ -168,9 +168,9 @@
       lbTitle.Location = new Point(5, 5);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(611, 60);
+      lbTitle.Size = new Size(614, 60);
       lbTitle.TabIndex = 0;
-      lbTitle.Text = "Khách hàng";
+      lbTitle.Text = "Kho";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel2
@@ -182,12 +182,12 @@
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(5, 204);
+      tableLayoutPanel2.Location = new Point(5, 181);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.Size = new Size(611, 60);
+      tableLayoutPanel2.Size = new Size(614, 60);
       tableLayoutPanel2.TabIndex = 5;
       // 
       // btnConfirm
@@ -204,7 +204,7 @@
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(254, 3);
+      btnConfirm.Location = new Point(257, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
       btnConfirm.Size = new Size(174, 54);
@@ -227,7 +227,7 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(434, 3);
+      btnClose.Location = new Point(437, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
       btnClose.Size = new Size(174, 54);
@@ -236,14 +236,14 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // PopupAddClient
+      // PopupWarehouse
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(621, 274);
+      ClientSize = new Size(624, 251);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
-      Name = "PopupAddClient";
+      Name = "PopupWarehouse";
       StartPosition = FormStartPosition.CenterParent;
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
@@ -256,14 +256,14 @@
     #endregion
 
     private TableLayoutPanel tableLayoutPanel3;
-    private Label lbTitle;
-    private TableLayoutPanel tableLayoutPanel2;
-    private Common.Custom.RJButton btnConfirm;
-    private Common.Custom.RJButton btnClose;
     private TableLayoutPanel tableLayoutPanel5;
     private Common.Custom.RJTextBox txtDescription;
     private Label label3;
     private Label label4;
     private Common.Custom.RJTextBox txtName;
+    private Label lbTitle;
+    private TableLayoutPanel tableLayoutPanel2;
+    private Common.Custom.RJButton btnConfirm;
+    private Common.Custom.RJButton btnClose;
   }
 }

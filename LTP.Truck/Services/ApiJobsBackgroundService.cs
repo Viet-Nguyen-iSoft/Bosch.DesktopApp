@@ -46,11 +46,18 @@ namespace LTP.Truck.Services
               }  
               break;
             case EnumTypeAPI.MD_Client:
-              var client = JsonHelper.FromJson<ClientUpsertRequest>(apiJob?.Json??string.Empty);
-              if (client != null)
+              var clientUpsertRequest = JsonHelper.FromJson<ClientUpsertRequest>(apiJob?.Json??string.Empty);
+              if (clientUpsertRequest != null)
               {
-                var rs = await api.UpsertClientAsync(client);
+                var rs = await api.UpsertClientAsync(clientUpsertRequest);
               }  
+              break;
+            case EnumTypeAPI.MD_WareHouse:
+              var warehouseUpsert = JsonHelper.FromJson<WarehouseUpsertRequest>(apiJob?.Json ?? string.Empty);
+              if (warehouseUpsert != null)
+              {
+                var rs = await api.UpsertWarehouseAsync(warehouseUpsert);
+              }
               break;
           }
 
@@ -77,7 +84,7 @@ namespace LTP.Truck.Services
       Action<Exception>? onError = null,
       TimeSpan? interval = null)
     {
-      var delay = interval ?? TimeSpan.FromSeconds(5);
+      var delay = interval ?? TimeSpan.FromSeconds(3);
 
       while (!cancellationToken.IsCancellationRequested)
       {

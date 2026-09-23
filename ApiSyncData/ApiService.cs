@@ -626,7 +626,7 @@ namespace ApiSyncData
         if (!string.IsNullOrWhiteSpace(code))
           formData.Add(new StringContent(code.Trim()), "SerialCode");
 
-        if (!string.IsNullOrWhiteSpace(description))
+        if (description!=null)
           formData.Add(new StringContent(description.Trim()), "Description");
 
         formData.Add(

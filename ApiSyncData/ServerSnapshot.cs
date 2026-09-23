@@ -46,7 +46,8 @@ namespace ApiSyncData
             local.IdSrc = id;
           else
           {
-            local = new TEntity { IdSrc = id };
+            // Bản ghi được tạo từ server dùng luôn server Id làm khóa chính local.
+            local = new TEntity { Id = id, IdSrc = id };
             added.Add(local);
           }
           byId.Add(id, local);

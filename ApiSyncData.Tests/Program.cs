@@ -14,7 +14,8 @@ var locals = new List<Local> { retained, missing, localOnly, emptyId };
 var rows = new List<Source> { new() { Id = retainedId, Name = "updated" }, new() { Id = newId, Name = "new" } };
 ServerSnapshot.Validate(rows, 2);
 var added = ServerSnapshot.Apply(rows, locals, (s, l) => l.Name = s.Name, default);
-Check(added.Count == 1 && added[0].IdSrc == newId, "insert");
+Check(added.Count == 1 && added[0].Id == newId && added[0].IdSrc == newId,
+  "insert uses server Id as local Id");
 Check(retained.Id == retainedLocalId && retained.Code == "LOCAL" && retained.Name == "updated", "update preserves local fields");
 Check(!retained.DeletedFlag, "restore active record");
 Check(missing.DeletedFlag, "soft delete missing record");

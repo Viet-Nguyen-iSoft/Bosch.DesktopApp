@@ -16,14 +16,14 @@ using static LTP.Truck.EnumData;
 
 namespace LTP.Truck.MasterData
 {
-  public partial class PopupAddClient : Form
+  public partial class PopupClient : Form
   {
     public event Action<Client>? OnSendSuccess;
 
     private ClientService _clientService { get; set; }
     private Client _clientUpdate { get; set; }
     private EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
-    public PopupAddClient()
+    public PopupClient()
     {
       InitializeComponent();
       this.Load += PopupAddClient_Load;
@@ -31,7 +31,7 @@ namespace LTP.Truck.MasterData
       this.btnClose.Click += BtnClose_Click;
     }
 
-    public PopupAddClient(Client client) : this()
+    public PopupClient(Client client) : this()
     {
       _clientUpdate = client;
       _enumTypePopup = EnumTypePopup.Update;
@@ -97,7 +97,7 @@ namespace LTP.Truck.MasterData
         {
           _clientUpdate.Name = txtName.Texts.Trim();
           _clientUpdate.Description = txtDescription.Texts.Trim();
-          _clientUpdate.CreatedAt = DateTime.UtcNow;
+          _clientUpdate.UpdatedAt = DateTime.UtcNow;
           var rs = await _clientService.AddOrUpdateAsync(_clientUpdate);
 
           using var popupMsg = new PopupConfirm("Cập nhật thành công.",

@@ -24,6 +24,7 @@ namespace LTP.Truck.Forms
     private CancellationTokenSource? _searchDebounceCancellation;
     private ApiJobsService _apiJobsService { get; set; } 
     private ClientService _clientService { get; set; }
+    private WarehouseService _warehouseService { get; set; }
     public FrmMasterData()
     {
       InitializeComponent();
@@ -170,10 +171,42 @@ namespace LTP.Truck.Forms
     {
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
       {
-        PopupAddClient popupAddClient = new PopupAddClient();
+        PopupClient popupAddClient = new PopupClient();
         popupAddClient.OnSendSuccess += PopupAddClient_OnSendAddSuccess;
         popupAddClient.ShowDialog();
-      }  
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Warehouse)
+      {
+        PopupWarehouse  popupWarehouse = new PopupWarehouse();
+        popupWarehouse.OnSendSuccess += PopupWarehouse_OnSendSuccess;
+        popupWarehouse.ShowDialog();
+      }
+    }
+
+    private async void PopupWarehouse_OnSendSuccess(Warehouse obj)
+    {
+      try
+      {
+        WarehouseUpsertRequest  warehouseUpsertRequest = new WarehouseUpsertRequest();
+        warehouseUpsertRequest.Id = obj.Id;
+        warehouseUpsertRequest.Name = obj?.Name ?? string.Empty;
+        warehouseUpsertRequest.Description = obj?.Description ?? string.Empty;
+        warehouseUpsertRequest.DeletedFlag = false;
+
+        ApiJobs apiJobs = new ApiJobs();
+        apiJobs.Json = JsonHelper.ToJson(warehouseUpsertRequest);
+        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+        apiJobs.EnumTypeAPI = EnumTypeAPI.MD_WareHouse;
+        apiJobs.CreatedAt = DateTime.UtcNow;
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+        await LoadData(_enumTypeMasterDataCurrent);
+      }
+      catch (Exception ex)
+      {
+
+      }
     }
 
     private async void PopupAddClient_OnSendAddSuccess(Client client)
@@ -193,6 +226,8 @@ namespace LTP.Truck.Forms
         apiJobs.CreatedAt = DateTime.UtcNow;
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+        await LoadData(_enumTypeMasterDataCurrent);
       }
       catch (Exception ex)
       {
@@ -470,7 +505,7 @@ namespace LTP.Truck.Forms
         var data = rowData as ClientDTO;
         if (data?.Client != null)
         {
-          PopupAddClient popupUpdateClient = new PopupAddClient(data.Client);
+          PopupClient popupUpdateClient = new PopupClient(data.Client);
           popupUpdateClient.OnSendSuccess += PopupUpdateClient_OnSendAddSuccess;
           popupUpdateClient.ShowDialog();
         }
@@ -481,9 +516,51 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }  
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Warehouse)
+      {
+        var data = rowData as WareHouseDTO;
+        if (data?.Warehouse != null)
+        {
+          PopupWarehouse popupWarehouse = new PopupWarehouse(data.Warehouse);
+          popupWarehouse.OnSendSuccess += PopupUpdateWarehouse_OnSendSuccess;
+          popupWarehouse.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
 
 
       return Task.CompletedTask;
+    }
+
+    private async void PopupUpdateWarehouse_OnSendSuccess(Warehouse obj)
+    {
+      try
+      {
+        WarehouseUpsertRequest warehouseUpsertRequest = new WarehouseUpsertRequest();
+        warehouseUpsertRequest.Id = obj.Id;
+        warehouseUpsertRequest.Name = obj?.Name ?? string.Empty;
+        warehouseUpsertRequest.Description = obj?.Description ?? string.Empty;
+        warehouseUpsertRequest.DeletedFlag = false;
+
+        ApiJobs apiJobs = new ApiJobs();
+        apiJobs.Json = JsonHelper.ToJson(warehouseUpsertRequest);
+        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+        apiJobs.EnumTypeAPI = EnumTypeAPI.MD_WareHouse;
+        apiJobs.CreatedAt = DateTime.UtcNow;
+
+        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+        await LoadData(_enumTypeMasterDataCurrent);
+      }
+      catch (Exception ex)
+      {
+
+      }
     }
 
     private async void PopupUpdateClient_OnSendAddSuccess(Client client)
@@ -503,6 +580,8 @@ namespace LTP.Truck.Forms
         apiJobs.CreatedAt = DateTime.UtcNow;
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+        await LoadData(_enumTypeMasterDataCurrent);
       }
       catch (Exception ex)
       {
@@ -521,6 +600,25 @@ namespace LTP.Truck.Forms
            EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Client);
           popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
           popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Warehouse)
+      {
+        var data = rowData as WareHouseDTO;
+        if (data?.Warehouse != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Warehouse);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
         }
         else
         {
@@ -558,10 +656,36 @@ namespace LTP.Truck.Forms
             apiJobs.CreatedAt = DateTime.UtcNow;
 
             await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+            await LoadData(_enumTypeMasterDataCurrent);
+          }
+        }
+        else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Warehouse)
+        {
+          var warehouse = e.Obj as Warehouse;
+          if (warehouse != null)
+          {
+            warehouse.DeletedFlag = true;
+            await _warehouseService.AddOrUpdateAsync(warehouse);
+
+            WarehouseUpsertRequest  warehouseUpsertRequest = new WarehouseUpsertRequest();
+            warehouseUpsertRequest.Id = warehouse.IdSrc != null ? warehouse.IdSrc : warehouse.Id;
+            warehouseUpsertRequest.Name = warehouse?.Name ?? string.Empty;
+            warehouseUpsertRequest.Description = warehouse?.Description ?? string.Empty;
+            warehouseUpsertRequest.DeletedFlag = warehouse?.DeletedFlag ?? false;
+
+            ApiJobs apiJobs = new ApiJobs();
+            apiJobs.Json = JsonHelper.ToJson(warehouseUpsertRequest);
+            apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+            apiJobs.EnumTypeAPI = EnumTypeAPI.MD_WareHouse;
+            apiJobs.CreatedAt = DateTime.UtcNow;
+
+            await _apiJobsService.AddOrUpdateAsync(apiJobs);
+
+            await LoadData(_enumTypeMasterDataCurrent);
           }
         }
 
-       
       }
       catch (Exception ex)
       {

@@ -173,6 +173,7 @@ namespace HelperManager
       None,
       Plate,
       MD_Client,
+      MD_WareHouse,
     }
 
     public enum EnumStatusAPI
