@@ -34,6 +34,7 @@ namespace LTP.Truck.Forms
     private int _typeFilterIndex;
     private int _licensePlateLookupVersion;
     private bool _isLoadingRecordFromLicensePlate;
+    private bool _isViewingHistoricalDetail;
     private string _formatStrWeight { get; } = "F0";
 
     public FrmHomeTruck()
@@ -69,8 +70,6 @@ namespace LTP.Truck.Forms
 
       ucItemWeight01.Title = "KL cân lần 1";
       ucItemWeight02.Title = "KL cân lần 2";
-      ucItemWeightGoods.Title = "KL hàng";
-      ucItemWeightGoods.Visible = false;
       ucItemOffsetWeight.Title = "KL chênh lệch xe";
 
       ElipseControl elipseControl = new ElipseControl();
@@ -297,6 +296,14 @@ namespace LTP.Truck.Forms
           return;
         }
 
+        if (string.IsNullOrEmpty(txtNameDriver.Texts))
+        {
+          using var popupMsg = new PopupConfirm("Vui lòng nhập tên tài xế !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+          return;
+        }
+
         if (_msgDataWeight.IndicatedWeight <= 0)
         {
           PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
@@ -342,6 +349,7 @@ namespace LTP.Truck.Forms
         try
         {
           _recordTruck = new RecordTruck();
+          _isViewingHistoricalDetail = false;
           ShowDataHistorical(_recordTruck);
           txtLicensePlate.Texts = enteredPlate;
         }
@@ -382,6 +390,7 @@ namespace LTP.Truck.Forms
           return;
 
         _isLoadingRecordFromLicensePlate = true;
+        _isViewingHistoricalDetail = false;
         _recordTruck = pendingRecord;
         ShowDataHistorical(_recordTruck);
       }
@@ -414,10 +423,17 @@ namespace LTP.Truck.Forms
           return;
         }
 
+        if (string.IsNullOrEmpty(txtNameDriver.Texts))
+        {
+          using var popupMsg = new PopupConfirm("Vui lòng nhập tên tài xế !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+          return;
+        }
+
         _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
         _recordTruck.NetTimeTemp = 0.0;
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
-        CheckShowStatusButton(_recordTruck);
 
         //Save DB
         _recordTruck.NoLabelAuto = KeyHelper.CreateLabel(AppCore.Ins._appConfig?.Key);
@@ -431,6 +447,7 @@ namespace LTP.Truck.Forms
         _recordTruck.CreatedAt = DateTime.UtcNow;
         _recordTruck.UpdatedAt = DateTime.UtcNow;
         _recordTruck.WeighInAt = DateTime.UtcNow;
+        CheckShowStatusButton(_recordTruck);
 
         var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
         //Push API biển số xe
@@ -486,10 +503,17 @@ namespace LTP.Truck.Forms
           return;
         }
 
+        if (string.IsNullOrEmpty(txtNameDriver.Texts))
+        {
+          using var popupMsg = new PopupConfirm("Vui lòng nhập tên tài xế !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+          return;
+        }
+
         _recordTruck.NetTime02 = _recordTruck.NetTimeTemp;
         _recordTruck.NetTimeTemp = 0.0;
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime02;
-        CheckShowStatusButton(_recordTruck);
 
         //Save DB
         _recordTruck.NoLabelAuto = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -502,6 +526,7 @@ namespace LTP.Truck.Forms
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
         _recordTruck.UpdatedAt = DateTime.UtcNow;
         _recordTruck.WeighOutAt = DateTime.UtcNow;
+        CheckShowStatusButton(_recordTruck);
 
         await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
         await LoadHistorical();
@@ -527,11 +552,13 @@ namespace LTP.Truck.Forms
       {
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.WeightedTime01;
         _recordTruck.NetTime01 = 0.0;
+        _recordTruck.WeighInAt = null;
         CheckShowStatusButton(_recordTruck);
       }
       else if (_recordTruck.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime02)
       {
         _recordTruck.NetTime02 = 0.0;
+        _recordTruck.WeighOutAt = null;
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.WeightedTime02;
         CheckShowStatusButton(_recordTruck);
       }
@@ -594,8 +621,8 @@ namespace LTP.Truck.Forms
           break;
       }
 
+      ShowWeightTimes(recordTruck);
       UpdateOffsetWeight(recordTruck);
-      _ = LoadWeightGoodsAsync(recordTruck.Id);
       lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString(_formatStrWeight);
       ApplyRecordAccess(recordTruck);
     }
@@ -657,9 +684,9 @@ namespace LTP.Truck.Forms
           break;
       }
 
+      ShowWeightTimes(recordTruck);
       double valueGoods = (recordTruck.NetTime02 - recordTruck.NetTime01);
       UpdateOffsetWeight(recordTruck);
-      _ = LoadWeightGoodsAsync(recordTruck.Id);
       lbWeightTrigger.Text = recordTruck.NetTimeTemp.ToString(_formatStrWeight);
 
       if (valueGoods > 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
@@ -690,6 +717,19 @@ namespace LTP.Truck.Forms
       txtTypeGoods.Texts = recordTruck.TypeGoods?.Name ?? string.Empty;
 
       ApplyRecordAccess(recordTruck);
+    }
+
+    private void ShowWeightTimes(RecordTruck recordTruck)
+    {
+      ucItemWeight01.Time = FormatWeightTime(recordTruck.WeighInAt);
+      ucItemWeight02.Time = FormatWeightTime(recordTruck.WeighOutAt);
+    }
+
+    private static string FormatWeightTime(DateTime? utcTime)
+    {
+      return utcTime.HasValue
+        ? utcTime.Value.AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm:ss")
+        : "...";
     }
 
     private bool CanModifyRecord(RecordTruck? recordTruck)
@@ -729,7 +769,7 @@ namespace LTP.Truck.Forms
 
       txtNoLabel.Enabled = canEditInformation;
       txtNameDriver.Enabled = canEditInformation;
-      txtLicensePlate.Enabled = canEditInformation;
+      txtLicensePlate.Enabled = canEditInformation && !_isViewingHistoricalDetail;
       txtIdCard.Enabled = canEditInformation;
       txtClient.Enabled = canEditInformation;
       txtTypeGoods.Enabled = canEditInformation;
@@ -747,42 +787,6 @@ namespace LTP.Truck.Forms
 
       var offsetWeight = Math.Abs(recordTruck.NetTime02 - recordTruck.NetTime01);
       ucItemOffsetWeight.Value = offsetWeight.ToString(_formatStrWeight);
-    }
-
-    private async Task LoadWeightGoodsAsync(Guid recordTruckId)
-    {
-      var loadVersion = ++_weightGoodsLoadVersion;
-
-      try
-      {
-        var totalNet = recordTruckId != Guid.Empty
-          ? await AppCore.Ins._recordWeightService.SumNetByRecordTruckIdAsync(recordTruckId)
-          : 0.0;
-        var hasWeightGoods = Math.Abs(totalNet) >= 0.0005;
-
-        if (IsDisposed || Disposing || loadVersion != _weightGoodsLoadVersion)
-          return;
-
-        if (InvokeRequired)
-        {
-          BeginInvoke(new Action(() =>
-          {
-            if (loadVersion == _weightGoodsLoadVersion)
-            {
-              ucItemWeightGoods.Value = totalNet.ToString(_formatStrWeight);
-              ucItemWeightGoods.Visible = hasWeightGoods;
-            }
-          }));
-          return;
-        }
-
-        ucItemWeightGoods.Value = totalNet.ToString(_formatStrWeight);
-        ucItemWeightGoods.Visible = hasWeightGoods;
-      }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-      }
     }
 
     private async void btnSearchHistorical_Click(object sender, EventArgs e)
@@ -1081,12 +1085,14 @@ namespace LTP.Truck.Forms
       if (recordTruckDto.RecordTruck is not RecordTruck recordTruck)
         return;
 
+      _isViewingHistoricalDetail = true;
       _recordTruck = recordTruck;
       ShowDataHistorical(_recordTruck);
     }
 
     private void btnCreate_Click(object sender, EventArgs e)
     {
+      _isViewingHistoricalDetail = false;
       _recordTruck = new RecordTruck();
       ShowDataHistorical(_recordTruck);
     }

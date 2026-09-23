@@ -111,13 +111,6 @@ namespace Common
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-      ResponMsg responMsg = new ResponMsg()
-      {
-        EnumResponsible = EnumResponsible.Cancel,
-        Obj = _obj,
-      };
-
-      OnSendConfirm?.Invoke(sender, responMsg);
       this.Close();
     }
   }

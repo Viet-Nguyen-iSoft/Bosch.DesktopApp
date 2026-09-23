@@ -44,6 +44,13 @@ namespace LTP.Truck.UserControls
         lbValue.Text = value;
       }
     }
+    public string Time
+    {
+      set
+      {
+        lbTime.Text = value;
+      }
+    }
 
   }
 }
