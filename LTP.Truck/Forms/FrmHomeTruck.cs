@@ -1193,6 +1193,16 @@ namespace LTP.Truck.Forms
           return;
         }
 
+        if (record.DeletedFlag == true)
+        {
+          using var popup = new PopupConfirm(
+            "Không thể in dữ liệu đã xóa!",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Warning);
+          popup.ShowDialog(this);
+          return;
+        }
+
         var rs = await DownloadReportTruck(DateTime.Now, record);
 
         //POST PDF

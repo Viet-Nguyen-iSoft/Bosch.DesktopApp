@@ -224,10 +224,10 @@ namespace LTP.Truck.Forms
       lbWeightTrigger.AutoSize = true;
       lbWeightTrigger.BackColor = Color.Transparent;
       lbWeightTrigger.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      lbWeightTrigger.Location = new Point(252, 0);
+      lbWeightTrigger.Location = new Point(222, 0);
       lbWeightTrigger.Margin = new Padding(0);
       lbWeightTrigger.Name = "lbWeightTrigger";
-      lbWeightTrigger.Size = new Size(471, 50);
+      lbWeightTrigger.Size = new Size(501, 50);
       lbWeightTrigger.TabIndex = 4;
       lbWeightTrigger.Text = "0.000";
       lbWeightTrigger.TextAlign = ContentAlignment.BottomLeft;
@@ -241,7 +241,7 @@ namespace LTP.Truck.Forms
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
-      label2.Size = new Size(252, 50);
+      label2.Size = new Size(222, 50);
       label2.TabIndex = 3;
       label2.Text = "Giá trị cân xác nhận(Kg):";
       label2.TextAlign = ContentAlignment.BottomLeft;
@@ -557,7 +557,7 @@ namespace LTP.Truck.Forms
       label20.Location = new Point(0, 46);
       label20.Margin = new Padding(0);
       label20.Name = "label20";
-      label20.Size = new Size(159, 46);
+      label20.Size = new Size(139, 46);
       label20.TabIndex = 24;
       label20.Text = "Phiếu nhà máy:";
       label20.TextAlign = ContentAlignment.MiddleRight;
@@ -572,7 +572,7 @@ namespace LTP.Truck.Forms
       txtNameDriver.BorderSize = 2;
       txtNameDriver.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtNameDriver.ForeColor = Color.FromArgb(64, 64, 64);
-      txtNameDriver.Location = new Point(163, 234);
+      txtNameDriver.Location = new Point(143, 234);
       txtNameDriver.Margin = new Padding(4);
       txtNameDriver.Multiline = false;
       txtNameDriver.Name = "txtNameDriver";
@@ -580,7 +580,7 @@ namespace LTP.Truck.Forms
       txtNameDriver.PasswordChar = false;
       txtNameDriver.PlaceholderColor = Color.DarkGray;
       txtNameDriver.PlaceholderText = "";
-      txtNameDriver.Size = new Size(418, 42);
+      txtNameDriver.Size = new Size(438, 38);
       txtNameDriver.TabIndex = 15;
       txtNameDriver.Texts = "";
       txtNameDriver.UnderlinedStyle = false;
@@ -595,7 +595,7 @@ namespace LTP.Truck.Forms
       txtNoLabel.BorderSize = 2;
       txtNoLabel.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtNoLabel.ForeColor = Color.FromArgb(64, 64, 64);
-      txtNoLabel.Location = new Point(163, 50);
+      txtNoLabel.Location = new Point(143, 50);
       txtNoLabel.Margin = new Padding(4);
       txtNoLabel.Multiline = false;
       txtNoLabel.Name = "txtNoLabel";
@@ -603,7 +603,7 @@ namespace LTP.Truck.Forms
       txtNoLabel.PasswordChar = false;
       txtNoLabel.PlaceholderColor = Color.DarkGray;
       txtNoLabel.PlaceholderText = "";
-      txtNoLabel.Size = new Size(418, 42);
+      txtNoLabel.Size = new Size(438, 38);
       txtNoLabel.TabIndex = 16;
       txtNoLabel.Texts = "";
       txtNoLabel.UnderlinedStyle = false;
@@ -617,7 +617,7 @@ namespace LTP.Truck.Forms
       label19.Location = new Point(0, 327);
       label19.Margin = new Padding(0);
       label19.Name = "label19";
-      label19.Size = new Size(159, 123);
+      label19.Size = new Size(139, 123);
       label19.TabIndex = 17;
       label19.Text = "Ghi chú:";
       // 
@@ -631,12 +631,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel15.Controls.Add(txtWareHouse, 0, 0);
       tableLayoutPanel15.Controls.Add(btnLoadWarehouse, 1, 0);
-      tableLayoutPanel15.Location = new Point(159, 184);
+      tableLayoutPanel15.Location = new Point(139, 184);
       tableLayoutPanel15.Margin = new Padding(0);
       tableLayoutPanel15.Name = "tableLayoutPanel15";
       tableLayoutPanel15.RowCount = 1;
       tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel15.Size = new Size(426, 46);
+      tableLayoutPanel15.Size = new Size(446, 46);
       tableLayoutPanel15.TabIndex = 20;
       // 
       // txtWareHouse
@@ -658,7 +658,7 @@ namespace LTP.Truck.Forms
       txtWareHouse.PasswordChar = false;
       txtWareHouse.PlaceholderColor = Color.DarkGray;
       txtWareHouse.PlaceholderText = "";
-      txtWareHouse.Size = new Size(358, 42);
+      txtWareHouse.Size = new Size(378, 38);
       txtWareHouse.TabIndex = 15;
       txtWareHouse.Texts = "";
       txtWareHouse.UnderlinedStyle = false;
@@ -676,7 +676,7 @@ namespace LTP.Truck.Forms
       btnLoadWarehouse.FlatStyle = FlatStyle.Flat;
       btnLoadWarehouse.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadWarehouse.ForeColor = Color.Black;
-      btnLoadWarehouse.Location = new Point(369, 4);
+      btnLoadWarehouse.Location = new Point(389, 4);
       btnLoadWarehouse.Name = "btnLoadWarehouse";
       btnLoadWarehouse.Size = new Size(54, 38);
       btnLoadWarehouse.TabIndex = 16;
@@ -695,12 +695,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel14.Controls.Add(txtTypeGoods, 0, 0);
       tableLayoutPanel14.Controls.Add(btnLoadTypeGoods, 1, 0);
-      tableLayoutPanel14.Location = new Point(159, 138);
+      tableLayoutPanel14.Location = new Point(139, 138);
       tableLayoutPanel14.Margin = new Padding(0);
       tableLayoutPanel14.Name = "tableLayoutPanel14";
       tableLayoutPanel14.RowCount = 1;
       tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel14.Size = new Size(426, 46);
+      tableLayoutPanel14.Size = new Size(446, 46);
       tableLayoutPanel14.TabIndex = 19;
       // 
       // txtTypeGoods
@@ -722,7 +722,7 @@ namespace LTP.Truck.Forms
       txtTypeGoods.PasswordChar = false;
       txtTypeGoods.PlaceholderColor = Color.DarkGray;
       txtTypeGoods.PlaceholderText = "";
-      txtTypeGoods.Size = new Size(358, 42);
+      txtTypeGoods.Size = new Size(378, 38);
       txtTypeGoods.TabIndex = 15;
       txtTypeGoods.Texts = "";
       txtTypeGoods.UnderlinedStyle = false;
@@ -740,7 +740,7 @@ namespace LTP.Truck.Forms
       btnLoadTypeGoods.FlatStyle = FlatStyle.Flat;
       btnLoadTypeGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadTypeGoods.ForeColor = Color.Black;
-      btnLoadTypeGoods.Location = new Point(369, 4);
+      btnLoadTypeGoods.Location = new Point(389, 4);
       btnLoadTypeGoods.Name = "btnLoadTypeGoods";
       btnLoadTypeGoods.Size = new Size(54, 38);
       btnLoadTypeGoods.TabIndex = 16;
@@ -759,12 +759,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel13.Controls.Add(txtClient, 0, 0);
       tableLayoutPanel13.Controls.Add(btnLoadClient, 1, 0);
-      tableLayoutPanel13.Location = new Point(159, 92);
+      tableLayoutPanel13.Location = new Point(139, 92);
       tableLayoutPanel13.Margin = new Padding(0);
       tableLayoutPanel13.Name = "tableLayoutPanel13";
       tableLayoutPanel13.RowCount = 1;
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel13.Size = new Size(426, 46);
+      tableLayoutPanel13.Size = new Size(446, 46);
       tableLayoutPanel13.TabIndex = 18;
       // 
       // txtClient
@@ -786,7 +786,7 @@ namespace LTP.Truck.Forms
       txtClient.PasswordChar = false;
       txtClient.PlaceholderColor = Color.DarkGray;
       txtClient.PlaceholderText = "";
-      txtClient.Size = new Size(358, 42);
+      txtClient.Size = new Size(378, 38);
       txtClient.TabIndex = 15;
       txtClient.Texts = "";
       txtClient.UnderlinedStyle = false;
@@ -804,7 +804,7 @@ namespace LTP.Truck.Forms
       btnLoadClient.FlatStyle = FlatStyle.Flat;
       btnLoadClient.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadClient.ForeColor = Color.Black;
-      btnLoadClient.Location = new Point(369, 4);
+      btnLoadClient.Location = new Point(389, 4);
       btnLoadClient.Name = "btnLoadClient";
       btnLoadClient.Size = new Size(54, 38);
       btnLoadClient.TabIndex = 16;
@@ -822,7 +822,7 @@ namespace LTP.Truck.Forms
       label6.Location = new Point(0, 0);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(159, 46);
+      label6.Size = new Size(139, 46);
       label6.TabIndex = 1;
       label6.Text = "Số phiếu:";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -836,7 +836,7 @@ namespace LTP.Truck.Forms
       label8.Location = new Point(0, 92);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(159, 46);
+      label8.Size = new Size(139, 46);
       label8.TabIndex = 3;
       label8.Text = "Khách hàng:";
       label8.TextAlign = ContentAlignment.MiddleLeft;
@@ -850,7 +850,7 @@ namespace LTP.Truck.Forms
       label9.Location = new Point(0, 138);
       label9.Margin = new Padding(0);
       label9.Name = "label9";
-      label9.Size = new Size(159, 46);
+      label9.Size = new Size(139, 46);
       label9.TabIndex = 4;
       label9.Text = "Loại hàng:";
       label9.TextAlign = ContentAlignment.MiddleLeft;
@@ -864,7 +864,7 @@ namespace LTP.Truck.Forms
       label11.Location = new Point(0, 184);
       label11.Margin = new Padding(0);
       label11.Name = "label11";
-      label11.Size = new Size(159, 46);
+      label11.Size = new Size(139, 46);
       label11.TabIndex = 5;
       label11.Text = "Kho hàng:";
       label11.TextAlign = ContentAlignment.MiddleLeft;
@@ -876,16 +876,16 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel11.Controls.Add(txtTypeWeight, 3, 0);
       tableLayoutPanel11.Controls.Add(label12, 2, 0);
       tableLayoutPanel11.Controls.Add(txtNoLabelAuto, 0, 0);
-      tableLayoutPanel11.Location = new Point(159, 0);
+      tableLayoutPanel11.Location = new Point(139, 0);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
       tableLayoutPanel11.RowCount = 1;
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel11.Size = new Size(426, 46);
+      tableLayoutPanel11.Size = new Size(446, 46);
       tableLayoutPanel11.TabIndex = 16;
       // 
       // txtTypeWeight
@@ -899,7 +899,7 @@ namespace LTP.Truck.Forms
       txtTypeWeight.Enabled = false;
       txtTypeWeight.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTypeWeight.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTypeWeight.Location = new Point(230, 4);
+      txtTypeWeight.Location = new Point(270, 4);
       txtTypeWeight.Margin = new Padding(4);
       txtTypeWeight.Multiline = false;
       txtTypeWeight.Name = "txtTypeWeight";
@@ -907,7 +907,7 @@ namespace LTP.Truck.Forms
       txtTypeWeight.PasswordChar = false;
       txtTypeWeight.PlaceholderColor = Color.DarkGray;
       txtTypeWeight.PlaceholderText = "";
-      txtTypeWeight.Size = new Size(192, 42);
+      txtTypeWeight.Size = new Size(172, 38);
       txtTypeWeight.TabIndex = 22;
       txtTypeWeight.Texts = "";
       txtTypeWeight.UnderlinedStyle = false;
@@ -918,10 +918,10 @@ namespace LTP.Truck.Forms
       label12.AutoSize = true;
       label12.BackColor = Color.Transparent;
       label12.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label12.Location = new Point(125, 0);
+      label12.Location = new Point(178, 0);
       label12.Margin = new Padding(0);
       label12.Name = "label12";
-      label12.Size = new Size(101, 46);
+      label12.Size = new Size(88, 46);
       label12.TabIndex = 17;
       label12.Text = "Kiểu cân:";
       label12.TextAlign = ContentAlignment.MiddleRight;
@@ -945,7 +945,7 @@ namespace LTP.Truck.Forms
       txtNoLabelAuto.PasswordChar = false;
       txtNoLabelAuto.PlaceholderColor = Color.DarkGray;
       txtNoLabelAuto.PlaceholderText = "";
-      txtNoLabelAuto.Size = new Size(97, 42);
+      txtNoLabelAuto.Size = new Size(150, 38);
       txtNoLabelAuto.TabIndex = 15;
       txtNoLabelAuto.Texts = "";
       txtNoLabelAuto.UnderlinedStyle = false;
@@ -959,7 +959,7 @@ namespace LTP.Truck.Forms
       label16.Location = new Point(0, 230);
       label16.Margin = new Padding(0);
       label16.Name = "label16";
-      label16.Size = new Size(159, 46);
+      label16.Size = new Size(139, 46);
       label16.TabIndex = 12;
       label16.Text = "Tên lái xe:";
       label16.TextAlign = ContentAlignment.MiddleLeft;
@@ -973,7 +973,7 @@ namespace LTP.Truck.Forms
       label7.Location = new Point(0, 276);
       label7.Margin = new Padding(0);
       label7.Name = "label7";
-      label7.Size = new Size(159, 46);
+      label7.Size = new Size(139, 46);
       label7.TabIndex = 2;
       label7.Text = "Biển số:";
       label7.TextAlign = ContentAlignment.MiddleLeft;
@@ -989,12 +989,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel16.Controls.Add(txtLicensePlate, 0, 0);
       tableLayoutPanel16.Controls.Add(label13, 2, 0);
       tableLayoutPanel16.Controls.Add(txtIdCard, 3, 0);
-      tableLayoutPanel16.Location = new Point(159, 276);
+      tableLayoutPanel16.Location = new Point(139, 276);
       tableLayoutPanel16.Margin = new Padding(0);
       tableLayoutPanel16.Name = "tableLayoutPanel16";
       tableLayoutPanel16.RowCount = 1;
       tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel16.Size = new Size(426, 46);
+      tableLayoutPanel16.Size = new Size(446, 46);
       tableLayoutPanel16.TabIndex = 21;
       // 
       // txtLicensePlate
@@ -1015,7 +1015,7 @@ namespace LTP.Truck.Forms
       txtLicensePlate.PasswordChar = false;
       txtLicensePlate.PlaceholderColor = Color.DarkGray;
       txtLicensePlate.PlaceholderText = "";
-      txtLicensePlate.Size = new Size(192, 42);
+      txtLicensePlate.Size = new Size(192, 38);
       txtLicensePlate.TabIndex = 15;
       txtLicensePlate.Texts = "";
       txtLicensePlate.UnderlinedStyle = false;
@@ -1029,7 +1029,7 @@ namespace LTP.Truck.Forms
       label13.Location = new Point(220, 0);
       label13.Margin = new Padding(0);
       label13.Name = "label13";
-      label13.Size = new Size(73, 46);
+      label13.Size = new Size(63, 46);
       label13.TabIndex = 17;
       label13.Text = "CCCD:";
       label13.TextAlign = ContentAlignment.MiddleLeft;
@@ -1044,7 +1044,7 @@ namespace LTP.Truck.Forms
       txtIdCard.BorderSize = 2;
       txtIdCard.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtIdCard.ForeColor = Color.FromArgb(64, 64, 64);
-      txtIdCard.Location = new Point(297, 4);
+      txtIdCard.Location = new Point(287, 4);
       txtIdCard.Margin = new Padding(4);
       txtIdCard.Multiline = false;
       txtIdCard.Name = "txtIdCard";
@@ -1052,7 +1052,7 @@ namespace LTP.Truck.Forms
       txtIdCard.PasswordChar = false;
       txtIdCard.PlaceholderColor = Color.DarkGray;
       txtIdCard.PlaceholderText = "";
-      txtIdCard.Size = new Size(125, 42);
+      txtIdCard.Size = new Size(155, 38);
       txtIdCard.TabIndex = 18;
       txtIdCard.Texts = "";
       txtIdCard.UnderlinedStyle = false;
@@ -1061,10 +1061,10 @@ namespace LTP.Truck.Forms
       // 
       txtDocument.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       txtDocument.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtDocument.Location = new Point(162, 330);
+      txtDocument.Location = new Point(142, 330);
       txtDocument.Multiline = true;
       txtDocument.Name = "txtDocument";
-      txtDocument.Size = new Size(420, 117);
+      txtDocument.Size = new Size(440, 117);
       txtDocument.TabIndex = 25;
       // 
       // label10
@@ -1256,7 +1256,7 @@ namespace LTP.Truck.Forms
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(106, 62);
+      label4.Size = new Size(95, 62);
       label4.TabIndex = 17;
       label4.Text = "Tìm kiếm:";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -1271,7 +1271,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.BorderSize = 2;
       txtSearchKey.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearchKey.ForeColor = Color.FromArgb(64, 64, 64);
-      txtSearchKey.Location = new Point(110, 10);
+      txtSearchKey.Location = new Point(99, 12);
       txtSearchKey.Margin = new Padding(4);
       txtSearchKey.Multiline = false;
       txtSearchKey.Name = "txtSearchKey";
@@ -1279,7 +1279,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.PasswordChar = false;
       txtSearchKey.PlaceholderColor = Color.DarkGray;
       txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(164, 42);
+      txtSearchKey.Size = new Size(188, 38);
       txtSearchKey.TabIndex = 18;
       txtSearchKey.Texts = "";
       txtSearchKey.UnderlinedStyle = false;
@@ -1290,10 +1290,10 @@ namespace LTP.Truck.Forms
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(328, 0);
+      label17.Location = new Point(341, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
-      label17.Size = new Size(38, 62);
+      label17.Size = new Size(32, 62);
       label17.TabIndex = 21;
       label17.Text = "Từ";
       label17.TextAlign = ContentAlignment.MiddleLeft;
@@ -1330,10 +1330,10 @@ namespace LTP.Truck.Forms
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(686, 0);
+      label18.Location = new Point(693, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
-      label18.Size = new Size(49, 62);
+      label18.Size = new Size(42, 62);
       label18.TabIndex = 22;
       label18.Text = "đến";
       label18.TextAlign = ContentAlignment.MiddleLeft;
@@ -1367,7 +1367,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(369, 3);
+      ucTimeSearchFrom.Location = new Point(376, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 30;

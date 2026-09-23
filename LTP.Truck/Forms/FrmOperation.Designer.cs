@@ -430,7 +430,7 @@ namespace LTP.Truck.Forms
       btnReportTruck.FlatStyle = FlatStyle.Flat;
       btnReportTruck.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnReportTruck.ForeColor = Color.Black;
-      btnReportTruck.Image = Properties.Resources.icon_report;
+      btnReportTruck.Image = Properties.Resources.icon_btn_report;
       btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
       btnReportTruck.Location = new Point(3, 583);
       btnReportTruck.Name = "btnReportTruck";
@@ -455,7 +455,7 @@ namespace LTP.Truck.Forms
       btnReportGoods.FlatStyle = FlatStyle.Flat;
       btnReportGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnReportGoods.ForeColor = Color.Black;
-      btnReportGoods.Image = Properties.Resources.icon_report;
+      btnReportGoods.Image = Properties.Resources.icon_btn_report;
       btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
       btnReportGoods.Location = new Point(3, 659);
       btnReportGoods.Name = "btnReportGoods";
