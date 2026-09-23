@@ -242,6 +242,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
       {
@@ -292,6 +293,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
       {
@@ -322,6 +324,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
       {
@@ -348,6 +351,7 @@ namespace LTP.Truck.Forms
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
 
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess("Thêm thành công.");
       }
       catch (Exception ex)
       {
@@ -374,6 +378,7 @@ namespace LTP.Truck.Forms
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
 
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess("Thêm thành công.");
       }
       catch (Exception ex)
       {
@@ -400,6 +405,7 @@ namespace LTP.Truck.Forms
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
 
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess("Thêm thành công.");
       }
       catch (Exception ex)
       {
@@ -793,6 +799,7 @@ namespace LTP.Truck.Forms
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
 
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess("Cập nhật thành công.");
       }
       catch (Exception ex)
       {
@@ -819,6 +826,7 @@ namespace LTP.Truck.Forms
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
 
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess("Cập nhật thành công.");
       }
       catch (Exception ex)
       {
@@ -845,11 +853,19 @@ namespace LTP.Truck.Forms
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
 
         await LoadData(_enumTypeMasterDataCurrent);
+        ShowSaveSuccess("Cập nhật thành công.");
       }
       catch (Exception ex)
       {
 
       }
+    }
+
+    private void ShowSaveSuccess(string message)
+    {
+      using var popupMsg = new PopupConfirm(message,
+        EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+      popupMsg.ShowDialog(this);
     }
 
     private Task DeleteMasterDataAsync(object? rowData)

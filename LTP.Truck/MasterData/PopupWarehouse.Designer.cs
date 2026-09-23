@@ -31,8 +31,10 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupWarehouse));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
+      tableLayoutPanel4 = new TableLayoutPanel();
+      label1 = new Label();
+      label5 = new Label();
       txtDescription = new Common.Custom.RJTextBox();
-      label3 = new Label();
       label4 = new Label();
       txtName = new Common.Custom.RJTextBox();
       lbTitle = new Label();
@@ -41,6 +43,7 @@
       btnClose = new Common.Custom.RJButton();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
+      tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       SuspendLayout();
       // 
@@ -63,7 +66,7 @@
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(624, 251);
+      tableLayoutPanel3.Size = new Size(624, 302);
       tableLayoutPanel3.TabIndex = 4;
       // 
       // tableLayoutPanel5
@@ -72,8 +75,8 @@
       tableLayoutPanel5.ColumnCount = 2;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel5.Controls.Add(tableLayoutPanel4, 0, 0);
       tableLayoutPanel5.Controls.Add(txtDescription, 1, 1);
-      tableLayoutPanel5.Controls.Add(label3, 0, 0);
       tableLayoutPanel5.Controls.Add(label4, 0, 1);
       tableLayoutPanel5.Controls.Add(txtName, 1, 0);
       tableLayoutPanel5.Location = new Point(8, 68);
@@ -82,8 +85,53 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel5.Size = new Size(608, 110);
+      tableLayoutPanel5.Size = new Size(608, 161);
       tableLayoutPanel5.TabIndex = 8;
+      // 
+      // tableLayoutPanel4
+      // 
+      tableLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel4.ColumnCount = 2;
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel4.Controls.Add(label1, 1, 0);
+      tableLayoutPanel4.Controls.Add(label5, 0, 0);
+      tableLayoutPanel4.Location = new Point(0, 0);
+      tableLayoutPanel4.Margin = new Padding(0);
+      tableLayoutPanel4.Name = "tableLayoutPanel4";
+      tableLayoutPanel4.RowCount = 1;
+      tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel4.Size = new Size(150, 80);
+      tableLayoutPanel4.TabIndex = 40;
+      // 
+      // label1
+      // 
+      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label1.AutoSize = true;
+      label1.BackColor = Color.Transparent;
+      label1.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label1.ForeColor = Color.Red;
+      label1.Location = new Point(41, 0);
+      label1.Margin = new Padding(0);
+      label1.Name = "label1";
+      label1.Size = new Size(109, 80);
+      label1.TabIndex = 4;
+      label1.Text = "*";
+      label1.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label5
+      // 
+      label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label5.AutoSize = true;
+      label5.BackColor = Color.Transparent;
+      label5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label5.Location = new Point(0, 0);
+      label5.Margin = new Padding(0);
+      label5.Name = "label5";
+      label5.Size = new Size(41, 80);
+      label5.TabIndex = 3;
+      label5.Text = "Tên";
+      label5.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtDescription
       // 
@@ -95,7 +143,7 @@
       txtDescription.BorderSize = 2;
       txtDescription.Font = new Font("Roboto", 14F);
       txtDescription.ForeColor = Color.FromArgb(64, 64, 64);
-      txtDescription.Location = new Point(154, 63);
+      txtDescription.Location = new Point(154, 101);
       txtDescription.Margin = new Padding(4);
       txtDescription.Multiline = false;
       txtDescription.Name = "txtDescription";
@@ -108,30 +156,16 @@
       txtDescription.Texts = "";
       txtDescription.UnderlinedStyle = false;
       // 
-      // label3
-      // 
-      label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label3.AutoSize = true;
-      label3.BackColor = Color.Transparent;
-      label3.Font = new Font("Roboto", 14F);
-      label3.Location = new Point(0, 0);
-      label3.Margin = new Padding(0);
-      label3.Name = "label3";
-      label3.Size = new Size(150, 55);
-      label3.TabIndex = 1;
-      label3.Text = "Tên";
-      label3.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // label4
       // 
       label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
       label4.Font = new Font("Roboto", 14F);
-      label4.Location = new Point(0, 55);
+      label4.Location = new Point(0, 80);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(150, 55);
+      label4.Size = new Size(150, 81);
       label4.TabIndex = 2;
       label4.Text = "Mô tả";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -146,7 +180,7 @@
       txtName.BorderSize = 2;
       txtName.Font = new Font("Roboto", 14F);
       txtName.ForeColor = Color.FromArgb(64, 64, 64);
-      txtName.Location = new Point(154, 8);
+      txtName.Location = new Point(154, 21);
       txtName.Margin = new Padding(4);
       txtName.Multiline = false;
       txtName.Name = "txtName";
@@ -182,7 +216,7 @@
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(5, 181);
+      tableLayoutPanel2.Location = new Point(5, 232);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
@@ -240,7 +274,7 @@
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(624, 251);
+      ClientSize = new Size(624, 302);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupWarehouse";
@@ -249,6 +283,8 @@
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel5.ResumeLayout(false);
       tableLayoutPanel5.PerformLayout();
+      tableLayoutPanel4.ResumeLayout(false);
+      tableLayoutPanel4.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
       ResumeLayout(false);
     }
@@ -258,12 +294,14 @@
     private TableLayoutPanel tableLayoutPanel3;
     private TableLayoutPanel tableLayoutPanel5;
     private Common.Custom.RJTextBox txtDescription;
-    private Label label3;
     private Label label4;
     private Common.Custom.RJTextBox txtName;
     private Label lbTitle;
     private TableLayoutPanel tableLayoutPanel2;
     private Common.Custom.RJButton btnConfirm;
     private Common.Custom.RJButton btnClose;
+    private TableLayoutPanel tableLayoutPanel4;
+    private Label label1;
+    private Label label5;
   }
 }

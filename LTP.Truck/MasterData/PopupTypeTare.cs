@@ -102,12 +102,8 @@ namespace LTP.Truck.MasterData
           categoryTare.CreatedAt = DateTime.UtcNow;
           var rs = await _categoryTareService.AddOrUpdateAsync(categoryTare);
 
-          using var popupMsg = new PopupConfirm("Thêm thành công.",
-              EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-          popupMsg.ShowDialog(this);
-
-          OnSendSuccess?.Invoke(rs);
           this.Close();
+          OnSendSuccess?.Invoke(rs);
         }
         else if (_enumTypePopup == EnumTypePopup.Update)
         {
@@ -118,12 +114,8 @@ namespace LTP.Truck.MasterData
           _categoryTareUpdate.UpdatedAt = DateTime.UtcNow;
           var rs = await _categoryTareService.AddOrUpdateAsync(_categoryTareUpdate);
 
-          using var popupMsg = new PopupConfirm("Cập nhật thành công.",
-              EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-          popupMsg.ShowDialog(this);
-
-          OnSendSuccess?.Invoke(rs);
           this.Close();
+          OnSendSuccess?.Invoke(rs);
         }
 
       }

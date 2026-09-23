@@ -87,12 +87,8 @@ namespace LTP.Truck.MasterData
           warehouse.CreatedAt = DateTime.UtcNow;
           var rs = await _warehouseService.AddOrUpdateAsync(warehouse);
 
-          using var popupMsg = new PopupConfirm("Thêm thành công.",
-              EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-          popupMsg.ShowDialog(this);
-
-          OnSendSuccess?.Invoke(rs);
           this.Close();
+          OnSendSuccess?.Invoke(rs);
         }
         else if (_enumTypePopup == EnumTypePopup.Update)
         {
@@ -101,12 +97,8 @@ namespace LTP.Truck.MasterData
           _warehouseUpdate.UpdatedAt = DateTime.UtcNow;
           var rs = await _warehouseService.AddOrUpdateAsync(_warehouseUpdate);
 
-          using var popupMsg = new PopupConfirm("Cập nhật thành công.",
-              EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-          popupMsg.ShowDialog(this);
-
-          OnSendSuccess?.Invoke(rs);
           this.Close();
+          OnSendSuccess?.Invoke(rs);
         }
 
       }

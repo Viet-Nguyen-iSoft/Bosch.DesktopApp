@@ -32,16 +32,19 @@
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
       txtDescription = new Common.Custom.RJTextBox();
-      label3 = new Label();
       label4 = new Label();
       txtName = new Common.Custom.RJTextBox();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
+      tableLayoutPanel1 = new TableLayoutPanel();
+      label15 = new Label();
+      label8 = new Label();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanel1.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -72,8 +75,8 @@
       tableLayoutPanel5.ColumnCount = 2;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel5.Controls.Add(tableLayoutPanel1, 0, 0);
       tableLayoutPanel5.Controls.Add(txtDescription, 1, 1);
-      tableLayoutPanel5.Controls.Add(label3, 0, 0);
       tableLayoutPanel5.Controls.Add(label4, 0, 1);
       tableLayoutPanel5.Controls.Add(txtName, 1, 0);
       tableLayoutPanel5.Location = new Point(8, 68);
@@ -107,20 +110,6 @@
       txtDescription.TabIndex = 4;
       txtDescription.Texts = "";
       txtDescription.UnderlinedStyle = false;
-      // 
-      // label3
-      // 
-      label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label3.AutoSize = true;
-      label3.BackColor = Color.Transparent;
-      label3.Font = new Font("Roboto", 14F);
-      label3.Location = new Point(0, 0);
-      label3.Margin = new Padding(0);
-      label3.Name = "label3";
-      label3.Size = new Size(150, 64);
-      label3.TabIndex = 1;
-      label3.Text = "Tên";
-      label3.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // label4
       // 
@@ -236,6 +225,51 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
+      // tableLayoutPanel1
+      // 
+      tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel1.ColumnCount = 2;
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel1.Controls.Add(label15, 1, 0);
+      tableLayoutPanel1.Controls.Add(label8, 0, 0);
+      tableLayoutPanel1.Location = new Point(0, 0);
+      tableLayoutPanel1.Margin = new Padding(0);
+      tableLayoutPanel1.Name = "tableLayoutPanel1";
+      tableLayoutPanel1.RowCount = 1;
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel1.Size = new Size(150, 64);
+      tableLayoutPanel1.TabIndex = 36;
+      // 
+      // label15
+      // 
+      label15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label15.AutoSize = true;
+      label15.BackColor = Color.Transparent;
+      label15.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label15.ForeColor = Color.Red;
+      label15.Location = new Point(41, 0);
+      label15.Margin = new Padding(0);
+      label15.Name = "label15";
+      label15.Size = new Size(109, 64);
+      label15.TabIndex = 4;
+      label15.Text = "*";
+      label15.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label8
+      // 
+      label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label8.AutoSize = true;
+      label8.BackColor = Color.Transparent;
+      label8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label8.Location = new Point(0, 0);
+      label8.Margin = new Padding(0);
+      label8.Name = "label8";
+      label8.Size = new Size(41, 64);
+      label8.TabIndex = 3;
+      label8.Text = "Tên";
+      label8.TextAlign = ContentAlignment.MiddleLeft;
+      // 
       // PopupProductGroup
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -250,6 +284,8 @@
       tableLayoutPanel5.ResumeLayout(false);
       tableLayoutPanel5.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanel1.ResumeLayout(false);
+      tableLayoutPanel1.PerformLayout();
       ResumeLayout(false);
     }
 
@@ -258,12 +294,14 @@
     private TableLayoutPanel tableLayoutPanel3;
     private TableLayoutPanel tableLayoutPanel5;
     private Common.Custom.RJTextBox txtDescription;
-    private Label label3;
     private Label label4;
     private Common.Custom.RJTextBox txtName;
     private Label lbTitle;
     private TableLayoutPanel tableLayoutPanel2;
     private Common.Custom.RJButton btnConfirm;
     private Common.Custom.RJButton btnClose;
+    private TableLayoutPanel tableLayoutPanel1;
+    private Label label15;
+    private Label label8;
   }
 }

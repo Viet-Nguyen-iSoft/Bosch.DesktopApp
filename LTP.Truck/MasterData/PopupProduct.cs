@@ -88,17 +88,14 @@ namespace LTP.Truck.MasterData
         }
 
         Product product;
-        string successMessage;
         if (_enumTypePopup == EnumTypePopup.Add)
         {
           product = new Product { CreatedAt = DateTime.UtcNow };
-          successMessage = "Thêm thành công.";
         }
         else
         {
           product = _productUpdate;
           product.UpdatedAt = DateTime.UtcNow;
-          successMessage = "Cập nhật thành công.";
         }
 
         product.Code = txtCode.Texts.Trim();
@@ -108,12 +105,8 @@ namespace LTP.Truck.MasterData
 
         var result = await _productService.AddOrUpdateAsync(product);
 
-        using var popupMsg = new PopupConfirm(successMessage,
-          EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-        popupMsg.ShowDialog(this);
-
-        OnSendSuccess?.Invoke(result);
         Close();
+        OnSendSuccess?.Invoke(result);
       }
       catch (Exception)
       {
