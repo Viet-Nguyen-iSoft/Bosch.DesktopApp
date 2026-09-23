@@ -397,65 +397,73 @@ namespace LTP.Truck.Forms
 
     private async void btnWeightTime01_Click(object sender, EventArgs e)
     {
-      if (_recordTruck.NetTimeTemp <= 0)
+      try
       {
-        PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupConfirm.ShowDialog();
-        return;
+        if (_recordTruck.NetTimeTemp <= 0)
+        {
+          PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupConfirm.ShowDialog();
+          return;
+        }
+
+        var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
+        if (!validLicense.IsValid)
+        {
+          PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupConfirm.ShowDialog();
+          return;
+        }
+
+        _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
+        _recordTruck.NetTimeTemp = 0.0;
+        _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
+        CheckShowStatusButton(_recordTruck);
+
+        //Save DB
+        _recordTruck.NoLabelAuto = KeyHelper.CreateLabel(AppCore.Ins._appConfig?.Key);
+        _recordTruck.NoLabelManual = txtNoLabel.Texts;
+        _recordTruck.NameDriver = txtNameDriver.Texts;
+        _recordTruck.LicensePlate = validLicense.Plate;
+        _recordTruck.IdCard = txtIdCard.Texts;
+        _recordTruck.Document = txtDocument.Text;
+        _recordTruck.StationId = AppCore.Ins._station?.Id;
+        _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
+        _recordTruck.CreatedAt = DateTime.UtcNow;
+        _recordTruck.UpdatedAt = DateTime.UtcNow;
+        _recordTruck.WeighInAt = DateTime.UtcNow;
+
+        var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
+        //Push API biển số xe
+        if (rs.Exist == false)
+        {
+          LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
+          licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
+          licensePlate.Id = rs.LicensePlate?.Id;
+          licensePlate.Description = rs.LicensePlate?.Description;
+
+          ApiJobs apiJobs = new ApiJobs();
+          apiJobs.Json = JsonHelper.ToJson(licensePlate);
+          apiJobs.EnumTypeAPI = EnumTypeAPI.Plate;
+          apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+          apiJobs.CreatedAt = DateTime.UtcNow;
+          await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
+        }
+
+        await LoadLicensePlateSuggestionsAsync();
+        await LoadHistorical();
+
+        ////POST PDF
+        RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
+        if (record != null)
+        {
+          var pathPdf = await DownloadReportTruck(DateTime.Now, record);
+          //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+        }
       }
-
-      var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
-      if (!validLicense.IsValid)
+      catch (Exception ex)
       {
-        PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupConfirm.ShowDialog();
-        return;
-      }
-
-      _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
-      _recordTruck.NetTimeTemp = 0.0;
-      _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
-      CheckShowStatusButton(_recordTruck);
-
-      //Save DB
-      _recordTruck.NoLabelAuto = KeyHelper.CreateLabel(AppCore.Ins._appConfig?.Key);
-      _recordTruck.NoLabelManual = txtNoLabel.Texts;
-      _recordTruck.NameDriver = txtNameDriver.Texts;
-      _recordTruck.LicensePlate = validLicense.Plate;
-      _recordTruck.IdCard = txtIdCard.Texts;
-      _recordTruck.Document = txtDocument.Text;
-      _recordTruck.StationId = AppCore.Ins._station?.Id;
-      _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
-      _recordTruck.CreatedAt = DateTime.UtcNow;
-      _recordTruck.UpdatedAt = DateTime.UtcNow;
-      _recordTruck.WeighInAt = DateTime.UtcNow;
-
-      var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
-      //Push API biển số xe
-      if (rs.Exist == false)
-      {
-        LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
-        licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
-        licensePlate.Id = rs.LicensePlate?.Id;
-        licensePlate.Description = rs.LicensePlate?.Description;
-
-        ApiJobs apiJobs = new ApiJobs();
-        apiJobs.Json = JsonHelper.ToJson(licensePlate);
-        apiJobs.EnumTypeAPI = EnumTypeAPI.Plate;
-        apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
-        apiJobs.CreatedAt = DateTime.UtcNow;
-        await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
-      }
-
-      await LoadLicensePlateSuggestionsAsync();
-      await LoadHistorical();
-
-      ////POST PDF
-      RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
-      if (record != null)
-      {
-        var pathPdf = await DownloadReportTruck(DateTime.Now, record);
-        //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        MessageBox.Show(ex.StackTrace);
       }
     }
 
