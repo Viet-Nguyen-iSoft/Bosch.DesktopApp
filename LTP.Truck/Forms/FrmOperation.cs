@@ -268,22 +268,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      if (station != null)
-      {
-        var stationKey = Environment.GetEnvironmentVariable("STATION");
-        if (stationKey == "1")
-        {
-          lbTitle.Text = $"HỆ THỐNG CÂN XE TẢI - {station.Name}";
-        }
-        else
-        {
-          lbTitle.Text = $"HỆ THỐNG CÂN PHẾ PHẨM - {station.Name}";
-        }
-      }
-      else
-      {
-        lbTitle.Text = $"- - - - -";
-      }
+      lbTitle.Text = (station != null) ? station?.Name?.ToUpper() : "- - - - -";
     }
 
     private void Ins_OnSendStatusWeight(object? sender, iSoft.Communication.Interface.CommunicationStatusChangedEventArgs e)

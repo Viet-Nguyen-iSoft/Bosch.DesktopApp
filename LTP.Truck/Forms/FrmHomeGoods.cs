@@ -1,14 +1,17 @@
-using Common;
 using ApiSyncData.Req;
+using Common;
 using HelperManager;
 using iSoft.Communication.Interface;
 using iSoft.Communication.Mode;
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
+using iSoft.Database.Repositorys;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
+using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 
@@ -189,7 +192,7 @@ namespace LTP.Truck.Forms
       //Tare
       if (_categoryTare != null)
       {
-        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight + (_categoryTare?.Value ?? 0.0), 3);
+        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight + (messageData?.TareWeight ?? 0.0), 3);
       }
       else
       {
@@ -587,6 +590,7 @@ namespace LTP.Truck.Forms
 
         await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
         await LoadSumWeightAsync(validLicense.Plate);
+        await LoadHistorical();
 
         ////In máy in
         //var printDTO = new DTOPrintLabel()
@@ -601,20 +605,20 @@ namespace LTP.Truck.Forms
         //};
         //AppCore.Ins.PrinterLabel(AppCore.Ins._appConfig?.NamePrint, printDTO);
 
-        try
-        {
-          await LoadHistorical();
-        }
-        catch (Exception ex)
-        {
-          HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        }
-        if (!IsDisposed && !Disposing)
-        {
-          using var popupMsg = new PopupConfirm("Lưu phiếu cân thành công.",
-          EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-          popupMsg.ShowDialog(this);
-        }
+        //try
+        //{
+          
+        //}
+        //catch (Exception ex)
+        //{
+        //  HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        //}
+        //if (!IsDisposed && !Disposing)
+        //{
+        //  using var popupMsg = new PopupConfirm("Lưu phiếu cân thành công.",
+        //  EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+        //  popupMsg.ShowDialog(this);
+        //}
       }
       catch (Exception ex)
       {
@@ -758,17 +762,155 @@ namespace LTP.Truck.Forms
       checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
     }
 
-    private void btnExport_Click(object sender, EventArgs e)
+    private async void btnExport_Click(object sender, EventArgs e)
     {
       dgv.EndEdit();
 
-      List<RecordWeight> exportData = dgv.Rows
+      List<RecordWeightDTO> selectedData = dgv.Rows
         .Cast<DataGridViewRow>()
         .Where(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value))
         .Select(row => row.DataBoundItem as RecordWeightDTO)
         .Where(dto => dto?.RecordWeight is not null)
-        .Select(dto => dto!.RecordWeight!)
+        .Select(dto => dto!)
         .ToList();
+
+      if (selectedData.Count == 0)
+      {
+        using var popupMsg = new PopupConfirm("Vui lòng chọn dữ liệu cần xuất !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      int licensePlateCount = selectedData
+        .Select(dto => LicensePlateRepository.Normalize(dto.LicensePlate))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .Count();
+
+      if (licensePlateCount > 1)
+      {
+        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng biển số xe !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      List<RecordWeight> exportData = selectedData
+        .Select(dto => dto.RecordWeight!)
+        .ToList();
+
+      await DownloadFileWorkReport(exportData);
+    }
+
+
+    private async Task DownloadFileWorkReport(List<RecordWeight> exportData)
+    {
+      try
+      {
+        DateTime dt = DateTime.Now;
+        string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
+        string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
+        string folderOutput = Application.StartupPath + "Template\\ReportGoods";
+        if (!Directory.Exists(folderOutput))
+        {
+          Directory.CreateDirectory(folderOutput);
+        }
+
+        string licensePlate = exportData.FirstOrDefault()?.LicensePlate ?? string.Empty;
+        string template = File.ReadAllText(pathFileTemplate);
+        string table = File.ReadAllText(pathFileTemplateTable);
+        string result = template.Replace("{{documentNo}}", "A26-00001")
+                                .Replace("{documentNo}", "A26-00001")
+                                .Replace("{{day}}", dt.Day.ToString())
+                                .Replace("{day}", dt.Day.ToString())
+                                .Replace("{{month}}", dt.Month.ToString())
+                                .Replace("{month}", dt.Month.ToString())
+                                .Replace("{{year}}", dt.Year.ToString())
+                                .Replace("{year}", dt.Year.ToString())
+                                .Replace("{{vehiclePlate}}", licensePlate)
+                                .Replace("{{sealNo}}", "")
+
+                                .Replace("{{signPlace}}", "Đồng Nai")
+                                .Replace("{{signDay}}", dt.Day.ToString())
+                                .Replace("{{signMonth}}", dt.Month.ToString())
+                                .Replace("{{signYear}}", dt.Year.ToString())
+                                .Replace("{{sender.deptCode}}", "FCM")
+                                .Replace("{{receiver.deptCode}}", "SES");
+
+
+        var recordWeightsByProduct = exportData
+          .GroupBy(recordWeight => recordWeight.ProductId)
+          .Select(group => new
+          {
+            ProductGroup = group.First().Product.ProductGroup?.Name,
+            ProductName = group.First().Product?.Name ?? string.Empty,
+            ProductCode = group.First().Product?.Code ?? string.Empty,
+            SumNet = group.Sum(recordWeight => recordWeight.Net)
+          })
+          .ToList();
+
+
+        string tableDetails = string.Empty;
+        double value = 0.0;
+        if (recordWeightsByProduct?.Count() > 0)
+        {
+          for (int no = 1; no <= recordWeightsByProduct?.Count(); no++)
+          {
+            string tempTableDetal = table;
+            tempTableDetal = tempTableDetal.Replace("{{no}}", (no).ToString("D2"));
+            tempTableDetal = tempTableDetal.Replace("{{name}}", recordWeightsByProduct[no - 1].ProductName);
+            tempTableDetal = tempTableDetal.Replace("{{code}}", recordWeightsByProduct[no - 1].ProductCode);
+            tempTableDetal = tempTableDetal.Replace("{{quantity}}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
+            tempTableDetal = tempTableDetal.Replace("{{note}}", "");
+
+
+            tableDetails = tableDetails + tempTableDetal;
+            value += recordWeightsByProduct[no - 1].SumNet;
+          }
+        }
+
+        result = result.Replace("{{totalQuantity}}", FormatWeight(value));
+        result = result.Replace("{table}", tableDetails);
+
+        string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
+        File.WriteAllText(outputPath, result);
+
+        await CreateFile(outputPath);
+
+        var openReportFile = false;
+        using (var popup = new PopupConfirm(
+            "Tạo phiếu thành công. Bạn có muốn mở file không?",
+            EnumTypeMsg.Confirm,
+            EnumImageMsg.Question))
+        {
+          popup.OnSendConfirm += (_, response) =>
+            openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
+          popup.ShowDialog(this);
+        }
+      }
+      catch (Exception ex)
+      {
+
+      }
+    }
+
+    private static string FormatWeight(double value)
+    {
+      return WeightFormatHelper.Format(value);
+    }
+
+    private async Task<string> CreateFile(string path)
+    {
+      try
+      {
+        string pdf = path.Replace(".html", ".pdf");
+        await PdfHelper.HtmlToPdfAsync(path, pdf);
+        return pdf;
+      }
+      catch (Exception)
+      {
+        throw;
+      }
     }
   }
 }
