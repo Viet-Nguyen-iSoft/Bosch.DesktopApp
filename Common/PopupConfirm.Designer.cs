@@ -127,8 +127,8 @@ namespace Common
       tableLayoutPanel3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel3.ColumnCount = 3;
       tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
-      tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
+      tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel3.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel3.Controls.Add(btnClose, 2, 0);
       tableLayoutPanel3.Location = new Point(0, 161);
@@ -153,9 +153,10 @@ namespace Common
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = Properties.Resources.icon_confirm;
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(477, 3);
+      btnConfirm.Location = new Point(437, 3);
       btnConfirm.Name = "btnConfirm";
-      btnConfirm.Size = new Size(154, 54);
+      btnConfirm.Padding = new Padding(10, 0, 0, 0);
+      btnConfirm.Size = new Size(174, 54);
       btnConfirm.TabIndex = 0;
       btnConfirm.Text = "       Xác nhận";
       btnConfirm.TextColor = Color.White;
@@ -176,9 +177,10 @@ namespace Common
       btnClose.ForeColor = Color.White;
       btnClose.Image = Properties.Resources.icon_close;
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(637, 3);
+      btnClose.Location = new Point(617, 3);
       btnClose.Name = "btnClose";
-      btnClose.Size = new Size(154, 54);
+      btnClose.Padding = new Padding(10, 0, 0, 0);
+      btnClose.Size = new Size(174, 54);
       btnClose.TabIndex = 1;
       btnClose.Text = "       Đóng";
       btnClose.TextColor = Color.White;

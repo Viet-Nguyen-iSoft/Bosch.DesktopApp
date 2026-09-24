@@ -1376,10 +1376,41 @@ namespace LTP.Truck.Forms
           return;
         }
 
+        string pathPdf = Path.Combine(
+          Application.StartupPath + "Report",
+          $"{record.Id.ToString().Replace("-", "").Replace(" ", "")}.pdf");
+
+        if (FileLockHelper.IsFileLocked(pathPdf))
+        {
+          bool closeOpenedFile = false;
+          using (var popup = new PopupConfirm(
+            "File báo cáo đang được mở. Bạn có muốn đóng file để tiếp tục xuất lại không?",
+            EnumTypeMsg.Confirm,
+            EnumImageMsg.Question))
+          {
+            popup.OnSendConfirm += (_, response) =>
+              closeOpenedFile = response.EnumResponsible == EnumResponsible.Confirm;
+            popup.ShowDialog(this);
+          }
+
+          if (!closeOpenedFile)
+            return;
+
+          bool fileClosed = await FileLockHelper.TryCloseLockingProcessesAsync(pathPdf);
+          if (!fileClosed || FileLockHelper.IsFileLocked(pathPdf))
+          {
+            using var popup = new PopupConfirm(
+              "Không thể đóng file báo cáo đang mở. Vui lòng đóng file thủ công rồi thử lại.",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+            popup.ShowDialog(this);
+            return;
+          }
+        }
+
         var rs = await DownloadReportTruck02(DateTime.Now, record);
 
         //Đồng bộ pdf
-        string pathPdf = Path.Combine(Application.StartupPath + "Report", $"{record.Id.ToString().Replace("-", "").Replace(" ", "")}.pdf");
         if (File.Exists(pathPdf))
         {
           await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);

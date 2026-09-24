@@ -56,5 +56,15 @@ namespace iSoft.Database
       DoneTime02,
       Delete,
     }
+
+    public enum EnumWasteType
+    {
+      [Description("Nguy hiểm")]
+      Hazardous = 1,
+      [Description("Không thể tái chế")]
+      NonRecyclable = 2,
+      [Description("Có thể tái chế")]
+      Recyclable = 3,
+    }
   }
 }

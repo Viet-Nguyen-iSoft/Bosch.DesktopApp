@@ -813,11 +813,17 @@ namespace LTP.Truck.Forms
         .Select(dto => dto.RecordWeight!)
         .ToList();
 
-      await DownloadFileWorkReport(exportData);
+      string licensePlate = selectedData[0].LicensePlate?.Trim() ?? string.Empty;
+      string productGroupName = selectedData[0].ProductGroup?.Trim() ?? string.Empty;
+
+      await DownloadFileWorkReport(exportData, licensePlate, productGroupName);
     }
 
 
-    private async Task DownloadFileWorkReport(List<RecordWeight> exportData)
+    private async Task DownloadFileWorkReport(
+      List<RecordWeight> exportData,
+      string licensePlate,
+      string productGroupName)
     {
       try
       {
@@ -830,7 +836,6 @@ namespace LTP.Truck.Forms
           Directory.CreateDirectory(folderOutput);
         }
 
-        string licensePlate = exportData.FirstOrDefault()?.LicensePlate ?? string.Empty;
         string template = File.ReadAllText(pathFileTemplate);
         string table = File.ReadAllText(pathFileTemplateTable);
         string result = template.Replace("{{documentNo}}", "A26-00001")
