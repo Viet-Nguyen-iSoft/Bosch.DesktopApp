@@ -83,8 +83,23 @@ namespace LTP.Truck.MasterData
 
         if (_enumTypePopup == EnumTypePopup.Add )
         {
+          string clientName = txtName.Texts.Trim();
+          var clients = await _clientService.GetAllAsync(IsContainDelete: true);
+          bool isDuplicateName = clients.Any(client =>
+            string.Equals(client.Name?.Trim(), clientName,
+              StringComparison.CurrentCultureIgnoreCase));
+
+          if (isDuplicateName)
+          {
+            using var popupMsgAlarm = new PopupConfirm("Tên khách hàng đã tồn tại !",
+              EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupMsgAlarm.ShowDialog(this);
+            txtName.Focus();
+            return;
+          }
+
           Client client = new Client();
-          client.Name = txtName.Texts.Trim();
+          client.Name = clientName;
           client.Description = txtDescription.Texts.Trim();
           client.CreatedAt = DateTime.UtcNow;
           var rs = await _clientService.AddOrUpdateAsync(client);
