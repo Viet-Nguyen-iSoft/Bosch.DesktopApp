@@ -15,12 +15,14 @@ namespace LTP.Truck.Popup
   public partial class PopupLoadMD : Form
   {
     public event Action<object, EnumTypeData>? OnSendData;
+    public event Action<EnumTypeData>? OnAddData;
 
     private EnumTypeData _enumTypeData {  get; set; }
     public PopupLoadMD()
     {
       InitializeComponent();
       CustomUI();
+      btnAdd.Click += btnAdd_Click;
     }
 
     private void CustomUI()
@@ -42,6 +44,7 @@ namespace LTP.Truck.Popup
       if (typeof(T) == typeof(Client))
       {
         _enumTypeData = EnumTypeData.Client;
+        btnAdd.Visible = true;
 
         var dto = DTOHelper.ConvertClientDTO(items as List<Client>);
         dgv.DataSource = dto;
@@ -53,6 +56,7 @@ namespace LTP.Truck.Popup
       else if (typeof(T) == typeof(TypeGoods))
       {
         _enumTypeData = EnumTypeData.TypeGoods;
+        btnAdd.Visible = true;
 
         var dto = DTOHelper.ConvertTypeGoodsDTO(items as List<TypeGoods>);
         dgv.DataSource = dto;
@@ -64,6 +68,7 @@ namespace LTP.Truck.Popup
       else if (typeof(T) == typeof(RecordTruckDTO))
       {
         _enumTypeData = EnumTypeData.RecordTruck;
+        btnAdd.Visible = false;
         lbTitle.Text = "Danh sách phiếu đã cân lần 1";
         dgv.DataSource = items;
         dgv.Columns[nameof(RecordTruckDTO.NetTime02)].Visible = false;
@@ -101,6 +106,7 @@ namespace LTP.Truck.Popup
       else if (typeof(T) == typeof(Warehouse))
       {
         _enumTypeData = EnumTypeData.Warehouse;
+        btnAdd.Visible = true;
 
         var dto = DTOHelper.ConvertWareHouseDTO(items as List<Warehouse>);
         dgv.DataSource = dto;
@@ -114,6 +120,11 @@ namespace LTP.Truck.Popup
     private void btnClose_Click(object sender, EventArgs e)
     {
       this.Close();
+    }
+
+    private void btnAdd_Click(object? sender, EventArgs e)
+    {
+      OnAddData?.Invoke(_enumTypeData);
     }
 
     private void btnConfirm_Click(object sender, EventArgs e)

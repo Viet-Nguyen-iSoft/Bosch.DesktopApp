@@ -11,6 +11,7 @@ using iSoft.Database.Repositorys;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
+using LTP.Truck.MasterData;
 using LTP.Truck.Popup;
 using System.Data;
 using System.Drawing.Drawing2D;
@@ -190,6 +191,7 @@ namespace LTP.Truck.Forms
       PopupLoadMD popupLoadMD = new PopupLoadMD();
       popupLoadMD.SetData(clients);
       popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
+      popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
       popupLoadMD.ShowDialog();
     }
 
@@ -200,6 +202,7 @@ namespace LTP.Truck.Forms
       PopupLoadMD popupLoadMD = new PopupLoadMD();
       popupLoadMD.SetData(typeGoods);
       popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
+      popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
       popupLoadMD.ShowDialog();
     }
 
@@ -210,7 +213,102 @@ namespace LTP.Truck.Forms
       PopupLoadMD popupLoadMD = new PopupLoadMD();
       popupLoadMD.SetData(warehouses);
       popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
+      popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
       popupLoadMD.ShowDialog();
+    }
+
+    private void PopupLoadMD_OnAddData(PopupLoadMD popupLoadMD, Common.EnumData.EnumTypeData type)
+    {
+      switch (type)
+      {
+        case Common.EnumData.EnumTypeData.Client:
+          var popupClient = new PopupClient();
+          popupClient.OnSendSuccess += client =>
+            PopupLoadMD_OnAddSuccess(popupLoadMD, client, type);
+          popupClient.ShowDialog(popupLoadMD);
+          break;
+        case Common.EnumData.EnumTypeData.TypeGoods:
+          var popupTypeGoods = new PopupTypeGoods();
+          popupTypeGoods.OnSendSuccess += typeGoods =>
+            PopupLoadMD_OnAddSuccess(popupLoadMD, typeGoods, type);
+          popupTypeGoods.ShowDialog(popupLoadMD);
+          break;
+        case Common.EnumData.EnumTypeData.Warehouse:
+          var popupWarehouse = new PopupWarehouse();
+          popupWarehouse.OnSendSuccess += warehouse =>
+            PopupLoadMD_OnAddSuccess(popupLoadMD, warehouse, type);
+          popupWarehouse.ShowDialog(popupLoadMD);
+          break;
+      }
+    }
+
+    private async void PopupLoadMD_OnAddSuccess(
+      PopupLoadMD popupLoadMD,
+      object value,
+      Common.EnumData.EnumTypeData type)
+    {
+      try
+      {
+        var apiJob = new ApiJobs
+        {
+          EnumStatusAPI = EnumStatusAPI.Created,
+          CreatedAt = DateTime.UtcNow,
+        };
+
+        switch (type)
+        {
+          case Common.EnumData.EnumTypeData.Client when value is Client client:
+            apiJob.EnumTypeAPI = EnumTypeAPI.MD_Client;
+            apiJob.Json = JsonHelper.ToJson(new ClientUpsertRequest
+            {
+              Id = client.IdSrc ?? client.Id,
+              Name = client.Name ?? string.Empty,
+              Description = client.Description,
+              DeletedFlag = client.DeletedFlag,
+            });
+            await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
+            popupLoadMD.SetData(await AppCore.Ins._clientService.GetAllAsync(false));
+            break;
+          case Common.EnumData.EnumTypeData.TypeGoods when value is TypeGoods typeGoods:
+            apiJob.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
+            apiJob.Json = JsonHelper.ToJson(new TypeGoodsUpsertRequest
+            {
+              Id = typeGoods.IdSrc ?? typeGoods.Id,
+              SerialCode = typeGoods.Code ?? string.Empty,
+              Name = typeGoods.Name ?? string.Empty,
+              Description = typeGoods.Description,
+              DeletedFlag = typeGoods.DeletedFlag,
+            });
+            await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
+            popupLoadMD.SetData(await AppCore.Ins._typeGoodsService.GetAllAsync(false));
+            break;
+          case Common.EnumData.EnumTypeData.Warehouse when value is Warehouse warehouse:
+            apiJob.EnumTypeAPI = EnumTypeAPI.MD_WareHouse;
+            apiJob.Json = JsonHelper.ToJson(new WarehouseUpsertRequest
+            {
+              Id = warehouse.IdSrc ?? warehouse.Id,
+              Name = warehouse.Name ?? string.Empty,
+              Description = warehouse.Description,
+              DeletedFlag = warehouse.DeletedFlag,
+            });
+            await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
+            popupLoadMD.SetData(await AppCore.Ins._warehouseService.GetAllAsync(false));
+            break;
+          default:
+            return;
+        }
+
+        using var successPopup = new PopupConfirm("Thêm thành công.",
+          EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+        successPopup.ShowDialog(popupLoadMD);
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var errorPopup = new PopupConfirm("Không thể tải lại danh sách dữ liệu !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        errorPopup.ShowDialog(popupLoadMD);
+      }
     }
 
     private void PopupLoadMD_OnSendData(object arg1, Common.EnumData.EnumTypeData arg2)
