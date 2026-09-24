@@ -44,8 +44,8 @@ namespace iSoft.Database.Repositorys
           searchKey,
           statusFilterIndex,
           typeFilterIndex)
-        .OrderByDescending(record => record.CreatedAt)
-        .ThenByDescending(record => record.Id)
+        .OrderBy(record => record.CreatedAt)
+        .ThenBy(record => record.Id)
         .ToListAsync();
     }
 
@@ -71,8 +71,8 @@ namespace iSoft.Database.Repositorys
       var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
       pageNumber = Math.Min(pageNumber, totalPages);
       var records = await query
-        .OrderByDescending(record => record.CreatedAt)
-        .ThenByDescending(record => record.Id)
+        .OrderBy(record => record.CreatedAt)
+        .ThenBy(record => record.Id)
         .Skip((pageNumber - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();

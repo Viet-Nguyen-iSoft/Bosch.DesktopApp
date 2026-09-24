@@ -148,9 +148,12 @@ namespace LTP.Truck.Forms
 
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
         var effectivePage = Math.Min(pageNumber, totalPages);
-        var recordsDto = DTOHelper.ConvertRecordWeightDTO(records);
+        var recordsDto = DTOHelper.ConvertRecordWeightDTO(records)
+          .OrderBy(record => record.RecordWeight?.CreatedAt)
+          .ThenBy(record => record.RecordWeight?.Id)
+          .ToList();
         for (var index = 0; index < recordsDto.Count; index++)
-          recordsDto[index].No = totalRecords - ((effectivePage - 1) * pageSize + index);
+          recordsDto[index].No = (effectivePage - 1) * pageSize + index + 1;
 
         ucPage1.SetTotalRecords(totalRecords, effectivePage);
         SetDgvHistorical(recordsDto);
@@ -518,7 +521,10 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        var exportData = DTOHelper.ConvertRecordWeightDTO(exportRecords);
+        var exportData = DTOHelper.ConvertRecordWeightDTO(exportRecords)
+          .OrderBy(record => record.RecordWeight?.CreatedAt)
+          .ThenBy(record => record.RecordWeight?.Id)
+          .ToList();
 
         var exporterName = AppCore.Ins._userCurrent?.DisplayName;
         if (string.IsNullOrWhiteSpace(exporterName))
