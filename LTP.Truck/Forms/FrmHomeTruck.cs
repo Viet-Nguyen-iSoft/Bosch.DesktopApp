@@ -1378,6 +1378,13 @@ namespace LTP.Truck.Forms
 
         var rs = await DownloadReportTruck02(DateTime.Now, record);
 
+        //Đồng bộ pdf
+        string pathPdf = Path.Combine(Application.StartupPath + "Report", $"{record.Id.ToString().Replace("-", "").Replace(" ", "")}.pdf");
+        if (!File.Exists(pathPdf))
+        {
+          await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+        }
+
         var openReportFile = false;
         using (var popup = new PopupConfirm(
           "Tạo phiếu thành công. Bạn có muốn mở file không?",
@@ -1429,8 +1436,8 @@ namespace LTP.Truck.Forms
 
 
 
-        PopupConfirm popupConfirm = new PopupConfirm("In phiếu giao nhận thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-        popupConfirm.ShowDialog();
+        //PopupConfirm popupConfirm = new PopupConfirm("In phiếu giao nhận thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+        //popupConfirm.ShowDialog();
       }
       catch (Exception ex)
       {

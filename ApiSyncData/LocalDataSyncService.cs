@@ -125,7 +125,10 @@ namespace ApiSyncData
 
           //Đồng bộ pdf
           string pathPdf = Path.Combine(PathFolderSrc + "Report", $"{record.Id.ToString().Replace("-", "").Replace(" ", "")}.pdf");
-          await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+          if (!File.Exists(pathPdf))
+          {
+            await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+          }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
