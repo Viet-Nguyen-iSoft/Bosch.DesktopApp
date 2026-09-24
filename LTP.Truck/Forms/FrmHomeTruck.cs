@@ -394,20 +394,15 @@ namespace LTP.Truck.Forms
 
         await LoadPendingRecordByLicensePlateAsync(rs.Plate);
 
+        if (!ValidateClientSelected())
+          return;
+
         if (!ValidateWarehouseSelected())
           return;
 
         if (_recordTruck.TypeGoodsId == null)
         {
           using var popupMsg = new PopupConfirm("Vui lòng chọn Loại hàng trước khi cân !",
-            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupMsg.ShowDialog(this);
-          return;
-        }
-
-        if (string.IsNullOrEmpty(txtNameDriver.Texts))
-        {
-          using var popupMsg = new PopupConfirm("Vui lòng nhập tên tài xế !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupMsg.ShowDialog(this);
           return;
@@ -533,13 +528,8 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        if (string.IsNullOrEmpty(txtNameDriver.Texts))
-        {
-          using var popupMsg = new PopupConfirm("Vui lòng nhập tên tài xế !",
-            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupMsg.ShowDialog(this);
+        if (!ValidateClientSelected())
           return;
-        }
 
         if (!ValidateWarehouseSelected())
           return;
@@ -617,13 +607,8 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        if (string.IsNullOrEmpty(txtNameDriver.Texts))
-        {
-          using var popupMsg = new PopupConfirm("Vui lòng nhập tên tài xế !",
-            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupMsg.ShowDialog(this);
+        if (!ValidateClientSelected())
           return;
-        }
 
         if (!ValidateWarehouseSelected())
           return;
@@ -679,6 +664,23 @@ namespace LTP.Truck.Forms
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.WeightedTime02;
         CheckShowStatusButton(_recordTruck);
       }
+    }
+
+    private bool ValidateClientSelected()
+    {
+      if (!string.IsNullOrWhiteSpace(txtClient.Texts) &&
+          _recordTruck.ClientId.HasValue)
+      {
+        return true;
+      }
+
+      using var popupMsg = new PopupConfirm(
+        "Vui lòng chọn Khách hàng trước khi cân !",
+        EnumTypeMsg.MessageManualClose,
+        EnumImageMsg.Warning);
+      popupMsg.ShowDialog(this);
+      btnLoadClient.Focus();
+      return false;
     }
 
     private bool ValidateWarehouseSelected()
