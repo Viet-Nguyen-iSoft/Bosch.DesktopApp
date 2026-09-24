@@ -83,8 +83,23 @@ namespace LTP.Truck.MasterData
 
         if (_enumTypePopup == EnumTypePopup.Add)
         {
+          string warehouseName = txtName.Texts.Trim();
+          var warehouses = await _warehouseService.GetAllAsync(IsContainDelete: true);
+          bool isDuplicateName = warehouses.Any(warehouse =>
+            string.Equals(warehouse.Name?.Trim(), warehouseName,
+              StringComparison.CurrentCultureIgnoreCase));
+
+          if (isDuplicateName)
+          {
+            using var popupMsgAlarm = new PopupConfirm("Tên kho đã tồn tại !",
+              EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupMsgAlarm.ShowDialog(this);
+            txtName.Focus();
+            return;
+          }
+
           Warehouse warehouse = new Warehouse();
-          warehouse.Name = txtName.Texts.Trim();
+          warehouse.Name = warehouseName;
           warehouse.Description = txtDescription.Texts.Trim();
           warehouse.CreatedAt = DateTime.UtcNow;
           var rs = await _warehouseService.AddOrUpdateAsync(warehouse);
