@@ -119,13 +119,13 @@ namespace LTP.Truck.Forms
     private void FrmHome_Load(object? sender, EventArgs e)
     {
       btnFilter.Click += BtnFilter_Click;
-      AppCore.Ins.OnSendDataWeightTruck += Ins_OnSendDataWeightTruck;
-      AppCore.Ins.OnSendStatusWeightTruck += Ins_OnSendStatusWeightTruck;
+      AppCore.Ins.OnSendDataWeight += Ins_OnSendDataWeight;
+      AppCore.Ins.OnSendStatusWeight += Ins_OnSendStatusWeight;
       ResetWeightDisplay();
       CheckShowStatusButton(_recordTruck);
     }
 
-    private void Ins_OnSendStatusWeightTruck(object? sender, CommunicationStatusChangedEventArgs e)
+    private void Ins_OnSendStatusWeight(object? sender, CommunicationStatusChangedEventArgs e)
     {
       if (!e.IsConnected)
         ResetWeightDisplay();
@@ -179,7 +179,7 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void Ins_OnSendDataWeightTruck(object? sender, DataWeightInterface e)
+    private void Ins_OnSendDataWeight(object? sender, DataWeightInterface e)
     {
       _msgDataWeight = e;
       SetDataWeight(e);

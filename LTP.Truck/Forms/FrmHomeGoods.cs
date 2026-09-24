@@ -124,8 +124,8 @@ namespace LTP.Truck.Forms
         FrmMain.Instance.OnChangeProduct += Instance_OnChangeProduct;
         FrmMain.Instance.OnChangeTare += Instance_OnChangeTare;
         MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
-        AppCore.Ins.OnSendDataWeightGoods += Ins_OnSendDataWeightGoods;
-        AppCore.Ins.OnSendStatusWeightGoods += Ins_OnSendStatusWeightGoods;
+        AppCore.Ins.OnSendDataWeight += Ins_OnSendDataWeight;
+        AppCore.Ins.OnSendStatusWeight += Ins_OnSendStatusWeight;
         ResetWeightDisplay();
       }
       catch (Exception ex)
@@ -160,13 +160,13 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void Ins_OnSendDataWeightGoods(object? sender, DataWeightInterface e)
+    private void Ins_OnSendDataWeight(object? sender, DataWeightInterface e)
     {
       _msgDataWeight = e;
       SetDataWeight(e);
     }
 
-    private void Ins_OnSendStatusWeightGoods(object? sender, CommunicationStatusChangedEventArgs e)
+    private void Ins_OnSendStatusWeight(object? sender, CommunicationStatusChangedEventArgs e)
     {
       if (!e.IsConnected)
         ResetWeightDisplay();

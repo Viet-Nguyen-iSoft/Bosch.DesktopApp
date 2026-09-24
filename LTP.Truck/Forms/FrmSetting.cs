@@ -38,7 +38,6 @@ namespace LTP.Truck.Forms
       txtTimeoutServer._TextChanged += NonNegativeInteger_TextChanged;
       txtValueWeightPermit._TextChanged += NonNegativeDecimal_TextChanged;
 
-      AppCore.Ins.OnSendDataWeightTruck += Ins_OnSendDataWeightTruck;
     }
 
     private static void NonNegativeInteger_KeyPress(object? sender, KeyPressEventArgs e)
@@ -586,11 +585,6 @@ namespace LTP.Truck.Forms
         EnumTypeMsg.MessageManualClose,
         EnumImageMsg.Warning);
       popupMsg.ShowDialog(this);
-    }
-
-    private void Ins_OnSendDataWeightTruck(object? sender, DataWeightInterface e)
-    {
-
     }
 
     private async void btnConfirm_Click(object sender, EventArgs e)

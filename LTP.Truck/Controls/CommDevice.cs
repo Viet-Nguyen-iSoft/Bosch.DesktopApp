@@ -12,12 +12,7 @@ namespace LTP.Truck.Controls
 {
   public partial class AppCore
   {
-    public event EventHandler<DataWeightInterface>? OnSendDataWeightTruck;
-    public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeightTruck;
-
-    public event EventHandler<DataWeightInterface>? OnSendDataWeightGoods;
-    public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeightGoods;
-
+    public event EventHandler<DataWeightInterface>? OnSendDataWeight;
     public event EventHandler<CommunicationStatusChangedEventArgs>? OnSendStatusWeight;
     public event EventHandler<EnumStatusConnectTcp>? OnSendStatusServer;
     private const string ScaleId = "SCALE_01";
@@ -139,16 +134,13 @@ namespace LTP.Truck.Controls
        object? sender,
         DataWeightInterface dataWeightInterface)
     {
-      OnSendDataWeightTruck?.Invoke(sender, dataWeightInterface);
-      OnSendDataWeightGoods?.Invoke(sender, dataWeightInterface);
+      OnSendDataWeight?.Invoke(sender, dataWeightInterface);
     }
 
     private void Communication_StatusChanged(
         object? sender,
         CommunicationStatusChangedEventArgs e)
     {
-      OnSendStatusWeightTruck?.Invoke(sender, e);
-      OnSendStatusWeightGoods?.Invoke(sender, e);
       OnSendStatusWeight?.Invoke(sender, e);
     }
 
