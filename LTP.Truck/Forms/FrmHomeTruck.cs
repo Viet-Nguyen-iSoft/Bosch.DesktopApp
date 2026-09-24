@@ -14,6 +14,7 @@ using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
 using LTP.Truck.Popup;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using static Common.EnumData;
@@ -1377,6 +1378,38 @@ namespace LTP.Truck.Forms
 
         var rs = await DownloadReportTruck02(DateTime.Now, record);
 
+        var openReportFile = false;
+        using (var popup = new PopupConfirm(
+          "Tạo phiếu thành công. Bạn có muốn mở file không?",
+          EnumTypeMsg.Confirm,
+          EnumImageMsg.Question))
+        {
+          popup.OnSendConfirm += (_, response) =>
+            openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
+          popup.ShowDialog(this);
+        }
+
+        if (openReportFile)
+        {
+          try
+          {
+            Process.Start(new ProcessStartInfo
+            {
+              FileName = rs,
+              UseShellExecute = true,
+            });
+          }
+          catch (Exception openException)
+          {
+            HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
+            using var openErrorPopup = new PopupConfirm(
+              "Đã tạo phiếu nhưng không thể mở file.",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+            openErrorPopup.ShowDialog(this);
+          }
+        }
+
         //POST PDF
         //await (new ApiService()).UploadReportTruckPdf(record.Id, rs);
 
@@ -1494,6 +1527,7 @@ namespace LTP.Truck.Forms
           Directory.CreateDirectory(folderOutput);
         }
 
+        string fileImageLogo = Application.StartupPath + "Template\\LogoBosch.png";
         string template = File.ReadAllText(pathFileTemplate);
         string company = AppCore.Ins._appConfig?.Company ?? string.Empty;
         string address = AppCore.Ins._appConfig?.Address ?? string.Empty;
@@ -1550,8 +1584,8 @@ namespace LTP.Truck.Forms
                                 .Replace("{time_tare}", timeTare)
                                 .Replace("{time_gross}", timeGross)
                                 .Replace("{note}", recordTruck.Document)
+                                .Replace("{path_file_logo}", fileImageLogo)
                                 ;
-
         //string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");
         string outputPath = Path.Combine(folderOutput, $"{recordTruck.Id.ToString().Replace("-", "").Replace(" ", "")}.html");
         File.WriteAllText(outputPath, result);

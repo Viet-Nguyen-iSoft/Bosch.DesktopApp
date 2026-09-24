@@ -57,6 +57,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
       <Generator>SettingsSingleFileGenerator</Generator>
     </None>
+    <None Update="Template\LogoBosch.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\TemplateHtml.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

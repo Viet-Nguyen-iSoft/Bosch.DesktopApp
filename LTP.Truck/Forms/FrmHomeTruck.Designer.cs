@@ -59,8 +59,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel22 = new TableLayoutPanel();
       label16 = new Label();
       label25 = new Label();
-      tableLayoutPanel21 = new TableLayoutPanel();
-      label11 = new Label();
       label24 = new Label();
       tableLayoutPanel20 = new TableLayoutPanel();
       label9 = new Label();
@@ -123,7 +121,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel8.SuspendLayout();
       tableLayoutPanel22.SuspendLayout();
-      tableLayoutPanel21.SuspendLayout();
       tableLayoutPanel20.SuspendLayout();
       tableLayoutPanel19.SuspendLayout();
       tableLayoutPanel15.SuspendLayout();
@@ -532,7 +529,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel8.Controls.Add(tableLayoutPanel22, 0, 6);
-      tableLayoutPanel8.Controls.Add(tableLayoutPanel21, 0, 5);
+      tableLayoutPanel8.Controls.Add(label24, 0, 5);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel20, 0, 4);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel19, 0, 3);
       tableLayoutPanel8.Controls.Add(label20, 0, 1);
@@ -607,47 +604,16 @@ namespace LTP.Truck.Forms
       label25.Text = "Biển số";
       label25.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // tableLayoutPanel21
-      // 
-      tableLayoutPanel21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel21.ColumnCount = 2;
-      tableLayoutPanel21.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel21.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel21.Controls.Add(label11, 1, 0);
-      tableLayoutPanel21.Controls.Add(label24, 0, 0);
-      tableLayoutPanel21.Location = new Point(0, 230);
-      tableLayoutPanel21.Margin = new Padding(0);
-      tableLayoutPanel21.Name = "tableLayoutPanel21";
-      tableLayoutPanel21.RowCount = 1;
-      tableLayoutPanel21.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel21.Size = new Size(139, 46);
-      tableLayoutPanel21.TabIndex = 36;
-      // 
-      // label11
-      // 
-      label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label11.AutoSize = true;
-      label11.BackColor = Color.Transparent;
-      label11.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label11.ForeColor = Color.Red;
-      label11.Location = new Point(90, 0);
-      label11.Margin = new Padding(0);
-      label11.Name = "label11";
-      label11.Size = new Size(49, 46);
-      label11.TabIndex = 4;
-      label11.Text = "*";
-      label11.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // label24
       // 
       label24.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label24.AutoSize = true;
       label24.BackColor = Color.Transparent;
       label24.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label24.Location = new Point(0, 0);
+      label24.Location = new Point(0, 230);
       label24.Margin = new Padding(0);
       label24.Name = "label24";
-      label24.Size = new Size(90, 46);
+      label24.Size = new Size(139, 46);
       label24.TabIndex = 3;
       label24.Text = "Tên lái xe";
       label24.TextAlign = ContentAlignment.MiddleLeft;
@@ -1596,8 +1562,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.PerformLayout();
       tableLayoutPanel22.ResumeLayout(false);
       tableLayoutPanel22.PerformLayout();
-      tableLayoutPanel21.ResumeLayout(false);
-      tableLayoutPanel21.PerformLayout();
       tableLayoutPanel20.ResumeLayout(false);
       tableLayoutPanel20.PerformLayout();
       tableLayoutPanel19.ResumeLayout(false);
@@ -1692,8 +1656,6 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel22;
     private Label label16;
     private Label label25;
-    private TableLayoutPanel tableLayoutPanel21;
-    private Label label11;
     private Label label24;
     private TableLayoutPanel tableLayoutPanel20;
     private Label label9;
