@@ -72,18 +72,43 @@ namespace LTP.Truck.MasterData
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        if (string.IsNullOrEmpty(txtName.Texts))
+        if (string.IsNullOrWhiteSpace(txtCode.Texts))
+        {
+          using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập mã !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsgAlarm.ShowDialog(this);
+          txtCode.Focus();
+          return;
+        }
+
+        if (string.IsNullOrWhiteSpace(txtName.Texts))
         {
           using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập tên !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupMsgAlarm.ShowDialog(this);
+          txtName.Focus();
           return;
         }
 
         if (_enumTypePopup == EnumTypePopup.Add)
         {
+          string typeGoodsCode = txtCode.Texts.Trim();
+          var typeGoodsList = await _typeGoodsService.GetAllAsync(IsContainDelete: true);
+          bool isDuplicateCode = typeGoodsList.Any(typeGoods =>
+            string.Equals(typeGoods.Code?.Trim(), typeGoodsCode,
+              StringComparison.CurrentCultureIgnoreCase));
+
+          if (isDuplicateCode)
+          {
+            using var popupMsgAlarm = new PopupConfirm("Mã loại hàng đã tồn tại !",
+              EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupMsgAlarm.ShowDialog(this);
+            txtCode.Focus();
+            return;
+          }
+
           TypeGoods typeGoods = new TypeGoods();
-          typeGoods.Code = txtCode.Texts.Trim();
+          typeGoods.Code = typeGoodsCode;
           typeGoods.Name = txtName.Texts.Trim();
           typeGoods.Description = txtDescription.Texts.Trim();
           typeGoods.CreatedAt = DateTime.UtcNow;
@@ -94,6 +119,7 @@ namespace LTP.Truck.MasterData
         }
         else if (_enumTypePopup == EnumTypePopup.Update)
         {
+          _typeGoodsUpdate.Code = txtCode.Texts.Trim();
           _typeGoodsUpdate.Name = txtName.Texts.Trim();
           _typeGoodsUpdate.Description = txtDescription.Texts.Trim();
           _typeGoodsUpdate.UpdatedAt = DateTime.UtcNow;

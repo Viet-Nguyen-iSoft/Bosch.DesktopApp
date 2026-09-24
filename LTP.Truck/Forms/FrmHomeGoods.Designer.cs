@@ -714,7 +714,7 @@ namespace LTP.Truck.Forms
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(177, 149);
+      cbbProduct.Location = new Point(177, 150);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(569, 33);
       cbbProduct.TabIndex = 7;
@@ -739,7 +739,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(177, 101);
+      cbbProductGroup.Location = new Point(177, 102);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(268, 33);
       cbbProductGroup.TabIndex = 6;
@@ -891,7 +891,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 6);
+      cbbTare.Location = new Point(3, 7);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(248, 33);
       cbbTare.TabIndex = 8;
@@ -933,10 +933,10 @@ namespace LTP.Truck.Forms
       label6.BackColor = Color.Transparent;
       label6.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
       label6.ForeColor = Color.Red;
-      label6.Location = new Point(135, 0);
+      label6.Location = new Point(151, 0);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(39, 48);
+      label6.Size = new Size(23, 48);
       label6.TabIndex = 4;
       label6.Text = "*";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -950,9 +950,9 @@ namespace LTP.Truck.Forms
       label15.Location = new Point(0, 0);
       label15.Margin = new Padding(0);
       label15.Name = "label15";
-      label15.Size = new Size(135, 48);
+      label15.Size = new Size(151, 48);
       label15.TabIndex = 3;
-      label15.Text = "Loại phế phẩm";
+      label15.Text = "Nhóm phế phẩm";
       label15.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel21

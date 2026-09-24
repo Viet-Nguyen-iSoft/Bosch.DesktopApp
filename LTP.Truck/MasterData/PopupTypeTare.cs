@@ -94,6 +94,15 @@ namespace LTP.Truck.MasterData
           return;
         }
 
+        if (string.IsNullOrWhiteSpace(txtValueTare.Texts))
+        {
+          using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập giá trị Tare !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsgAlarm.ShowDialog(this);
+          txtValueTare.Focus();
+          return;
+        }
+
         if (!TryGetPositiveTareValue(out double tareValue))
         {
           using var popupMsgAlarm = new PopupConfirm("Khối lượng bì phải là số lớn hơn 0 !",
@@ -105,8 +114,23 @@ namespace LTP.Truck.MasterData
 
         if (_enumTypePopup == EnumTypePopup.Add)
         {
+          string categoryTareCode = txtCode.Texts.Trim();
+          var categoryTares = await _categoryTareService.GetAllAsync(IsContainDelete: true);
+          bool isDuplicateCode = categoryTares.Any(categoryTare =>
+            string.Equals(categoryTare.Code?.Trim(), categoryTareCode,
+              StringComparison.CurrentCultureIgnoreCase));
+
+          if (isDuplicateCode)
+          {
+            using var popupMsgAlarm = new PopupConfirm("Mã loại Tare đã tồn tại !",
+              EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupMsgAlarm.ShowDialog(this);
+            txtCode.Focus();
+            return;
+          }
+
           CategoryTare  categoryTare = new CategoryTare();
-          categoryTare.Code = txtCode.Texts.Trim();
+          categoryTare.Code = categoryTareCode;
           categoryTare.Name = txtName.Texts.Trim();
           categoryTare.Value = tareValue;
           categoryTare.Description = txtDescription.Texts.Trim();

@@ -44,6 +44,7 @@ namespace LTP.Truck.MasterData
         return;
       }
 
+      txtCode.Texts = productGroup.Code ?? string.Empty;
       txtName.Texts = productGroup.Name ?? string.Empty;
       txtDescription.Texts = productGroup.Description ?? string.Empty;
     }
@@ -58,22 +59,49 @@ namespace LTP.Truck.MasterData
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
+        if (string.IsNullOrWhiteSpace(txtCode.Texts))
+        {
+          using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập mã !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsgAlarm.ShowDialog(this);
+          txtCode.Focus();
+          return;
+        }
+
         if (string.IsNullOrWhiteSpace(txtName.Texts))
         {
           using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập tên !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupMsgAlarm.ShowDialog(this);
+          txtName.Focus();
           return;
         }
 
         ProductGroup productGroup;
         if (_enumTypePopup == EnumTypePopup.Add)
         {
+          string productGroupCode = txtCode.Texts.Trim();
+          var productGroups = await _productGroupService.GetAllAsync(IsContainDelete: true);
+          bool isDuplicateCode = productGroups.Any(item =>
+            string.Equals(item.Code?.Trim(), productGroupCode,
+              StringComparison.CurrentCultureIgnoreCase));
+
+          if (isDuplicateCode)
+          {
+            using var popupMsgAlarm = new PopupConfirm("Mã nhóm phế phẩm đã tồn tại !",
+              EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupMsgAlarm.ShowDialog(this);
+            txtCode.Focus();
+            return;
+          }
+
           productGroup = new ProductGroup { CreatedAt = DateTime.UtcNow };
+          productGroup.Code = productGroupCode;
         }
         else
         {
           productGroup = _productGroupUpdate;
+          productGroup.Code = txtCode.Texts.Trim();
           productGroup.UpdatedAt = DateTime.UtcNow;
         }
 

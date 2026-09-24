@@ -94,16 +94,31 @@ namespace LTP.Truck.MasterData
         Product product;
         if (_enumTypePopup == EnumTypePopup.Add)
         {
+          string productName = txtName.Texts.Trim();
+          var products = await _productService.GetAllAsync(IsContainDelete: true);
+          bool isDuplicateProduct = products.Any(item =>
+            item.ProductGroupId == selectedProductGroup.Id &&
+            string.Equals(item.Name?.Trim(), productName,
+              StringComparison.CurrentCultureIgnoreCase));
+
+          if (isDuplicateProduct)
+          {
+            ShowWarning("Tên chất thải đã tồn tại trong nhóm đã chọn !");
+            txtName.Focus();
+            return;
+          }
+
           product = new Product { CreatedAt = DateTime.UtcNow };
+          product.Name = productName;
         }
         else
         {
           product = _productUpdate;
+          product.Name = txtName.Texts.Trim();
           product.UpdatedAt = DateTime.UtcNow;
         }
 
         product.Code = txtCode.Texts.Trim();
-        product.Name = txtName.Texts.Trim();
         product.Description = txtDescription.Texts.Trim();
         product.ProductGroupId = selectedProductGroup.Id;
 
