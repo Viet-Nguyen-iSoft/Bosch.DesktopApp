@@ -55,7 +55,7 @@ namespace iSoft.Database.DTO
     [DisplayName("Kho hàng")]
     public string? Warehouse { get; set; }
     
-    [DisplayName("Chứng từ")]
+    [DisplayName("Ghi chú")]
     public string? Document { get; set; }
 
     [DisplayName("Trạm cân")]
