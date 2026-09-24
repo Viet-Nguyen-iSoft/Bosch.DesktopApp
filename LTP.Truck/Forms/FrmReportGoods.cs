@@ -3,6 +3,8 @@ using Common;
 using HelperManager;
 using iSoft.Database;
 using iSoft.Database.DTO;
+using iSoft.Database.Models;
+using iSoft.Database.Repositorys;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using System.Data;
@@ -17,6 +19,8 @@ namespace LTP.Truck.Forms
     private bool _isLoadingPage;
     private List<RecordWeightDTO> _currentRecords = new();
     private readonly FlowLayoutPanel _licensePlateGroups = new();
+
+    public event Action<string, List<RecordWeightDTO>>? ExportGroupRequested;
 
     public FrmReportGoods()
     {
@@ -334,6 +338,7 @@ namespace LTP.Truck.Forms
             return;
           }
 
+          ExportGroupRequested?.Invoke(group.Key, selectedRecords);
           await ExportRecordsAsync(selectedRecords, group.Key);
         };
 
@@ -580,77 +585,70 @@ namespace LTP.Truck.Forms
       IReadOnlyList<RecordWeightDTO> records,
       string licensePlate)
     {
-      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateReport.xlsx");
-      if (!File.Exists(templatePath))
+      int licensePlateCount = records
+        .Select(dto => LicensePlateRepository.Normalize(dto.LicensePlate))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .Count();
+
+      if (licensePlateCount > 1)
       {
-        using var popup = new PopupConfirm(
-          "Không tìm thấy file mẫu TemplateReport.xlsx.",
-          EnumTypeMsg.MessageManualClose,
-          EnumImageMsg.Warning);
-        popup.ShowDialog(this);
+        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng biển số xe !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
         return;
       }
 
-      var invalidFileNameChars = Path.GetInvalidFileNameChars();
-      var safeLicensePlate = new string(licensePlate
-        .Select(character => invalidFileNameChars.Contains(character) ? '_' : character)
-        .ToArray());
-      using var saveDialog = new SaveFileDialog
-      {
-        Filter = "Excel Workbook (*.xlsx)|*.xlsx",
-        FileName = $"BaoCaoCanHang_{safeLicensePlate}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx",
-        DefaultExt = "xlsx",
-        AddExtension = true,
-        OverwritePrompt = true
-      };
+      int productGroupNameCount = records
+        .Select(dto => (dto.ProductGroup ?? string.Empty).Trim())
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .Count();
 
-      if (saveDialog.ShowDialog(this) != DialogResult.OK)
+      if (productGroupNameCount > 1)
+      {
+        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm phế phẩm !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
         return;
+      }
 
-      try
-      {
-        var exporterName = AppCore.Ins._userCurrent?.DisplayName;
-        if (string.IsNullOrWhiteSpace(exporterName))
-          exporterName = AppCore.Ins._userCurrent?.FullName;
-        if (string.IsNullOrWhiteSpace(exporterName))
-          exporterName = AppCore.Ins._userCurrent?.Username ?? string.Empty;
+      List<RecordWeight> exportData = records
+        .Select(dto => dto.RecordWeight!)
+        .ToList();
 
-        await Task.Run(() => ExportGoodsReport(
-          templatePath,
-          saveDialog.FileName,
-          records,
-          ucTimeSearchFrom.Value,
-          ucTimeSearchTo.Value,
-          exporterName));
+      DateTime dt = DateTime.Now;
 
-        var openExportedFile = false;
-        using (var popup = new PopupConfirm(
-          "Xuất báo cáo Excel thành công. Bạn có muốn mở file không?",
+      var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData);
+
+      var openReportFile = false;
+      using (var popup = new PopupConfirm(
+          "Tạo phiếu thành công. Bạn có muốn mở file không?",
           EnumTypeMsg.Confirm,
           EnumImageMsg.Question))
-        {
-          popup.OnSendConfirm += (_, response) =>
-            openExportedFile = response.EnumResponsible == EnumResponsible.Confirm;
-          popup.ShowDialog(this);
-        }
+      {
+        popup.OnSendConfirm += (_, response) =>
+          openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
+        popup.ShowDialog(this);
+      }
 
-        if (openExportedFile)
+      if (openReportFile)
+      {
+        try
         {
           Process.Start(new ProcessStartInfo
           {
-            FileName = saveDialog.FileName,
-            UseShellExecute = true
+            FileName = pdfPath,
+            UseShellExecute = true,
           });
         }
-      }
-      catch (Exception ex)
-      {
-        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        using var popup = new PopupConfirm(
-          "Không thể xuất báo cáo Excel. Vui lòng thử lại !",
-          EnumTypeMsg.MessageManualClose,
-          EnumImageMsg.Warning);
-        popup.ShowDialog(this);
+        catch (Exception openException)
+        {
+          HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
+          using var openErrorPopup = new PopupConfirm(
+            "Đã tạo phiếu nhưng không thể mở file.",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+        }
       }
     }
 

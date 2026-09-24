@@ -1,4 +1,5 @@
-﻿using HelperManager;
+﻿using Common;
+using HelperManager;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
@@ -6,11 +7,13 @@ using LTP.Truck.Services;
 using QRCoder;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using static Common.EnumData;
 using static HelperManager.EnumData;
 using static LTP.Truck.EnumData;
 using static System.Windows.Forms.AxHost;
@@ -247,5 +250,161 @@ namespace LTP.Truck.Controls
       }
     }
 
+
+    public async Task<string> ExportPdfGoods(DateTime dt, string licensePlate, List<RecordWeight> exportData)
+    {
+      string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
+      string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
+      string folderOutput = Application.StartupPath + "ReportGoods";
+      if (!Directory.Exists(folderOutput))
+      {
+        Directory.CreateDirectory(folderOutput);
+      }
+
+      string template = File.ReadAllText(pathFileTemplate);
+      string table = File.ReadAllText(pathFileTemplateTable);
+      string result = template.Replace("{documentNo}", "      /2025/BBGN/BOSCH – SDV")
+                              .Replace("{day}", dt.Day.ToString())
+                              .Replace("{month}", dt.Month.ToString())
+                              .Replace("{year}", dt.Year.ToString())
+                              .Replace("{vehiclePlate}", licensePlate)
+                              .Replace("{sealNo}", "")
+
+                              .Replace("{signPlace}", "Đồng Nai")
+                              .Replace("{signDay}", dt.Day.ToString())
+                              .Replace("{signMonth}", dt.Month.ToString())
+                              .Replace("{signYear}", dt.Year.ToString())
+                              .Replace("{sender.deptCode}", "FCM")
+                              .Replace("{receiver.deptCode}", "SES");
+
+
+      var recordWeightsByProduct = exportData
+        .GroupBy(recordWeight => recordWeight.ProductId)
+        .Select(group => new
+        {
+          ProductGroup = group.First().Product.ProductGroup?.Name,
+          ProductName = group.First().Product?.Name ?? string.Empty,
+          ProductCode = group.First().Product?.Code ?? string.Empty,
+          SumNet = group.Sum(recordWeight => recordWeight.Net)
+        })
+        .ToList();
+
+
+      string tableDetails = string.Empty;
+      double value = 0.0;
+      if (recordWeightsByProduct?.Count() > 0)
+      {
+        for (int no = 1; no <= recordWeightsByProduct?.Count(); no++)
+        {
+          string tempTableDetal = table;
+          tempTableDetal = tempTableDetal.Replace("{no}", (no).ToString("D2"));
+          tempTableDetal = tempTableDetal.Replace("{name}", recordWeightsByProduct[no - 1].ProductName);
+          tempTableDetal = tempTableDetal.Replace("{code}", recordWeightsByProduct[no - 1].ProductCode);
+          tempTableDetal = tempTableDetal.Replace("{quantity}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
+          tempTableDetal = tempTableDetal.Replace("{note}", "");
+
+
+          tableDetails = tableDetails + tempTableDetal;
+          value += recordWeightsByProduct[no - 1].SumNet;
+        }
+      }
+
+      result = result.Replace("{totalQuantity}", FormatWeight(value, 3));
+      result = result.Replace("{table}", tableDetails);
+
+      string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
+      File.WriteAllText(outputPath, result);
+
+      string pdfPath = Path.ChangeExtension(outputPath, ".pdf");
+      await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath);
+      return pdfPath;
+    }
+
+    private static string FormatWeight(double value, int decimalPlaces = 0)
+    {
+      return WeightFormatHelper.Format(value, decimalPlaces);
+    }
+
+
+    public void PrinterLabelGoods(string? printer, RecordWeightDTO? recordWeightDTO)
+    {
+      try
+      {
+        int offsetY = 6;
+        int startX = 2;
+        int startY = 2;
+        int rowIndex = 0;
+        Brush brush = Brushes.Black;
+
+        PrintDocument pd = new PrintDocument();
+        pd.PrinterSettings.PrinterName = printer;
+
+        pd.PrintPage += (sender, e) =>
+        {
+          //Vẽ cái khung
+          e.Graphics.PageUnit = GraphicsUnit.Millimeter;
+
+          // khung 80x50 mm
+          e.Graphics.DrawRectangle(Pens.Black, startX - 2, startY - 2, 100, 60);
+
+          // Font family and styles to match the mockup
+          Font fontTitlePallet = new Font("Arial", 10, FontStyle.Bold);
+          Font fontTilte = new Font("Arial", 10, FontStyle.Regular);
+          Font fontValue = new Font("Arial", 10, FontStyle.Bold);
+
+          // Draw PALLET LẺ
+          e.Graphics.DrawString("Phiếu in phế phẩm", fontTitlePallet, brush, new PointF(startX, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Biển số xe:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.LicensePlate??string.Empty, fontValue, brush, new PointF(startX + 28, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Nhóm phế phẩm:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.ProductGroup ?? string.Empty, fontValue, brush, new PointF(startX + 28, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Tên phế phẩm:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.Product ?? string.Empty, fontValue, brush, new PointF(startX + 28, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Loại tare:", fontTilte, brush, new PointF(startX , startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.CategoryTare ?? string.Empty, fontValue, brush, new PointF(startX + 20, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Gross (Kg):", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.Gross ?? string.Empty, fontValue, brush, new PointF(startX + 20, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Net (Kg):", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.Net ?? string.Empty, fontValue, brush, new PointF(startX + 20, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Tare (Kg):", fontTilte, brush, new PointF( startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.Tare ?? string.Empty, fontValue, brush, new PointF(startX + 20, startY + rowIndex * offsetY));
+
+          rowIndex++;
+
+          e.Graphics.DrawString("Người cân:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString("Admin", fontValue, brush, new PointF(startX + 20, startY + rowIndex * offsetY));
+
+          e.Graphics.DrawString("Thời gian:", fontTilte, brush, new PointF(startX + 40, startY + rowIndex * offsetY));
+          e.Graphics.DrawString(recordWeightDTO?.Datetime ?? string.Empty, fontValue, brush, new PointF(startX + 58, startY + rowIndex * offsetY));
+        };
+
+        pd.Print();
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+    }
   }
 }

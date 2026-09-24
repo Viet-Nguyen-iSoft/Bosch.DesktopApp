@@ -775,17 +775,29 @@ namespace LTP.Truck.Forms
 
     private void btnPrint_Click(object sender, EventArgs e)
     {
-      if (dgv.SelectedRows.Count == 0 ||
-          dgv.SelectedRows[0].DataBoundItem is not RecordWeightDTO selectedRecord ||
-          selectedRecord.RecordWeight is null)
+      dgv.EndEdit();
+
+      List<RecordWeightDTO> selectedData = dgv.Rows
+        .Cast<DataGridViewRow>()
+        .Where(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value))
+        .Select(row => row.DataBoundItem as RecordWeightDTO)
+        .Where(dto => dto?.RecordWeight is not null)
+        .Select(dto => dto!)
+        .ToList();
+
+      if (selectedData.Count == 0)
       {
-        using var popupMsg = new PopupConfirm("Vui lòng chọn phiếu cân cần in !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+        using var popupMsg = new PopupConfirm("Vui lòng chọn dữ liệu cần in phiếu !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
         return;
       }
 
-      RecordWeight selectedData = selectedRecord.RecordWeight;
+      string printerName = AppCore.Ins._appConfig.NamePrint;
+      foreach (var row in selectedData)
+      {
+        AppCore.Ins.PrinterLabelGoods(printerName, row);
+      }  
     }
 
     private async void btnExport_Click(object sender, EventArgs e)
@@ -841,86 +853,20 @@ namespace LTP.Truck.Forms
       string licensePlate = selectedData[0].LicensePlate?.Trim() ?? string.Empty;
       string productGroupName = selectedData[0].ProductGroup?.Trim() ?? string.Empty;
 
-      await DownloadFileWorkReport(exportData, licensePlate, productGroupName);
+      await DownloadFileWorkReport(exportData, licensePlate);
     }
 
 
+    #region Export PDF Goods
     private async Task DownloadFileWorkReport(
       List<RecordWeight> exportData,
-      string licensePlate,
-      string productGroupName)
+      string licensePlate)
     {
       try
       {
         DateTime dt = DateTime.Now;
-        string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
-        string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
-        string folderOutput = Application.StartupPath + "ReportGoods";
-        if (!Directory.Exists(folderOutput))
-        {
-          Directory.CreateDirectory(folderOutput);
-        }
 
-        string template = File.ReadAllText(pathFileTemplate);
-        string table = File.ReadAllText(pathFileTemplateTable);
-        string result = template.Replace("{{documentNo}}", "A26-00001")
-                                .Replace("{documentNo}", "A26-00001")
-                                .Replace("{{day}}", dt.Day.ToString())
-                                .Replace("{day}", dt.Day.ToString())
-                                .Replace("{{month}}", dt.Month.ToString())
-                                .Replace("{month}", dt.Month.ToString())
-                                .Replace("{{year}}", dt.Year.ToString())
-                                .Replace("{year}", dt.Year.ToString())
-                                .Replace("{{vehiclePlate}}", licensePlate)
-                                .Replace("{{sealNo}}", "")
-
-                                .Replace("{{signPlace}}", "Đồng Nai")
-                                .Replace("{{signDay}}", dt.Day.ToString())
-                                .Replace("{{signMonth}}", dt.Month.ToString())
-                                .Replace("{{signYear}}", dt.Year.ToString())
-                                .Replace("{{sender.deptCode}}", "FCM")
-                                .Replace("{{receiver.deptCode}}", "SES");
-
-
-        var recordWeightsByProduct = exportData
-          .GroupBy(recordWeight => recordWeight.ProductId)
-          .Select(group => new
-          {
-            ProductGroup = group.First().Product.ProductGroup?.Name,
-            ProductName = group.First().Product?.Name ?? string.Empty,
-            ProductCode = group.First().Product?.Code ?? string.Empty,
-            SumNet = group.Sum(recordWeight => recordWeight.Net)
-          })
-          .ToList();
-
-
-        string tableDetails = string.Empty;
-        double value = 0.0;
-        if (recordWeightsByProduct?.Count() > 0)
-        {
-          for (int no = 1; no <= recordWeightsByProduct?.Count(); no++)
-          {
-            string tempTableDetal = table;
-            tempTableDetal = tempTableDetal.Replace("{{no}}", (no).ToString("D2"));
-            tempTableDetal = tempTableDetal.Replace("{{name}}", recordWeightsByProduct[no - 1].ProductName);
-            tempTableDetal = tempTableDetal.Replace("{{code}}", recordWeightsByProduct[no - 1].ProductCode);
-            tempTableDetal = tempTableDetal.Replace("{{quantity}}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
-            tempTableDetal = tempTableDetal.Replace("{{note}}", "");
-
-
-            tableDetails = tableDetails + tempTableDetal;
-            value += recordWeightsByProduct[no - 1].SumNet;
-          }
-        }
-
-        result = result.Replace("{{totalQuantity}}", FormatWeight(value));
-        result = result.Replace("{table}", tableDetails);
-
-        string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
-        File.WriteAllText(outputPath, result);
-
-        string pdfPath = Path.ChangeExtension(outputPath, ".pdf");
-        await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath);
+        var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData);
 
         var openReportFile = false;
         using (var popup = new PopupConfirm(
@@ -969,6 +915,8 @@ namespace LTP.Truck.Forms
     {
       return WeightFormatHelper.Format(value);
     }
+
+    #endregion
 
   }
 }
