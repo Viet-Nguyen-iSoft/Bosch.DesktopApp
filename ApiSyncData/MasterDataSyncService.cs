@@ -33,6 +33,20 @@ namespace ApiSyncData
       SyncAsync<ListDatumClient, Client>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
 
+    public static Task<MasterDataChangedEventArgs?> SyncUsersAsync(UserAPI response, CancellationToken token = default) =>
+      SyncAsync<ListDatumUser, User>(response.Data?.ListData, response.Data?.TotalRecord,
+        (s, l) =>
+        {
+          l.DisplayName = s.DisplayName;
+          l.FullName = string.IsNullOrWhiteSpace(s.DisplayName)
+            ? s.Username ?? string.Empty
+            : s.DisplayName;
+          l.Username = s.Username ?? string.Empty;
+          l.Password = s.Password;
+          l.EmployeeCode = s.EmployeeCode;
+          l.IdCardCode = s.IdCardCode;
+        }, token);
+
     public static Task<MasterDataChangedEventArgs?> SyncProductsAsync(ProductAPI response, CancellationToken token = default)
     {
       var groups = new Dictionary<Guid, Guid>();

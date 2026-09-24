@@ -27,9 +27,11 @@ namespace LTP.Truck
       MD_GroupProduct,
       MD_Product,
 
+      User,
+
       
       
-      Employee,
+      ,
 
       OpChooseModeFunction,
       OpTypePO,

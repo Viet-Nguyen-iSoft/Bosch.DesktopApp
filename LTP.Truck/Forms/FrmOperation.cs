@@ -35,6 +35,10 @@ namespace LTP.Truck.Forms
       AppCore.Ins.OnChangeStation += AppCore_OnChangeStation;
       AppCore.Ins.OnSendStatusWeight += Ins_OnSendStatusWeight;
       AppCore.Ins.OnSendStatusServer += Ins_OnSendStatusServer;
+
+      this.btnReportTruck.Click += btnReportTruck_Click;
+      this.btnReportGoods.Click += btnReportGoods_Click;
+      this.btnUser.Click += BtnUser_Click;
     }
 
     private void AppCore_OnChangeStation(Station? station)
@@ -433,6 +437,9 @@ namespace LTP.Truck.Forms
             OpenChildForm(appModulSupport, FrmMasterData.Instance);
             await FrmMasterData.Instance.LoadData(EnumTypeMasterData.Product);
             break;
+          case EnumScreen.User:
+            OpenChildForm(appModulSupport, FrmUser.Instance);
+            break;
         }
 
         ShowPagePath(appModulSupport);
@@ -556,16 +563,22 @@ namespace LTP.Truck.Forms
       FrmMain.Instance.ChangePage(EnumScreen.Waiting);
     }
 
-    private async void btnReportTruck_Click(object sender, EventArgs e)
+    private async void btnReportTruck_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.ReportTruck);
     }
 
-    private async void btnReportGoods_Click(object sender, EventArgs e)
+    private async void btnReportGoods_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.ReportGoods);
+    }
+
+    private async void BtnUser_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      await ChangePage(EnumScreen.User);
     }
   }
 }

@@ -64,6 +64,7 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
+      btnUser = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -92,7 +93,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel1.Name = "tableLayoutPanel1";
       tableLayoutPanel1.RowCount = 1;
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel1.Size = new Size(1268, 941);
+      tableLayoutPanel1.Size = new Size(1268, 1074);
       tableLayoutPanel1.TabIndex = 3;
       // 
       // panelMenu
@@ -110,7 +111,7 @@ namespace LTP.Truck.Forms
       panelMenu.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
       panelMenu.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       panelMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      panelMenu.Size = new Size(250, 941);
+      panelMenu.Size = new Size(250, 1074);
       panelMenu.TabIndex = 1;
       // 
       // tableLayoutPanel5
@@ -156,7 +157,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.RowCount = 2;
       tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel6.RowStyles.Add(new RowStyle());
-      tableLayoutPanel6.Size = new Size(250, 856);
+      tableLayoutPanel6.Size = new Size(250, 989);
       tableLayoutPanel6.TabIndex = 2;
       // 
       // flowLayoutPanel1
@@ -175,10 +176,11 @@ namespace LTP.Truck.Forms
       flowLayoutPanel1.Controls.Add(btnClient);
       flowLayoutPanel1.Controls.Add(btnReportTruck);
       flowLayoutPanel1.Controls.Add(btnReportGoods);
+      flowLayoutPanel1.Controls.Add(btnUser);
       flowLayoutPanel1.Location = new Point(0, 0);
       flowLayoutPanel1.Margin = new Padding(0);
       flowLayoutPanel1.Name = "flowLayoutPanel1";
-      flowLayoutPanel1.Size = new Size(250, 765);
+      flowLayoutPanel1.Size = new Size(250, 898);
       flowLayoutPanel1.TabIndex = 0;
       // 
       // btnHomeTruck
@@ -436,12 +438,11 @@ namespace LTP.Truck.Forms
       btnReportTruck.Name = "btnReportTruck";
       btnReportTruck.Padding = new Padding(15, 0, 0, 0);
       btnReportTruck.Size = new Size(242, 70);
-      btnReportTruck.TabIndex = 18;
+      btnReportTruck.TabIndex = 21;
       btnReportTruck.Text = "        BÁO CÁO";
       btnReportTruck.TextAlign = ContentAlignment.MiddleLeft;
       btnReportTruck.TextColor = Color.Black;
       btnReportTruck.UseVisualStyleBackColor = false;
-      btnReportTruck.Click += btnReportTruck_Click;
       // 
       // btnReportGoods
       // 
@@ -461,12 +462,11 @@ namespace LTP.Truck.Forms
       btnReportGoods.Name = "btnReportGoods";
       btnReportGoods.Padding = new Padding(15, 0, 0, 0);
       btnReportGoods.Size = new Size(242, 70);
-      btnReportGoods.TabIndex = 19;
+      btnReportGoods.TabIndex = 22;
       btnReportGoods.Text = "        BÁO CÁO";
       btnReportGoods.TextAlign = ContentAlignment.MiddleLeft;
       btnReportGoods.TextColor = Color.Black;
       btnReportGoods.UseVisualStyleBackColor = false;
-      btnReportGoods.Click += btnReportGoods_Click;
       // 
       // tableLayoutPanel7
       // 
@@ -475,7 +475,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel7.Controls.Add(lbVersion, 0, 1);
       tableLayoutPanel7.Controls.Add(pictureBox1, 0, 0);
-      tableLayoutPanel7.Location = new Point(3, 768);
+      tableLayoutPanel7.Location = new Point(3, 901);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
       tableLayoutPanel7.RowCount = 3;
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -489,10 +489,10 @@ namespace LTP.Truck.Forms
       lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbVersion.AutoSize = true;
       lbVersion.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      lbVersion.Location = new Point(0, 53);
+      lbVersion.Location = new Point(0, 57);
       lbVersion.Margin = new Padding(0);
       lbVersion.Name = "lbVersion";
-      lbVersion.Size = new Size(244, 27);
+      lbVersion.Size = new Size(244, 23);
       lbVersion.TabIndex = 4;
       lbVersion.Text = "Version: 1.0.0";
       lbVersion.TextAlign = ContentAlignment.MiddleCenter;
@@ -504,7 +504,7 @@ namespace LTP.Truck.Forms
       pictureBox1.Location = new Point(10, 0);
       pictureBox1.Margin = new Padding(10, 0, 10, 0);
       pictureBox1.Name = "pictureBox1";
-      pictureBox1.Size = new Size(224, 53);
+      pictureBox1.Size = new Size(224, 57);
       pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
       pictureBox1.TabIndex = 0;
       pictureBox1.TabStop = false;
@@ -526,7 +526,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-      tableLayoutPanel2.Size = new Size(1013, 941);
+      tableLayoutPanel2.Size = new Size(1013, 1074);
       tableLayoutPanel2.TabIndex = 0;
       // 
       // tableLayoutPanel4
@@ -568,10 +568,10 @@ namespace LTP.Truck.Forms
       lbTitlePage.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitlePage.AutoSize = true;
       lbTitlePage.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      lbTitlePage.Location = new Point(5, 47);
+      lbTitlePage.Location = new Point(5, 51);
       lbTitlePage.Margin = new Padding(5, 0, 0, 0);
       lbTitlePage.Name = "lbTitlePage";
-      lbTitlePage.Size = new Size(522, 27);
+      lbTitlePage.Size = new Size(522, 23);
       lbTitlePage.TabIndex = 4;
       lbTitlePage.Text = "Trang chính";
       lbTitlePage.TextAlign = ContentAlignment.MiddleLeft;
@@ -584,7 +584,7 @@ namespace LTP.Truck.Forms
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(527, 47);
+      lbTitle.Size = new Size(527, 51);
       lbTitle.TabIndex = 3;
       lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -631,7 +631,7 @@ namespace LTP.Truck.Forms
       panelMain.Location = new Point(0, 85);
       panelMain.Margin = new Padding(0);
       panelMain.Name = "panelMain";
-      panelMain.Size = new Size(1013, 806);
+      panelMain.Size = new Size(1013, 939);
       panelMain.TabIndex = 3;
       // 
       // tableLayoutPanel8
@@ -647,7 +647,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.Controls.Add(ucStatusConnectServer, 1, 0);
       tableLayoutPanel8.Controls.Add(ucStatusConnectWeight, 3, 0);
       tableLayoutPanel8.Controls.Add(lbTime, 4, 0);
-      tableLayoutPanel8.Location = new Point(0, 891);
+      tableLayoutPanel8.Location = new Point(0, 1024);
       tableLayoutPanel8.Margin = new Padding(0);
       tableLayoutPanel8.Name = "tableLayoutPanel8";
       tableLayoutPanel8.RowCount = 1;
@@ -683,11 +683,35 @@ namespace LTP.Truck.Forms
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
       // 
+      // btnUser
+      // 
+      btnUser.BackColor = Color.Silver;
+      btnUser.BackgroundColor = Color.Silver;
+      btnUser.BorderColor = Color.PaleVioletRed;
+      btnUser.BorderRadius = 5;
+      btnUser.BorderSize = 0;
+      btnUser.Dock = DockStyle.Top;
+      btnUser.FlatAppearance.BorderSize = 0;
+      btnUser.FlatStyle = FlatStyle.Flat;
+      btnUser.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnUser.ForeColor = Color.Black;
+      btnUser.Image = Properties.Resources.icon_btn_report;
+      btnUser.ImageAlign = ContentAlignment.MiddleLeft;
+      btnUser.Location = new Point(3, 735);
+      btnUser.Name = "btnUser";
+      btnUser.Padding = new Padding(15, 0, 0, 0);
+      btnUser.Size = new Size(242, 70);
+      btnUser.TabIndex = 23;
+      btnUser.Text = "        TÀI KHOẢN";
+      btnUser.TextAlign = ContentAlignment.MiddleLeft;
+      btnUser.TextColor = Color.Black;
+      btnUser.UseVisualStyleBackColor = false;
+      // 
       // FrmOperation
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(1268, 941);
+      ClientSize = new Size(1268, 1074);
       Controls.Add(tableLayoutPanel1);
       Name = "FrmOperation";
       Text = "FrmOperation";
@@ -744,5 +768,6 @@ namespace LTP.Truck.Forms
     private UserControls.UcLogin ucLogin;
     private RJButton btnReportTruck;
     private RJButton btnReportGoods;
+    private RJButton btnUser;
   }
 }

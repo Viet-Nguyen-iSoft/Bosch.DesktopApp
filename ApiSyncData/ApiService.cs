@@ -493,7 +493,7 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<UserAPI> User(bool isContainDelete = false)
+    public async Task<UserAPI> Users(bool isContainDelete = false)
     {
       try
       {

@@ -2,6 +2,7 @@ using HelperManager;
 using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
+using Microsoft.EntityFrameworkCore;
 
 namespace LTP.Truck
 {
@@ -46,6 +47,7 @@ namespace LTP.Truck
           try
           {
             await db.Database.EnsureCreatedAsync();
+            await EnsureUserSyncSchemaAsync(db);
             await db.Database.BeginTransactionAsync();
 
             if (db?.AppConfigs?.Count() <= 0)
@@ -83,6 +85,49 @@ namespace LTP.Truck
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         return false;
+      }
+    }
+
+    private static async Task EnsureUserSyncSchemaAsync(MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using var checkColumnCommand = db.Database.GetDbConnection().CreateCommand();
+        checkColumnCommand.CommandText = @"
+          SELECT COUNT(*)
+          FROM INFORMATION_SCHEMA.COLUMNS
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'm_users'
+            AND COLUMN_NAME = 'IdSrc';";
+        var columnCount = Convert.ToInt32(await checkColumnCommand.ExecuteScalarAsync());
+        if (columnCount == 0)
+        {
+          await using var addColumnCommand = db.Database.GetDbConnection().CreateCommand();
+          addColumnCommand.CommandText =
+            "ALTER TABLE `m_users` ADD COLUMN `IdSrc` char(36) NULL;";
+          await addColumnCommand.ExecuteNonQueryAsync();
+        }
+
+        await using var checkIndexCommand = db.Database.GetDbConnection().CreateCommand();
+        checkIndexCommand.CommandText = @"
+          SELECT COUNT(*)
+          FROM INFORMATION_SCHEMA.STATISTICS
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'm_users'
+            AND INDEX_NAME = 'IX_m_users_IdSrc';";
+        var indexCount = Convert.ToInt32(await checkIndexCommand.ExecuteScalarAsync());
+        if (indexCount == 0)
+        {
+          await using var addIndexCommand = db.Database.GetDbConnection().CreateCommand();
+          addIndexCommand.CommandText =
+            "CREATE INDEX `IX_m_users_IdSrc` ON `m_users` (`IdSrc`);";
+          await addIndexCommand.ExecuteNonQueryAsync();
+        }
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
       }
     }
   }
