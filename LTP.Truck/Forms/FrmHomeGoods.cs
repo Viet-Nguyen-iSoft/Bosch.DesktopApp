@@ -796,6 +796,19 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      int productGroupNameCount = selectedData
+        .Select(dto => (dto.ProductGroup ?? string.Empty).Trim())
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .Count();
+
+      if (productGroupNameCount > 1)
+      {
+        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm phế phẩm !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
       List<RecordWeight> exportData = selectedData
         .Select(dto => dto.RecordWeight!)
         .ToList();
