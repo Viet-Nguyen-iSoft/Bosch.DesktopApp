@@ -96,6 +96,7 @@ namespace LTP.Truck.Controls
       }
       catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         MessageBox.Show("Lỗi khởi động chương trình !");
         Environment.Exit(1);
       }
@@ -242,7 +243,7 @@ namespace LTP.Truck.Controls
       }
       catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 

@@ -1,6 +1,7 @@
 using Common;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
+using LTP.Truck.Controls;
 using static Common.EnumData;
 using static LTP.Truck.EnumData;
 
@@ -57,8 +58,9 @@ namespace LTP.Truck.MasterData
           cbbProductGroup.SelectedIndex = -1;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popupMsg = new PopupConfirm("Không thể tải danh sách nhóm phế phẩm !",
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
@@ -78,12 +80,14 @@ namespace LTP.Truck.MasterData
         if (string.IsNullOrWhiteSpace(txtName.Texts))
         {
           ShowWarning("Vui lòng nhập tên !");
+          txtName.Focus();
           return;
         }
 
         if (cbbProductGroup.SelectedItem is not ProductGroup selectedProductGroup)
         {
           ShowWarning("Vui lòng chọn nhóm phế phẩm !");
+          cbbProductGroup.Focus();
           return;
         }
 
@@ -108,8 +112,9 @@ namespace LTP.Truck.MasterData
         Close();
         OnSendSuccess?.Invoke(result);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         ShowWarning(_enumTypePopup == EnumTypePopup.Add ? "Thêm thất bại !" : "Cập nhật thất bại !");
       }
     }

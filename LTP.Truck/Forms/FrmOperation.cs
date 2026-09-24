@@ -553,9 +553,9 @@ namespace LTP.Truck.Forms
         DateTime dt = DateTime.Now;
         lbTime.Text = dt.ToString("dd/MM/yyyy HH:mm:ss");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
       finally
       {

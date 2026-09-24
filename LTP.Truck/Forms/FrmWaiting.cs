@@ -106,8 +106,9 @@ namespace LTP.Truck.Forms
       {
         Program.CloseApp();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         Environment.Exit(0);
       }
     }

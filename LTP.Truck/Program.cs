@@ -73,6 +73,7 @@ namespace LTP.Truck
           }
           catch (Exception ex)
           {
+            HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
             db.Database.RollbackTransaction();
           }
           return true;

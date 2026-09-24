@@ -46,6 +46,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         LoadInforError(ex.Message);
       }
     }
@@ -165,9 +166,9 @@ namespace LTP.Truck.Forms
           MessageBox.Show("Version lỗi");
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
       finally
       {

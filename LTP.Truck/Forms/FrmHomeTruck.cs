@@ -336,7 +336,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -558,9 +558,9 @@ namespace LTP.Truck.Forms
           //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -1301,6 +1301,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         PopupConfirm popupConfirm = new PopupConfirm("In phiếu giao nhận thất bại !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupConfirm.ShowDialog();
       }

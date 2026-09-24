@@ -495,8 +495,9 @@ namespace LTP.Truck.Forms
 
         return string.Empty;
       }
-      catch (JsonException)
+      catch (JsonException ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         return "Cấu hình kết nối không hợp lệ";
       }
     }
@@ -519,8 +520,9 @@ namespace LTP.Truck.Forms
           _ => false
         };
       }
-      catch (JsonException)
+      catch (JsonException ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         return false;
       }
     }
@@ -608,6 +610,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popupMsg = new PopupConfirm("Lưu thất bại. Kiểm tra lại !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupMsg.ShowDialog();

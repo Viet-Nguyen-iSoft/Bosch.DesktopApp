@@ -124,7 +124,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -270,8 +270,9 @@ namespace LTP.Truck.Forms
           cbbProductGroup.SelectedValueChanged += cbbProductGroup_SelectedValueChanged;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 

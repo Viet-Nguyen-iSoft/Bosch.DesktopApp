@@ -1,6 +1,7 @@
 using Common;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
+using LTP.Truck.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,11 +76,21 @@ namespace LTP.Truck.MasterData
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        if (string.IsNullOrEmpty(txtName.Texts))
+        if (string.IsNullOrWhiteSpace(txtCode.Texts))
+        {
+          using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập mã !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsgAlarm.ShowDialog(this);
+          txtCode.Focus();
+          return;
+        }
+
+        if (string.IsNullOrWhiteSpace(txtName.Texts))
         {
           using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập tên !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupMsgAlarm.ShowDialog(this);
+          txtName.Focus();
           return;
         }
 
@@ -119,8 +130,9 @@ namespace LTP.Truck.MasterData
         }
 
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         //TODO
 
         using var popupMsgAlarm = new PopupConfirm("Thêm thất bại !",

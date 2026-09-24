@@ -101,9 +101,9 @@ namespace LTP.Truck.Popup
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(106, 55);
+      label4.Size = new Size(90, 55);
       label4.TabIndex = 17;
-      label4.Text = "Tìm kiếm:";
+      label4.Text = "Tìm kiếm";
       label4.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtSearch
@@ -116,7 +116,7 @@ namespace LTP.Truck.Popup
       txtSearch.BorderSize = 2;
       txtSearch.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearch.ForeColor = Color.FromArgb(64, 64, 64);
-      txtSearch.Location = new Point(110, 6);
+      txtSearch.Location = new Point(94, 8);
       txtSearch.Margin = new Padding(4);
       txtSearch.Multiline = false;
       txtSearch.Name = "txtSearch";
@@ -124,7 +124,7 @@ namespace LTP.Truck.Popup
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(832, 42);
+      txtSearch.Size = new Size(843, 38);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;

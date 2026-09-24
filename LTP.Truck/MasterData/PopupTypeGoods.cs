@@ -1,6 +1,7 @@
 using Common;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
+using LTP.Truck.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -103,8 +104,9 @@ namespace LTP.Truck.MasterData
         }
 
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         //TODO
 
         using var popupMsgAlarm = new PopupConfirm("Thêm thất bại !",

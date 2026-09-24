@@ -1,6 +1,7 @@
 using Common;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
+using LTP.Truck.Controls;
 using static Common.EnumData;
 using static LTP.Truck.EnumData;
 
@@ -84,8 +85,9 @@ namespace LTP.Truck.MasterData
         Close();
         OnSendSuccess?.Invoke(result);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popupMsgAlarm = new PopupConfirm(
           _enumTypePopup == EnumTypePopup.Add ? "Thêm thất bại !" : "Cập nhật thất bại !",
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);

@@ -99,6 +99,7 @@ namespace LTP.Truck.Services
         }
         catch (Exception ex)
         {
+          HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
           apiJob.EnumStatusAPI = EnumStatusAPI.Fail;
           apiJob.Retry = (apiJob.Retry ?? 0) + 1;
           apiJob.Description = ex.Message;
