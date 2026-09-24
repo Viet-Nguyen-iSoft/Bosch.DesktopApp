@@ -11,6 +11,7 @@ using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using static Common.EnumData;
 using static HelperManager.EnumData;
@@ -736,6 +737,17 @@ namespace LTP.Truck.Forms
           DataGridViewContentAlignment.MiddleCenter;
     }
 
+    private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
+    {
+      if (e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
+        return;
+
+      var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+      checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
+    }
+
     private void btnPrint_Click(object sender, EventArgs e)
     {
       if (dgv.SelectedRows.Count == 0 ||
@@ -749,17 +761,6 @@ namespace LTP.Truck.Forms
       }
 
       RecordWeight selectedData = selectedRecord.RecordWeight;
-    }
-
-    private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
-    {
-      if (e.RowIndex < 0 ||
-          e.ColumnIndex < 0 ||
-          dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
-        return;
-
-      var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
-      checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
     }
 
     private async void btnExport_Click(object sender, EventArgs e)
@@ -810,7 +811,7 @@ namespace LTP.Truck.Forms
         DateTime dt = DateTime.Now;
         string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
         string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
-        string folderOutput = Application.StartupPath + "Template\\ReportGoods";
+        string folderOutput = Application.StartupPath + "ReportGoods";
         if (!Directory.Exists(folderOutput))
         {
           Directory.CreateDirectory(folderOutput);
@@ -875,7 +876,8 @@ namespace LTP.Truck.Forms
         string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
         File.WriteAllText(outputPath, result);
 
-        await CreateFile(outputPath);
+        string pdfPath = Path.ChangeExtension(outputPath, ".pdf");
+        await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath);
 
         var openReportFile = false;
         using (var popup = new PopupConfirm(
@@ -887,10 +889,36 @@ namespace LTP.Truck.Forms
             openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
           popup.ShowDialog(this);
         }
+
+        if (openReportFile)
+        {
+          try
+          {
+            Process.Start(new ProcessStartInfo
+            {
+              FileName = pdfPath,
+              UseShellExecute = true,
+            });
+          }
+          catch (Exception openException)
+          {
+            HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
+            using var openErrorPopup = new PopupConfirm(
+              "Đã tạo phiếu nhưng không thể mở file.",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+            openErrorPopup.ShowDialog(this);
+          }
+        }
       }
       catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popupMsg = new PopupConfirm(
+          "Không thể tạo phiếu. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
       }
     }
 
@@ -899,18 +927,5 @@ namespace LTP.Truck.Forms
       return WeightFormatHelper.Format(value);
     }
 
-    private async Task<string> CreateFile(string path)
-    {
-      try
-      {
-        string pdf = path.Replace(".html", ".pdf");
-        await PdfHelper.HtmlToPdfAsync(path, pdf);
-        return pdf;
-      }
-      catch (Exception)
-      {
-        throw;
-      }
-    }
   }
 }
