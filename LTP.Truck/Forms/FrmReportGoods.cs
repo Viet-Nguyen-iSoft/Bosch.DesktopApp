@@ -74,7 +74,7 @@ namespace LTP.Truck.Forms
       _licensePlateGroups.WrapContents = false;
       _licensePlateGroups.FlowDirection = FlowDirection.TopDown;
       _licensePlateGroups.BackColor = dgv.BackgroundColor;
-      _licensePlateGroups.Padding = new Padding(8);
+      _licensePlateGroups.Padding = Padding.Empty;
       _licensePlateGroups.Visible = false;
       _licensePlateGroups.SizeChanged += (_, _) => ResizeLicensePlateGroupPanels();
       tableLayoutPanel9.Controls.Add(_licensePlateGroups, 0, 2);
@@ -262,7 +262,7 @@ namespace LTP.Truck.Forms
         var groupRecords = group.ToList();
         var groupPanel = new Panel
         {
-          BackColor = Color.White,
+          BackColor = dgv.BackgroundColor,
           BorderStyle = BorderStyle.FixedSingle,
           Height = 54,
           Margin = new Padding(0, 0, 0, 8),
@@ -352,27 +352,40 @@ namespace LTP.Truck.Forms
     {
       var grid = new DataGridView
       {
+        BindingContext = new BindingContext(),
         AllowUserToAddRows = false,
         AllowUserToDeleteRows = false,
         AllowUserToResizeColumns = false,
         AllowUserToResizeRows = false,
         AutoGenerateColumns = true,
         AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-        BackgroundColor = Color.White,
-        BorderStyle = BorderStyle.None,
+        AutoSizeRowsMode = dgv.AutoSizeRowsMode,
+        AlternatingRowsDefaultCellStyle = dgv.AlternatingRowsDefaultCellStyle.Clone(),
+        BackgroundColor = dgv.BackgroundColor,
+        BorderStyle = dgv.BorderStyle,
+        CellBorderStyle = dgv.CellBorderStyle,
         ColumnHeadersDefaultCellStyle = dgv.ColumnHeadersDefaultCellStyle.Clone(),
+        ColumnHeadersBorderStyle = dgv.ColumnHeadersBorderStyle,
         ColumnHeadersHeight = dgv.ColumnHeadersHeight,
         ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
         DefaultCellStyle = dgv.DefaultCellStyle.Clone(),
         EnableHeadersVisualStyles = false,
+        Font = dgv.Font,
+        ForeColor = dgv.ForeColor,
+        GridColor = dgv.GridColor,
         MultiSelect = false,
         ReadOnly = true,
+        RowHeadersBorderStyle = dgv.RowHeadersBorderStyle,
+        RowHeadersDefaultCellStyle = dgv.RowHeadersDefaultCellStyle.Clone(),
         RowHeadersVisible = false,
+        RowsDefaultCellStyle = dgv.RowsDefaultCellStyle.Clone(),
         ScrollBars = ScrollBars.None,
         SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-        DataSource = records,
       };
       grid.RowTemplate.Height = dgv.RowTemplate.Height;
+      grid.DataSource = records;
+      foreach (DataGridViewRow row in grid.Rows)
+        row.Height = dgv.RowTemplate.Height;
       ApplyGridColumnFormatting(grid);
       foreach (DataGridViewColumn column in grid.Columns)
         column.ReadOnly = true;
@@ -389,6 +402,7 @@ namespace LTP.Truck.Forms
         TrueValue = true,
       };
       grid.Columns.Insert(0, selectedColumn);
+      ConfigureGroupGridColumnWidths(grid);
       grid.CellClick += (_, e) =>
       {
         if (e.RowIndex < 0 || e.ColumnIndex != selectedColumn.Index)
@@ -402,10 +416,52 @@ namespace LTP.Truck.Forms
       return grid;
     }
 
+    private static void ConfigureGroupGridColumnWidths(DataGridView grid)
+    {
+      foreach (DataGridViewColumn column in grid.Columns)
+        column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+      var selectedColumn = FindGridColumn(grid, "Selected");
+      if (selectedColumn != null)
+      {
+        selectedColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+        selectedColumn.Width = 60;
+      }
+
+      var autoSizeColumns = new[]
+      {
+        nameof(RecordWeightDTO.No),
+        nameof(RecordWeightDTO.Datetime),
+        nameof(RecordWeightDTO.LicensePlate),
+        nameof(RecordWeightDTO.ProductGroup),
+        nameof(RecordWeightDTO.CategoryTare),
+        nameof(RecordWeightDTO.Net),
+        nameof(RecordWeightDTO.Gross),
+        nameof(RecordWeightDTO.Tare),
+      };
+
+      foreach (var columnName in autoSizeColumns)
+      {
+        var column = FindGridColumn(grid, columnName);
+        if (column != null)
+          column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+      }
+    }
+
+    private static DataGridViewColumn? FindGridColumn(DataGridView grid, string columnName)
+    {
+      return grid.Columns
+        .Cast<DataGridViewColumn>()
+        .FirstOrDefault(column =>
+          string.Equals(column.Name, columnName, StringComparison.Ordinal) ||
+          string.Equals(column.DataPropertyName, columnName, StringComparison.Ordinal));
+    }
+
     private void ResizeLicensePlateGroupPanels()
     {
       var width = Math.Max(100, _licensePlateGroups.ClientSize.Width -
-        _licensePlateGroups.Padding.Horizontal - SystemInformation.VerticalScrollBarWidth - 2);
+        _licensePlateGroups.Padding.Horizontal -
+        (_licensePlateGroups.VerticalScroll.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
       foreach (Control control in _licensePlateGroups.Controls)
         control.Width = width;
     }
