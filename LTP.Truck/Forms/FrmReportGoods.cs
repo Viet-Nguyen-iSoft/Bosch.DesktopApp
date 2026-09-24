@@ -15,6 +15,8 @@ namespace LTP.Truck.Forms
   public partial class FrmReportGoods : Form
   {
     private bool _isLoadingPage;
+    private List<RecordWeightDTO> _currentRecords = new();
+    private readonly FlowLayoutPanel _licensePlateGroups = new();
 
     public FrmReportGoods()
     {
@@ -25,6 +27,10 @@ namespace LTP.Truck.Forms
       txtSearchKey.KeyPress += txtSearchKey_KeyPress;
       ucPage1.PageChanged += ucPage1_PageChanged;
       Shown += FrmReportGoods_Shown;
+      cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbType.SelectedIndex = 0;
+      cbbType.SelectedIndexChanged += cbbType_SelectedIndexChanged;
+      InitializeLicensePlateGroups();
     }
 
     #region Instance
@@ -59,6 +65,19 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
+    }
+
+    private void InitializeLicensePlateGroups()
+    {
+      _licensePlateGroups.Dock = DockStyle.Fill;
+      _licensePlateGroups.AutoScroll = true;
+      _licensePlateGroups.WrapContents = false;
+      _licensePlateGroups.FlowDirection = FlowDirection.TopDown;
+      _licensePlateGroups.BackColor = dgv.BackgroundColor;
+      _licensePlateGroups.Padding = new Padding(8);
+      _licensePlateGroups.Visible = false;
+      _licensePlateGroups.SizeChanged += (_, _) => ResizeLicensePlateGroupPanels();
+      tableLayoutPanel9.Controls.Add(_licensePlateGroups, 0, 2);
     }
     private async void FrmReportGoods_Shown(object? sender, EventArgs e)
     {
@@ -157,10 +176,25 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      dgv.DataSource = records;
+      _currentRecords = records;
+      var showGroupedView = cbbType.SelectedIndex == 1;
+      dgv.Visible = !showGroupedView;
+      _licensePlateGroups.Visible = showGroupedView;
 
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
-        dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
+      if (showGroupedView)
+      {
+        BuildLicensePlateGroups(records);
+        return;
+      }
+
+      dgv.DataSource = records;
+      ApplyGridColumnFormatting(dgv);
+    }
+
+    private static void ApplyGridColumnFormatting(DataGridView grid)
+    {
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
+        grid.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
 
       var autoSizeColumns = new[]
       {
@@ -175,8 +209,8 @@ namespace LTP.Truck.Forms
       };
       foreach (var columnName in autoSizeColumns)
       {
-        if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        if (grid.Columns.Contains(columnName))
+          grid.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
       }
 
       var weightColumns = new[]
@@ -188,8 +222,8 @@ namespace LTP.Truck.Forms
       };
       foreach (var columnName in weightColumns)
       {
-        if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].DefaultCellStyle.Alignment =
+        if (grid.Columns.Contains(columnName))
+          grid.Columns[columnName].DefaultCellStyle.Alignment =
             DataGridViewContentAlignment.MiddleRight;
       }
 
@@ -200,13 +234,111 @@ namespace LTP.Truck.Forms
       };
       foreach (var columnName in middleCenterColumns)
       {
-        if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].DefaultCellStyle.Alignment =
+        if (grid.Columns.Contains(columnName))
+          grid.Columns[columnName].DefaultCellStyle.Alignment =
             DataGridViewContentAlignment.MiddleCenter;
       }
 
-      dgv.ClearSelection();
-      dgv.CurrentCell = null;
+      grid.ClearSelection();
+      grid.CurrentCell = null;
+    }
+
+    private void cbbType_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+      SetDgvHistorical(_currentRecords);
+    }
+
+    private void BuildLicensePlateGroups(IEnumerable<RecordWeightDTO> records)
+    {
+      _licensePlateGroups.SuspendLayout();
+      _licensePlateGroups.Controls.Clear();
+
+      foreach (var group in records.GroupBy(
+        record => string.IsNullOrWhiteSpace(record.LicensePlate)
+          ? "Không có biển số"
+          : record.LicensePlate.Trim(),
+        StringComparer.CurrentCultureIgnoreCase))
+      {
+        var groupRecords = group.ToList();
+        var groupPanel = new Panel
+        {
+          BackColor = Color.White,
+          BorderStyle = BorderStyle.FixedSingle,
+          Height = 44,
+          Margin = new Padding(0, 0, 0, 8),
+          Tag = false,
+        };
+        var header = new Label
+        {
+          Dock = DockStyle.Top,
+          Height = 42,
+          BackColor = Color.FromArgb(218, 218, 218),
+          Font = new Font(dgv.Font.FontFamily, 14F, FontStyle.Regular),
+          ForeColor = Color.Black,
+          Text = $"  ▶    {group.Key}",
+          TextAlign = ContentAlignment.MiddleLeft,
+          Cursor = Cursors.Hand,
+          Tag = group.Key,
+        };
+        var detailGrid = CreateGroupDetailGrid(groupRecords);
+        detailGrid.Dock = DockStyle.Fill;
+        detailGrid.Visible = false;
+
+        void ToggleGroup(object? sender, EventArgs e)
+        {
+          var expanded = !(bool)groupPanel.Tag;
+          groupPanel.Tag = expanded;
+          detailGrid.Visible = expanded;
+          header.Text = expanded ? $"  ▼    {header.Tag}" : $"  ▶    {header.Tag}";
+          groupPanel.Height = expanded ? 44 + detailGrid.ColumnHeadersHeight +
+            detailGrid.RowTemplate.Height * groupRecords.Count + 2 : 44;
+        }
+
+        header.Click += ToggleGroup;
+        groupPanel.Controls.Add(detailGrid);
+        groupPanel.Controls.Add(header);
+        _licensePlateGroups.Controls.Add(groupPanel);
+      }
+
+      ResizeLicensePlateGroupPanels();
+      _licensePlateGroups.ResumeLayout();
+    }
+
+    private DataGridView CreateGroupDetailGrid(List<RecordWeightDTO> records)
+    {
+      var grid = new DataGridView
+      {
+        AllowUserToAddRows = false,
+        AllowUserToDeleteRows = false,
+        AllowUserToResizeColumns = false,
+        AllowUserToResizeRows = false,
+        AutoGenerateColumns = true,
+        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+        BackgroundColor = Color.White,
+        BorderStyle = BorderStyle.None,
+        ColumnHeadersDefaultCellStyle = dgv.ColumnHeadersDefaultCellStyle.Clone(),
+        ColumnHeadersHeight = dgv.ColumnHeadersHeight,
+        ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
+        DefaultCellStyle = dgv.DefaultCellStyle.Clone(),
+        EnableHeadersVisualStyles = false,
+        MultiSelect = false,
+        ReadOnly = true,
+        RowHeadersVisible = false,
+        ScrollBars = ScrollBars.None,
+        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+        DataSource = records,
+      };
+      grid.RowTemplate.Height = dgv.RowTemplate.Height;
+      ApplyGridColumnFormatting(grid);
+      return grid;
+    }
+
+    private void ResizeLicensePlateGroupPanels()
+    {
+      var width = Math.Max(100, _licensePlateGroups.ClientSize.Width -
+        _licensePlateGroups.Padding.Horizontal - SystemInformation.VerticalScrollBarWidth - 2);
+      foreach (Control control in _licensePlateGroups.Controls)
+        control.Width = width;
     }
 
     private async void btnExport_Click(object sender, EventArgs e)

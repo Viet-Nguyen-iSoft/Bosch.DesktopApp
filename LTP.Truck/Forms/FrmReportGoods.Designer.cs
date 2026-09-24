@@ -42,7 +42,7 @@ namespace LTP.Truck.Forms
       ucTimeSearchTo = new LTP.Truck.UserControls.UcTimeSearch();
       btnSearchHistorical = new LTP.Truck.Custom.RJButton();
       btnExport = new LTP.Truck.Custom.RJButton();
-      comboBox1 = new ComboBox();
+      cbbType = new ComboBox();
       label27 = new Label();
       ucPage1 = new LTP.Truck.UserControls.UcPage();
       tableLayoutPanel9.SuspendLayout();
@@ -137,7 +137,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.Controls.Add(ucTimeSearchTo, 8, 0);
       tableLayoutPanel11.Controls.Add(btnSearchHistorical, 10, 0);
       tableLayoutPanel11.Controls.Add(btnExport, 11, 0);
-      tableLayoutPanel11.Controls.Add(comboBox1, 0, 0);
+      tableLayoutPanel11.Controls.Add(cbbType, 0, 0);
       tableLayoutPanel11.Location = new Point(0, 50);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
@@ -278,16 +278,16 @@ namespace LTP.Truck.Forms
       btnExport.UseVisualStyleBackColor = false;
       btnExport.Click += btnExport_Click;
       // 
-      // comboBox1
+      // cbbType
       // 
-      comboBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      comboBox1.Font = new Font("Roboto", 16.25F, FontStyle.Bold);
-      comboBox1.FormattingEnabled = true;
-      comboBox1.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số" });
-      comboBox1.Location = new Point(3, 13);
-      comboBox1.Name = "comboBox1";
-      comboBox1.Size = new Size(194, 35);
-      comboBox1.TabIndex = 32;
+      cbbType.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      cbbType.Font = new Font("Roboto", 16.25F, FontStyle.Bold);
+      cbbType.FormattingEnabled = true;
+      cbbType.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số" });
+      cbbType.Location = new Point(3, 13);
+      cbbType.Name = "cbbType";
+      cbbType.Size = new Size(194, 35);
+      cbbType.TabIndex = 32;
       // 
       // label27
       // 
@@ -342,6 +342,6 @@ namespace LTP.Truck.Forms
     private Custom.RJButton btnExport;
     private Label label27;
     private UserControls.UcPage ucPage1;
-    private ComboBox comboBox1;
+    private ComboBox cbbType;
   }
 }
