@@ -236,6 +236,29 @@ namespace iSoft.Database
     }
 
 
+    public static List<UserDTO> ConvertUserDTO(List<User>? users)
+    {
+      if (users == null || users.Count == 0)
+        return new List<UserDTO>();
+
+      return users
+        .OrderBy(e => e.FullName)
+        .ThenBy(e => e.Username)
+        .Select((e, index) => new UserDTO
+        {
+          User = e,
+          No = index + 1,
+          FullName = e.FullName,
+          DisplayName = e.DisplayName,
+          Username = e.Username,
+          EmployeeCode = e.EmployeeCode,
+          IdCardCode = e.IdCardCode,
+          UpdatedAt = (e.UpdatedAt ?? e.CreatedAt)?.AddHours(utc)
+            .ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
+        })
+        .ToList();
+    }
+
     public static DTOPrintLabel? ConvertProductDTO(RecordWeight recordWeight)
     {
       return new DTOPrintLabel()

@@ -51,7 +51,7 @@ namespace LTP.Truck.Forms
       Button[] menuButtons =
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
-        btnClient, btnTypeGoods, btnWarehouse, btnTare, btnGroupProduct, btnProduct
+        btnUser, btnClient, btnTypeGoods, btnWarehouse, btnTare, btnGroupProduct, btnProduct
       };
 
       foreach (Button button in menuButtons)
@@ -69,7 +69,8 @@ namespace LTP.Truck.Forms
     {
       return new[]
       {
-        btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData
+        btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
+        btnUser
       };
     }
 
@@ -439,6 +440,7 @@ namespace LTP.Truck.Forms
             break;
           case EnumScreen.User:
             OpenChildForm(appModulSupport, FrmUser.Instance);
+            await FrmUser.Instance.LoadData();
             break;
         }
 
@@ -465,12 +467,13 @@ namespace LTP.Truck.Forms
         EnumScreen.ReportTruck => "Trang chính > Báo cáo xe tải",
         EnumScreen.ReportGoods => "Trang chính > Báo cáo cân hàng",
         EnumScreen.Setting => "Trang chính > Cài đặt",
-        EnumScreen.MD_Client => "Trang chính > Dữ liệu gốc > Khách hàng",
-        EnumScreen.MD_TypeGoods => "Trang chính > Dữ liệu gốc > Loại hàng",
-        EnumScreen.MD_Warehouse => "Trang chính > Dữ liệu gốc > Kho hàng",
-        EnumScreen.MD_Tare => "Trang chính > Dữ liệu gốc > Nhóm Tare",
-        EnumScreen.MD_GroupProduct => "Trang chính > Dữ liệu gốc > Nhóm chất thải",
-        EnumScreen.MD_Product => "Trang chính > Dữ liệu gốc > Chất thải",
+        EnumScreen.MD_Client => "Trang chính > Master Data > Khách hàng",
+        EnumScreen.MD_TypeGoods => "Trang chính > Master Data > Loại hàng",
+        EnumScreen.MD_Warehouse => "Trang chính > Master Data > Kho hàng",
+        EnumScreen.MD_Tare => "Trang chính > Master Data > Nhóm Tare",
+        EnumScreen.MD_GroupProduct => "Trang chính > Master Data > Nhóm chất thải",
+        EnumScreen.MD_Product => "Trang chính > Master Data > Chất thải",
+        EnumScreen.User => "Trang chính > Tài khoản",
         _ => "Trang chính"
       };
     }

@@ -45,7 +45,8 @@ namespace ApiSyncData
           l.Password = s.Password;
           l.EmployeeCode = s.EmployeeCode;
           l.IdCardCode = s.IdCardCode;
-        }, token);
+        }, token,
+        initializeAdded: user => user.CreatedAt = DateTime.UtcNow);
 
     public static Task<MasterDataChangedEventArgs?> SyncProductsAsync(ProductAPI response, CancellationToken token = default)
     {
@@ -98,7 +99,8 @@ namespace ApiSyncData
     private static async Task<MasterDataChangedEventArgs?> SyncAsync<TSource, TEntity>(
       List<TSource>? rows, int? total, Action<TSource, TEntity> map,
       CancellationToken token, Func<MySqlDbContext, Task>? prepare = null,
-      Func<TSource, bool>? shouldSync = null)
+      Func<TSource, bool>? shouldSync = null,
+      Action<TEntity>? initializeAdded = null)
       where TSource : IServerRecord
       where TEntity : BaseModel, new()
     {
@@ -120,6 +122,11 @@ namespace ApiSyncData
           ? null
           : rows!.Select(row => row.Id!.Value);
         var added = ServerSnapshot.Apply(rowsToSync, locals, map, token, snapshotIds);
+        if (initializeAdded != null)
+        {
+          foreach (var entity in added)
+            initializeAdded(entity);
+        }
         db.Set<TEntity>().AddRange(added);
 
         db.ChangeTracker.DetectChanges();

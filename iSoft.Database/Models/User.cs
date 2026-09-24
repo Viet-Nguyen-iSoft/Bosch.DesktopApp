@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iSoft.Database.Models
 {
-  [Table("users")]
+  [Table("m_users")]
   public class User : BaseModel
   {
     [Required]

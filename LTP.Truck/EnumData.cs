@@ -29,10 +29,6 @@ namespace LTP.Truck
 
       User,
 
-      
-      
-      ,
-
       OpChooseModeFunction,
       OpTypePO,
       OpShowListPO,

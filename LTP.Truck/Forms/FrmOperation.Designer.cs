@@ -49,6 +49,7 @@ namespace LTP.Truck.Forms
       btnClient = new RJButton();
       btnReportTruck = new RJButton();
       btnReportGoods = new RJButton();
+      btnUser = new RJButton();
       tableLayoutPanel7 = new TableLayoutPanel();
       lbVersion = new Label();
       pictureBox1 = new PictureBox();
@@ -64,7 +65,6 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
-      btnUser = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -468,6 +468,30 @@ namespace LTP.Truck.Forms
       btnReportGoods.TextColor = Color.Black;
       btnReportGoods.UseVisualStyleBackColor = false;
       // 
+      // btnUser
+      // 
+      btnUser.BackColor = Color.Silver;
+      btnUser.BackgroundColor = Color.Silver;
+      btnUser.BorderColor = Color.PaleVioletRed;
+      btnUser.BorderRadius = 5;
+      btnUser.BorderSize = 0;
+      btnUser.Dock = DockStyle.Top;
+      btnUser.FlatAppearance.BorderSize = 0;
+      btnUser.FlatStyle = FlatStyle.Flat;
+      btnUser.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnUser.ForeColor = Color.Black;
+      btnUser.Image = Properties.Resources.icon_btn_user;
+      btnUser.ImageAlign = ContentAlignment.MiddleLeft;
+      btnUser.Location = new Point(3, 735);
+      btnUser.Name = "btnUser";
+      btnUser.Padding = new Padding(15, 0, 0, 0);
+      btnUser.Size = new Size(242, 70);
+      btnUser.TabIndex = 23;
+      btnUser.Text = "        TÀI KHOẢN";
+      btnUser.TextAlign = ContentAlignment.MiddleLeft;
+      btnUser.TextColor = Color.Black;
+      btnUser.UseVisualStyleBackColor = false;
+      // 
       // tableLayoutPanel7
       // 
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -682,30 +706,6 @@ namespace LTP.Truck.Forms
       lbTime.TabIndex = 2;
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
-      // 
-      // btnUser
-      // 
-      btnUser.BackColor = Color.Silver;
-      btnUser.BackgroundColor = Color.Silver;
-      btnUser.BorderColor = Color.PaleVioletRed;
-      btnUser.BorderRadius = 5;
-      btnUser.BorderSize = 0;
-      btnUser.Dock = DockStyle.Top;
-      btnUser.FlatAppearance.BorderSize = 0;
-      btnUser.FlatStyle = FlatStyle.Flat;
-      btnUser.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnUser.ForeColor = Color.Black;
-      btnUser.Image = Properties.Resources.icon_btn_report;
-      btnUser.ImageAlign = ContentAlignment.MiddleLeft;
-      btnUser.Location = new Point(3, 735);
-      btnUser.Name = "btnUser";
-      btnUser.Padding = new Padding(15, 0, 0, 0);
-      btnUser.Size = new Size(242, 70);
-      btnUser.TabIndex = 23;
-      btnUser.Text = "        TÀI KHOẢN";
-      btnUser.TextAlign = ContentAlignment.MiddleLeft;
-      btnUser.TextColor = Color.Black;
-      btnUser.UseVisualStyleBackColor = false;
       // 
       // FrmOperation
       // 
