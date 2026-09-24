@@ -1358,12 +1358,12 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearchKey, 1, 0);
       tableLayoutPanel10.Controls.Add(label17, 3, 0);
-      tableLayoutPanel10.Controls.Add(btnPrint, 9, 0);
       tableLayoutPanel10.Controls.Add(label18, 5, 0);
-      tableLayoutPanel10.Controls.Add(btnSearchHistorical, 10, 0);
       tableLayoutPanel10.Controls.Add(ucTimeSearchFrom, 4, 0);
       tableLayoutPanel10.Controls.Add(ucTimeSearchTo, 6, 0);
       tableLayoutPanel10.Controls.Add(btnFilter, 7, 0);
+      tableLayoutPanel10.Controls.Add(btnPrint, 10, 0);
+      tableLayoutPanel10.Controls.Add(btnSearchHistorical, 9, 0);
       tableLayoutPanel10.Location = new Point(0, 50);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -1438,7 +1438,7 @@ namespace LTP.Truck.Forms
       btnPrint.ForeColor = Color.White;
       btnPrint.Image = Properties.Resources.icon_print;
       btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnPrint.Location = new Point(1168, 3);
+      btnPrint.Location = new Point(1348, 3);
       btnPrint.Name = "btnPrint";
       btnPrint.Padding = new Padding(10, 0, 0, 0);
       btnPrint.Size = new Size(174, 56);
@@ -1478,7 +1478,7 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(1348, 3);
+      btnSearchHistorical.Location = new Point(1168, 3);
       btnSearchHistorical.Name = "btnSearchHistorical";
       btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
       btnSearchHistorical.Size = new Size(174, 55);

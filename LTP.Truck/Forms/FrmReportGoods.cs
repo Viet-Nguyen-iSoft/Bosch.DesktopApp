@@ -16,7 +16,9 @@ namespace LTP.Truck.Forms
 {
   public partial class FrmReportGoods : Form
   {
+    private const string PrintColumnName = "btnPrintLabel";
     private bool _isLoadingPage;
+    private bool _isPrintingLabel;
     private List<RecordWeightDTO> _currentRecords = new();
     private readonly FlowLayoutPanel _licensePlateGroups = new();
 
@@ -34,6 +36,7 @@ namespace LTP.Truck.Forms
       cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbType.SelectedIndex = 0;
       cbbType.SelectedIndexChanged += cbbType_SelectedIndexChanged;
+      dgv.CellContentClick += dgv_CellContentClick;
       InitializeLicensePlateGroups();
     }
 
@@ -195,7 +198,60 @@ namespace LTP.Truck.Forms
       }
 
       dgv.DataSource = records;
+      AddPrintColumn();
       ApplyGridColumnFormatting(dgv);
+    }
+
+    private void AddPrintColumn()
+    {
+      if (!dgv.Columns.Contains(PrintColumnName))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = PrintColumnName,
+          HeaderText = string.Empty,
+          Text = "In phiếu",
+          UseColumnTextForButtonValue = true,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 120,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+
+      dgv.Columns[PrintColumnName].DisplayIndex = dgv.Columns.Count - 1;
+    }
+
+    private void dgv_CellContentClick(object? sender, DataGridViewCellEventArgs e)
+    {
+      if (_isPrintingLabel ||
+          e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != PrintColumnName ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO row)
+        return;
+
+      try
+      {
+        _isPrintingLabel = true;
+        dgv.Enabled = false;
+        string printerName = AppCore.Ins._appConfig.NamePrint;
+        AppCore.Ins.PrinterLabelGoods(printerName, row);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể in phiếu. Vui lòng kiểm tra máy in và thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+      finally
+      {
+        dgv.Enabled = true;
+        _isPrintingLabel = false;
+      }
     }
 
     private static void ApplyGridColumnFormatting(DataGridView grid)
