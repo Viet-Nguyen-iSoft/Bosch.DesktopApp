@@ -234,6 +234,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
         await LoadData(_enumTypeMasterDataCurrent);
+        MasterDataChangeNotifier.Notify<Product>();
         ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
@@ -287,6 +288,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
         await LoadData(_enumTypeMasterDataCurrent);
+        MasterDataChangeNotifier.Notify<ProductGroup>();
         ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
@@ -319,6 +321,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
         await LoadData(_enumTypeMasterDataCurrent);
+        MasterDataChangeNotifier.Notify<CategoryTare>();
         ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
@@ -1089,6 +1092,7 @@ namespace LTP.Truck.Forms
 
             await _apiJobsService.AddOrUpdateAsync(apiJobs);
             await LoadData(_enumTypeMasterDataCurrent);
+            MasterDataChangeNotifier.Notify<CategoryTare>();
           }
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
@@ -1118,6 +1122,7 @@ namespace LTP.Truck.Forms
 
             await _apiJobsService.AddOrUpdateAsync(apiJobs);
             await LoadData(_enumTypeMasterDataCurrent);
+            MasterDataChangeNotifier.Notify<ProductGroup>();
           }
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Product)
@@ -1138,6 +1143,7 @@ namespace LTP.Truck.Forms
 
             await _apiJobsService.AddOrUpdateAsync(apiJobs);
             await LoadData(_enumTypeMasterDataCurrent);
+            MasterDataChangeNotifier.Notify<Product>();
           }
         }
       }

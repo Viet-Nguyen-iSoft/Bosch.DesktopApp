@@ -23,6 +23,7 @@ namespace LTP.Truck.Forms
     private const string SelectColumnName = "SelectRecord";
     private List<Product> _products = new();
     private int _productGroupRefreshVersion;
+    private int _productRefreshVersion;
     private int _tareRefreshVersion;
     private int _sumWeightLoadVersion;
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
@@ -122,6 +123,7 @@ namespace LTP.Truck.Forms
         FrmMain.Instance.OnChangeProductGroup += Instance_OnChangeProductGroup;
         FrmMain.Instance.OnChangeProduct += Instance_OnChangeProduct;
         FrmMain.Instance.OnChangeTare += Instance_OnChangeTare;
+        MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
         AppCore.Ins.OnSendDataWeightGoods += Ins_OnSendDataWeightGoods;
         AppCore.Ins.OnSendStatusWeightGoods += Ins_OnSendStatusWeightGoods;
         ResetWeightDisplay();
@@ -130,6 +132,16 @@ namespace LTP.Truck.Forms
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
+    }
+
+    private void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
+    {
+      if (entityType == typeof(ProductGroup))
+        Instance_OnChangeProductGroup(sender, EventArgs.Empty);
+      else if (entityType == typeof(Product))
+        Instance_OnChangeProduct(sender, EventArgs.Empty);
+      else if (entityType == typeof(CategoryTare))
+        Instance_OnChangeTare(sender, EventArgs.Empty);
     }
 
     private async Task LoadLicensePlateSuggestionsAsync()
@@ -237,9 +249,22 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      var refreshVersion = ++_productRefreshVersion;
       var selectedProductId = (cbbProduct.SelectedItem as Product)?.Id;
-      _products = await AppCore.Ins._productService.GetAllAsync();
-      FillProduct(selectedProductId, preserveSelection: true);
+
+      try
+      {
+        var products = await AppCore.Ins._productService.GetAllAsync();
+        if (IsDisposed || Disposing || refreshVersion != _productRefreshVersion)
+          return;
+
+        _products = products;
+        FillProduct(selectedProductId, preserveSelection: true);
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async void Instance_OnChangeProductGroup(object? sender, EventArgs e)
