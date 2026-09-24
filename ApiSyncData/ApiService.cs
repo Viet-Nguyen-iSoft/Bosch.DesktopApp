@@ -222,12 +222,13 @@ namespace ApiSyncData
     {
       ArgumentNullException.ThrowIfNull(product);
 
-      IReadOnlyDictionary<string, string>? additionalFields = product.ProductGroupId.HasValue
-        ? new Dictionary<string, string>
-        {
-          ["ProductGroupId"] = product.ProductGroupId.Value.ToString(),
-        }
-        : null;
+      var additionalFields = new Dictionary<string, string>
+      {
+        ["WasteType"] = product.WasteType.ToString(),
+      };
+
+      if (product.ProductGroupId.HasValue)
+        additionalFields["ProductGroupId"] = product.ProductGroupId.Value.ToString();
 
       return PostUpsertMultiLangAsync(
         "ProductFood",

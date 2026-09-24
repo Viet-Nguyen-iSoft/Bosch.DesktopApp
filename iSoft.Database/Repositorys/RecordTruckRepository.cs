@@ -11,6 +11,7 @@ namespace iSoft.Database.Repositorys
 {
   public class RecordTruckRepository : GenericRepository<RecordTruck, CommonDbContext>
   {
+    private const string SearchCollation = "utf8mb4_unicode_ci";
     public RecordTruckRepository(CommonDbContext context) : base(context)
     {
     }
@@ -116,16 +117,16 @@ namespace iSoft.Database.Repositorys
       if (!string.IsNullOrWhiteSpace(searchKey))
       {
         query = query.Where(record =>
-          (record.NoLabelAuto != null && record.NoLabelAuto.Contains(searchKey)) ||
-          (record.NoLabelManual != null && record.NoLabelManual.Contains(searchKey)) ||
-          (record.LicensePlate != null && record.LicensePlate.Contains(searchKey)) ||
-          (record.NameDriver != null && record.NameDriver.Contains(searchKey)) ||
-          (record.IdCard != null && record.IdCard.Contains(searchKey)) ||
-          (record.Document != null && record.Document.Contains(searchKey)) ||
-          (record.Client != null && record.Client.Name != null && record.Client.Name.Contains(searchKey)) ||
-          (record.TypeGoods != null && record.TypeGoods.Name != null && record.TypeGoods.Name.Contains(searchKey)) ||
-          (record.Warehouse != null && record.Warehouse.Name != null && record.Warehouse.Name.Contains(searchKey)) ||
-          (record.Station != null && record.Station.Name != null && record.Station.Name.Contains(searchKey)));
+          (record.NoLabelAuto != null && EF.Functions.Collate(record.NoLabelAuto, SearchCollation).Contains(searchKey)) ||
+          (record.NoLabelManual != null && EF.Functions.Collate(record.NoLabelManual, SearchCollation).Contains(searchKey)) ||
+          (record.LicensePlate != null && EF.Functions.Collate(record.LicensePlate, SearchCollation).Contains(searchKey)) ||
+          (record.NameDriver != null && EF.Functions.Collate(record.NameDriver, SearchCollation).Contains(searchKey)) ||
+          (record.IdCard != null && EF.Functions.Collate(record.IdCard, SearchCollation).Contains(searchKey)) ||
+          (record.Document != null && EF.Functions.Collate(record.Document, SearchCollation).Contains(searchKey)) ||
+          (record.Client != null && record.Client.Name != null && EF.Functions.Collate(record.Client.Name, SearchCollation).Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.Name != null && EF.Functions.Collate(record.TypeGoods.Name, SearchCollation).Contains(searchKey)) ||
+          (record.Warehouse != null && record.Warehouse.Name != null && EF.Functions.Collate(record.Warehouse.Name, SearchCollation).Contains(searchKey)) ||
+          (record.Station != null && record.Station.Name != null && EF.Functions.Collate(record.Station.Name, SearchCollation).Contains(searchKey)));
       }
 
       return query;

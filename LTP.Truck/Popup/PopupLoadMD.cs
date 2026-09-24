@@ -2,6 +2,7 @@
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
+using HelperManager;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,11 +19,14 @@ namespace LTP.Truck.Popup
     public event Action<EnumTypeData>? OnAddData;
 
     private EnumTypeData _enumTypeData {  get; set; }
+    private Action<string>? _applySearch;
     public PopupLoadMD()
     {
       InitializeComponent();
       CustomUI();
       btnAdd.Click += btnAdd_Click;
+      btnSearch.Click += btnSearch_Click;
+      txtSearch._TextChanged += txtSearch_TextChanged;
     }
 
     private void CustomUI()
@@ -47,6 +51,7 @@ namespace LTP.Truck.Popup
         btnAdd.Visible = true;
 
         var dto = DTOHelper.ConvertClientDTO(items as List<Client>);
+        ConfigureSearch(dto);
         dgv.DataSource = dto;
 
         dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -59,6 +64,7 @@ namespace LTP.Truck.Popup
         btnAdd.Visible = true;
 
         var dto = DTOHelper.ConvertTypeGoodsDTO(items as List<TypeGoods>);
+        ConfigureSearch(dto);
         dgv.DataSource = dto;
 
         dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -70,6 +76,7 @@ namespace LTP.Truck.Popup
         _enumTypeData = EnumTypeData.RecordTruck;
         btnAdd.Visible = false;
         lbTitle.Text = "Danh sách phiếu đã cân lần 1";
+        ConfigureSearch(items);
         dgv.DataSource = items;
         dgv.Columns[nameof(RecordTruckDTO.NetTime02)].Visible = false;
         dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -109,12 +116,30 @@ namespace LTP.Truck.Popup
         btnAdd.Visible = true;
 
         var dto = DTOHelper.ConvertWareHouseDTO(items as List<Warehouse>);
+        ConfigureSearch(dto);
         dgv.DataSource = dto;
 
         dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
         dgv.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
+    }
+
+    private void ConfigureSearch<T>(List<T>? items)
+    {
+      var source = items ?? new List<T>();
+      _applySearch = searchText =>
+        dgv.DataSource = TextSearchHelper.FilterBrowsableProperties(source, searchText);
+    }
+
+    private void btnSearch_Click(object? sender, EventArgs e)
+    {
+      _applySearch?.Invoke(txtSearch.Texts);
+    }
+
+    private void txtSearch_TextChanged(object? sender, EventArgs e)
+    {
+      _applySearch?.Invoke(txtSearch.Texts);
     }
 
     private void btnClose_Click(object sender, EventArgs e)

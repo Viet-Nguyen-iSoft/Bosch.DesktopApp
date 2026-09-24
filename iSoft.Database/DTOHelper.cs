@@ -224,6 +224,7 @@ namespace iSoft.Database
             Group = e.ProductGroup?.Name,
             Code = e.Code,
             Name = e.Name,
+            WasteType = EnumHelper.GetDescription(e.EnumWasteType),
             Description = e.Description,
             UpdatedAt = e?.UpdatedAt != null ? (((DateTime)e?.UpdatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? "") :
                                               (((DateTime)e?.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? ""),

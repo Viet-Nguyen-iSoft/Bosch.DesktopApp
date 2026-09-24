@@ -96,63 +96,55 @@ namespace LTP.Truck.Forms
 
     public async Task LoadData(EnumTypeMasterData enumTypeMaster)
     {
-      _enumTypeMasterDataCurrent = enumTypeMaster;
-      string searchKey = txtSearch.Texts.Trim();
-      switch (enumTypeMaster)
+      try
       {
-        case EnumTypeMasterData.Client:
-          var rsClient = await AppCore.Ins._clientService.GetAllAsync();
-          var dtoClient = DTOHelper.ConvertClientDTO(rsClient);
-          SetDgv(enumTypeMaster, FilterBySearchKey(dtoClient, searchKey));
-          break;
-        case EnumTypeMasterData.TypeGoods:
-          var rsTypeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync();
-          var dtoTypeGoods = DTOHelper.ConvertTypeGoodsDTO(rsTypeGoods);
-          SetDgv(enumTypeMaster, FilterBySearchKey(dtoTypeGoods, searchKey));
-          break;
-        case EnumTypeMasterData.Warehouse:
-          var rsWarehouse = await AppCore.Ins._warehouseService.GetAllAsync();
-          var dtoWarehouse = DTOHelper.ConvertWareHouseDTO(rsWarehouse);
-          SetDgv(enumTypeMaster, FilterBySearchKey(dtoWarehouse, searchKey));
-          break;
-        case EnumTypeMasterData.Tare:
-          var rsTare = await AppCore.Ins._categoryTareService.GetAllAsync();
-          var dtoTare = DTOHelper.ConvertCategoryTareDTO(rsTare);
-          SetDgv(enumTypeMaster, FilterBySearchKey(dtoTare, searchKey));
-          break;
-        case EnumTypeMasterData.GroupProduct:
-          var rsGroupProduct = await AppCore.Ins._productGroupService.GetAllAsync();
-          var dtoGroupProduct = DTOHelper.ConvertProductGroupDTO(rsGroupProduct);
-          SetDgv(enumTypeMaster, FilterBySearchKey(dtoGroupProduct, searchKey));
-          break;
-        case EnumTypeMasterData.Product:
-          var rsProduct = await AppCore.Ins._productService.GetAllAsync();
-          var dtoProduct = DTOHelper.ConvertProductDTO(rsProduct);
-          SetDgv(enumTypeMaster, FilterBySearchKey(dtoProduct, searchKey));
-          break;
-        default:
-          break;
+        _enumTypeMasterDataCurrent = enumTypeMaster;
+        string searchKey = txtSearch.Texts.Trim();
+        switch (enumTypeMaster)
+        {
+          case EnumTypeMasterData.Client:
+            var rsClient = await AppCore.Ins._clientService.GetAllAsync();
+            var dtoClient = DTOHelper.ConvertClientDTO(rsClient);
+            SetDgv(enumTypeMaster, FilterBySearchKey(dtoClient, searchKey));
+            break;
+          case EnumTypeMasterData.TypeGoods:
+            var rsTypeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync();
+            var dtoTypeGoods = DTOHelper.ConvertTypeGoodsDTO(rsTypeGoods);
+            SetDgv(enumTypeMaster, FilterBySearchKey(dtoTypeGoods, searchKey));
+            break;
+          case EnumTypeMasterData.Warehouse:
+            var rsWarehouse = await AppCore.Ins._warehouseService.GetAllAsync();
+            var dtoWarehouse = DTOHelper.ConvertWareHouseDTO(rsWarehouse);
+            SetDgv(enumTypeMaster, FilterBySearchKey(dtoWarehouse, searchKey));
+            break;
+          case EnumTypeMasterData.Tare:
+            var rsTare = await AppCore.Ins._categoryTareService.GetAllAsync();
+            var dtoTare = DTOHelper.ConvertCategoryTareDTO(rsTare);
+            SetDgv(enumTypeMaster, FilterBySearchKey(dtoTare, searchKey));
+            break;
+          case EnumTypeMasterData.GroupProduct:
+            var rsGroupProduct = await AppCore.Ins._productGroupService.GetAllAsync();
+            var dtoGroupProduct = DTOHelper.ConvertProductGroupDTO(rsGroupProduct);
+            SetDgv(enumTypeMaster, FilterBySearchKey(dtoGroupProduct, searchKey));
+            break;
+          case EnumTypeMasterData.Product:
+            var rsProduct = await AppCore.Ins._productService.GetAllAsync();
+            var dtoProduct = DTOHelper.ConvertProductDTO(rsProduct);
+            SetDgv(enumTypeMaster, FilterBySearchKey(dtoProduct, searchKey));
+            break;
+          default:
+            break;
+        }
+      }
+      catch (Exception ex)
+      {
+
       }
     }
 
     private static List<T> FilterBySearchKey<T>(List<T>? values, string searchKey)
     {
-      if (values == null)
-        return new List<T>();
-
-      if (string.IsNullOrWhiteSpace(searchKey))
-        return values;
-
-      var searchableProperties = TypeDescriptor.GetProperties(typeof(T))
-        .Cast<PropertyDescriptor>()
-        .Where(property => property.IsBrowsable)
-        .ToArray();
-
-      return values.Where(item => searchableProperties.Any(property =>
-      {
-        string? value = property.GetValue(item)?.ToString();
-        return value?.Contains(searchKey, StringComparison.CurrentCultureIgnoreCase) == true;
-      })).ToList();
+      return TextSearchHelper.FilterBrowsableProperties(values, searchKey);
     }
 
     private async void btnSearch_Click(object sender, EventArgs e)
@@ -267,6 +259,7 @@ namespace LTP.Truck.Forms
         Name = product.Name ?? string.Empty,
         Description = product.Description,
         ProductGroupId = productGroupId,
+        WasteType = (int)product.EnumWasteType,
         DeletedFlag = product.DeletedFlag,
       };
     }
@@ -599,6 +592,7 @@ namespace LTP.Truck.Forms
           nameof(ProductDTO.UpdatedAt),
           nameof(ProductDTO.Group),
           nameof(ProductDTO.Code),
+          nameof(ProductDTO.WasteType),
         };
         foreach (var columnName in autoSizeColumns)
         {

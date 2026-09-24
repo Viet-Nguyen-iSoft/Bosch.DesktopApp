@@ -62,6 +62,11 @@ namespace ApiSyncData
           l.Code = s.SerialCode;
           l.Description = s.Description;
           l.ProductGroupId = localGroupId;
+          if (s.WasteType.HasValue &&
+              Enum.IsDefined(typeof(iSoft.Database.EnumData.EnumWasteType), s.WasteType.Value))
+          {
+            l.EnumWasteType = (iSoft.Database.EnumData.EnumWasteType)s.WasteType.Value;
+          }
         }, token,
         async db =>
         {

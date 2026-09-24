@@ -1,8 +1,10 @@
 using Common;
+using HelperManager;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using static Common.EnumData;
+using static iSoft.Database.EnumData;
 using static LTP.Truck.EnumData;
 
 namespace LTP.Truck.MasterData
@@ -23,6 +25,14 @@ namespace LTP.Truck.MasterData
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += BtnClose_Click;
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
+
+      cbbType.DisplayMember = "Value";
+      cbbType.ValueMember = "Key";
+      cbbType.DataSource = Enum.GetValues<EnumWasteType>()
+        .ToDictionary(value => value, value => EnumHelper.GetDescription(value))
+        .ToList();
+      cbbType.SelectedIndex = -1;
     }
 
     public PopupProduct(Product product) : this()
@@ -34,6 +44,9 @@ namespace LTP.Truck.MasterData
       txtCode.Texts = product.Code ?? string.Empty;
       txtName.Texts = product.Name ?? string.Empty;
       txtDescription.Texts = product.Description ?? string.Empty;
+
+      if (Enum.IsDefined(typeof(EnumWasteType), product.EnumWasteType))
+        cbbType.SelectedValue = product.EnumWasteType;
     }
 
     private async void PopupProduct_Load(object? sender, EventArgs e)
@@ -84,6 +97,13 @@ namespace LTP.Truck.MasterData
           return;
         }
 
+        if ((cbbType.SelectedIndex == 0)|| (cbbType.SelectedValue is not EnumWasteType selectedWasteType))
+        {
+          ShowWarning("Vui lòng chọn loại phế phẩm !");
+          cbbType.Focus();
+          return;
+        }
+
         if (cbbProductGroup.SelectedItem is not ProductGroup selectedProductGroup)
         {
           ShowWarning("Vui lòng chọn nhóm phế phẩm !");
@@ -122,6 +142,7 @@ namespace LTP.Truck.MasterData
         product.Code = txtCode.Texts.Trim();
         product.Description = txtDescription.Texts.Trim();
         product.ProductGroupId = selectedProductGroup.Id;
+        product.EnumWasteType = selectedWasteType;
 
         var result = await _productService.AddOrUpdateAsync(product);
 

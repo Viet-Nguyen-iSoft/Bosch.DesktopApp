@@ -59,6 +59,8 @@ namespace iSoft.Database
 
     public enum EnumWasteType
     {
+      [Description("Chọn")]
+      None,
       [Description("Nguy hiểm")]
       Hazardous = 1,
       [Description("Không thể tái chế")]

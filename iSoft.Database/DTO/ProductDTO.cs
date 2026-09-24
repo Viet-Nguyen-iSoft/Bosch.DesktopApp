@@ -18,11 +18,17 @@ namespace iSoft.Database.DTO
     public int? No { get; set; }
     [DisplayName("Nhóm")]
     public string? Group { get; set; }
+
+    [DisplayName("Loại phế phẩm")]
+    public string? WasteType { get; set; }
+
     [DisplayName("Mã")]
     public string? Code { get; set; }
 
     [DisplayName("Tên sản phẩm")]
     public string? Name { get; set; }
+
+    
 
     [DisplayName("Mô tả")]
     public string? Description { get; set; }

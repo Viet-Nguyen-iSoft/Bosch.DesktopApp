@@ -82,6 +82,11 @@ namespace iSoft.Database.DbContexts
         .HasIndex(record => new { record.SyncFlag, record.CreatedAt })
         .HasDatabaseName("IX_RecordWeights_PendingSync");
 
+      modelBuilder.Entity<Product>()
+        .Property(product => product.EnumWasteType)
+        .HasConversion<int>()
+        .HasDefaultValue((EnumData.EnumWasteType)0);
+
       modelBuilder.Entity<Connection>()
         .HasIndex(connection => new
         {
