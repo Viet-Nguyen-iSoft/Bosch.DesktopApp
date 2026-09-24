@@ -1380,7 +1380,7 @@ namespace LTP.Truck.Forms
 
         //Đồng bộ pdf
         string pathPdf = Path.Combine(Application.StartupPath + "Report", $"{record.Id.ToString().Replace("-", "").Replace(" ", "")}.pdf");
-        if (!File.Exists(pathPdf))
+        if (File.Exists(pathPdf))
         {
           await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
         }
