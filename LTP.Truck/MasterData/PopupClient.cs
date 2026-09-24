@@ -86,6 +86,7 @@ namespace LTP.Truck.MasterData
           string clientName = txtName.Texts.Trim();
           var clients = await _clientService.GetAllAsync(IsContainDelete: true);
           bool isDuplicateName = clients.Any(client =>
+            !client.DeletedFlag &&
             string.Equals(client.Name?.Trim(), clientName,
               StringComparison.CurrentCultureIgnoreCase));
 

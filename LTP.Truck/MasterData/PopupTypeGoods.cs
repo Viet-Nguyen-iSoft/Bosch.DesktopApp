@@ -95,6 +95,7 @@ namespace LTP.Truck.MasterData
           string typeGoodsCode = txtCode.Texts.Trim();
           var typeGoodsList = await _typeGoodsService.GetAllAsync(IsContainDelete: true);
           bool isDuplicateCode = typeGoodsList.Any(typeGoods =>
+            !typeGoods.DeletedFlag &&
             string.Equals(typeGoods.Code?.Trim(), typeGoodsCode,
               StringComparison.CurrentCultureIgnoreCase));
 

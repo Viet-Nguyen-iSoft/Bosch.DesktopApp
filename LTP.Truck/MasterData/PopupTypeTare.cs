@@ -117,6 +117,7 @@ namespace LTP.Truck.MasterData
           string categoryTareCode = txtCode.Texts.Trim();
           var categoryTares = await _categoryTareService.GetAllAsync(IsContainDelete: true);
           bool isDuplicateCode = categoryTares.Any(categoryTare =>
+            !categoryTare.DeletedFlag &&
             string.Equals(categoryTare.Code?.Trim(), categoryTareCode,
               StringComparison.CurrentCultureIgnoreCase));
 

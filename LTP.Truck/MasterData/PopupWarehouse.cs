@@ -86,6 +86,7 @@ namespace LTP.Truck.MasterData
           string warehouseName = txtName.Texts.Trim();
           var warehouses = await _warehouseService.GetAllAsync(IsContainDelete: true);
           bool isDuplicateName = warehouses.Any(warehouse =>
+            !warehouse.DeletedFlag &&
             string.Equals(warehouse.Name?.Trim(), warehouseName,
               StringComparison.CurrentCultureIgnoreCase));
 

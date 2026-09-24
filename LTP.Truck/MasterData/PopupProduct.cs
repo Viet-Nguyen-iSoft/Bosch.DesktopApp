@@ -97,6 +97,7 @@ namespace LTP.Truck.MasterData
           string productName = txtName.Texts.Trim();
           var products = await _productService.GetAllAsync(IsContainDelete: true);
           bool isDuplicateProduct = products.Any(item =>
+            !item.DeletedFlag &&
             item.ProductGroupId == selectedProductGroup.Id &&
             string.Equals(item.Name?.Trim(), productName,
               StringComparison.CurrentCultureIgnoreCase));

@@ -83,6 +83,7 @@ namespace LTP.Truck.MasterData
           string productGroupCode = txtCode.Texts.Trim();
           var productGroups = await _productGroupService.GetAllAsync(IsContainDelete: true);
           bool isDuplicateCode = productGroups.Any(item =>
+            !item.DeletedFlag &&
             string.Equals(item.Code?.Trim(), productGroupCode,
               StringComparison.CurrentCultureIgnoreCase));
 
