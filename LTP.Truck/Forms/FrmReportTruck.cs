@@ -248,16 +248,6 @@ namespace LTP.Truck.Forms
     private async void btnExport_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      if (ucPage1.TotalRecords == 0)
-      {
-        using var popup = new PopupConfirm(
-          "Không có dữ liệu để xuất báo cáo.",
-          EnumTypeMsg.MessageManualClose,
-          EnumImageMsg.Information);
-        popup.ShowDialog(this);
-        return;
-      }
-
       var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateReport.xlsx");
       if (!File.Exists(templatePath))
       {
@@ -293,6 +283,17 @@ namespace LTP.Truck.Forms
           searchKey,
           _statusFilterIndex,
           _typeFilterIndex);
+
+        if (exportRecords.Count == 0)
+        {
+          using var popup = new PopupConfirm(
+            "Không có dữ liệu phù hợp với điều kiện lọc để xuất báo cáo.",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Information);
+          popup.ShowDialog(this);
+          return;
+        }
+
         var exportData = DTOHelper.ConvertRecordTruckDTO(exportRecords);
 
         var exporterName = AppCore.Ins._userCurrent?.DisplayName;

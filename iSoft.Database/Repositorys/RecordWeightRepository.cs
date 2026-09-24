@@ -37,43 +37,7 @@ namespace iSoft.Database.Repositorys
       DateTime toUtcExclusive,
       string? searchKey)
     {
-      var query = Context.Set<RecordWeight>()
-        .AsNoTracking()
-        .Include(record => record.Product)
-          .ThenInclude(product => product.ProductGroup)
-        .Include(record => record.CategoryTare)
-        .Include(record => record.RecordTruck)
-        .Include(record => record.User)
-        .Where(record =>
-          !record.DeletedFlag &&
-          record.CreatedAt >= fromUtc &&
-          record.CreatedAt < toUtcExclusive);
-
-      if (!string.IsNullOrWhiteSpace(searchKey))
-      {
-        query = query.Where(record =>
-          (record.Product != null && record.Product.Code != null && EF.Functions.Collate(record.Product.Code, SearchCollation).Contains(searchKey)) ||
-          (record.Product != null && record.Product.Name != null && EF.Functions.Collate(record.Product.Name, SearchCollation).Contains(searchKey)) ||
-          (record.Product != null && record.Product.ProductGroup != null &&
-            record.Product.ProductGroup.Code != null && EF.Functions.Collate(record.Product.ProductGroup.Code, SearchCollation).Contains(searchKey)) ||
-          (record.Product != null && record.Product.ProductGroup != null &&
-            record.Product.ProductGroup.Name != null && EF.Functions.Collate(record.Product.ProductGroup.Name, SearchCollation).Contains(searchKey)) ||
-          (record.CategoryTare != null && record.CategoryTare.Code != null && EF.Functions.Collate(record.CategoryTare.Code, SearchCollation).Contains(searchKey)) ||
-          (record.CategoryTare != null && record.CategoryTare.Name != null && EF.Functions.Collate(record.CategoryTare.Name, SearchCollation).Contains(searchKey)) ||
-          (record.LicensePlate != null && EF.Functions.Collate(record.LicensePlate, SearchCollation).Contains(searchKey)) ||
-          (record.RecordTruck != null && record.RecordTruck.NoLabelAuto != null &&
-            EF.Functions.Collate(record.RecordTruck.NoLabelAuto, SearchCollation).Contains(searchKey)) ||
-          (record.RecordTruck != null && record.RecordTruck.NoLabelManual != null &&
-            EF.Functions.Collate(record.RecordTruck.NoLabelManual, SearchCollation).Contains(searchKey)) ||
-          (record.RecordTruck != null && record.RecordTruck.LicensePlate != null &&
-            EF.Functions.Collate(record.RecordTruck.LicensePlate, SearchCollation).Contains(searchKey)) ||
-          (record.RecordTruck != null && record.RecordTruck.NameDriver != null &&
-            EF.Functions.Collate(record.RecordTruck.NameDriver, SearchCollation).Contains(searchKey)) ||
-          (record.RecordTruck != null && record.RecordTruck.IdCard != null &&
-            EF.Functions.Collate(record.RecordTruck.IdCard, SearchCollation).Contains(searchKey)));
-      }
-
-      return query
+      return BuildReportQuery(fromUtc, toUtcExclusive, searchKey)
         .OrderByDescending(record => record.CreatedAt)
         .ThenByDescending(record => record.Id)
         .ToListAsync();
