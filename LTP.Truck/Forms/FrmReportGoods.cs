@@ -264,15 +264,19 @@ namespace LTP.Truck.Forms
         {
           BackColor = Color.White,
           BorderStyle = BorderStyle.FixedSingle,
-          Height = 44,
+          Height = 54,
           Margin = new Padding(0, 0, 0, 8),
           Tag = false,
         };
-        var header = new Label
+        var headerPanel = new Panel
         {
           Dock = DockStyle.Top,
-          Height = 42,
+          Height = 52,
           BackColor = Color.FromArgb(218, 218, 218),
+        };
+        var header = new Label
+        {
+          Dock = DockStyle.Fill,
           Font = new Font(dgv.Font.FontFamily, 14F, FontStyle.Regular),
           ForeColor = Color.Black,
           Text = $"  ▶    {group.Key}",
@@ -280,6 +284,20 @@ namespace LTP.Truck.Forms
           Cursor = Cursors.Hand,
           Tag = group.Key,
         };
+        var exportGroupButton = new RJButton
+        {
+          Dock = DockStyle.Right,
+          Width = 160,
+          Margin = new Padding(6),
+          BackgroundColor = Color.FromArgb(0, 122, 204),
+          BorderRadius = 5,
+          BorderSize = 0,
+          Font = new Font(dgv.Font.FontFamily, 11F, FontStyle.Bold),
+          TextColor = Color.White,
+          Text = "Xuất báo cáo",
+          Cursor = Cursors.Hand,
+        };
+        exportGroupButton.FlatAppearance.BorderSize = 0;
         var detailGrid = CreateGroupDetailGrid(groupRecords);
         detailGrid.Dock = DockStyle.Fill;
         detailGrid.Visible = false;
@@ -290,13 +308,39 @@ namespace LTP.Truck.Forms
           groupPanel.Tag = expanded;
           detailGrid.Visible = expanded;
           header.Text = expanded ? $"  ▼    {header.Tag}" : $"  ▶    {header.Tag}";
-          groupPanel.Height = expanded ? 44 + detailGrid.ColumnHeadersHeight +
-            detailGrid.RowTemplate.Height * groupRecords.Count + 2 : 44;
+          groupPanel.Height = expanded ? 54 + detailGrid.ColumnHeadersHeight +
+            detailGrid.RowTemplate.Height * groupRecords.Count + 2 : 54;
         }
 
         header.Click += ToggleGroup;
+        exportGroupButton.Click += async (_, _) =>
+        {
+          using var buttonLock = ButtonExecutionScope.Enter(exportGroupButton);
+          var selectedRecords = detailGrid.Rows
+            .Cast<DataGridViewRow>()
+            .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value ?? false))
+            .Select(row => row.DataBoundItem as RecordWeightDTO)
+            .Where(record => record != null)
+            .Cast<RecordWeightDTO>()
+            .ToList();
+
+          if (selectedRecords.Count == 0)
+          {
+            using var popup = new PopupConfirm(
+              "Vui lòng chọn ít nhất một dữ liệu cần xuất báo cáo.",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+            popup.ShowDialog(this);
+            return;
+          }
+
+          await ExportRecordsAsync(selectedRecords, group.Key);
+        };
+
+        headerPanel.Controls.Add(header);
+        headerPanel.Controls.Add(exportGroupButton);
         groupPanel.Controls.Add(detailGrid);
-        groupPanel.Controls.Add(header);
+        groupPanel.Controls.Add(headerPanel);
         _licensePlateGroups.Controls.Add(groupPanel);
       }
 
@@ -330,6 +374,31 @@ namespace LTP.Truck.Forms
       };
       grid.RowTemplate.Height = dgv.RowTemplate.Height;
       ApplyGridColumnFormatting(grid);
+      foreach (DataGridViewColumn column in grid.Columns)
+        column.ReadOnly = true;
+
+      var selectedColumn = new DataGridViewCheckBoxColumn
+      {
+        Name = "Selected",
+        HeaderText = "Chọn",
+        Width = 60,
+        MinimumWidth = 60,
+        AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+        ReadOnly = true,
+        FalseValue = false,
+        TrueValue = true,
+      };
+      grid.Columns.Insert(0, selectedColumn);
+      grid.CellClick += (_, e) =>
+      {
+        if (e.RowIndex < 0 || e.ColumnIndex != selectedColumn.Index)
+          return;
+
+        var cell = grid.Rows[e.RowIndex].Cells[selectedColumn.Index];
+        cell.Value = !Convert.ToBoolean(cell.Value ?? false);
+        grid.ClearSelection();
+        grid.CurrentCell = null;
+      };
       return grid;
     }
 
@@ -448,6 +517,84 @@ namespace LTP.Truck.Forms
       finally
       {
         btnExport.Enabled = true;
+      }
+    }
+
+    private async Task ExportRecordsAsync(
+      IReadOnlyList<RecordWeightDTO> records,
+      string licensePlate)
+    {
+      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateReport.xlsx");
+      if (!File.Exists(templatePath))
+      {
+        using var popup = new PopupConfirm(
+          "Không tìm thấy file mẫu TemplateReport.xlsx.",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      var invalidFileNameChars = Path.GetInvalidFileNameChars();
+      var safeLicensePlate = new string(licensePlate
+        .Select(character => invalidFileNameChars.Contains(character) ? '_' : character)
+        .ToArray());
+      using var saveDialog = new SaveFileDialog
+      {
+        Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+        FileName = $"BaoCaoCanHang_{safeLicensePlate}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx",
+        DefaultExt = "xlsx",
+        AddExtension = true,
+        OverwritePrompt = true
+      };
+
+      if (saveDialog.ShowDialog(this) != DialogResult.OK)
+        return;
+
+      try
+      {
+        var exporterName = AppCore.Ins._userCurrent?.DisplayName;
+        if (string.IsNullOrWhiteSpace(exporterName))
+          exporterName = AppCore.Ins._userCurrent?.FullName;
+        if (string.IsNullOrWhiteSpace(exporterName))
+          exporterName = AppCore.Ins._userCurrent?.Username ?? string.Empty;
+
+        await Task.Run(() => ExportGoodsReport(
+          templatePath,
+          saveDialog.FileName,
+          records,
+          ucTimeSearchFrom.Value,
+          ucTimeSearchTo.Value,
+          exporterName));
+
+        var openExportedFile = false;
+        using (var popup = new PopupConfirm(
+          "Xuất báo cáo Excel thành công. Bạn có muốn mở file không?",
+          EnumTypeMsg.Confirm,
+          EnumImageMsg.Question))
+        {
+          popup.OnSendConfirm += (_, response) =>
+            openExportedFile = response.EnumResponsible == EnumResponsible.Confirm;
+          popup.ShowDialog(this);
+        }
+
+        if (openExportedFile)
+        {
+          Process.Start(new ProcessStartInfo
+          {
+            FileName = saveDialog.FileName,
+            UseShellExecute = true
+          });
+        }
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể xuất báo cáo Excel. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
       }
     }
 
