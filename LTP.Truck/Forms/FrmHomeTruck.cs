@@ -1091,11 +1091,18 @@ namespace LTP.Truck.Forms
           row.Cells["btnDelete"].Style.ForeColor = canModify
             ? dgv.DefaultCellStyle.ForeColor
             : Color.Gray;
-          var rowBackColor = isDeleted
-            ? Color.Tomato
-            : dgv.DefaultCellStyle.BackColor;
-          row.DefaultCellStyle.BackColor = rowBackColor;
-          row.DefaultCellStyle.SelectionBackColor = rowBackColor;
+          if (isDeleted)
+          {
+            row.DefaultCellStyle.BackColor = Color.Tomato;
+            row.DefaultCellStyle.SelectionBackColor = Color.Tomato;
+          }
+          else
+          {
+            // Để Color.Empty nhằm kế thừa màu hàng chẵn/lẻ từ AppTheme,
+            // giống DataGridView trong FrmMasterData.
+            row.DefaultCellStyle.BackColor = Color.Empty;
+            row.DefaultCellStyle.SelectionBackColor = Color.Empty;
+          }
         }
       }
 
