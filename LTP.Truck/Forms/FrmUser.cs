@@ -4,12 +4,16 @@ using iSoft.Database;
 using iSoft.Database.DTO;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
+using LTP.Truck.MasterData;
 using static Common.EnumData;
 
 namespace LTP.Truck.Forms
 {
   public partial class FrmUser : Form
   {
+    private const string EditButtonColumnName = "btnEdit";
+    private const string DeleteButtonColumnName = "btnDelete";
+    private const string ChangePasswordButtonColumnName = "btnChangePassword";
     private CancellationTokenSource? _searchDebounceCancellation;
     private int _loadVersion;
 
@@ -19,7 +23,9 @@ namespace LTP.Truck.Forms
       CustomUI();
 
       btnSearch.Click += btnSearch_Click;
+      btnAddnew.Click += btnAddnew_Click;
       txtSearch._TextChanged += txtSearch_TextChanged;
+      dgv.CellContentClick += dgv_CellContentClick;
     }
 
     #region Instance
@@ -115,6 +121,7 @@ namespace LTP.Truck.Forms
 
       dgv.DataSource = null;
       dgv.DataSource = users;
+      EnsureChangePasswordColumn();
 
       if (dgv.Columns.Contains(nameof(UserDTO.User)))
         dgv.Columns[nameof(UserDTO.User)].Visible = false;
@@ -122,9 +129,7 @@ namespace LTP.Truck.Forms
       var autoSizeColumns = new[]
       {
         nameof(UserDTO.No),
-        nameof(UserDTO.Username),
         nameof(UserDTO.EmployeeCode),
-        nameof(UserDTO.IdCardCode),
         nameof(UserDTO.UpdatedAt),
       };
 
@@ -147,10 +152,181 @@ namespace LTP.Truck.Forms
       dgv.CurrentCell = null;
     }
 
+    private void EnsureChangePasswordColumn()
+    {
+      if (!dgv.Columns.Contains(ChangePasswordButtonColumnName))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = ChangePasswordButtonColumnName,
+          HeaderText = string.Empty,
+          Text = "Đổi mật khẩu",
+          UseColumnTextForButtonValue = true,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 160,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+
+      if (!dgv.Columns.Contains(EditButtonColumnName))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = EditButtonColumnName,
+          HeaderText = string.Empty,
+          Text = "Chỉnh sửa",
+          UseColumnTextForButtonValue = true,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 130,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+
+      if (!dgv.Columns.Contains(DeleteButtonColumnName))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = DeleteButtonColumnName,
+          HeaderText = string.Empty,
+          Text = "Xóa",
+          UseColumnTextForButtonValue = true,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 100,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+
+      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 3;
+      dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
+      dgv.Columns[ChangePasswordButtonColumnName].DisplayIndex =
+        dgv.Columns.Count - 1;
+    }
+
+    private async void dgv_CellContentClick(
+      object? sender,
+      DataGridViewCellEventArgs e)
+    {
+      if (e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not UserDTO row ||
+          row.User == null)
+      {
+        return;
+      }
+
+      string columnName = dgv.Columns[e.ColumnIndex].Name;
+      try
+      {
+        dgv.Enabled = false;
+
+        if (columnName == EditButtonColumnName)
+          await EditUserAsync(row.User);
+        else if (columnName == DeleteButtonColumnName)
+          await DeleteUserAsync(row.User);
+        else if (columnName == ChangePasswordButtonColumnName)
+          await ChangePasswordAsync(row.User);
+      }
+      finally
+      {
+        dgv.Enabled = true;
+      }
+    }
+
+    private async Task EditUserAsync(iSoft.Database.Models.User user)
+    {
+      bool isUpdated = false;
+      using var popup = new PopupUser(user);
+
+      popup.OnSendSuccess += _ => isUpdated = true;
+      popup.ShowDialog(this);
+
+      if (!isUpdated)
+        return;
+
+      await LoadData();
+      ShowSuccess("Cập nhật tài khoản thành công.");
+    }
+
+    private async Task DeleteUserAsync(iSoft.Database.Models.User user)
+    {
+      bool isConfirmed = false;
+      using (var confirmPopup = new PopupConfirm(
+        $"Bạn có chắc chắn muốn xóa tài khoản {user.Username} không?",
+        EnumTypeMsg.Confirm,
+        EnumImageMsg.Warning,
+        user))
+      {
+        confirmPopup.OnSendConfirm += (_, _) => isConfirmed = true;
+        confirmPopup.ShowDialog(this);
+      }
+
+      if (!isConfirmed)
+        return;
+
+      try
+      {
+        await AppCore.Ins._userService.DeleteAsync(user);
+        await LoadData();
+        ShowSuccess("Xóa tài khoản thành công.");
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var errorPopup = new PopupConfirm(
+          "Xóa tài khoản thất bại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        errorPopup.ShowDialog(this);
+      }
+    }
+
+    private async Task ChangePasswordAsync(iSoft.Database.Models.User user)
+    {
+      bool isUpdated = false;
+      using var popup = new PopupUser(user, isChangePassword: true);
+
+      popup.OnSendSuccess += _ => isUpdated = true;
+      popup.ShowDialog(this);
+
+      if (!isUpdated)
+        return;
+
+      await LoadData();
+      ShowSuccess("Cập nhật mật khẩu thành công.");
+    }
+
+    private void ShowSuccess(string message)
+    {
+      using var successPopup = new PopupConfirm(
+        message,
+        EnumTypeMsg.MessageAutoClose,
+        EnumImageMsg.Information);
+      successPopup.ShowDialog(this);
+    }
+
     private async void btnSearch_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await LoadData();
+    }
+
+    private async void btnAddnew_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      bool isAdded = false;
+      using var popup = new PopupUser();
+
+      popup.OnSendSuccess += _ => isAdded = true;
+      popup.ShowDialog(this);
+
+      if (!isAdded)
+        return;
+
+      await LoadData();
+      ShowSuccess("Thêm tài khoản thành công.");
     }
 
     private async void txtSearch_TextChanged(object? sender, EventArgs e)

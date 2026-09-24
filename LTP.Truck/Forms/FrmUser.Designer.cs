@@ -28,9 +28,9 @@
     /// </summary>
     private void InitializeComponent()
     {
-      DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
       tableLayoutPanel7 = new TableLayoutPanel();
       dgv = new DataGridView();
       tableLayoutPanel10 = new TableLayoutPanel();
@@ -38,6 +38,7 @@
       txtSearch = new LTP.Truck.Custom.RJTextBox();
       btnSearch = new LTP.Truck.Custom.RJButton();
       label27 = new Label();
+      btnAddnew = new LTP.Truck.Custom.RJButton();
       tableLayoutPanel7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel10.SuspendLayout();
@@ -70,35 +71,35 @@
       dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
       dgv.BackgroundColor = Color.FromArgb(236, 236, 236);
       dgv.BorderStyle = BorderStyle.None;
-      dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle4.BackColor = SystemColors.Control;
-      dataGridViewCellStyle4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = SystemColors.Control;
+      dataGridViewCellStyle1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle5.BackColor = SystemColors.Window;
-      dataGridViewCellStyle5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle5.ForeColor = SystemColors.ControlText;
-      dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
-      dgv.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle2.BackColor = SystemColors.Window;
+      dataGridViewCellStyle2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+      dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+      dgv.DefaultCellStyle = dataGridViewCellStyle2;
       dgv.EnableHeadersVisualStyles = false;
       dgv.Location = new Point(3, 113);
       dgv.Name = "dgv";
       dgv.ReadOnly = true;
-      dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = SystemColors.Control;
-      dataGridViewCellStyle6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = SystemColors.Control;
+      dataGridViewCellStyle3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.Size = new Size(1224, 471);
@@ -107,15 +108,16 @@
       // tableLayoutPanel10
       // 
       tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel10.ColumnCount = 4;
+      tableLayoutPanel10.ColumnCount = 5;
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearch, 1, 0);
-      tableLayoutPanel10.Controls.Add(btnSearch, 3, 0);
+      tableLayoutPanel10.Controls.Add(btnSearch, 4, 0);
+      tableLayoutPanel10.Controls.Add(btnAddnew, 3, 0);
       tableLayoutPanel10.Location = new Point(0, 50);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -156,7 +158,7 @@
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(646, 38);
+      txtSearch.Size = new Size(506, 38);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;
@@ -199,6 +201,30 @@
       label27.Text = "Danh sách tài khoản";
       label27.TextAlign = ContentAlignment.MiddleLeft;
       // 
+      // btnAddnew
+      // 
+      btnAddnew.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnAddnew.BackColor = Color.FromArgb(64, 107, 177);
+      btnAddnew.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnAddnew.BorderColor = Color.White;
+      btnAddnew.BorderRadius = 5;
+      btnAddnew.BorderSize = 0;
+      btnAddnew.FlatAppearance.BorderColor = Color.White;
+      btnAddnew.FlatAppearance.BorderSize = 0;
+      btnAddnew.FlatStyle = FlatStyle.Flat;
+      btnAddnew.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnAddnew.ForeColor = Color.White;
+      btnAddnew.Image = Properties.Resources.icon_add_new;
+      btnAddnew.ImageAlign = ContentAlignment.MiddleLeft;
+      btnAddnew.Location = new Point(832, 3);
+      btnAddnew.Name = "btnAddnew";
+      btnAddnew.Padding = new Padding(10, 0, 0, 0);
+      btnAddnew.Size = new Size(194, 54);
+      btnAddnew.TabIndex = 29;
+      btnAddnew.Text = "Thêm mới";
+      btnAddnew.TextColor = Color.White;
+      btnAddnew.UseVisualStyleBackColor = false;
+      // 
       // FrmUser
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -224,5 +250,6 @@
     private Custom.RJTextBox txtSearch;
     private Custom.RJButton btnSearch;
     private Label label27;
+    private Custom.RJButton btnAddnew;
   }
 }

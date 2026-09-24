@@ -252,7 +252,6 @@ namespace iSoft.Database
           DisplayName = e.DisplayName,
           Username = e.Username,
           EmployeeCode = e.EmployeeCode,
-          IdCardCode = e.IdCardCode,
           UpdatedAt = (e.UpdatedAt ?? e.CreatedAt)?.AddHours(utc)
             .ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
         })

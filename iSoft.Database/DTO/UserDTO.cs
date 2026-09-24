@@ -23,9 +23,6 @@ namespace iSoft.Database.DTO
     [DisplayName("Mã nhân viên")]
     public string? EmployeeCode { get; set; }
 
-    [DisplayName("CCCD/CMND")]
-    public string? IdCardCode { get; set; }
-
     [DisplayName("Cập nhật")]
     public string? UpdatedAt { get; set; }
   }
