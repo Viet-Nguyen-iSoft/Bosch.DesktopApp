@@ -199,10 +199,12 @@ namespace LTP.Truck.Forms
         });
       }
 
-      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 3;
-      dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
+      // Đặt từ cột cuối ngược về trước để DataGridView không dịch
+      // một cột dữ liệu chen vào giữa các cột thao tác.
       dgv.Columns[ChangePasswordButtonColumnName].DisplayIndex =
         dgv.Columns.Count - 1;
+      dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
+      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 3;
     }
 
     private async void dgv_CellContentClick(
