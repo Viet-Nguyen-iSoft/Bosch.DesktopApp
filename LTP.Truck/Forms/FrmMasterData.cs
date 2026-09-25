@@ -25,6 +25,7 @@ namespace LTP.Truck.Forms
     private const string DeleteButtonColumnName = "btnDelete";
 
     private CancellationTokenSource? _searchDebounceCancellation;
+    private bool _isLoadingProductGroupFilter;
     private ApiJobsService _apiJobsService { get; set; } 
     private ClientService _clientService { get; set; }
     private WarehouseService _warehouseService { get; set; }
@@ -42,6 +43,11 @@ namespace LTP.Truck.Forms
 
       txtSearch._TextChanged += txtSearch_TextChanged;
       dgv.CellContentClick += dgv_CellContentClick;
+      cbbFilter.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbFilter.DisplayMember = nameof(ProductGroupFilterItem.Name);
+      cbbFilter.ValueMember = nameof(ProductGroupFilterItem.Id);
+      cbbFilter.Visible = false;
+      cbbFilter.SelectedIndexChanged += cbbFilter_SelectedIndexChanged;
     }
 
     private void RegisterService()
@@ -101,6 +107,7 @@ namespace LTP.Truck.Forms
       try
       {
         _enumTypeMasterDataCurrent = enumTypeMaster;
+        await ConfigureProductGroupFilterAsync(enumTypeMaster);
         string searchKey = txtSearch.Texts.Trim();
         switch (enumTypeMaster)
         {
@@ -131,6 +138,13 @@ namespace LTP.Truck.Forms
             break;
           case EnumTypeMasterData.Product:
             var rsProduct = await AppCore.Ins._productService.GetAllAsync();
+            Guid? productGroupId = (cbbFilter.SelectedItem as ProductGroupFilterItem)?.Id;
+            if (productGroupId.HasValue)
+            {
+              rsProduct = rsProduct
+                .Where(product => product.ProductGroupId == productGroupId.Value)
+                .ToList();
+            }
             var dtoProduct = DTOHelper.ConvertProductDTO(rsProduct);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoProduct, searchKey));
             break;
@@ -148,6 +162,50 @@ namespace LTP.Truck.Forms
 
       }
     }
+
+    private async Task ConfigureProductGroupFilterAsync(EnumTypeMasterData enumTypeMaster)
+    {
+      bool isProduct = enumTypeMaster == EnumTypeMasterData.Product;
+      cbbFilter.Visible = isProduct;
+
+      if (!isProduct)
+      {
+        if (cbbFilter.DataSource != null)
+        {
+          _isLoadingProductGroupFilter = true;
+          cbbFilter.DataSource = null;
+          _isLoadingProductGroupFilter = false;
+        }
+        return;
+      }
+
+      Guid? selectedId = (cbbFilter.SelectedItem as ProductGroupFilterItem)?.Id;
+      var productGroups = await AppCore.Ins._productGroupService.GetAllAsync();
+      var filterItems = productGroups
+        .OrderBy(group => group.Name)
+        .Select(group => new ProductGroupFilterItem(group.Id, group.Name ?? string.Empty))
+        .Prepend(new ProductGroupFilterItem(null, "Tất cả nhóm"))
+        .ToList();
+
+      _isLoadingProductGroupFilter = true;
+      cbbFilter.DataSource = filterItems;
+      cbbFilter.SelectedItem = filterItems.FirstOrDefault(item => item.Id == selectedId)
+        ?? filterItems[0];
+      _isLoadingProductGroupFilter = false;
+    }
+
+    private async void cbbFilter_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+      if (_isLoadingProductGroupFilter ||
+          _enumTypeMasterDataCurrent != EnumTypeMasterData.Product)
+      {
+        return;
+      }
+
+      await LoadData(EnumTypeMasterData.Product);
+    }
+
+    private sealed record ProductGroupFilterItem(Guid? Id, string Name);
 
     private static List<T> FilterBySearchKey<T>(List<T>? values, string searchKey)
     {
