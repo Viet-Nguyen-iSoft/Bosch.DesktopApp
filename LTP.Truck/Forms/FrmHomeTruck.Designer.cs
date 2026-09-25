@@ -104,12 +104,12 @@ namespace LTP.Truck.Forms
       label4 = new Label();
       txtSearchKey = new RJTextBox();
       label17 = new Label();
-      btnPrint = new RJButton();
       label18 = new Label();
-      btnSearchHistorical = new RJButton();
       ucTimeSearchFrom = new LTP.Truck.UserControls.UcTimeSearch();
       ucTimeSearchTo = new LTP.Truck.UserControls.UcTimeSearch();
       btnFilter = new Common.Custom.RJButton();
+      btnPrint = new RJButton();
+      btnSearchHistorical = new RJButton();
       label27 = new Label();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
@@ -292,7 +292,7 @@ namespace LTP.Truck.Forms
       lbWeightValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbWeightValue.AutoSize = true;
       lbWeightValue.BackColor = Color.Transparent;
-      lbWeightValue.Font = new Font("Roboto", 90F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbWeightValue.Font = new Font("Roboto", 120F, FontStyle.Bold);
       lbWeightValue.Location = new Point(0, 0);
       lbWeightValue.Margin = new Padding(0);
       lbWeightValue.Name = "lbWeightValue";
@@ -1423,32 +1423,6 @@ namespace LTP.Truck.Forms
       label17.Text = "Từ";
       label17.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // btnPrint
-      // 
-      btnPrint.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnPrint.BackColor = Color.FromArgb(64, 107, 177);
-      btnPrint.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnPrint.BorderColor = Color.White;
-      btnPrint.BorderRadius = 5;
-      btnPrint.BorderSize = 0;
-      btnPrint.FlatAppearance.BorderColor = Color.White;
-      btnPrint.FlatAppearance.BorderSize = 0;
-      btnPrint.FlatStyle = FlatStyle.Flat;
-      btnPrint.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnPrint.ForeColor = Color.White;
-      btnPrint.Image = Properties.Resources.icon_print;
-      btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnPrint.Location = new Point(1348, 3);
-      btnPrint.Name = "btnPrint";
-      btnPrint.Padding = new Padding(10, 0, 0, 0);
-      btnPrint.Size = new Size(174, 56);
-      btnPrint.TabIndex = 20;
-      btnPrint.Text = "       In phiếu";
-      btnPrint.TextAlign = ContentAlignment.MiddleLeft;
-      btnPrint.TextColor = Color.White;
-      btnPrint.UseVisualStyleBackColor = false;
-      btnPrint.Click += btnPrint_Click;
-      // 
       // label18
       // 
       label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -1462,32 +1436,6 @@ namespace LTP.Truck.Forms
       label18.TabIndex = 22;
       label18.Text = "đến";
       label18.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // btnSearchHistorical
-      // 
-      btnSearchHistorical.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnSearchHistorical.BackColor = Color.FromArgb(64, 107, 177);
-      btnSearchHistorical.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnSearchHistorical.BorderColor = Color.White;
-      btnSearchHistorical.BorderRadius = 5;
-      btnSearchHistorical.BorderSize = 0;
-      btnSearchHistorical.FlatAppearance.BorderColor = Color.White;
-      btnSearchHistorical.FlatAppearance.BorderSize = 0;
-      btnSearchHistorical.FlatStyle = FlatStyle.Flat;
-      btnSearchHistorical.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnSearchHistorical.ForeColor = Color.White;
-      btnSearchHistorical.Image = Properties.Resources.icon_search;
-      btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(1168, 3);
-      btnSearchHistorical.Name = "btnSearchHistorical";
-      btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
-      btnSearchHistorical.Size = new Size(174, 55);
-      btnSearchHistorical.TabIndex = 27;
-      btnSearchHistorical.Text = "       Tìm kiếm";
-      btnSearchHistorical.TextAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.TextColor = Color.White;
-      btnSearchHistorical.UseVisualStyleBackColor = false;
-      btnSearchHistorical.Click += btnSearchHistorical_Click;
       // 
       // ucTimeSearchFrom
       // 
@@ -1523,6 +1471,58 @@ namespace LTP.Truck.Forms
       btnFilter.TabIndex = 32;
       btnFilter.TextColor = Color.White;
       btnFilter.UseVisualStyleBackColor = false;
+      // 
+      // btnPrint
+      // 
+      btnPrint.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnPrint.BackColor = Color.FromArgb(64, 107, 177);
+      btnPrint.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnPrint.BorderColor = Color.White;
+      btnPrint.BorderRadius = 5;
+      btnPrint.BorderSize = 0;
+      btnPrint.FlatAppearance.BorderColor = Color.White;
+      btnPrint.FlatAppearance.BorderSize = 0;
+      btnPrint.FlatStyle = FlatStyle.Flat;
+      btnPrint.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnPrint.ForeColor = Color.White;
+      btnPrint.Image = Properties.Resources.icon_print;
+      btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
+      btnPrint.Location = new Point(1348, 3);
+      btnPrint.Name = "btnPrint";
+      btnPrint.Padding = new Padding(10, 0, 0, 0);
+      btnPrint.Size = new Size(174, 56);
+      btnPrint.TabIndex = 20;
+      btnPrint.Text = "       In phiếu";
+      btnPrint.TextAlign = ContentAlignment.MiddleLeft;
+      btnPrint.TextColor = Color.White;
+      btnPrint.UseVisualStyleBackColor = false;
+      btnPrint.Click += btnPrint_Click;
+      // 
+      // btnSearchHistorical
+      // 
+      btnSearchHistorical.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnSearchHistorical.BackColor = Color.FromArgb(64, 107, 177);
+      btnSearchHistorical.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnSearchHistorical.BorderColor = Color.White;
+      btnSearchHistorical.BorderRadius = 5;
+      btnSearchHistorical.BorderSize = 0;
+      btnSearchHistorical.FlatAppearance.BorderColor = Color.White;
+      btnSearchHistorical.FlatAppearance.BorderSize = 0;
+      btnSearchHistorical.FlatStyle = FlatStyle.Flat;
+      btnSearchHistorical.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnSearchHistorical.ForeColor = Color.White;
+      btnSearchHistorical.Image = Properties.Resources.icon_search;
+      btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
+      btnSearchHistorical.Location = new Point(1168, 3);
+      btnSearchHistorical.Name = "btnSearchHistorical";
+      btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
+      btnSearchHistorical.Size = new Size(174, 55);
+      btnSearchHistorical.TabIndex = 27;
+      btnSearchHistorical.Text = "       Tìm kiếm";
+      btnSearchHistorical.TextAlign = ContentAlignment.MiddleLeft;
+      btnSearchHistorical.TextColor = Color.White;
+      btnSearchHistorical.UseVisualStyleBackColor = false;
+      btnSearchHistorical.Click += btnSearchHistorical_Click;
       // 
       // label27
       // 
