@@ -1,6 +1,7 @@
 using iSoft.Communication.Interface;
 using iSoft.Communication.JsonPayload;
 using iSoft.Communication.Mode;
+using System.Globalization;
 using static iSoft.Communication.EnumCommunication;
 
 namespace iSoft.Communication.Communication;
@@ -98,6 +99,23 @@ public sealed class CommunicationService : ICommunicationService
 
   public void SendData(string id, string data) => GetRequiredConnection(id).SendData(data);
   public void Tare(string id) => GetRequiredConnection(id).Tare();
+  public void PresetTare(string id, double tareWeight, string unit = "kg")
+  {
+    if (double.IsNaN(tareWeight) ||
+        double.IsInfinity(tareWeight) ||
+        tareWeight < 0)
+    {
+      throw new ArgumentOutOfRangeException(
+        nameof(tareWeight),
+        "Giá trị tare phải là số lớn hơn hoặc bằng 0.");
+    }
+
+    if (string.IsNullOrWhiteSpace(unit) || unit.Any(character => !char.IsLetter(character)))
+      throw new ArgumentException("Đơn vị cân không hợp lệ.", nameof(unit));
+
+    string value = tareWeight.ToString("0.################", CultureInfo.InvariantCulture);
+    GetRequiredConnection(id).SendData($"TA {value} {unit.Trim()}\r\n");
+  }
   public void Zero(string id) => GetRequiredConnection(id).Zero();
 
   public void Dispose()

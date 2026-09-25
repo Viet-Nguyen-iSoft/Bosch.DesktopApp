@@ -88,6 +88,15 @@ namespace LTP.Truck.Controls
       _communication.Tare(ScaleId);
     }
 
+    public void SetTareWeight(double tareWeight, string unit = "kg")
+    {
+      var scaleConnection = _communication.GetConnection(ScaleId);
+      if (scaleConnection?.IsConnected != true)
+        throw new InvalidOperationException("Cân chưa được kết nối.");
+
+      _communication.PresetTare(ScaleId, tareWeight, unit);
+    }
+
     private void SubscribeCommunicationEvents()
     {
       if (_communicationEventsSubscribed)

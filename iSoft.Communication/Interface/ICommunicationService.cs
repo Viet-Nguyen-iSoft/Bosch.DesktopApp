@@ -28,6 +28,7 @@ public interface ICommunicationService : IDisposable
   void DisconnectAll();
   void SendData(string id, string data);
   void Tare(string id);
+  void PresetTare(string id, double tareWeight, string unit = "kg");
   void Zero(string id);
 }
 
