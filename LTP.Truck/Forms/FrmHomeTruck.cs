@@ -33,7 +33,6 @@ namespace LTP.Truck.Forms
     private readonly Font _deleteReasonToolTipFont = new("Segoe UI", 14F);
     private string _deleteReasonToolTipText = string.Empty;
     private int _statusFilterIndex = 1;
-    private int _typeFilterIndex;
     private int _licensePlateLookupVersion;
     private bool _isLoadingRecordFromLicensePlate;
     private bool _isViewingHistoricalDetail;
@@ -145,15 +144,14 @@ namespace LTP.Truck.Forms
 
     private void BtnFilter_Click(object? sender, EventArgs e)
     {
-      using var popupFilter = new PopupFilter(_statusFilterIndex, _typeFilterIndex);
+      using var popupFilter = new PopupFilter(_statusFilterIndex);
       popupFilter.OnSendData += PopupFilter_OnSendData;
       popupFilter.ShowDialog();
     }
 
-    private async void PopupFilter_OnSendData(int arg1, int arg2)
+    private async void PopupFilter_OnSendData(int statusIndex)
     {
-      _statusFilterIndex = arg1;
-      _typeFilterIndex = arg2;
+      _statusFilterIndex = statusIndex;
       await LoadHistorical();
     }
 
@@ -943,15 +941,13 @@ namespace LTP.Truck.Forms
       var fromUtc = fromDateTime.ToUniversalTime();
       var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
       var statusIndex = _statusFilterIndex;
-      var typeIndex = _typeFilterIndex;
       var searchKey = txtSearchKey.Texts.Trim();
 
       var records = await AppCore.Ins._recordTruckService.GetReportAsync(
         fromUtc,
         toUtcExclusive,
         searchKey,
-        statusIndex,
-        typeIndex);
+        statusIndex);
       var dto = DTOHelper.ConvertRecordTruckDTO(records);
       SetDgvHistorical(dto);
     }

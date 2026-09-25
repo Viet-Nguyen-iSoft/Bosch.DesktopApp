@@ -16,8 +16,7 @@ namespace LTP.Truck.Forms
 {
   public partial class FrmReportTruck : Form
   {
-    private int _statusFilterIndex;
-    private int _typeFilterIndex;
+    private int _statusFilterIndex = 1;
     private bool _isLoadingPage;
 
     public FrmReportTruck()
@@ -90,15 +89,14 @@ namespace LTP.Truck.Forms
 
     private void btnFilter_Click(object? sender, EventArgs e)
     {
-      using var popupFilter = new PopupFilter(_statusFilterIndex, _typeFilterIndex);
+      using var popupFilter = new PopupFilter(_statusFilterIndex);
       popupFilter.OnSendData += PopupFilter_OnSendData;
       popupFilter.ShowDialog(this);
     }
 
-    private async void PopupFilter_OnSendData(int statusIndex, int typeIndex)
+    private async void PopupFilter_OnSendData(int statusIndex)
     {
       _statusFilterIndex = statusIndex;
-      _typeFilterIndex = typeIndex;
       await LoadHistorical(resetPage: true);
     }
 
@@ -144,7 +142,6 @@ namespace LTP.Truck.Forms
           toUtcExclusive,
           searchKey,
           _statusFilterIndex,
-          _typeFilterIndex,
           pageNumber,
           pageSize);
 
@@ -284,8 +281,7 @@ namespace LTP.Truck.Forms
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
           searchKey,
-          _statusFilterIndex,
-          _typeFilterIndex);
+          _statusFilterIndex);
 
         if (exportRecords.Count == 0)
         {

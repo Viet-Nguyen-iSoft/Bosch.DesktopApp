@@ -13,20 +13,18 @@ namespace LTP.Truck.Forms
 {
   public partial class PopupFilter : Form
   {
-    public event Action<int, int>? OnSendData;
+    public event Action<int>? OnSendData;
     public int StatusIndex => cbbStatus.SelectedIndex;
-    public int TypeIndex => cbbType.SelectedIndex;
 
-    public PopupFilter() : this(1, 0)
+    public PopupFilter() : this(1)
     {
     }
 
-    public PopupFilter(int statusIndex, int typeIndex)
+    public PopupFilter(int statusIndex)
     {
       InitializeComponent();
 
       cbbStatus.SelectedIndex = NormalizeIndex(statusIndex, cbbStatus.Items.Count);
-      cbbType.SelectedIndex = NormalizeIndex(typeIndex, cbbType.Items.Count);
       btnConfirm.Click += btnConfirm_Click;
       btnClose.Click += btnClose_Click;
       AcceptButton = btnConfirm;
@@ -38,7 +36,7 @@ namespace LTP.Truck.Forms
 
     private void btnConfirm_Click(object? sender, EventArgs e)
     {
-      OnSendData?.Invoke(StatusIndex, TypeIndex);
+      OnSendData?.Invoke(StatusIndex);
       Close();
     }
 

@@ -35,15 +35,13 @@ namespace iSoft.Database.Repositorys
       DateTime fromUtc,
       DateTime toUtcExclusive,
       string? searchKey,
-      int statusFilterIndex = 0,
-      int typeFilterIndex = 0)
+      int statusFilterIndex = 0)
     {
       return BuildReportQuery(
           fromUtc,
           toUtcExclusive,
           searchKey,
-          statusFilterIndex,
-          typeFilterIndex)
+          statusFilterIndex)
         .OrderBy(record => record.CreatedAt)
         .ThenBy(record => record.Id)
         .ToListAsync();
@@ -54,7 +52,6 @@ namespace iSoft.Database.Repositorys
       DateTime toUtcExclusive,
       string? searchKey,
       int statusFilterIndex,
-      int typeFilterIndex,
       int pageNumber,
       int pageSize)
     {
@@ -65,8 +62,7 @@ namespace iSoft.Database.Repositorys
         fromUtc,
         toUtcExclusive,
         searchKey,
-        statusFilterIndex,
-        typeFilterIndex);
+        statusFilterIndex);
       var totalRecords = await query.CountAsync();
       var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
       pageNumber = Math.Min(pageNumber, totalPages);
@@ -84,8 +80,7 @@ namespace iSoft.Database.Repositorys
       DateTime fromUtc,
       DateTime toUtcExclusive,
       string? searchKey,
-      int statusFilterIndex,
-      int typeFilterIndex)
+      int statusFilterIndex)
     {
       var query = Context.Set<RecordTruck>()
         .AsNoTracking()
@@ -96,21 +91,16 @@ namespace iSoft.Database.Repositorys
         .Include(record => record.Station)
         .Where(record => record.UpdatedAt >= fromUtc && record.UpdatedAt < toUtcExclusive);
 
-      query = typeFilterIndex switch
-      {
-        1 => query.Where(record => !record.DeletedFlag),
-        2 => query.Where(record => record.DeletedFlag),
-        _ => query
-      };
-
       query = statusFilterIndex switch
       {
         1 => query.Where(record =>
-          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime01 ||
-          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime01 ||
-          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime02),
+          !record.DeletedFlag &&
+          (record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime01 ||
+           record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime01 ||
+           record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime02)),
         2 => query.Where(record =>
-          record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime02),
+          !record.DeletedFlag && record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime02),
+        3 => query.Where(record => record.DeletedFlag),
         _ => query
       };
 

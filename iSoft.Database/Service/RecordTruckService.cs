@@ -42,8 +42,7 @@ namespace iSoft.Database.Service
       DateTime fromUtc,
       DateTime toUtcExclusive,
       string? searchKey,
-      int statusFilterIndex = 0,
-      int typeFilterIndex = 0)
+      int statusFilterIndex = 0)
     {
       await using var context = new MySqlDbContext();
       var repository = new RecordTruckRepository(context);
@@ -51,8 +50,7 @@ namespace iSoft.Database.Service
         fromUtc,
         toUtcExclusive,
         searchKey,
-        statusFilterIndex,
-        typeFilterIndex).ConfigureAwait(false);
+        statusFilterIndex).ConfigureAwait(false);
     }
 
     public async Task<(List<RecordTruck> Records, int TotalRecords)> GetReportPageAsync(
@@ -60,7 +58,6 @@ namespace iSoft.Database.Service
       DateTime toUtcExclusive,
       string? searchKey,
       int statusFilterIndex,
-      int typeFilterIndex,
       int pageNumber,
       int pageSize)
     {
@@ -71,7 +68,6 @@ namespace iSoft.Database.Service
         toUtcExclusive,
         searchKey,
         statusFilterIndex,
-        typeFilterIndex,
         pageNumber,
         pageSize).ConfigureAwait(false);
     }
