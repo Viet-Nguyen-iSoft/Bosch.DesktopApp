@@ -25,8 +25,7 @@ namespace LTP.Truck.Forms
       flowCommWeight.FlowDirection = FlowDirection.LeftToRight;
       flowCommWeight.WrapContents = false;
       this.Load += FrmSetting_Load;
-      btnSavePrintA4.Click += btnSavePrintA4_Click;
-      btnSavePrintLabel.Click += BtnSavePrintLabel_Click;
+      btnSavePrint.Click += btnSavePrint_Click;
       btnSaveStation.Click += btnSaveStation_Click;
       btnAddCommWeight.Click += btnAddCommWeight_Click;
       txtPortServer.KeyPress += NonNegativeInteger_KeyPress;
@@ -37,43 +36,6 @@ namespace LTP.Truck.Forms
       txtValueWeightPermit._TextChanged += NonNegativeDecimal_TextChanged;
 
       btnSaveValueWeightGoodsCheckPermitConfirm.Click += btnSaveValueWeightGoodsCheckPermitConfirm_Click;
-    }
-
-    private async void BtnSavePrintLabel_Click(object? sender, EventArgs e)
-    {
-      using var buttonLock = ButtonExecutionScope.Enter(sender);
-      if (cbbPrintLabel.SelectedItem is not string printerName ||
-        string.IsNullOrWhiteSpace(printerName))
-      {
-        PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn máy in !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupConfirm.ShowDialog();
-        return;
-      }
-
-      var appConfig = AppCore.Ins._appConfig;
-      if (appConfig == null)
-      {
-        PopupConfirm popupConfirm = new PopupConfirm("Không tìm thấy cấu hình ứng dụng !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupConfirm.ShowDialog();
-        return;
-      }
-
-      try
-      {
-        appConfig.NamePrintLabel = printerName;
-        appConfig.UpdatedAt = DateTime.UtcNow;
-        AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
-          .AddOrUpdateAsync(appConfig);
-
-        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu thông tin máy in nhãn thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-        popupConfirm.ShowDialog();
-      }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        PopupConfirm popupConfirm = new PopupConfirm("Không thể lưu thông tin máy in nhãn. Vui lòng thử lại !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupConfirm.ShowDialog();
-      }
     }
 
     private static void NonNegativeInteger_KeyPress(object? sender, KeyPressEventArgs e)
@@ -155,7 +117,7 @@ namespace LTP.Truck.Forms
 
       ElipseControl elipseControl02 = new ElipseControl();
       elipseControl02.CornerRadius = 20;
-      elipseControl02.TargetControl = tableLayoutPanel3;
+      elipseControl02.TargetControl = this.tableLayoutPanel14;
 
       ElipseControl elipseControl03 = new ElipseControl();
       elipseControl03.CornerRadius = 20;
@@ -184,6 +146,10 @@ namespace LTP.Truck.Forms
       ElipseControl elipseControl09 = new ElipseControl();
       elipseControl09.CornerRadius = 20;
       elipseControl09.TargetControl = tableLayoutPanel25;
+
+      //ElipseControl elipseControl10 = new ElipseControl();
+      //elipseControl10.CornerRadius = 20;
+      //elipseControl10.TargetControl = tableLayoutPanel3;
     }
 
     private async void FrmSetting_Load(object? sender, EventArgs e)
@@ -217,12 +183,12 @@ namespace LTP.Truck.Forms
       if (station == "1")
       {
         tableLayoutPanel16.Visible = true;
-        tableLayoutPanel22.Visible = false;
+        tableLayoutPanel25.Visible = false;
       }
       else
       {
         tableLayoutPanel16.Visible = false;
-        tableLayoutPanel22.Visible = true;
+        tableLayoutPanel25.Visible = true;
       }
     }
 
@@ -415,13 +381,21 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void btnSavePrintA4_Click(object? sender, EventArgs e)
+    private async void btnSavePrint_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      if (cbbPrintA4.SelectedItem is not string printerName ||
-        string.IsNullOrWhiteSpace(printerName))
+      if (cbbPrintA4.SelectedItem is not string printerNameA4 ||
+        string.IsNullOrWhiteSpace(printerNameA4))
       {
-        PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn máy in !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn máy in A4 !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
+        return;
+      }
+
+      if (cbbPrintLabel.SelectedItem is not string printerNameLabel ||
+        string.IsNullOrWhiteSpace(printerNameLabel))
+      {
+        PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn máy in A4 !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupConfirm.ShowDialog();
         return;
       }
@@ -436,18 +410,19 @@ namespace LTP.Truck.Forms
 
       try
       {
-        appConfig.NamePrintA4 = printerName;
+        appConfig.NamePrintA4 = printerNameA4;
+        appConfig.NamePrintLabel = printerNameLabel;
         appConfig.UpdatedAt = DateTime.UtcNow;
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
 
-        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu thông tin máy in A4 thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu thông tin máy in thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
         popupConfirm.ShowDialog();
       }
       catch (Exception ex)
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        PopupConfirm popupConfirm = new PopupConfirm("Không thể lưu thông tin máy in A4. Vui lòng thử lại !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        PopupConfirm popupConfirm = new PopupConfirm("Không thể lưu thông tin máy in. Vui lòng thử lại !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupConfirm.ShowDialog();
       }
     }
@@ -479,7 +454,7 @@ namespace LTP.Truck.Forms
               Tag = connection,
               Margin = new Padding(3),
               Width = Math.Max(100, flowCommWeight.ClientSize.Width - 10),
-              Height = 208
+              Height = Math.Max(200, flowCommWeight.ClientSize.Height - 10),
             };
             item.OnSendDataDetail += Item_OnSendDataDetail;
             item.OnSendDelete += Item_OnSendDelete;
