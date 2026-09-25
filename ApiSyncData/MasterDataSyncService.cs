@@ -33,6 +33,18 @@ namespace ApiSyncData
       SyncAsync<ListDatumClient, Client>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
 
+    public static Task<MasterDataChangedEventArgs?> SyncDeliveriesAsync(DeliveryAPI response, CancellationToken token = default) =>
+      SyncAsync<ListDatumDelivery, Delivery>(response.Data?.ListData, response.Data?.TotalRecord,
+        (s, l) =>
+        {
+          l.Name = s.Name;
+          l.OfficeAddress = s.OfficeAddress;
+          l.PhoneForOfficeAddress = s.PhoneForOfficeAddress;
+          l.AgentAddress = s.AgentAddress;
+          l.AgentAddressForOfficeAddress = s.AgentAddressForOfficeAddress;
+          l.Description = s.Description;
+        }, token);
+
     public static Task<MasterDataChangedEventArgs?> SyncUsersAsync(UserAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumUser, User>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) =>

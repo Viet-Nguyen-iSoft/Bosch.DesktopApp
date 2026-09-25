@@ -31,6 +31,9 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupClient));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
+      tableLayoutPanel1 = new TableLayoutPanel();
+      label15 = new Label();
+      label8 = new Label();
       txtDescription = new Common.Custom.RJTextBox();
       label4 = new Label();
       txtName = new Common.Custom.RJTextBox();
@@ -38,13 +41,10 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      tableLayoutPanel1 = new TableLayoutPanel();
-      label15 = new Label();
-      label8 = new Label();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
-      tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel1.SuspendLayout();
+      tableLayoutPanel2.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -87,6 +87,51 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
       tableLayoutPanel5.Size = new Size(608, 157);
       tableLayoutPanel5.TabIndex = 8;
+      // 
+      // tableLayoutPanel1
+      // 
+      tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel1.ColumnCount = 2;
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel1.Controls.Add(label15, 1, 0);
+      tableLayoutPanel1.Controls.Add(label8, 0, 0);
+      tableLayoutPanel1.Location = new Point(0, 0);
+      tableLayoutPanel1.Margin = new Padding(0);
+      tableLayoutPanel1.Name = "tableLayoutPanel1";
+      tableLayoutPanel1.RowCount = 1;
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel1.Size = new Size(150, 78);
+      tableLayoutPanel1.TabIndex = 34;
+      // 
+      // label15
+      // 
+      label15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label15.AutoSize = true;
+      label15.BackColor = Color.Transparent;
+      label15.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label15.ForeColor = Color.Red;
+      label15.Location = new Point(41, 0);
+      label15.Margin = new Padding(0);
+      label15.Name = "label15";
+      label15.Size = new Size(109, 78);
+      label15.TabIndex = 4;
+      label15.Text = "*";
+      label15.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label8
+      // 
+      label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label8.AutoSize = true;
+      label8.BackColor = Color.Transparent;
+      label8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label8.Location = new Point(0, 0);
+      label8.Margin = new Padding(0);
+      label8.Name = "label8";
+      label8.Size = new Size(41, 78);
+      label8.TabIndex = 3;
+      label8.Text = "Tên";
+      label8.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtDescription
       // 
@@ -225,51 +270,6 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // tableLayoutPanel1
-      // 
-      tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel1.ColumnCount = 2;
-      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel1.Controls.Add(label15, 1, 0);
-      tableLayoutPanel1.Controls.Add(label8, 0, 0);
-      tableLayoutPanel1.Location = new Point(0, 0);
-      tableLayoutPanel1.Margin = new Padding(0);
-      tableLayoutPanel1.Name = "tableLayoutPanel1";
-      tableLayoutPanel1.RowCount = 1;
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel1.Size = new Size(150, 78);
-      tableLayoutPanel1.TabIndex = 34;
-      // 
-      // label15
-      // 
-      label15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label15.AutoSize = true;
-      label15.BackColor = Color.Transparent;
-      label15.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label15.ForeColor = Color.Red;
-      label15.Location = new Point(41, 0);
-      label15.Margin = new Padding(0);
-      label15.Name = "label15";
-      label15.Size = new Size(109, 78);
-      label15.TabIndex = 4;
-      label15.Text = "*";
-      label15.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // label8
-      // 
-      label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label8.AutoSize = true;
-      label8.BackColor = Color.Transparent;
-      label8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label8.Location = new Point(0, 0);
-      label8.Margin = new Padding(0);
-      label8.Name = "label8";
-      label8.Size = new Size(41, 78);
-      label8.TabIndex = 3;
-      label8.Text = "Tên";
-      label8.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // PopupClient
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -283,9 +283,9 @@
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel5.ResumeLayout(false);
       tableLayoutPanel5.PerformLayout();
-      tableLayoutPanel2.ResumeLayout(false);
       tableLayoutPanel1.ResumeLayout(false);
       tableLayoutPanel1.PerformLayout();
+      tableLayoutPanel2.ResumeLayout(false);
       ResumeLayout(false);
     }
 

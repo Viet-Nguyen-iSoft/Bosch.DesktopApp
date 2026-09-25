@@ -90,6 +90,32 @@ namespace ApiSyncData
       }
     }
 
+    public async Task<DeliveryAPI> Delivery(bool isContainDelete = false)
+    {
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/ClientGoods/get-list-simplify?IsDeleted={isContainDelete}";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+      using var response = await httpClient.GetAsync(apiUrl).ConfigureAwait(false);
+      string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"Delivery. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
+      }
+
+      return JsonConvert.DeserializeObject<DeliveryAPI>(responseContent)
+        ?? throw new InvalidOperationException("Delivery API trả về dữ liệu không hợp lệ.");
+    }
+
     public async Task<string> UpsertWarehouseAsync(
       Req.WarehouseUpsertRequest warehouse,
       string lang = "vi",

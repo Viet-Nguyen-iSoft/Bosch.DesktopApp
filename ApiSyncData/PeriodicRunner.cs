@@ -12,6 +12,7 @@ namespace ApiSyncData
     public static Resp.ProductAPI? Products { get; private set; }
     public static Resp.CategoryTareAPI? CategoryTares { get; private set; }
     public static Resp.ClientAPI? Clients { get; private set; }
+    public static Resp.DeliveryAPI? Deliveries { get; private set; }
     public static Resp.UserAPI? Users { get; private set; }
 
     /// <summary>
@@ -52,12 +53,16 @@ namespace ApiSyncData
 
         var clients = LoadAndSyncAsync(api.Client(), MasterDataSyncService.SyncClientsAsync,
           value => Clients = value, cancellationToken);
+
+        var deliveries = LoadAndSyncAsync(api.Delivery(), MasterDataSyncService.SyncDeliveriesAsync,
+          value => Deliveries = value, cancellationToken);
+
         var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
           value => Users = value, cancellationToken);
 
 
         await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
-          products, categoryTares, clients, users).ConfigureAwait(false);
+          products, categoryTares, clients, deliveries, users).ConfigureAwait(false);
       }
       catch (Exception ex)
       {

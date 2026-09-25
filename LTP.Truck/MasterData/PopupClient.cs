@@ -57,8 +57,8 @@ namespace LTP.Truck.MasterData
         return;
       }
 
-     txtName.Texts = client?.Name??string.Empty;
-     txtDescription.Texts = client?.Description ?? string.Empty;
+      txtName.Texts = client?.Name ?? string.Empty;
+      txtDescription.Texts = client?.Description ?? string.Empty;
     }
 
 
@@ -81,7 +81,7 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        if (_enumTypePopup == EnumTypePopup.Add )
+        if (_enumTypePopup == EnumTypePopup.Add)
         {
           string clientName = txtName.Texts.Trim();
           var clients = await _clientService.GetAllAsync(IsContainDelete: true);
@@ -107,7 +107,7 @@ namespace LTP.Truck.MasterData
 
           this.Close();
           OnSendSuccess?.Invoke(rs);
-        }  
+        }
         else if (_enumTypePopup == EnumTypePopup.Update)
         {
           _clientUpdate.Name = txtName.Texts.Trim();
