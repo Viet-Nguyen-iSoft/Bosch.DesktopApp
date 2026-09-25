@@ -31,9 +31,11 @@ namespace LTP.Truck.Forms
       txtPortServer.KeyPress += NonNegativeInteger_KeyPress;
       txtTimeoutServer.KeyPress += NonNegativeInteger_KeyPress;
       txtValueWeightPermit.KeyPress += NonNegativeDecimal_KeyPress;
+      txtValueWeightGoodsCheckPermitConfirm.KeyPress += NonNegativeDecimal_KeyPress;
       txtPortServer._TextChanged += NonNegativeInteger_TextChanged;
       txtTimeoutServer._TextChanged += NonNegativeInteger_TextChanged;
       txtValueWeightPermit._TextChanged += NonNegativeDecimal_TextChanged;
+      txtValueWeightGoodsCheckPermitConfirm._TextChanged += NonNegativeDecimal_TextChanged;
 
       btnSaveValueWeightGoodsCheckPermitConfirm.Click += btnSaveValueWeightGoodsCheckPermitConfirm_Click;
     }
@@ -163,6 +165,9 @@ namespace LTP.Truck.Forms
       _permitCheck = AppCore.Ins._appConfig?.PermitCheckWeight ?? false;
       SetStatusPermitCheckWeight(_permitCheck);
       txtValueWeightPermit.Texts = (AppCore.Ins._appConfig?.ValueCheckWeight ?? 0)
+        .ToString(CultureInfo.CurrentCulture);
+      txtValueWeightGoodsCheckPermitConfirm.Texts =
+        (AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm ?? 0)
         .ToString(CultureInfo.CurrentCulture);
 
       LoadConfig();
@@ -692,13 +697,14 @@ namespace LTP.Truck.Forms
       string input = txtValueWeightPermit.Texts.Trim().Replace(',', '.');
       if (!double.TryParse(input, NumberStyles.AllowDecimalPoint,
           CultureInfo.InvariantCulture, out double permittedWeight) ||
-          permittedWeight < 0)
+          permittedWeight <= 0)
       {
         using var popupWarning = new PopupConfirm(
-          "Khối lượng sai số cho phép phải là số lớn hơn hoặc bằng 0 !",
+          "Khối lượng sai số cho phép phải là số lớn hơn 0 !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupWarning.ShowDialog(this);
+        txtValueWeightPermit.Focus();
         return;
       }
 
@@ -774,9 +780,59 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void btnSaveValueWeightGoodsCheckPermitConfirm_Click(object? sender, EventArgs e)
+    private async void btnSaveValueWeightGoodsCheckPermitConfirm_Click(object? sender, EventArgs e)
     {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      var appConfig = AppCore.Ins._appConfig;
+      if (appConfig == null)
+      {
+        using var popupWarning = new PopupConfirm(
+          "Không tìm thấy cấu hình ứng dụng !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupWarning.ShowDialog(this);
+        return;
+      }
 
+      string input = txtValueWeightGoodsCheckPermitConfirm.Texts.Trim().Replace(',', '.');
+      if (!double.TryParse(input, NumberStyles.AllowDecimalPoint,
+          CultureInfo.InvariantCulture, out double permittedWeight) ||
+          permittedWeight <= 0)
+      {
+        using var popupWarning = new PopupConfirm(
+          "Khối lượng hàng cần xác nhận phải là số lớn hơn 0 !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupWarning.ShowDialog(this);
+        txtValueWeightGoodsCheckPermitConfirm.Focus();
+        return;
+      }
+
+      try
+      {
+        appConfig.ValueWeightGoodsCheckPermitConfirm = permittedWeight;
+        appConfig.UpdatedAt = DateTime.UtcNow;
+        AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
+          .AddOrUpdateAsync(appConfig);
+
+        txtValueWeightGoodsCheckPermitConfirm.Texts = permittedWeight
+          .ToString(CultureInfo.CurrentCulture);
+
+        using var popupSuccess = new PopupConfirm(
+          "Đã lưu thành công.",
+          EnumTypeMsg.MessageAutoClose,
+          EnumImageMsg.Information);
+        popupSuccess.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popupError = new PopupConfirm(
+          "Không thể lưu. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupError.ShowDialog(this);
+      }
     }
   }
 }
