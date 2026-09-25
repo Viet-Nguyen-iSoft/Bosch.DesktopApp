@@ -22,6 +22,7 @@ namespace iSoft.Database.Repositorys
         .Include(record => record.Product)
           .ThenInclude(product => product.ProductGroup)
         .Include(record => record.CategoryTare)
+        .Include(record => record.Delivery)
         .Include(record => record.RecordTruck)
         .Include(record => record.User)
         .AsQueryable();
@@ -77,6 +78,7 @@ namespace iSoft.Database.Repositorys
         .Include(record => record.Product)
           .ThenInclude(product => product.ProductGroup)
         .Include(record => record.CategoryTare)
+        .Include(record => record.Delivery)
         .Include(record => record.RecordTruck)
         .Include(record => record.User)
         .Where(record =>
@@ -95,6 +97,7 @@ namespace iSoft.Database.Repositorys
             record.Product.ProductGroup.Name != null && EF.Functions.Collate(record.Product.ProductGroup.Name, SearchCollation).Contains(searchKey)) ||
           (record.CategoryTare != null && record.CategoryTare.Code != null && EF.Functions.Collate(record.CategoryTare.Code, SearchCollation).Contains(searchKey)) ||
           (record.CategoryTare != null && record.CategoryTare.Name != null && EF.Functions.Collate(record.CategoryTare.Name, SearchCollation).Contains(searchKey)) ||
+          (record.Delivery != null && record.Delivery.Name != null && EF.Functions.Collate(record.Delivery.Name, SearchCollation).Contains(searchKey)) ||
           (record.LicensePlate != null && EF.Functions.Collate(record.LicensePlate, SearchCollation).Contains(searchKey)) ||
           (record.RecordTruck != null && record.RecordTruck.NoLabelAuto != null &&
             EF.Functions.Collate(record.RecordTruck.NoLabelAuto, SearchCollation).Contains(searchKey)) ||

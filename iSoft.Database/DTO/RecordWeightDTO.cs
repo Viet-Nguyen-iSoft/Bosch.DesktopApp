@@ -13,6 +13,8 @@ namespace iSoft.Database.DTO
 
     [DisplayName("Thời gian")]
     public string? Datetime { get; set; }
+    [DisplayName("Bên giao")]
+    public string? Delivery { get; set; }
     [DisplayName("Biển số xe")]
     public string? LicensePlate { get; set; }
     [DisplayName("Tên tài xế")]

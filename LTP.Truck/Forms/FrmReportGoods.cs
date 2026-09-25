@@ -13,7 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using static Common.EnumData;
 
-namespace LTP.Truck.Forms
+namespace LTP.Truck.Forms 
 {
   public partial class FrmReportGoods : Form
   {
@@ -264,6 +264,7 @@ namespace LTP.Truck.Forms
       {
         nameof(RecordWeightDTO.No),
         nameof(RecordWeightDTO.Datetime),
+        nameof(RecordWeightDTO.Delivery),
         nameof(RecordWeightDTO.LicensePlate),
         nameof(RecordWeightDTO.ProductGroup),
         nameof(RecordWeightDTO.CategoryTare),

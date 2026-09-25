@@ -87,6 +87,7 @@ namespace iSoft.Database
           No = orderedRecords.Count - index,
           Datetime = record.CreatedAt!=null ? ((DateTime)record.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") : string.Empty,
           LicensePlate = record?.LicensePlate,
+          Delivery = record?.Delivery?.Name,
           NameDriver = record?.NameDriver,
           ProductGroup = record?.Product?.ProductGroup?.Name,
           Product = record?.Product?.Name,
