@@ -12,6 +12,7 @@ using LTP.Truck.Custom;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using static Common.EnumData;
 using static HelperManager.EnumData;
@@ -27,6 +28,7 @@ namespace LTP.Truck.Forms
     private int _tareRefreshVersion;
     private int _deliveryRefreshVersion;
     private int _sumWeightLoadVersion;
+    private bool _waitingForWeightReset;
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private RecordTruckDTO _recordTruckDTO { get; set; }
     private CategoryTare? _categoryTare { get; set; }
@@ -228,6 +230,16 @@ namespace LTP.Truck.Forms
 
       //Net
       lbWeightValue.Text = WeightFormatHelper.Format(messageData.IndicatedWeight, 2);
+
+      var resetThreshold = AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm;
+      if (_waitingForWeightReset &&
+          resetThreshold.HasValue && resetThreshold.Value > 0 &&
+          TryGetDisplayedWeight(out var displayedWeight) &&
+          displayedWeight <= resetThreshold.Value)
+      {
+        _waitingForWeightReset = false;
+        btnSaveData.Enabled = true;
+      }
 
       //Tare
       lbTareSrc.Text = WeightFormatHelper.Format(messageData.TareWeight, 2);
@@ -598,7 +610,28 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveData_Click(object sender, EventArgs e)
     {
-      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      var resetThreshold = AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm;
+      if (!resetThreshold.HasValue || resetThreshold.Value <= 0)
+      {
+        using var popupMsg = new PopupConfirm(
+          "Vui lòng cấu hình khối lượng xác nhận cân tiếp tục lớn hơn 0 !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      if (_waitingForWeightReset)
+      {
+        using var popupMsg = new PopupConfirm(
+          $"Vui lòng chờ khối lượng trên cân giảm xuống nhỏ hơn hoặc bằng " +
+          $"{WeightFormatHelper.Format(resetThreshold.Value, 2)} kg trước khi cân tiếp tục !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
       if (string.IsNullOrEmpty(txtLicensePlate.Texts.Trim()))
       {
         PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn hoặc điền biển số xe !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
@@ -698,6 +731,7 @@ namespace LTP.Truck.Forms
         await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
         await LoadSumWeightAsync(validLicense.Plate);
         await LoadHistorical();
+        _waitingForWeightReset = true;
       }
       catch (Exception ex)
       {
@@ -712,8 +746,17 @@ namespace LTP.Truck.Forms
       finally
       {
         if (!IsDisposed && !Disposing)
-          btnSaveData.Enabled = true;
+          btnSaveData.Enabled = !_waitingForWeightReset;
       }
+    }
+
+    private bool TryGetDisplayedWeight(out double weight)
+    {
+      return double.TryParse(
+        lbWeightValue.Text,
+        NumberStyles.Float | NumberStyles.AllowThousands,
+        CultureInfo.InvariantCulture,
+        out weight);
     }
 
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)
