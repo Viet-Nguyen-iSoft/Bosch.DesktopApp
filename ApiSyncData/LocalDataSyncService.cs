@@ -316,6 +316,7 @@ namespace ApiSyncData
           record.CategoryTareId,
           record.CategoryTare,
           nameof(record.CategoryTare)),
+        ClientGoodsId = record.DeliveryId,
         RecordTruckId = record.RecordTruckId,
         CreatedAt = record.CreatedAt,
         UpdatedAt = record.UpdatedAt

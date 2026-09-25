@@ -8,9 +8,13 @@ namespace HelperManager
 {
   public static class KeyHelper
   {
-    public static string? CreateLabel(string? key)
+    public static string CreateLabel(DateTime date, int sequenceNumber)
     {
-      return key + DateTime.Now.ToString("yyMMddHHmmss");
+      if (sequenceNumber <= 0 || sequenceNumber > 9999)
+        throw new ArgumentOutOfRangeException(nameof(sequenceNumber),
+          "Số thứ tự tem phải nằm trong khoảng từ 1 đến 9999.");
+
+      return $"{date:yyMMdd}{sequenceNumber:D4}";
     }
   }
 }

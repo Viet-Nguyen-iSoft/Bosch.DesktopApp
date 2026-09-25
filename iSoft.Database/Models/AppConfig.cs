@@ -16,6 +16,8 @@ namespace iSoft.Database.Models
     public string? Version { get; set; }
 
     public string? Key { get; set; }
+    public DateTime? LabelSequenceDate { get; set; }
+    public int LabelSequenceNumber { get; set; }
     public string? NamePrintA4 { get; set; }
     public string? NamePrintLabel { get; set; }
     public bool PermitCheckWeight { get; set; } = false;

@@ -538,7 +538,9 @@ namespace LTP.Truck.Forms
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
 
         //Save DB
-        _recordTruck.NoLabelAuto = KeyHelper.CreateLabel(AppCore.Ins._appConfig?.Key);
+        _recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
+          .CreateNextLabelAsync(AppCore.Ins._appConfig ??
+            throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
         _recordTruck.NoLabelManual = txtNoLabel.Texts;
         _recordTruck.NameDriver = txtNameDriver.Texts;
         _recordTruck.LicensePlate = validLicense.Plate;
@@ -617,7 +619,9 @@ namespace LTP.Truck.Forms
         _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime02;
 
         //Save DB
-        _recordTruck.NoLabelAuto = DateTime.Now.ToString("yyyyMMddHHmmss");
+        _recordTruck.NoLabelAuto ??= await AppCore.Ins._appConfigService
+          .CreateNextLabelAsync(AppCore.Ins._appConfig ??
+            throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
         _recordTruck.NoLabelManual = txtNoLabel.Texts;
         _recordTruck.NameDriver = txtNameDriver.Texts;
         _recordTruck.LicensePlate = validLicense.Plate;

@@ -315,8 +315,8 @@ namespace LTP.Truck.Forms
         AppCore.Ins.ChangeStation(selectedStation);
 
         using var popupSuccess = new PopupConfirm(
-          "Đã lưu trạm.",
-          EnumTypeMsg.MessageManualClose,
+          "Đã lưu trạm cân.",
+          EnumTypeMsg.MessageAutoClose,
           EnumImageMsg.Information);
         popupSuccess.ShowDialog(this);
       }
