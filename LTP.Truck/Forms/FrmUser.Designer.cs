@@ -28,17 +28,18 @@
     /// </summary>
     private void InitializeComponent()
     {
-      DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
       tableLayoutPanel7 = new TableLayoutPanel();
       dgv = new DataGridView();
       tableLayoutPanel10 = new TableLayoutPanel();
       label4 = new Label();
       txtSearch = new LTP.Truck.Custom.RJTextBox();
       btnSearch = new LTP.Truck.Custom.RJButton();
-      label27 = new Label();
       btnAddnew = new LTP.Truck.Custom.RJButton();
+      label27 = new Label();
+      ucPage1 = new LTP.Truck.UserControls.UcPage();
       tableLayoutPanel7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel10.SuspendLayout();
@@ -52,14 +53,16 @@
       tableLayoutPanel7.Controls.Add(dgv, 0, 2);
       tableLayoutPanel7.Controls.Add(tableLayoutPanel10, 0, 1);
       tableLayoutPanel7.Controls.Add(label27, 0, 0);
+      tableLayoutPanel7.Controls.Add(ucPage1, 0, 3);
       tableLayoutPanel7.Dock = DockStyle.Fill;
       tableLayoutPanel7.Location = new Point(0, 0);
       tableLayoutPanel7.Margin = new Padding(0);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
-      tableLayoutPanel7.RowCount = 3;
+      tableLayoutPanel7.RowCount = 4;
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel7.Size = new Size(1230, 587);
       tableLayoutPanel7.TabIndex = 4;
       // 
@@ -71,38 +74,38 @@
       dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
       dgv.BackgroundColor = Color.FromArgb(236, 236, 236);
       dgv.BorderStyle = BorderStyle.None;
-      dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle1.BackColor = SystemColors.Control;
-      dataGridViewCellStyle1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle4.BackColor = SystemColors.Control;
+      dataGridViewCellStyle4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle2.BackColor = SystemColors.Window;
-      dataGridViewCellStyle2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-      dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-      dgv.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle5.BackColor = SystemColors.Window;
+      dataGridViewCellStyle5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle5.ForeColor = SystemColors.ControlText;
+      dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+      dgv.DefaultCellStyle = dataGridViewCellStyle5;
       dgv.EnableHeadersVisualStyles = false;
       dgv.Location = new Point(3, 113);
       dgv.Name = "dgv";
       dgv.ReadOnly = true;
-      dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle3.BackColor = SystemColors.Control;
-      dataGridViewCellStyle3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle6.BackColor = SystemColors.Control;
+      dataGridViewCellStyle6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
+      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-      dgv.Size = new Size(1224, 471);
+      dgv.Size = new Size(1224, 411);
       dgv.TabIndex = 23;
       // 
       // tableLayoutPanel10
@@ -187,20 +190,6 @@
       btnSearch.TextColor = Color.White;
       btnSearch.UseVisualStyleBackColor = false;
       // 
-      // label27
-      // 
-      label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label27.AutoSize = true;
-      label27.BackColor = Color.FromArgb(199, 199, 199);
-      label27.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label27.Location = new Point(0, 0);
-      label27.Margin = new Padding(0);
-      label27.Name = "label27";
-      label27.Size = new Size(1230, 50);
-      label27.TabIndex = 0;
-      label27.Text = "Danh sách tài khoản";
-      label27.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // btnAddnew
       // 
       btnAddnew.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -224,6 +213,29 @@
       btnAddnew.Text = "Thêm mới";
       btnAddnew.TextColor = Color.White;
       btnAddnew.UseVisualStyleBackColor = false;
+      // 
+      // label27
+      // 
+      label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label27.AutoSize = true;
+      label27.BackColor = Color.FromArgb(199, 199, 199);
+      label27.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label27.Location = new Point(0, 0);
+      label27.Margin = new Padding(0);
+      label27.Name = "label27";
+      label27.Size = new Size(1230, 50);
+      label27.TabIndex = 0;
+      label27.Text = "Danh sách tài khoản";
+      label27.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // ucPage1
+      // 
+      ucPage1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucPage1.Location = new Point(0, 527);
+      ucPage1.Margin = new Padding(0);
+      ucPage1.Name = "ucPage1";
+      ucPage1.Size = new Size(1230, 60);
+      ucPage1.TabIndex = 24;
       // 
       // FrmUser
       // 
@@ -251,5 +263,6 @@
     private Custom.RJButton btnSearch;
     private Label label27;
     private Custom.RJButton btnAddnew;
+    private UserControls.UcPage ucPage1;
   }
 }

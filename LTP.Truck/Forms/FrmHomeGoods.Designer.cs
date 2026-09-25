@@ -39,8 +39,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel3 = new TableLayoutPanel();
       label1 = new Label();
       tableLayoutPanel6 = new TableLayoutPanel();
-      rjButton1 = new RJButton();
-      rjButton2 = new RJButton();
+      btnTare = new RJButton();
+      btnZero = new RJButton();
       tableLayoutPanel12 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
       label5 = new Label();
@@ -208,8 +208,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel6.Controls.Add(rjButton1, 3, 0);
-      tableLayoutPanel6.Controls.Add(rjButton2, 2, 0);
+      tableLayoutPanel6.Controls.Add(btnTare, 3, 0);
+      tableLayoutPanel6.Controls.Add(btnZero, 2, 0);
       tableLayoutPanel6.Location = new Point(0, 347);
       tableLayoutPanel6.Margin = new Padding(0);
       tableLayoutPanel6.Name = "tableLayoutPanel6";
@@ -218,45 +218,47 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.Size = new Size(760, 62);
       tableLayoutPanel6.TabIndex = 2;
       // 
-      // rjButton1
+      // btnTare
       // 
-      rjButton1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      rjButton1.BackColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BackgroundColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BorderColor = Color.PaleVioletRed;
-      rjButton1.BorderRadius = 5;
-      rjButton1.BorderSize = 0;
-      rjButton1.FlatAppearance.BorderSize = 0;
-      rjButton1.FlatStyle = FlatStyle.Flat;
-      rjButton1.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      rjButton1.ForeColor = Color.White;
-      rjButton1.Image = (Image)resources.GetObject("rjButton1.Image");
-      rjButton1.Location = new Point(578, 3);
-      rjButton1.Name = "rjButton1";
-      rjButton1.Size = new Size(174, 55);
-      rjButton1.TabIndex = 0;
-      rjButton1.TextColor = Color.White;
-      rjButton1.UseVisualStyleBackColor = false;
+      btnTare.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnTare.BackColor = Color.FromArgb(64, 107, 177);
+      btnTare.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnTare.BorderColor = Color.PaleVioletRed;
+      btnTare.BorderRadius = 5;
+      btnTare.BorderSize = 0;
+      btnTare.FlatAppearance.BorderSize = 0;
+      btnTare.FlatStyle = FlatStyle.Flat;
+      btnTare.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnTare.ForeColor = Color.White;
+      btnTare.Image = (Image)resources.GetObject("btnTare.Image");
+      btnTare.Location = new Point(578, 3);
+      btnTare.Name = "btnTare";
+      btnTare.Size = new Size(174, 55);
+      btnTare.TabIndex = 0;
+      btnTare.TextColor = Color.White;
+      btnTare.UseVisualStyleBackColor = false;
+      btnTare.Click += btnTare_Click;
       // 
-      // rjButton2
+      // btnZero
       // 
-      rjButton2.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      rjButton2.BackColor = Color.FromArgb(64, 107, 177);
-      rjButton2.BackgroundColor = Color.FromArgb(64, 107, 177);
-      rjButton2.BorderColor = Color.PaleVioletRed;
-      rjButton2.BorderRadius = 5;
-      rjButton2.BorderSize = 0;
-      rjButton2.FlatAppearance.BorderSize = 0;
-      rjButton2.FlatStyle = FlatStyle.Flat;
-      rjButton2.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      rjButton2.ForeColor = Color.White;
-      rjButton2.Image = (Image)resources.GetObject("rjButton2.Image");
-      rjButton2.Location = new Point(398, 3);
-      rjButton2.Name = "rjButton2";
-      rjButton2.Size = new Size(174, 55);
-      rjButton2.TabIndex = 1;
-      rjButton2.TextColor = Color.White;
-      rjButton2.UseVisualStyleBackColor = false;
+      btnZero.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnZero.BackColor = Color.FromArgb(64, 107, 177);
+      btnZero.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnZero.BorderColor = Color.PaleVioletRed;
+      btnZero.BorderRadius = 5;
+      btnZero.BorderSize = 0;
+      btnZero.FlatAppearance.BorderSize = 0;
+      btnZero.FlatStyle = FlatStyle.Flat;
+      btnZero.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnZero.ForeColor = Color.White;
+      btnZero.Image = (Image)resources.GetObject("btnZero.Image");
+      btnZero.Location = new Point(398, 3);
+      btnZero.Name = "btnZero";
+      btnZero.Size = new Size(174, 55);
+      btnZero.TabIndex = 1;
+      btnZero.TextColor = Color.White;
+      btnZero.UseVisualStyleBackColor = false;
+      btnZero.Click += btnZero_Click;
       // 
       // tableLayoutPanel12
       // 
@@ -1379,8 +1381,8 @@ namespace LTP.Truck.Forms
     private Label label5;
     private Label label1;
     private TableLayoutPanel tableLayoutPanel6;
-    private RJButton rjButton1;
-    private RJButton rjButton2;
+    private RJButton btnTare;
+    private RJButton btnZero;
     private TableLayoutPanel tableLayoutPanel4;
     private TableLayoutPanel tableLayoutPanel8;
     private Label lbTare;

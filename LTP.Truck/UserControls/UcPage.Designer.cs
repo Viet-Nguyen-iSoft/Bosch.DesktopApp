@@ -137,13 +137,11 @@ namespace LTP.Truck.UserControls
       btnPrevious.FlatStyle = FlatStyle.Flat;
       btnPrevious.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnPrevious.ForeColor = Color.White;
-      btnPrevious.ImageAlign = ContentAlignment.MiddleLeft;
+      btnPrevious.Image = Properties.Resources.icon_previous;
       btnPrevious.Location = new Point(438, 3);
       btnPrevious.Name = "btnPrevious";
-      btnPrevious.Padding = new Padding(15, 0, 0, 0);
       btnPrevious.Size = new Size(144, 48);
       btnPrevious.TabIndex = 28;
-      btnPrevious.Text = "<<";
       btnPrevious.TextColor = Color.White;
       btnPrevious.UseVisualStyleBackColor = false;
       // 
@@ -172,7 +170,7 @@ namespace LTP.Truck.UserControls
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
-      label1.Size = new Size(205, 54);
+      label1.Size = new Size(182, 54);
       label1.TabIndex = 8;
       label1.Text = "Số dữ liệu mỗi trang";
       label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -183,7 +181,7 @@ namespace LTP.Truck.UserControls
       cbbNumberRecord.Font = new Font("Roboto", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       cbbNumberRecord.FormattingEnabled = true;
       cbbNumberRecord.Items.AddRange(new object[] { "5", "10", "20", "50", "100", "200", "500" });
-      cbbNumberRecord.Location = new Point(208, 10);
+      cbbNumberRecord.Location = new Point(185, 10);
       cbbNumberRecord.Name = "cbbNumberRecord";
       cbbNumberRecord.Size = new Size(170, 33);
       cbbNumberRecord.TabIndex = 9;
@@ -201,13 +199,11 @@ namespace LTP.Truck.UserControls
       btnNext.FlatStyle = FlatStyle.Flat;
       btnNext.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnNext.ForeColor = Color.White;
-      btnNext.ImageAlign = ContentAlignment.MiddleLeft;
+      btnNext.Image = Properties.Resources.icon_next;
       btnNext.Location = new Point(738, 3);
       btnNext.Name = "btnNext";
-      btnNext.Padding = new Padding(15, 0, 0, 0);
       btnNext.Size = new Size(144, 48);
       btnNext.TabIndex = 29;
-      btnNext.Text = ">>";
       btnNext.TextColor = Color.White;
       btnNext.UseVisualStyleBackColor = false;
       // 

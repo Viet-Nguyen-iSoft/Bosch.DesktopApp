@@ -1341,22 +1341,33 @@ namespace LTP.Truck.Forms
     public readonly RecordTruckService _recordTruckService = new();
     private void btnZero_Click(object sender, EventArgs e)
     {
-      //RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
-
-      //if (record == null)
-      //  return;
-
-      //Download(DateTime.Now, record);
-      var rs = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
-      if (!rs.IsValid)
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      try
       {
-        using var popupMsg = new PopupConfirm("Biển số xe không hợp lệ !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
-        popupMsg.ShowDialog(this);
-        return;
+        AppCore.Ins.ZeroWeight();
+        using var popup = new PopupConfirm(
+          "Đã gửi lệnh zero xuống cân thành công.",
+          EnumTypeMsg.MessageAutoClose,
+          EnumImageMsg.Information);
+        popup.ShowDialog(this);
       }
-
-      txtNoLabel.Texts = rs.Plate;
+      catch (InvalidOperationException ex)
+      {
+        using var popup = new PopupConfirm(
+          ex.Message,
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể gửi lệnh zero xuống cân. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
     }
 
     private async void btnPrint_Click(object sender, EventArgs e)

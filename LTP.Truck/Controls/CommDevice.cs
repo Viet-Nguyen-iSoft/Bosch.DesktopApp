@@ -70,6 +70,24 @@ namespace LTP.Truck.Controls
       SendWeightConnectionStatus(false);
     }
 
+    public void ZeroWeight()
+    {
+      var scaleConnection = _communication.GetConnection(ScaleId);
+      if (scaleConnection?.IsConnected != true)
+        throw new InvalidOperationException("Cân chưa được kết nối.");
+
+      _communication.Zero(ScaleId);
+    }
+
+    public void TareWeight()
+    {
+      var scaleConnection = _communication.GetConnection(ScaleId);
+      if (scaleConnection?.IsConnected != true)
+        throw new InvalidOperationException("Cân chưa được kết nối.");
+
+      _communication.Tare(ScaleId);
+    }
+
     private void SubscribeCommunicationEvents()
     {
       if (_communicationEventsSubscribed)

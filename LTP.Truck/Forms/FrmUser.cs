@@ -26,6 +26,7 @@ namespace LTP.Truck.Forms
       btnAddnew.Click += btnAddnew_Click;
       txtSearch._TextChanged += txtSearch_TextChanged;
       dgv.CellContentClick += dgv_CellContentClick;
+      ucPage1.PageChanged += ucPage1_PageChanged;
     }
 
     #region Instance
@@ -74,13 +75,17 @@ namespace LTP.Truck.Forms
         dgv.RowHeadersDefaultCellStyle.ForeColor;
     }
 
-    public async Task LoadData()
+    public async Task LoadData(bool resetPage = true)
     {
       int loadVersion = Interlocked.Increment(ref _loadVersion);
 
       try
       {
         btnSearch.Enabled = false;
+        ucPage1.Enabled = false;
+
+        if (resetPage)
+          ucPage1.ResetToFirstPage();
 
         var users = await AppCore.Ins._userService.GetAllAsync();
         var userDtos = DTOHelper.ConvertUserDTO(users);
@@ -89,7 +94,21 @@ namespace LTP.Truck.Forms
           txtSearch.Texts.Trim());
 
         if (loadVersion == _loadVersion)
-          SetDgv(filteredUsers);
+        {
+          var totalRecords = filteredUsers.Count;
+          var pageSize = ucPage1.PageSize;
+          var totalPages = Math.Max(
+            1,
+            (int)Math.Ceiling(totalRecords / (double)pageSize));
+          var effectivePage = Math.Min(ucPage1.CurrentPage, totalPages);
+          var pagedUsers = filteredUsers
+            .Skip((effectivePage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+          ucPage1.SetTotalRecords(totalRecords, effectivePage);
+          SetDgv(pagedUsers);
+        }
       }
       catch (Exception ex)
       {
@@ -107,8 +126,18 @@ namespace LTP.Truck.Forms
       finally
       {
         if (loadVersion == _loadVersion && !btnSearch.IsDisposed)
+        {
           btnSearch.Enabled = true;
+          ucPage1.Enabled = true;
+        }
       }
+    }
+
+    private async void ucPage1_PageChanged(
+      object? sender,
+      UserControls.PageChangedEventArgs e)
+    {
+      await LoadData(resetPage: false);
     }
 
     private void SetDgv(List<UserDTO> users)
@@ -248,7 +277,7 @@ namespace LTP.Truck.Forms
       if (!isUpdated)
         return;
 
-      await LoadData();
+      await LoadData(resetPage: false);
       ShowSuccess("Cập nhật tài khoản thành công.");
     }
 
@@ -271,7 +300,7 @@ namespace LTP.Truck.Forms
       try
       {
         await AppCore.Ins._userService.DeleteAsync(user);
-        await LoadData();
+        await LoadData(resetPage: false);
         ShowSuccess("Xóa tài khoản thành công.");
       }
       catch (Exception ex)
@@ -296,7 +325,7 @@ namespace LTP.Truck.Forms
       if (!isUpdated)
         return;
 
-      await LoadData();
+      await LoadData(resetPage: false);
       ShowSuccess("Cập nhật mật khẩu thành công.");
     }
 
@@ -312,7 +341,7 @@ namespace LTP.Truck.Forms
     private async void btnSearch_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      await LoadData();
+      await LoadData(resetPage: true);
     }
 
     private async void btnAddnew_Click(object? sender, EventArgs e)
@@ -327,7 +356,7 @@ namespace LTP.Truck.Forms
       if (!isAdded)
         return;
 
-      await LoadData();
+      await LoadData(resetPage: true);
       ShowSuccess("Thêm tài khoản thành công.");
     }
 
@@ -342,7 +371,7 @@ namespace LTP.Truck.Forms
       try
       {
         await Task.Delay(300, cancellation.Token);
-        await LoadData();
+        await LoadData(resetPage: true);
       }
       catch (OperationCanceledException)
       {

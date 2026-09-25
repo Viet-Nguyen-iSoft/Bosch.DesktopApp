@@ -633,7 +633,7 @@ namespace LTP.Truck.Forms
 
         //try
         //{
-          
+
         //}
         //catch (Exception ex)
         //{
@@ -797,7 +797,7 @@ namespace LTP.Truck.Forms
       foreach (var row in selectedData)
       {
         AppCore.Ins.PrinterLabelGoods(printerName, row);
-      }  
+      }
     }
 
     private async void btnExport_Click(object sender, EventArgs e)
@@ -918,5 +918,57 @@ namespace LTP.Truck.Forms
 
     #endregion
 
+    private void btnZero_Click(object sender, EventArgs e)
+    {
+      ExecuteScaleCommand(
+        sender,
+        AppCore.Ins.ZeroWeight,
+        "Zero cân thành công.",
+        "Không thể gửi lệnh Zero xuống cân. Vui lòng thử lại !");
+    }
+
+    private void btnTare_Click(object sender, EventArgs e)
+    {
+      ExecuteScaleCommand(
+        sender,
+        AppCore.Ins.TareWeight,
+        "Tare cân thành công.",
+        "Không thể gửi lệnh Tare xuống cân. Vui lòng thử lại !");
+    }
+
+    private void ExecuteScaleCommand(
+      object sender,
+      Action command,
+      string successMessage,
+      string errorMessage)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      try
+      {
+        command();
+        using var popup = new PopupConfirm(
+          successMessage,
+          EnumTypeMsg.MessageAutoClose,
+          EnumImageMsg.Information);
+        popup.ShowDialog(this);
+      }
+      catch (InvalidOperationException ex)
+      {
+        using var popup = new PopupConfirm(
+          ex.Message,
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          errorMessage,
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+    }
   }
 }
