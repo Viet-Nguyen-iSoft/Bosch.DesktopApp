@@ -188,13 +188,24 @@ namespace LTP.Truck.Forms
       }
 
       _currentRecords = records;
-      var showGroupedView = cbbType.SelectedIndex == 1;
+      var showGroupedView = cbbType.SelectedIndex is >= 1 and <= 3;
       dgv.Visible = !showGroupedView;
       _licensePlateGroups.Visible = showGroupedView;
 
       if (showGroupedView)
       {
-        BuildLicensePlateGroups(records);
+        if (cbbType.SelectedIndex == 1)
+        {
+          BuildGroups(records, record => record.LicensePlate, "Không có biển số");
+        }
+        else if (cbbType.SelectedIndex == 2)
+        {
+          BuildGroups(records, record => record.Delivery, "Không có bên nhận");
+        }
+        else
+        {
+          BuildGroups(records, record => record.ProductGroup, "Không có nhóm phế phẩm");
+        }
         return;
       }
 
@@ -313,18 +324,24 @@ namespace LTP.Truck.Forms
       SetDgvHistorical(_currentRecords);
     }
 
-    private void BuildLicensePlateGroups(IEnumerable<RecordWeightDTO> records)
+    private void BuildGroups(
+      IEnumerable<RecordWeightDTO> records,
+      Func<RecordWeightDTO, string?> groupKeySelector,
+      string emptyGroupName)
     {
       _licensePlateGroups.SuspendLayout();
       _licensePlateGroups.Controls.Clear();
 
       foreach (var group in records.GroupBy(
-        record => string.IsNullOrWhiteSpace(record.LicensePlate)
-          ? "Không có biển số"
-          : record.LicensePlate.Trim(),
+        record => string.IsNullOrWhiteSpace(groupKeySelector(record))
+          ? emptyGroupName
+          : groupKeySelector(record)!.Trim(),
         StringComparer.CurrentCultureIgnoreCase))
       {
         var groupRecords = group.ToList();
+        var totalNetWeight = groupRecords.Sum(record => record.RecordWeight?.Net ?? 0.0);
+        var groupHeaderText =
+          $"{group.Key} - Tổng khối lượng {WeightFormatHelper.Format(totalNetWeight, 2)} Kg";
         var groupPanel = new Panel
         {
           BackColor = dgv.BackgroundColor,
@@ -344,10 +361,10 @@ namespace LTP.Truck.Forms
           Dock = DockStyle.Fill,
           Font = new Font(dgv.Font.FontFamily, 14F, FontStyle.Regular),
           ForeColor = Color.Black,
-          Text = $"  ▶    {group.Key}",
+          Text = $"  ▶    {groupHeaderText}",
           TextAlign = ContentAlignment.MiddleLeft,
           Cursor = Cursors.Hand,
-          Tag = group.Key,
+          Tag = groupHeaderText,
         };
         var exportGroupButton = new RJButton
         {
@@ -400,7 +417,7 @@ namespace LTP.Truck.Forms
           }
 
           ExportGroupRequested?.Invoke(group.Key, selectedRecords);
-          await ExportRecordsAsync(selectedRecords, group.Key);
+          await ExportRecordsAsync(selectedRecords);
         };
 
         headerPanel.Controls.Add(header);
@@ -498,6 +515,7 @@ namespace LTP.Truck.Forms
       {
         nameof(RecordWeightDTO.No),
         nameof(RecordWeightDTO.Datetime),
+        nameof(RecordWeightDTO.Delivery),
         nameof(RecordWeightDTO.LicensePlate),
         nameof(RecordWeightDTO.ProductGroup),
         nameof(RecordWeightDTO.CategoryTare),
@@ -646,21 +664,22 @@ namespace LTP.Truck.Forms
     }
 
     private async Task ExportRecordsAsync(
-      IReadOnlyList<RecordWeightDTO> records,
-      string licensePlate)
+      IReadOnlyList<RecordWeightDTO> records)
     {
-      int licensePlateCount = records
+      var licensePlates = records
         .Select(dto => LicensePlateRepository.Normalize(dto.LicensePlate))
         .Distinct(StringComparer.OrdinalIgnoreCase)
-        .Count();
+        .ToList();
 
-      if (licensePlateCount > 1)
+      if (licensePlates.Count > 1)
       {
         using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng biển số xe !",
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
         return;
       }
+
+      var licensePlate = licensePlates.FirstOrDefault() ?? string.Empty;
 
       int productGroupNameCount = records
         .Select(dto => (dto.ProductGroup ?? string.Empty).Trim())
