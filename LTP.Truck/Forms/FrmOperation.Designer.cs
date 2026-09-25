@@ -227,7 +227,7 @@ namespace LTP.Truck.Forms
       btnHomeGoods.Padding = new Padding(15, 0, 0, 0);
       btnHomeGoods.Size = new Size(242, 70);
       btnHomeGoods.TabIndex = 2;
-      btnHomeGoods.Text = "        CÂN HÀNG";
+      btnHomeGoods.Text = "        CÂN PHẾ PHẨM";
       btnHomeGoods.TextAlign = ContentAlignment.MiddleLeft;
       btnHomeGoods.TextColor = Color.Black;
       btnHomeGoods.UseVisualStyleBackColor = false;

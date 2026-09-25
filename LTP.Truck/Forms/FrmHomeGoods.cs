@@ -34,10 +34,10 @@ namespace LTP.Truck.Forms
       InitializeComponent();
       CustomUI();
 
-      cbbTare.SelectedValueChanged += cbbTare_SelectedValueChanged;
+      cbbTare.SelectionChangeCommitted += cbbTare_SelectedValueChanged;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
-      lbTare.Text = "0.000";
+      lbTare.Text = "---";
       this.Load += FrmHomeGoods_Load;
     }
 
@@ -349,11 +349,14 @@ namespace LTP.Truck.Forms
     private void cbbTare_SelectedValueChanged(object? sender, EventArgs e)
     {
       _categoryTare = cbbTare.SelectedItem as CategoryTare;
-      if (_categoryTare != null)
+      if (_categoryTare?.Value is double tareValue)
       {
-        lbTare.Text = _categoryTare?.Value is double tareValue
-          ? WeightFormatHelper.Format(tareValue, 3)
-          : string.Empty;
+        lbTare.Text = WeightFormatHelper.Format(tareValue, 3);
+        ExecuteScaleCommand(
+          sender ?? cbbTare,
+          () => AppCore.Ins.SetTareWeight(tareValue),
+          $"Đã gửi giá trị tare {WeightFormatHelper.Format(tareValue, 3)} kg xuống cân thành công.",
+          "Không thể gửi giá trị tare xuống cân. Vui lòng thử lại !");
       }
       else
       {
