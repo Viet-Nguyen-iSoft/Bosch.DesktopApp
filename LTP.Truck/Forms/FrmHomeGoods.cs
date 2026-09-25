@@ -170,6 +170,8 @@ namespace LTP.Truck.Forms
     {
       if (!e.IsConnected)
         ResetWeightDisplay();
+
+      ShowStatusWeight(e.IsConnected);
     }
 
     private void ResetWeightDisplay()
@@ -183,6 +185,30 @@ namespace LTP.Truck.Forms
       _msgDataWeight = new DataWeightInterface();
       lbWeightValue.Text = "---";
       lbGross.Text = "---";
+    }
+
+    private void ShowStatusWeight(bool isConneted)
+    {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(() =>
+        {
+          ShowStatusWeight(isConneted);
+        }));
+        return;
+      }
+
+      if (isConneted)
+      {
+        lbStatusWeight.Text = "Kết nối";
+        lbStatusWeight.ForeColor = Color.DarkGreen;
+      } 
+      else
+      {
+        lbStatusWeight.Text =  "Mất kết nối";
+        lbStatusWeight.ForeColor = Color.Red;
+      }  
+      
     }
 
     private void SetDataWeight(DataWeightInterface messageData)

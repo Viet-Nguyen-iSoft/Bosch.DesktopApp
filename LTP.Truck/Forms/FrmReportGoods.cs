@@ -9,6 +9,7 @@ using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using System.Data;
 using System.Diagnostics;
+using System.Text;
 using System.Windows.Forms;
 using static Common.EnumData;
 
@@ -789,6 +790,295 @@ namespace LTP.Truck.Forms
       worksheet.PageSetup.PrintAreas.Add($"A1:K{lastDataRow}");
 
       workbook.SaveAs(outputPath);
+    }
+
+    private async void btnTracking_Click(object sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "Tracking.xlsx");
+      if (!File.Exists(templatePath))
+      {
+        using var popup = new PopupConfirm(
+          "Không tìm thấy file mẫu Tracking.xlsx.",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      var fromDateTime = ucTimeSearchFrom.Value;
+      var toDateTime = ucTimeSearchTo.Value;
+      if (fromDateTime > toDateTime)
+      {
+        using var popup = new PopupConfirm(
+          "Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      if (fromDateTime.Year != toDateTime.Year)
+      {
+        using var popup = new PopupConfirm(
+          "Báo cáo tracking chỉ hỗ trợ dữ liệu trong cùng một năm.",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      using var saveDialog = new SaveFileDialog
+      {
+        Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+        FileName = $"Tracking_{fromDateTime.Year}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx",
+        DefaultExt = "xlsx",
+        AddExtension = true,
+        OverwritePrompt = true
+      };
+
+      if (saveDialog.ShowDialog(this) != DialogResult.OK)
+        return;
+
+      try
+      {
+        btnTracking.Enabled = false;
+        var records = await AppCore.Ins._recordWeightService.GetReportAsync(
+          fromDateTime.ToUniversalTime(),
+          toDateTime.AddMinutes(1).ToUniversalTime(),
+          txtSearchKey.Texts.Trim());
+
+        if (records.Count == 0)
+        {
+          using var popup = new PopupConfirm(
+            "Không có dữ liệu phù hợp với điều kiện lọc để xuất tracking.",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Information);
+          popup.ShowDialog(this);
+          return;
+        }
+
+        await Task.Run(() => ExportTrackingReport(
+          templatePath,
+          saveDialog.FileName,
+          records,
+          fromDateTime.Year));
+
+        var openExportedFile = false;
+        using (var popup = new PopupConfirm(
+          "Xuất tracking thành công. Bạn có muốn mở file không?",
+          EnumTypeMsg.Confirm,
+          EnumImageMsg.Question))
+        {
+          popup.OnSendConfirm += (_, response) =>
+            openExportedFile = response.EnumResponsible == EnumResponsible.Confirm;
+          popup.ShowDialog(this);
+        }
+
+        if (openExportedFile)
+        {
+          try
+          {
+            Process.Start(new ProcessStartInfo
+            {
+              FileName = saveDialog.FileName,
+              UseShellExecute = true
+            });
+          }
+          catch (Exception openException)
+          {
+            LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
+            using var openErrorPopup = new PopupConfirm(
+              "Đã xuất tracking nhưng không thể mở file.",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+            openErrorPopup.ShowDialog(this);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          ex is InvalidOperationException
+            ? ex.Message
+            : "Không thể xuất tracking. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+      finally
+      {
+        btnTracking.Enabled = true;
+      }
+    }
+
+    private static void ExportTrackingReport(
+      string templatePath,
+      string outputPath,
+      IReadOnlyList<RecordWeight> records,
+      int reportYear)
+    {
+      //if (records.Any(record => record.Product == null || !record.CreatedAt.HasValue))
+      //  throw new InvalidOperationException("Có dữ liệu cân thiếu sản phẩm hoặc ngày cân.");
+
+      //using var template = new XLWorkbook(templatePath);
+      //using var workbook = new XLWorkbook();
+      //var groups = records.GroupBy(record => record.Product.EnumWasteType)
+      //  .OrderBy(group => group.Key);
+      //foreach (var group in groups)
+      //{
+      //  var hazardous = group.Key == iSoft.Database.EnumData.EnumWasteType.Hazardous;
+      //  var sheetName = group.Key switch
+      //  {
+      //    iSoft.Database.EnumData.EnumWasteType.Hazardous => "Nguy hai",
+      //    iSoft.Database.EnumData.EnumWasteType.NonRecyclable => "Khong tai che",
+      //    iSoft.Database.EnumData.EnumWasteType.Recyclable => "Tai che",
+      //    _ => "Chua phan loai"
+      //  };
+      //  var source = template.Worksheet(hazardous ? "HW_HcP" : "Non HW_HcP");
+      //  var sheet = workbook.Worksheets.Add(sheetName);
+      //  WriteDynamicTrackingSheet(sheet, source, group.ToList(), reportYear, hazardous);
+      //}
+      //workbook.RecalculateAllFormulas();
+      //workbook.SaveAs(outputPath);
+    }
+
+    //private static void WriteDynamicTrackingSheet(
+    //  IXLWorksheet sheet,
+    //  IXLWorksheet template,
+    //  IReadOnlyList<RecordWeight> records,
+    //  int year,
+    //  bool hazardous)
+    //{
+    //  // Each distinct product has its own column, even when names/codes are shared.
+    //  var products = records.Select(record => record.Product)
+    //    .GroupBy(product => product.Id)
+    //    .Select(group => group.First())
+    //    .OrderBy(product => product.Code)
+    //    .ThenBy(product => product.Name)
+    //    .ThenBy(product => product.Id)
+    //    .ToList();
+    //  if (products.Count > 16380)
+    //    throw new InvalidOperationException("Số sản phẩm vượt giới hạn cột của Excel.");
+
+    //  int firstProductColumn = 2;
+    //  int plateColumn = products.Count + 2;
+    //  int operatorColumn = plateColumn + 1;
+    //  int totalColumn = operatorColumn + 1;
+    //  int sourceProductColumn = hazardous ? 3 : 2;
+    //  var productColumns = products.Select((product, index) => new
+    //  {
+    //    product.Id,
+    //    Column = firstProductColumn + index
+    //  }).ToDictionary(item => item.Id, item => item.Column);
+
+    //  sheet.ShowGridLines = false;
+    //  sheet.Column(1).Width = 24;
+    //  sheet.Columns(firstProductColumn, plateColumn - 1).Width = 24;
+    //  sheet.Column(plateColumn).Width = 32;
+    //  sheet.Column(operatorColumn).Width = 32;
+    //  sheet.Column(totalColumn).Width = 20;
+    //  sheet.Range(1, 1, 1, totalColumn).Merge();
+    //  sheet.Cell(1, 1).Style = template.Cell(1, 1).Style;
+    //  sheet.Cell(1, 1).Value = $"TRACKING CHẤT THẢI - {sheet.Name.ToUpperInvariant()} - {year}";
+    //  sheet.Row(1).Height = 32;
+    //  sheet.Cell(2, 1).Value = "Ngày xuất";
+    //  sheet.Cell(2, 2).Value = DateTime.Now;
+    //  sheet.Cell(2, 2).Style.DateFormat.Format = "dd/MM/yyyy HH:mm";
+    //  sheet.Cell(3, 1).Value = "Đơn vị";
+    //  sheet.Cell(3, 2).Value = "Khối lượng Net (kg)";
+    //  sheet.Cell(4, 1).Value = "Phạm vi";
+    //  sheet.Cell(4, 2).Value = "Dữ liệu theo bộ lọc đã chọn";
+
+    //  for (int column = 1; column <= totalColumn; column++)
+    //  {
+    //    sheet.Cell(7, column).Style = template.Cell(7, sourceProductColumn).Style;
+    //    sheet.Cell(8, column).Style = template.Cell(9, sourceProductColumn).Style;
+    //    sheet.Cell(10, column).Style = template.Cell(10, sourceProductColumn).Style;
+    //  }
+    //  sheet.Cell(7, 1).Value = "Ngày";
+    //  sheet.Cell(8, 1).Value = "Ngày cân";
+    //  foreach (var product in products)
+    //  {
+    //    int column = productColumns[product.Id];
+    //    sheet.Cell(7, column).Value = product.Code ?? string.Empty;
+    //    sheet.Cell(8, column).Value = product.Name ?? string.Empty;
+    //  }
+    //  sheet.Cell(7, plateColumn).Value = "Biển số xe";
+    //  sheet.Cell(7, operatorColumn).Value = "Người nhập";
+    //  sheet.Cell(7, totalColumn).Value = "Tổng (kg)";
+    //  sheet.Range(7, 1, 8, totalColumn).Style.Alignment.WrapText = true;
+    //  sheet.Row(7).Height = 28;
+    //  sheet.Row(8).Height = 80;
+    //  sheet.Cell(10, 1).Value = $"{year} - Tổng (kg)";
+    //  var days = records.GroupBy(record => record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date)
+    //    .ToDictionary(group => group.Key, group => group.ToList());
+    //  var monthlyTotalRows = new List<int>();
+    //  int row = 11;
+    //  for (int month = 1; month <= 12; month++)
+    //  {
+    //    int firstRow = row;
+    //    for (int day = 1; day <= DateTime.DaysInMonth(year, month); day++, row++)
+    //    {
+    //      var date = new DateTime(year, month, day);
+    //      sheet.Cell(row, 1).Value = date;
+    //      sheet.Cell(row, 1).Style.DateFormat.Format = "dd/MM/yyyy";
+    //      if (days.TryGetValue(date, out var dayRecords))
+    //      {
+    //        foreach (var productGroup in dayRecords.GroupBy(record => record.Product.Id))
+    //          sheet.Cell(row, productColumns[productGroup.Key]).Value =
+    //            productGroup.Sum(record => record.Net);
+    //        sheet.Cell(row, plateColumn).Value = string.Join(", ", dayRecords
+    //          .Select(record => record.LicensePlate)
+    //          .Where(value => !string.IsNullOrWhiteSpace(value))
+    //          .Distinct(StringComparer.OrdinalIgnoreCase));
+    //        sheet.Cell(row, operatorColumn).Value = string.Join(", ", dayRecords
+    //          .Select(GetOperatorName).Where(value => !string.IsNullOrWhiteSpace(value))
+    //          .Distinct(StringComparer.OrdinalIgnoreCase));
+    //      }
+    //      sheet.Cell(row, totalColumn).FormulaA1 =
+    //        $"SUM(B{row}:{XLHelper.GetColumnLetterFromNumber(plateColumn - 1)}{row})";
+    //    }
+    //    monthlyTotalRows.Add(row);
+    //    sheet.Cell(row, 1).Value = $"Tháng {month:00} - Tổng (kg)";
+    //    for (int column = 1; column <= totalColumn; column++)
+    //    {
+    //      sheet.Cell(row, column).Style = template.Cell(hazardous ? 43 : 42, sourceProductColumn).Style;
+    //      if (column >= firstProductColumn && column < plateColumn || column == totalColumn)
+    //      {
+    //        var letter = XLHelper.GetColumnLetterFromNumber(column);
+    //        sheet.Cell(row, column).FormulaA1 = $"SUM({letter}{firstRow}:{letter}{row - 1})";
+    //      }
+    //    }
+    //    row++;
+    //  }
+    //  for (int column = firstProductColumn; column <= totalColumn; column++)
+    //  {
+    //    if (column == plateColumn || column == operatorColumn)
+    //      continue;
+    //    var letter = XLHelper.GetColumnLetterFromNumber(column);
+    //    sheet.Cell(10, column).FormulaA1 =
+    //      "SUM(" + string.Join(",", monthlyTotalRows.Select(totalRow => $"{letter}{totalRow}")) + ")";
+    //    sheet.Range(10, column, row - 1, column).Style.NumberFormat.Format = "#,##0.000";
+    //  }
+    //  sheet.Range(11, plateColumn, row - 1, operatorColumn).Style.Alignment.WrapText = true;
+    //  sheet.Rows(11, row - 1).AdjustToContents();
+    //  sheet.SheetView.FreezeRows(10);
+    //  sheet.SheetView.FreezeColumns(1);
+    //  sheet.PageSetup.PageOrientation = XLPageOrientation.Landscape;
+    //  sheet.PageSetup.FitToPages(1, 0);
+    //  sheet.PageSetup.SetRowsToRepeatAtTop(7, 8);
+    //  sheet.PageSetup.PrintAreas.Add(sheet.Range(1, 1, row - 1, totalColumn));
+    //}
+
+    private static string GetOperatorName(RecordWeight record)
+    {
+      if (!string.IsNullOrWhiteSpace(record.User?.DisplayName))
+        return record.User.DisplayName;
+      if (!string.IsNullOrWhiteSpace(record.User?.FullName))
+        return record.User.FullName;
+      return record.User?.Username ?? string.Empty;
     }
   }
 }
