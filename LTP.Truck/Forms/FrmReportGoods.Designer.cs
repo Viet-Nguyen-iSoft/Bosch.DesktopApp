@@ -34,8 +34,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel9 = new TableLayoutPanel();
       dgv = new DataGridView();
       tableLayoutPanel11 = new TableLayoutPanel();
-      label9 = new Label();
-      txtSearchKey = new LTP.Truck.Custom.RJTextBox();
       label17 = new Label();
       label18 = new Label();
       ucTimeSearchFrom = new LTP.Truck.UserControls.UcTimeSearch();
@@ -117,10 +115,7 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel11
       // 
       tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel11.ColumnCount = 13;
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 10F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel11.ColumnCount = 10;
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
@@ -131,16 +126,17 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel11.Controls.Add(label9, 2, 0);
-      tableLayoutPanel11.Controls.Add(txtSearchKey, 3, 0);
-      tableLayoutPanel11.Controls.Add(label17, 5, 0);
-      tableLayoutPanel11.Controls.Add(label18, 7, 0);
-      tableLayoutPanel11.Controls.Add(ucTimeSearchFrom, 6, 0);
-      tableLayoutPanel11.Controls.Add(ucTimeSearchTo, 8, 0);
-      tableLayoutPanel11.Controls.Add(btnSearchHistorical, 10, 0);
-      tableLayoutPanel11.Controls.Add(btnExport, 11, 0);
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel11.Controls.Add(label17, 2, 0);
+      tableLayoutPanel11.Controls.Add(label18, 4, 0);
+      tableLayoutPanel11.Controls.Add(ucTimeSearchFrom, 3, 0);
+      tableLayoutPanel11.Controls.Add(ucTimeSearchTo, 5, 0);
+      tableLayoutPanel11.Controls.Add(btnSearchHistorical, 7, 0);
+      tableLayoutPanel11.Controls.Add(btnExport, 8, 0);
       tableLayoutPanel11.Controls.Add(cbbType, 0, 0);
-      tableLayoutPanel11.Controls.Add(btnTracking, 12, 0);
+      tableLayoutPanel11.Controls.Add(btnTracking, 9, 0);
       tableLayoutPanel11.Location = new Point(0, 50);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
@@ -148,43 +144,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.Size = new Size(1925, 62);
       tableLayoutPanel11.TabIndex = 22;
-      // 
-      // label9
-      // 
-      label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label9.AutoSize = true;
-      label9.BackColor = Color.Transparent;
-      label9.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label9.Location = new Point(260, 0);
-      label9.Margin = new Padding(0);
-      label9.Name = "label9";
-      label9.Size = new Size(95, 62);
-      label9.TabIndex = 17;
-      label9.Text = "Tìm kiếm:";
-      label9.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtSearchKey
-      // 
-      txtSearchKey.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtSearchKey.BackColor = SystemColors.Window;
-      txtSearchKey.BorderColor = Color.Black;
-      txtSearchKey.BorderFocusColor = Color.HotPink;
-      txtSearchKey.BorderRadius = 5;
-      txtSearchKey.BorderSize = 2;
-      txtSearchKey.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtSearchKey.ForeColor = Color.FromArgb(64, 64, 64);
-      txtSearchKey.Location = new Point(359, 12);
-      txtSearchKey.Margin = new Padding(4);
-      txtSearchKey.Multiline = false;
-      txtSearchKey.Name = "txtSearchKey";
-      txtSearchKey.Padding = new Padding(10, 7, 10, 7);
-      txtSearchKey.PasswordChar = false;
-      txtSearchKey.PlaceholderColor = Color.DarkGray;
-      txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(228, 38);
-      txtSearchKey.TabIndex = 18;
-      txtSearchKey.Texts = "";
-      txtSearchKey.UnderlinedStyle = false;
       // 
       // label17
       // 
@@ -289,7 +248,7 @@ namespace LTP.Truck.Forms
       cbbType.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số", "Nhóm theo Bên nhận", "Nhóm theo Nhóm phế phẩm" });
       cbbType.Location = new Point(3, 13);
       cbbType.Name = "cbbType";
-      cbbType.Size = new Size(244, 35);
+      cbbType.Size = new Size(585, 35);
       cbbType.TabIndex = 32;
       // 
       // btnTracking
@@ -361,8 +320,6 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel9;
     private DataGridView dgv;
     private TableLayoutPanel tableLayoutPanel11;
-    private Label label9;
-    private Custom.RJTextBox txtSearchKey;
     private Label label17;
     private Label label18;
     private UserControls.UcTimeSearch ucTimeSearchFrom;

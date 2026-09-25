@@ -26,6 +26,7 @@ namespace LTP.Truck.Forms
 
     private CancellationTokenSource? _searchDebounceCancellation;
     private bool _isLoadingProductGroupFilter;
+    private int _loadDataVersion;
     private ApiJobsService _apiJobsService { get; set; } 
     private ClientService _clientService { get; set; }
     private WarehouseService _warehouseService { get; set; }
@@ -106,38 +107,47 @@ namespace LTP.Truck.Forms
     {
       try
       {
+        int loadVersion = Interlocked.Increment(ref _loadDataVersion);
         _enumTypeMasterDataCurrent = enumTypeMaster;
-        await ConfigureProductGroupFilterAsync(enumTypeMaster);
+        await ConfigureProductGroupFilterAsync(enumTypeMaster, loadVersion);
+        if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
+
         string searchKey = txtSearch.Texts.Trim();
         switch (enumTypeMaster)
         {
           case EnumTypeMasterData.Client:
             var rsClient = await AppCore.Ins._clientService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoClient = DTOHelper.ConvertClientDTO(rsClient);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoClient, searchKey));
             break;
           case EnumTypeMasterData.TypeGoods:
             var rsTypeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoTypeGoods = DTOHelper.ConvertTypeGoodsDTO(rsTypeGoods);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoTypeGoods, searchKey));
             break;
           case EnumTypeMasterData.Warehouse:
             var rsWarehouse = await AppCore.Ins._warehouseService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoWarehouse = DTOHelper.ConvertWareHouseDTO(rsWarehouse);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoWarehouse, searchKey));
             break;
           case EnumTypeMasterData.Tare:
             var rsTare = await AppCore.Ins._categoryTareService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoTare = DTOHelper.ConvertCategoryTareDTO(rsTare);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoTare, searchKey));
             break;
           case EnumTypeMasterData.GroupProduct:
             var rsGroupProduct = await AppCore.Ins._productGroupService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoGroupProduct = DTOHelper.ConvertProductGroupDTO(rsGroupProduct);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoGroupProduct, searchKey));
             break;
           case EnumTypeMasterData.Product:
             var rsProduct = await AppCore.Ins._productService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             Guid? productGroupId = (cbbFilter.SelectedItem as ProductGroupFilterItem)?.Id;
             if (productGroupId.HasValue)
             {
@@ -146,10 +156,21 @@ namespace LTP.Truck.Forms
                 .ToList();
             }
             var dtoProduct = DTOHelper.ConvertProductDTO(rsProduct);
+            dtoProduct = dtoProduct?
+              .OrderBy(product => product.Group ?? string.Empty)
+              .ThenBy(product => product.WasteType ?? string.Empty)
+              .ThenBy(product => product.Name ?? string.Empty)
+              .Select((product, index) =>
+              {
+                product.No = index + 1;
+                return product;
+              })
+              .ToList();
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoProduct, searchKey));
             break;
           case EnumTypeMasterData.Delivery:
             var deliveries = await AppCore.Ins._deliveryService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var deliveryDtos = DTOHelper.ConvertDeliveryDTO(deliveries);
             SetDgv(enumTypeMaster, FilterBySearchKey(deliveryDtos, searchKey));
             break;
@@ -163,7 +184,15 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async Task ConfigureProductGroupFilterAsync(EnumTypeMasterData enumTypeMaster)
+    private bool IsCurrentLoad(EnumTypeMasterData enumTypeMaster, int loadVersion)
+    {
+      return loadVersion == _loadDataVersion &&
+             enumTypeMaster == _enumTypeMasterDataCurrent;
+    }
+
+    private async Task ConfigureProductGroupFilterAsync(
+      EnumTypeMasterData enumTypeMaster,
+      int loadVersion)
     {
       bool isProduct = enumTypeMaster == EnumTypeMasterData.Product;
       cbbFilter.Visible = isProduct;
@@ -179,8 +208,14 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      Guid? selectedId = (cbbFilter.SelectedItem as ProductGroupFilterItem)?.Id;
+      if (cbbFilter.DataSource != null)
+      {
+        return;
+      }
+
       var productGroups = await AppCore.Ins._productGroupService.GetAllAsync();
+      if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
+
       var filterItems = productGroups
         .OrderBy(group => group.Name)
         .Select(group => new ProductGroupFilterItem(group.Id, group.Name ?? string.Empty))
@@ -189,8 +224,9 @@ namespace LTP.Truck.Forms
 
       _isLoadingProductGroupFilter = true;
       cbbFilter.DataSource = filterItems;
-      cbbFilter.SelectedItem = filterItems.FirstOrDefault(item => item.Id == selectedId)
-        ?? filterItems[0];
+      cbbFilter.DisplayMember = nameof(ProductGroupFilterItem.Name);
+      cbbFilter.ValueMember = nameof(ProductGroupFilterItem.Id);
+      cbbFilter.SelectedIndex = 0;
       _isLoadingProductGroupFilter = false;
     }
 
@@ -205,7 +241,19 @@ namespace LTP.Truck.Forms
       await LoadData(EnumTypeMasterData.Product);
     }
 
-    private sealed record ProductGroupFilterItem(Guid? Id, string Name);
+    private sealed class ProductGroupFilterItem
+    {
+      public Guid? Id { get; }
+      public string Name { get; }
+
+      public ProductGroupFilterItem(Guid? id, string name)
+      {
+        Id = id;
+        Name = name;
+      }
+
+      public override string ToString() => Name;
+    }
 
     private static List<T> FilterBySearchKey<T>(List<T>? values, string searchKey)
     {

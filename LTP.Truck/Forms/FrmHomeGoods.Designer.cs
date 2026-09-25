@@ -345,6 +345,7 @@ namespace LTP.Truck.Forms
       btnTare.Name = "btnTare";
       btnTare.Size = new Size(154, 55);
       btnTare.TabIndex = 0;
+      btnTare.Text = "T";
       btnTare.TextColor = Color.White;
       btnTare.UseVisualStyleBackColor = false;
       btnTare.Click += btnTare_Click;
@@ -425,6 +426,7 @@ namespace LTP.Truck.Forms
       btnZero.Name = "btnZero";
       btnZero.Size = new Size(154, 55);
       btnZero.TabIndex = 1;
+      btnZero.Text = "0";
       btnZero.TextColor = Color.White;
       btnZero.UseVisualStyleBackColor = false;
       btnZero.Click += btnZero_Click;
@@ -787,7 +789,7 @@ namespace LTP.Truck.Forms
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(177, 236);
+      cbbProduct.Location = new Point(177, 235);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(569, 33);
       cbbProduct.TabIndex = 7;
@@ -798,7 +800,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(177, 180);
+      cbbProductGroup.Location = new Point(177, 179);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(344, 33);
       cbbProductGroup.TabIndex = 6;
@@ -948,7 +950,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 11);
+      cbbTare.Location = new Point(3, 10);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(344, 33);
       cbbTare.TabIndex = 8;
@@ -1108,7 +1110,7 @@ namespace LTP.Truck.Forms
       cbbDelivery.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbDelivery.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbDelivery.FormattingEnabled = true;
-      cbbDelivery.Location = new Point(177, 123);
+      cbbDelivery.Location = new Point(177, 124);
       cbbDelivery.Name = "cbbDelivery";
       cbbDelivery.Size = new Size(569, 33);
       cbbDelivery.TabIndex = 40;

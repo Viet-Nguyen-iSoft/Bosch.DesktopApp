@@ -31,7 +31,6 @@ namespace LTP.Truck.Forms
       CustomUI();
 
       btnSearchHistorical.Click += btnSearchHistorical_Click;
-      txtSearchKey.KeyPress += txtSearchKey_KeyPress;
       ucPage1.PageChanged += ucPage1_PageChanged;
       Shown += FrmReportGoods_Shown;
       cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -140,13 +139,12 @@ namespace LTP.Truck.Forms
 
         var fromUtc = fromDateTime.ToUniversalTime();
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
-        var searchKey = txtSearchKey.Texts.Trim();
         var pageNumber = ucPage1.CurrentPage;
         var pageSize = ucPage1.PageSize;
         var (records, totalRecords) = await AppCore.Ins._recordWeightService.GetReportPageAsync(
           fromUtc,
           toUtcExclusive,
-          searchKey,
+          "",
           pageNumber,
           pageSize);
 
@@ -581,11 +579,10 @@ namespace LTP.Truck.Forms
         btnExport.Enabled = false;
         var fromDateTime = ucTimeSearchFrom.Value;
         var toDateTime = ucTimeSearchTo.Value;
-        var searchKey = txtSearchKey.Texts.Trim();
         var exportRecords = await AppCore.Ins._recordWeightService.GetReportAsync(
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
-          searchKey);
+          "");
 
         if (exportRecords.Count == 0)
         {
@@ -866,7 +863,7 @@ namespace LTP.Truck.Forms
         var records = await AppCore.Ins._recordWeightService.GetReportAsync(
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
-          txtSearchKey.Texts.Trim());
+          "");
 
         if (records.Count == 0)
         {
