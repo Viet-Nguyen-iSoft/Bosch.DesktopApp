@@ -26,6 +26,7 @@ namespace LTP.Truck
       MD_Tare,
       MD_GroupProduct,
       MD_Product,
+      MD_Delivery,
 
       User,
 
@@ -81,6 +82,7 @@ namespace LTP.Truck
       Tare,
       GroupProduct,
       Product,
+      Delivery,
     }
     public enum EnumStation
     {

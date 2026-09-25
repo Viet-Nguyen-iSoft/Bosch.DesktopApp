@@ -210,6 +210,31 @@ namespace iSoft.Database
       return rsDto;
     }
 
+    public static List<DeliveryDTO>? ConvertDeliveryDTO(List<Delivery>? deliveries)
+    {
+      var rsDto = new List<DeliveryDTO>();
+      if (deliveries?.Count > 0)
+      {
+        rsDto = deliveries
+          .OrderBy(delivery => delivery.Name)
+          .Select((delivery, index) => new DeliveryDTO
+          {
+            Delivery = delivery,
+            No = index + 1,
+            Name = delivery.Name,
+            OfficeAddress = delivery.OfficeAddress,
+            PhoneForOfficeAddress = delivery.PhoneForOfficeAddress,
+            AgentAddress = delivery.AgentAddress,
+            AgentAddressForOfficeAddress = delivery.AgentAddressForOfficeAddress,
+            Description = delivery.Description,
+            UpdatedAt = (delivery.UpdatedAt ?? delivery.CreatedAt)?.AddHours(utc)
+              .ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
+          })
+          .ToList();
+      }
+      return rsDto;
+    }
+
     public static List<ProductDTO>? ConvertProductDTO(List<Product>? products)
     {
       var rsDto = new List<ProductDTO>();

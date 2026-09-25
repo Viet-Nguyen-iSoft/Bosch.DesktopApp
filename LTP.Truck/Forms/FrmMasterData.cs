@@ -32,6 +32,7 @@ namespace LTP.Truck.Forms
     private CategoryTareService _categoryTareService { get; set; }
     private ProductGroupService _productGroupService { get; set; }
     private ProductService _productService { get; set; }
+    private DeliveryService _deliveryService { get; set; }
     public FrmMasterData()
     {
       InitializeComponent();
@@ -52,6 +53,7 @@ namespace LTP.Truck.Forms
       _categoryTareService = new CategoryTareService();
       _productGroupService = new ProductGroupService();
       _productService = new ProductService();
+      _deliveryService = new DeliveryService();
     }
     #region Instance
     private static FrmMasterData _Instance = null;
@@ -131,6 +133,11 @@ namespace LTP.Truck.Forms
             var rsProduct = await AppCore.Ins._productService.GetAllAsync();
             var dtoProduct = DTOHelper.ConvertProductDTO(rsProduct);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoProduct, searchKey));
+            break;
+          case EnumTypeMasterData.Delivery:
+            var deliveries = await AppCore.Ins._deliveryService.GetAllAsync();
+            var deliveryDtos = DTOHelper.ConvertDeliveryDTO(deliveries);
+            SetDgv(enumTypeMaster, FilterBySearchKey(deliveryDtos, searchKey));
             break;
           default:
             break;
@@ -217,6 +224,28 @@ namespace LTP.Truck.Forms
         PopupProduct popupProduct = new PopupProduct();
         popupProduct.OnSendSuccess += PopupProduct_OnSendSuccess;
         popupProduct.ShowDialog();
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
+      {
+        PopupDelivery popupDelivery = new PopupDelivery();
+        popupDelivery.OnSendSuccess += PopupDelivery_OnSendSuccess;
+        popupDelivery.ShowDialog();
+      }
+    }
+
+    private async void PopupDelivery_OnSendSuccess(Delivery delivery)
+    {
+      try
+      {
+        await LoadData(_enumTypeMasterDataCurrent);
+        MasterDataChangeNotifier.Notify<Delivery>();
+        ShowSaveSuccess(delivery.UpdatedAt.HasValue
+          ? "Cập nhật thành công."
+          : "Thêm thành công.");
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -623,6 +652,27 @@ namespace LTP.Truck.Forms
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
       }
+      else if (enumTypeMasterData == EnumTypeMasterData.Delivery)
+      {
+        var autoSizeColumns = new[]
+        {
+          nameof(DeliveryDTO.No),
+          nameof(DeliveryDTO.UpdatedAt),
+        };
+        foreach (var columnName in autoSizeColumns)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        }
+
+        if (dgv.Columns.Contains(nameof(DeliveryDTO.No)))
+          dgv.Columns[nameof(DeliveryDTO.No)].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleCenter;
+
+        if (dgv.Columns.Contains(nameof(DeliveryDTO.UpdatedAt)))
+          dgv.Columns[nameof(DeliveryDTO.UpdatedAt)].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleRight;
+      }
     }
 
     private void EnsureActionColumns()
@@ -771,6 +821,22 @@ namespace LTP.Truck.Forms
         {
           using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
+      {
+        var data = rowData as DeliveryDTO;
+        if (data?.Delivery != null)
+        {
+          PopupDelivery popupDelivery = new PopupDelivery(data.Delivery);
+          popupDelivery.OnSendSuccess += PopupDelivery_OnSendSuccess;
+          popupDelivery.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupMsg.ShowDialog(this);
         }
       }
@@ -978,6 +1044,24 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
+      {
+        var data = rowData as DeliveryDTO;
+        if (data?.Delivery != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+            EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Delivery);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
 
       return Task.CompletedTask;
     }
@@ -1144,6 +1228,18 @@ namespace LTP.Truck.Forms
             await _apiJobsService.AddOrUpdateAsync(apiJobs);
             await LoadData(_enumTypeMasterDataCurrent);
             MasterDataChangeNotifier.Notify<Product>();
+          }
+        }
+        else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
+        {
+          var delivery = e.Obj as Delivery;
+          if (delivery != null)
+          {
+            delivery.DeletedFlag = true;
+            delivery.UpdatedAt = DateTime.UtcNow;
+            await _deliveryService.AddOrUpdateAsync(delivery);
+            await LoadData(_enumTypeMasterDataCurrent);
+            MasterDataChangeNotifier.Notify<Delivery>();
           }
         }
       }

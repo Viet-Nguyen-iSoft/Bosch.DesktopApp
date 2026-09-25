@@ -51,7 +51,8 @@ namespace LTP.Truck.Forms
       Button[] menuButtons =
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
-        btnUser, btnClient, btnTypeGoods, btnWarehouse, btnTare, btnGroupProduct, btnProduct
+        btnUser, btnClient, btnTypeGoods, btnWarehouse, btnTare, btnGroupProduct, btnProduct,
+        btnDelivery
       };
 
       foreach (Button button in menuButtons)
@@ -106,7 +107,8 @@ namespace LTP.Truck.Forms
     private bool IsMasterDataChild(Button button)
     {
       return button == btnClient || button == btnTypeGoods || button == btnWarehouse
-        || button == btnTare || button == btnGroupProduct || button == btnProduct;
+        || button == btnTare || button == btnGroupProduct || button == btnProduct
+        || button == btnDelivery;
     }
 
     private void SetMasterDataExpanded(bool expanded)
@@ -137,7 +139,8 @@ namespace LTP.Truck.Forms
       bool isTruckStation = Environment.GetEnvironmentVariable("STATION") == "1";
       return isTruckStation
         ? button == btnClient || button == btnWarehouse || button == btnTypeGoods
-        : button == btnGroupProduct || button == btnProduct || button == btnTare;
+        : button == btnGroupProduct || button == btnProduct || button == btnTare
+          || button == btnDelivery;
     }
 
     private void SetMenuCollapsed(bool collapsed)
@@ -208,6 +211,7 @@ namespace LTP.Truck.Forms
       this.btnTare.Click += BtnTare_Click;
       this.btnGroupProduct.Click += BtnGroupProduct_Click;
       this.btnProduct.Click += BtnProduct_Click;
+      this.btnDelivery.Click += BtnDelivery_Click;
 
       LoadConfig();
     }
@@ -326,6 +330,13 @@ namespace LTP.Truck.Forms
       await ChangePage(EnumScreen.MD_Product);
     }
 
+    private async void BtnDelivery_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      EnsureMenuExpanded();
+      await ChangePage(EnumScreen.MD_Delivery);
+    }
+
     private async void BtnGroupProduct_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -438,6 +449,10 @@ namespace LTP.Truck.Forms
             OpenChildForm(appModulSupport, FrmMasterData.Instance);
             await FrmMasterData.Instance.LoadData(EnumTypeMasterData.Product);
             break;
+          case EnumScreen.MD_Delivery:
+            OpenChildForm(appModulSupport, FrmMasterData.Instance);
+            await FrmMasterData.Instance.LoadData(EnumTypeMasterData.Delivery);
+            break;
           case EnumScreen.User:
             OpenChildForm(appModulSupport, FrmUser.Instance);
             await FrmUser.Instance.LoadData();
@@ -473,6 +488,7 @@ namespace LTP.Truck.Forms
         EnumScreen.MD_Tare => "Trang chính > Master Data > Nhóm Tare",
         EnumScreen.MD_GroupProduct => "Trang chính > Master Data > Nhóm chất thải",
         EnumScreen.MD_Product => "Trang chính > Master Data > Chất thải",
+        EnumScreen.MD_Delivery => "Trang chính > Master Data > Khách hàng giao",
         EnumScreen.User => "Trang chính > Tài khoản",
         _ => "Trang chính"
       };

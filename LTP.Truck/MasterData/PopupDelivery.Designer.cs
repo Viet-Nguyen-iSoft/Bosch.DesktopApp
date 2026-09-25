@@ -31,22 +31,22 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupDelivery));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
-      label7 = new Label();
+      label1 = new Label();
+      txtOfficeAddress = new Common.Custom.RJTextBox();
+      txtAgentAddressForOfficeAddress = new Common.Custom.RJTextBox();
       label6 = new Label();
-      label8 = new Label();
       label5 = new Label();
+      label7 = new Label();
+      label8 = new Label();
       txtPhoneForOfficeAddress = new Common.Custom.RJTextBox();
       txtDescription = new Common.Custom.RJTextBox();
       label4 = new Label();
       txtAgentAddress = new Common.Custom.RJTextBox();
+      txtCompanyName = new Common.Custom.RJTextBox();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      txtAgentAddressForOfficeAddress = new Common.Custom.RJTextBox();
-      txtOfficeAddress = new Common.Custom.RJTextBox();
-      txtCompanyName = new Common.Custom.RJTextBox();
-      label1 = new Label();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
@@ -104,19 +104,65 @@
       tableLayoutPanel5.Size = new Size(608, 366);
       tableLayoutPanel5.TabIndex = 8;
       // 
-      // label7
+      // label1
       // 
-      label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label7.AutoSize = true;
-      label7.BackColor = Color.Transparent;
-      label7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label7.Location = new Point(0, 61);
-      label7.Margin = new Padding(0);
-      label7.Name = "label7";
-      label7.Size = new Size(200, 61);
-      label7.TabIndex = 3;
-      label7.Text = "Địa chỉ văn phòng";
-      label7.TextAlign = ContentAlignment.MiddleLeft;
+      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label1.AutoSize = true;
+      label1.BackColor = Color.Transparent;
+      label1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label1.Location = new Point(0, 0);
+      label1.Margin = new Padding(0);
+      label1.Name = "label1";
+      label1.Size = new Size(200, 61);
+      label1.TabIndex = 43;
+      label1.Text = "Tên công ty";
+      label1.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // txtOfficeAddress
+      // 
+      txtOfficeAddress.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtOfficeAddress.BackColor = SystemColors.Window;
+      txtOfficeAddress.BorderColor = Color.Black;
+      txtOfficeAddress.BorderFocusColor = Color.HotPink;
+      txtOfficeAddress.BorderRadius = 5;
+      txtOfficeAddress.BorderSize = 2;
+      txtOfficeAddress.Font = new Font("Roboto", 14F);
+      txtOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
+      txtOfficeAddress.Location = new Point(204, 72);
+      txtOfficeAddress.Margin = new Padding(4);
+      txtOfficeAddress.Multiline = false;
+      txtOfficeAddress.Name = "txtOfficeAddress";
+      txtOfficeAddress.Padding = new Padding(10, 7, 10, 7);
+      txtOfficeAddress.PasswordChar = false;
+      txtOfficeAddress.PlaceholderColor = Color.DarkGray;
+      txtOfficeAddress.PlaceholderText = "";
+      txtOfficeAddress.Size = new Size(400, 38);
+      txtOfficeAddress.TabIndex = 41;
+      txtOfficeAddress.Texts = "";
+      txtOfficeAddress.UnderlinedStyle = false;
+      // 
+      // txtAgentAddressForOfficeAddress
+      // 
+      txtAgentAddressForOfficeAddress.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtAgentAddressForOfficeAddress.BackColor = SystemColors.Window;
+      txtAgentAddressForOfficeAddress.BorderColor = Color.Black;
+      txtAgentAddressForOfficeAddress.BorderFocusColor = Color.HotPink;
+      txtAgentAddressForOfficeAddress.BorderRadius = 5;
+      txtAgentAddressForOfficeAddress.BorderSize = 2;
+      txtAgentAddressForOfficeAddress.Font = new Font("Roboto", 14F);
+      txtAgentAddressForOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
+      txtAgentAddressForOfficeAddress.Location = new Point(204, 255);
+      txtAgentAddressForOfficeAddress.Margin = new Padding(4);
+      txtAgentAddressForOfficeAddress.Multiline = false;
+      txtAgentAddressForOfficeAddress.Name = "txtAgentAddressForOfficeAddress";
+      txtAgentAddressForOfficeAddress.Padding = new Padding(10, 7, 10, 7);
+      txtAgentAddressForOfficeAddress.PasswordChar = false;
+      txtAgentAddressForOfficeAddress.PlaceholderColor = Color.DarkGray;
+      txtAgentAddressForOfficeAddress.PlaceholderText = "";
+      txtAgentAddressForOfficeAddress.Size = new Size(400, 38);
+      txtAgentAddressForOfficeAddress.TabIndex = 40;
+      txtAgentAddressForOfficeAddress.Texts = "";
+      txtAgentAddressForOfficeAddress.UnderlinedStyle = false;
       // 
       // label6
       // 
@@ -132,20 +178,6 @@
       label6.Text = "ĐT";
       label6.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // label8
-      // 
-      label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label8.AutoSize = true;
-      label8.BackColor = Color.Transparent;
-      label8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label8.Location = new Point(0, 122);
-      label8.Margin = new Padding(0);
-      label8.Name = "label8";
-      label8.Size = new Size(200, 61);
-      label8.TabIndex = 3;
-      label8.Text = "ĐT";
-      label8.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // label5
       // 
       label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -159,6 +191,34 @@
       label5.TabIndex = 3;
       label5.Text = "Địa chỉ cơ sở/đại lý";
       label5.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label7
+      // 
+      label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label7.AutoSize = true;
+      label7.BackColor = Color.Transparent;
+      label7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label7.Location = new Point(0, 61);
+      label7.Margin = new Padding(0);
+      label7.Name = "label7";
+      label7.Size = new Size(200, 61);
+      label7.TabIndex = 3;
+      label7.Text = "Địa chỉ văn phòng";
+      label7.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label8
+      // 
+      label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label8.AutoSize = true;
+      label8.BackColor = Color.Transparent;
+      label8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label8.Location = new Point(0, 122);
+      label8.Margin = new Padding(0);
+      label8.Name = "label8";
+      label8.Size = new Size(200, 61);
+      label8.TabIndex = 3;
+      label8.Text = "ĐT";
+      label8.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtPhoneForOfficeAddress
       // 
@@ -243,6 +303,29 @@
       txtAgentAddress.Texts = "";
       txtAgentAddress.UnderlinedStyle = false;
       // 
+      // txtCompanyName
+      // 
+      txtCompanyName.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtCompanyName.BackColor = SystemColors.Window;
+      txtCompanyName.BorderColor = Color.Black;
+      txtCompanyName.BorderFocusColor = Color.HotPink;
+      txtCompanyName.BorderRadius = 5;
+      txtCompanyName.BorderSize = 2;
+      txtCompanyName.Font = new Font("Roboto", 14F);
+      txtCompanyName.ForeColor = Color.FromArgb(64, 64, 64);
+      txtCompanyName.Location = new Point(204, 11);
+      txtCompanyName.Margin = new Padding(4);
+      txtCompanyName.Multiline = false;
+      txtCompanyName.Name = "txtCompanyName";
+      txtCompanyName.Padding = new Padding(10, 7, 10, 7);
+      txtCompanyName.PasswordChar = false;
+      txtCompanyName.PlaceholderColor = Color.DarkGray;
+      txtCompanyName.PlaceholderText = "";
+      txtCompanyName.Size = new Size(400, 38);
+      txtCompanyName.TabIndex = 42;
+      txtCompanyName.Texts = "";
+      txtCompanyName.UnderlinedStyle = false;
+      // 
       // lbTitle
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -320,97 +403,15 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // txtAgentAddressForOfficeAddress
-      // 
-      txtAgentAddressForOfficeAddress.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtAgentAddressForOfficeAddress.BackColor = SystemColors.Window;
-      txtAgentAddressForOfficeAddress.BorderColor = Color.Black;
-      txtAgentAddressForOfficeAddress.BorderFocusColor = Color.HotPink;
-      txtAgentAddressForOfficeAddress.BorderRadius = 5;
-      txtAgentAddressForOfficeAddress.BorderSize = 2;
-      txtAgentAddressForOfficeAddress.Font = new Font("Roboto", 14F);
-      txtAgentAddressForOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtAgentAddressForOfficeAddress.Location = new Point(204, 255);
-      txtAgentAddressForOfficeAddress.Margin = new Padding(4);
-      txtAgentAddressForOfficeAddress.Multiline = false;
-      txtAgentAddressForOfficeAddress.Name = "txtAgentAddressForOfficeAddress";
-      txtAgentAddressForOfficeAddress.Padding = new Padding(10, 7, 10, 7);
-      txtAgentAddressForOfficeAddress.PasswordChar = false;
-      txtAgentAddressForOfficeAddress.PlaceholderColor = Color.DarkGray;
-      txtAgentAddressForOfficeAddress.PlaceholderText = "";
-      txtAgentAddressForOfficeAddress.Size = new Size(400, 38);
-      txtAgentAddressForOfficeAddress.TabIndex = 40;
-      txtAgentAddressForOfficeAddress.Texts = "";
-      txtAgentAddressForOfficeAddress.UnderlinedStyle = false;
-      // 
-      // txtOfficeAddress
-      // 
-      txtOfficeAddress.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtOfficeAddress.BackColor = SystemColors.Window;
-      txtOfficeAddress.BorderColor = Color.Black;
-      txtOfficeAddress.BorderFocusColor = Color.HotPink;
-      txtOfficeAddress.BorderRadius = 5;
-      txtOfficeAddress.BorderSize = 2;
-      txtOfficeAddress.Font = new Font("Roboto", 14F);
-      txtOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtOfficeAddress.Location = new Point(204, 72);
-      txtOfficeAddress.Margin = new Padding(4);
-      txtOfficeAddress.Multiline = false;
-      txtOfficeAddress.Name = "txtOfficeAddress";
-      txtOfficeAddress.Padding = new Padding(10, 7, 10, 7);
-      txtOfficeAddress.PasswordChar = false;
-      txtOfficeAddress.PlaceholderColor = Color.DarkGray;
-      txtOfficeAddress.PlaceholderText = "";
-      txtOfficeAddress.Size = new Size(400, 38);
-      txtOfficeAddress.TabIndex = 41;
-      txtOfficeAddress.Texts = "";
-      txtOfficeAddress.UnderlinedStyle = false;
-      // 
-      // txtCompanyName
-      // 
-      txtCompanyName.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtCompanyName.BackColor = SystemColors.Window;
-      txtCompanyName.BorderColor = Color.Black;
-      txtCompanyName.BorderFocusColor = Color.HotPink;
-      txtCompanyName.BorderRadius = 5;
-      txtCompanyName.BorderSize = 2;
-      txtCompanyName.Font = new Font("Roboto", 14F);
-      txtCompanyName.ForeColor = Color.FromArgb(64, 64, 64);
-      txtCompanyName.Location = new Point(204, 11);
-      txtCompanyName.Margin = new Padding(4);
-      txtCompanyName.Multiline = false;
-      txtCompanyName.Name = "txtCompanyName";
-      txtCompanyName.Padding = new Padding(10, 7, 10, 7);
-      txtCompanyName.PasswordChar = false;
-      txtCompanyName.PlaceholderColor = Color.DarkGray;
-      txtCompanyName.PlaceholderText = "";
-      txtCompanyName.Size = new Size(400, 38);
-      txtCompanyName.TabIndex = 42;
-      txtCompanyName.Texts = "";
-      txtCompanyName.UnderlinedStyle = false;
-      // 
-      // label1
-      // 
-      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label1.AutoSize = true;
-      label1.BackColor = Color.Transparent;
-      label1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label1.Location = new Point(0, 0);
-      label1.Margin = new Padding(0);
-      label1.Name = "label1";
-      label1.Size = new Size(200, 61);
-      label1.TabIndex = 43;
-      label1.Text = "Tên công ty";
-      label1.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // PopupDelivery
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(624, 507);
+      ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupDelivery";
-      Text = "PopupDelivery";
+      StartPosition = FormStartPosition.CenterParent;
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel5.ResumeLayout(false);
