@@ -135,6 +135,7 @@ namespace LTP.Truck.Controls
       }
       catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }
@@ -402,8 +403,9 @@ namespace LTP.Truck.Controls
 
         pd.Print();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }

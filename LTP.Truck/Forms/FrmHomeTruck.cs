@@ -1655,8 +1655,9 @@ namespace LTP.Truck.Forms
 
         return await CreateFile(outputPath);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }
@@ -1670,8 +1671,9 @@ namespace LTP.Truck.Forms
         await PdfHelper.HtmlToPdfAsync(path, pdf);
         return pdf;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }

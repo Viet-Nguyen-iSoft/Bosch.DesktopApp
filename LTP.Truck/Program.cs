@@ -14,16 +14,31 @@ namespace LTP.Truck
     [STAThread]
     static void Main()
     {
-      // To customize application configuration such as set high DPI settings or default font,
-      // see https://aka.ms/applicationconfiguration.
-      ApplicationConfiguration.Initialize();
+      Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+      Application.ThreadException += (_, args) =>
+        LogHelper.LogErrorToFileLog(args.Exception, AppCore.Ins._folderFileLog);
+      AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+      {
+        if (args.ExceptionObject is Exception ex)
+          LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      };
+      TaskScheduler.UnobservedTaskException += (_, args) =>
+      {
+        LogHelper.LogErrorToFileLog(args.Exception, AppCore.Ins._folderFileLog);
+        args.SetObserved();
+      };
 
-
-      //Khởi tạo Db
-      InitDb().GetAwaiter().GetResult();
-
-      //Start Form
-      AppCore.Ins.Init();
+      try
+      {
+        ApplicationConfiguration.Initialize();
+        InitDb().GetAwaiter().GetResult();
+        AppCore.Ins.Init();
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        throw;
+      }
     }
 
     public static void StartApp()

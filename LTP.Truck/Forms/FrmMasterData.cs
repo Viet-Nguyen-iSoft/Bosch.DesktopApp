@@ -180,7 +180,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
-
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 

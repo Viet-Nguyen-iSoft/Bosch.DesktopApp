@@ -12,8 +12,9 @@ namespace LTP.Truck.Controls
         var api = new ApiService();
         return await api.UpsertWarehouseAsync(warehouseUpsertRequest);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }
@@ -25,8 +26,9 @@ namespace LTP.Truck.Controls
         var api = new ApiService();
         return await api.UpsertCategoryTareAsync(categoryTareUpsertRequest);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }
@@ -38,8 +40,9 @@ namespace LTP.Truck.Controls
         var api = new ApiService();
         return await api.UpsertTypeGoodsAsync(typeGoodsUpsertRequest);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }
@@ -51,8 +54,9 @@ namespace LTP.Truck.Controls
         var api = new ApiService();
         return await api.UpsertProductGroupAsync(productGroupUpsertRequest);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }
@@ -64,8 +68,9 @@ namespace LTP.Truck.Controls
         var api = new ApiService();
         return await api.UpsertClientAsync(clientUpsertRequest);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }
@@ -79,6 +84,7 @@ namespace LTP.Truck.Controls
       }
       catch (Exception ex)
       {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         throw;
       }
     }

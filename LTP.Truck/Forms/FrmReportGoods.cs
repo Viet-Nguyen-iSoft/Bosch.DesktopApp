@@ -127,15 +127,7 @@ namespace LTP.Truck.Forms
 
         var fromDateTime = ucTimeSearchFrom.Value;
         var toDateTime = ucTimeSearchTo.Value;
-        if (fromDateTime > toDateTime)
-        {
-          using var popup = new PopupConfirm(
-            "Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
-            EnumTypeMsg.MessageManualClose,
-            EnumImageMsg.Warning);
-          popup.ShowDialog(this);
-          return;
-        }
+        if (!ValidateReportDateRange(fromDateTime, toDateTime)) return;
 
         var fromUtc = fromDateTime.ToUniversalTime();
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
@@ -474,7 +466,7 @@ namespace LTP.Truck.Forms
       var selectedColumn = new DataGridViewCheckBoxColumn
       {
         Name = "Selected",
-        HeaderText = "Chọn",
+        HeaderText = string.Empty,
         Width = 60,
         MinimumWidth = 60,
         AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
@@ -482,6 +474,16 @@ namespace LTP.Truck.Forms
         FalseValue = false,
         TrueValue = true,
       };
+      var selectAllHeader = new CheckBoxColumnHeaderCell();
+      selectAllHeader.CheckedChanged += isChecked =>
+      {
+        foreach (DataGridViewRow row in grid.Rows)
+          row.Cells[selectedColumn.Index].Value = isChecked;
+
+        grid.ClearSelection();
+        grid.CurrentCell = null;
+      };
+      selectedColumn.HeaderCell = selectAllHeader;
       grid.Columns.Insert(0, selectedColumn);
       ConfigureGroupGridColumnWidths(grid);
       grid.CellClick += (_, e) =>
@@ -491,10 +493,85 @@ namespace LTP.Truck.Forms
 
         var cell = grid.Rows[e.RowIndex].Cells[selectedColumn.Index];
         cell.Value = !Convert.ToBoolean(cell.Value ?? false);
+        selectAllHeader.Checked = grid.Rows
+          .Cast<DataGridViewRow>()
+          .All(row => Convert.ToBoolean(row.Cells[selectedColumn.Index].Value ?? false));
         grid.ClearSelection();
         grid.CurrentCell = null;
       };
       return grid;
+    }
+
+    private sealed class CheckBoxColumnHeaderCell : DataGridViewColumnHeaderCell
+    {
+      private bool _checked;
+
+      public event Action<bool>? CheckedChanged;
+
+      public bool Checked
+      {
+        get => _checked;
+        set
+        {
+          if (_checked == value) return;
+          _checked = value;
+          DataGridView?.InvalidateCell(this);
+        }
+      }
+
+      protected override void Paint(
+        Graphics graphics,
+        Rectangle clipBounds,
+        Rectangle cellBounds,
+        int rowIndex,
+        DataGridViewElementStates dataGridViewElementState,
+        object? value,
+        object? formattedValue,
+        string? errorText,
+        DataGridViewCellStyle cellStyle,
+        DataGridViewAdvancedBorderStyle advancedBorderStyle,
+        DataGridViewPaintParts paintParts)
+      {
+        base.Paint(
+          graphics,
+          clipBounds,
+          cellBounds,
+          rowIndex,
+          dataGridViewElementState,
+          value,
+          formattedValue,
+          errorText,
+          cellStyle,
+          advancedBorderStyle,
+          paintParts & ~DataGridViewPaintParts.ContentForeground);
+
+        var state = Checked
+          ? System.Windows.Forms.VisualStyles.CheckBoxState.CheckedNormal
+          : System.Windows.Forms.VisualStyles.CheckBoxState.UncheckedNormal;
+        var checkBoxSize = CheckBoxRenderer.GetGlyphSize(graphics, state);
+        var checkBoxLocation = new Point(
+          cellBounds.Left + (cellBounds.Width - checkBoxSize.Width) / 2,
+          cellBounds.Top + (cellBounds.Height - checkBoxSize.Height) / 2);
+        CheckBoxRenderer.DrawCheckBox(graphics, checkBoxLocation, state);
+      }
+
+      protected override void OnMouseClick(DataGridViewCellMouseEventArgs e)
+      {
+        if (e.Button == MouseButtons.Left)
+        {
+          Checked = !Checked;
+          CheckedChanged?.Invoke(Checked);
+        }
+
+        base.OnMouseClick(e);
+      }
+
+      public override object Clone()
+      {
+        var clone = (CheckBoxColumnHeaderCell)base.Clone();
+        clone._checked = _checked;
+        return clone;
+      }
     }
 
     private static void ConfigureGroupGridColumnWidths(DataGridView grid)
@@ -551,6 +628,10 @@ namespace LTP.Truck.Forms
     private async void btnExport_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
+      var fromDateTime = ucTimeSearchFrom.Value;
+      var toDateTime = ucTimeSearchTo.Value;
+      if (!ValidateReportDateRange(fromDateTime, toDateTime)) return;
+
       var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateReport.xlsx");
       if (!File.Exists(templatePath))
       {
@@ -577,8 +658,6 @@ namespace LTP.Truck.Forms
       try
       {
         btnExport.Enabled = false;
-        var fromDateTime = ucTimeSearchFrom.Value;
-        var toDateTime = ucTimeSearchTo.Value;
         var exportRecords = await AppCore.Ins._recordWeightService.GetReportAsync(
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
@@ -825,15 +904,7 @@ namespace LTP.Truck.Forms
 
       var fromDateTime = ucTimeSearchFrom.Value;
       var toDateTime = ucTimeSearchTo.Value;
-      if (fromDateTime > toDateTime)
-      {
-        using var popup = new PopupConfirm(
-          "Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
-          EnumTypeMsg.MessageManualClose,
-          EnumImageMsg.Warning);
-        popup.ShowDialog(this);
-        return;
-      }
+      if (!ValidateReportDateRange(fromDateTime, toDateTime)) return;
 
       if (fromDateTime.Year != toDateTime.Year)
       {
@@ -928,6 +999,28 @@ namespace LTP.Truck.Forms
       {
         btnTracking.Enabled = true;
       }
+    }
+
+    private bool ValidateReportDateRange(DateTime fromDateTime, DateTime toDateTime)
+    {
+      string? message = null;
+      if (fromDateTime > toDateTime)
+      {
+        message = "Thời gian bắt đầu không được lớn hơn thời gian kết thúc.";
+      }
+      else if (toDateTime > fromDateTime.AddYears(1))
+      {
+        message = "Khoảng thời gian tra cứu không được vượt quá 1 năm.";
+      }
+
+      if (message == null) return true;
+
+      using var popup = new PopupConfirm(
+        message,
+        EnumTypeMsg.MessageManualClose,
+        EnumImageMsg.Warning);
+      popup.ShowDialog(this);
+      return false;
     }
 
     private static void ExportTrackingReport(

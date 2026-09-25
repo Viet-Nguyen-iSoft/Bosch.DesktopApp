@@ -122,15 +122,7 @@ namespace LTP.Truck.Forms
 
         var fromDateTime = ucTimeSearchFrom.Value;
         var toDateTime = ucTimeSearchTo.Value;
-        if (fromDateTime > toDateTime)
-        {
-          using var popup = new PopupConfirm(
-            "Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
-            EnumTypeMsg.MessageManualClose,
-            EnumImageMsg.Warning);
-          popup.ShowDialog(this);
-          return;
-        }
+        if (!ValidateReportDateRange(fromDateTime, toDateTime)) return;
 
         var fromUtc = fromDateTime.ToUniversalTime();
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
@@ -248,6 +240,10 @@ namespace LTP.Truck.Forms
     private async void btnExport_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
+      var fromDateTime = ucTimeSearchFrom.Value;
+      var toDateTime = ucTimeSearchTo.Value;
+      if (!ValidateReportDateRange(fromDateTime, toDateTime)) return;
+
       var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateReport.xlsx");
       if (!File.Exists(templatePath))
       {
@@ -274,8 +270,6 @@ namespace LTP.Truck.Forms
       try
       {
         btnExport.Enabled = false;
-        var fromDateTime = ucTimeSearchFrom.Value;
-        var toDateTime = ucTimeSearchTo.Value;
         var searchKey = txtSearchKey.Texts.Trim();
         var exportRecords = await AppCore.Ins._recordTruckService.GetReportAsync(
           fromDateTime.ToUniversalTime(),
@@ -357,6 +351,28 @@ namespace LTP.Truck.Forms
       {
         btnExport.Enabled = true;
       }
+    }
+
+    private bool ValidateReportDateRange(DateTime fromDateTime, DateTime toDateTime)
+    {
+      string? message = null;
+      if (fromDateTime > toDateTime)
+      {
+        message = "Thời gian bắt đầu không được lớn hơn thời gian kết thúc.";
+      }
+      else if (toDateTime > fromDateTime.AddYears(1))
+      {
+        message = "Khoảng thời gian tra cứu không được vượt quá 1 năm.";
+      }
+
+      if (message == null) return true;
+
+      using var popup = new PopupConfirm(
+        message,
+        EnumTypeMsg.MessageManualClose,
+        EnumImageMsg.Warning);
+      popup.ShowDialog(this);
+      return false;
     }
 
     private static void ExportTruckReport(

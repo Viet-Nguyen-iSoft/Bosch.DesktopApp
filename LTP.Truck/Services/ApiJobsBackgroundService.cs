@@ -134,6 +134,7 @@ namespace LTP.Truck.Services
         }
         catch (Exception ex)
         {
+          HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
           if (onError == null)
             throw;
 
