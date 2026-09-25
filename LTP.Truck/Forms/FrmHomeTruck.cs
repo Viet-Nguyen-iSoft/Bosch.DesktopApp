@@ -1582,8 +1582,8 @@ namespace LTP.Truck.Forms
         string fileImageLogo = Application.StartupPath + "Template\\LogoBosch.png";
         string template = File.ReadAllText(pathFileTemplate);
         string company = AppCore.Ins._appConfig?.Company ?? string.Empty;
-        string address = AppCore.Ins._appConfig?.Address ?? string.Empty;
-        string phone = AppCore.Ins._appConfig?.Phone ?? string.Empty;
+        string address = AppCore.Ins._appConfig?.OfficeAddress ?? string.Empty;
+        string phone = AppCore.Ins._appConfig?.PhoneForOfficeAddress ?? string.Empty;
         string timePrint = dt.ToString(
                                         "HH:mm 'Ngày' dd 'tháng' MM 'năm' yyyy",
                                         CultureInfo.GetCultureInfo("vi-VN")

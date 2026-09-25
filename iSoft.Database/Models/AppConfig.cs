@@ -22,8 +22,12 @@ namespace iSoft.Database.Models
     public double ValueCheckWeight { get; set; } = 0;
 
     public string? Company { get; set; }
-    public string? Address { get; set; }
-    public string? Phone { get; set; }
+    public string? OfficeAddress { get; set; }
+    public string? PhoneForOfficeAddress { get; set; }
+
+    public string? AgentAddress { get; set; }
+    public string? PhoneForAgentAddress { get; set; }
+
 
     public double? ValueWeightGoodsCheckPermitConfirm { get; set; } = 0.0;
   }

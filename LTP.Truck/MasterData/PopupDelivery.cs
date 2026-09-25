@@ -31,7 +31,7 @@ namespace LTP.Truck.MasterData
       txtOfficeAddress.Texts = delivery.OfficeAddress ?? string.Empty;
       txtPhoneForOfficeAddress.Texts = delivery.PhoneForOfficeAddress ?? string.Empty;
       txtAgentAddress.Texts = delivery.AgentAddress ?? string.Empty;
-      txtAgentAddressForOfficeAddress.Texts = delivery.AgentAddressForOfficeAddress ?? string.Empty;
+      txtPhoneForAgentAddress.Texts = delivery.AgentAddressForOfficeAddress ?? string.Empty;
       txtDescription.Texts = delivery.Description ?? string.Empty;
     }
 
@@ -69,7 +69,7 @@ namespace LTP.Truck.MasterData
         deliveryToSave.OfficeAddress = txtOfficeAddress.Texts.Trim();
         deliveryToSave.PhoneForOfficeAddress = txtPhoneForOfficeAddress.Texts.Trim();
         deliveryToSave.AgentAddress = txtAgentAddress.Texts.Trim();
-        deliveryToSave.AgentAddressForOfficeAddress = txtAgentAddressForOfficeAddress.Texts.Trim();
+        deliveryToSave.AgentAddressForOfficeAddress = txtPhoneForAgentAddress.Texts.Trim();
         deliveryToSave.Description = txtDescription.Texts.Trim();
         if (_enumTypePopup == EnumTypePopup.Update)
           deliveryToSave.UpdatedAt = DateTime.UtcNow;

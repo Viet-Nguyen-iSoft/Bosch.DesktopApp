@@ -33,7 +33,7 @@
       tableLayoutPanel5 = new TableLayoutPanel();
       label1 = new Label();
       txtOfficeAddress = new Common.Custom.RJTextBox();
-      txtAgentAddressForOfficeAddress = new Common.Custom.RJTextBox();
+      txtPhoneForAgentAddress = new Common.Custom.RJTextBox();
       label6 = new Label();
       label5 = new Label();
       label7 = new Label();
@@ -82,7 +82,7 @@
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel5.Controls.Add(label1, 0, 0);
       tableLayoutPanel5.Controls.Add(txtOfficeAddress, 1, 1);
-      tableLayoutPanel5.Controls.Add(txtAgentAddressForOfficeAddress, 1, 4);
+      tableLayoutPanel5.Controls.Add(txtPhoneForAgentAddress, 1, 4);
       tableLayoutPanel5.Controls.Add(label6, 0, 4);
       tableLayoutPanel5.Controls.Add(label5, 0, 3);
       tableLayoutPanel5.Controls.Add(label7, 0, 1);
@@ -141,28 +141,28 @@
       txtOfficeAddress.Texts = "";
       txtOfficeAddress.UnderlinedStyle = false;
       // 
-      // txtAgentAddressForOfficeAddress
+      // txtPhoneForAgentAddress
       // 
-      txtAgentAddressForOfficeAddress.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtAgentAddressForOfficeAddress.BackColor = SystemColors.Window;
-      txtAgentAddressForOfficeAddress.BorderColor = Color.Black;
-      txtAgentAddressForOfficeAddress.BorderFocusColor = Color.HotPink;
-      txtAgentAddressForOfficeAddress.BorderRadius = 5;
-      txtAgentAddressForOfficeAddress.BorderSize = 2;
-      txtAgentAddressForOfficeAddress.Font = new Font("Roboto", 14F);
-      txtAgentAddressForOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtAgentAddressForOfficeAddress.Location = new Point(204, 278);
-      txtAgentAddressForOfficeAddress.Margin = new Padding(4);
-      txtAgentAddressForOfficeAddress.Multiline = false;
-      txtAgentAddressForOfficeAddress.Name = "txtAgentAddressForOfficeAddress";
-      txtAgentAddressForOfficeAddress.Padding = new Padding(10, 7, 10, 7);
-      txtAgentAddressForOfficeAddress.PasswordChar = false;
-      txtAgentAddressForOfficeAddress.PlaceholderColor = Color.DarkGray;
-      txtAgentAddressForOfficeAddress.PlaceholderText = "";
-      txtAgentAddressForOfficeAddress.Size = new Size(751, 38);
-      txtAgentAddressForOfficeAddress.TabIndex = 40;
-      txtAgentAddressForOfficeAddress.Texts = "";
-      txtAgentAddressForOfficeAddress.UnderlinedStyle = false;
+      txtPhoneForAgentAddress.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtPhoneForAgentAddress.BackColor = SystemColors.Window;
+      txtPhoneForAgentAddress.BorderColor = Color.Black;
+      txtPhoneForAgentAddress.BorderFocusColor = Color.HotPink;
+      txtPhoneForAgentAddress.BorderRadius = 5;
+      txtPhoneForAgentAddress.BorderSize = 2;
+      txtPhoneForAgentAddress.Font = new Font("Roboto", 14F);
+      txtPhoneForAgentAddress.ForeColor = Color.FromArgb(64, 64, 64);
+      txtPhoneForAgentAddress.Location = new Point(204, 278);
+      txtPhoneForAgentAddress.Margin = new Padding(4);
+      txtPhoneForAgentAddress.Multiline = false;
+      txtPhoneForAgentAddress.Name = "txtPhoneForAgentAddress";
+      txtPhoneForAgentAddress.Padding = new Padding(10, 7, 10, 7);
+      txtPhoneForAgentAddress.PasswordChar = false;
+      txtPhoneForAgentAddress.PlaceholderColor = Color.DarkGray;
+      txtPhoneForAgentAddress.PlaceholderText = "";
+      txtPhoneForAgentAddress.Size = new Size(751, 38);
+      txtPhoneForAgentAddress.TabIndex = 40;
+      txtPhoneForAgentAddress.Texts = "";
+      txtPhoneForAgentAddress.UnderlinedStyle = false;
       // 
       // label6
       // 
@@ -437,7 +437,7 @@
     private Common.Custom.RJButton btnConfirm;
     private Common.Custom.RJButton btnClose;
     private Common.Custom.RJTextBox txtOfficeAddress;
-    private Common.Custom.RJTextBox txtAgentAddressForOfficeAddress;
+    private Common.Custom.RJTextBox txtPhoneForAgentAddress;
     private Label label1;
     private Common.Custom.RJTextBox txtCompanyName;
   }

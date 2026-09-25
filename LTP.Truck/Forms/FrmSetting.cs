@@ -217,10 +217,12 @@ namespace LTP.Truck.Forms
       if (station == "1")
       {
         tableLayoutPanel16.Visible = true;
+        tableLayoutPanel22.Visible = false;
       }
       else
       {
         tableLayoutPanel16.Visible = false;
+        tableLayoutPanel22.Visible = true;
       }
     }
 
@@ -302,8 +304,11 @@ namespace LTP.Truck.Forms
       }
 
       txtCompany.Texts = appConfig?.Company ?? string.Empty;
-      txtAddress.Texts = appConfig?.Address ?? string.Empty;
-      txtPhone.Texts = appConfig?.Phone ?? string.Empty;
+      txtOfficeAddress.Texts = appConfig?.OfficeAddress ?? string.Empty;
+      txtPhoneForOfficeAddress.Texts = appConfig?.PhoneForOfficeAddress ?? string.Empty;
+
+      txtAgentAddress.Texts = appConfig?.AgentAddress ?? string.Empty;
+      txtPhoneForAgentAddress.Texts = appConfig?.PhoneForAgentAddress ?? string.Empty;
     }
 
     private async void btnSaveStation_Click(object? sender, EventArgs e)
@@ -473,8 +478,8 @@ namespace LTP.Truck.Forms
               AutoConnect = GetConnectionAutoConnect(connection),
               Tag = connection,
               Margin = new Padding(3),
-              Width = Math.Max(100, flowCommWeight.ClientSize.Width / 2 - 10),
-              Height = 225
+              Width = Math.Max(100, flowCommWeight.ClientSize.Width - 10),
+              Height = 208
             };
             item.OnSendDataDetail += Item_OnSendDataDetail;
             item.OnSendDelete += Item_OnSendDelete;
@@ -768,14 +773,14 @@ namespace LTP.Truck.Forms
       try
       {
         appConfig.Company = txtCompany.Texts.Trim();
-        appConfig.Address = txtAddress.Texts.Trim();
-        appConfig.Phone = txtPhone.Texts.Trim();
+        appConfig.OfficeAddress = txtOfficeAddress.Texts.Trim();
+        appConfig.PhoneForOfficeAddress = txtPhoneForOfficeAddress.Texts.Trim();
+        appConfig.AgentAddress = txtAgentAddress.Texts.Trim();
+        appConfig.PhoneForAgentAddress = txtPhoneForAgentAddress.Texts.Trim();
         appConfig.UpdatedAt = DateTime.UtcNow;
 
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
-
-        LoadReportInformation(AppCore.Ins._appConfig);
 
         using var popupSuccess = new PopupConfirm(
           "Đã lưu thông tin báo cáo thành công.",

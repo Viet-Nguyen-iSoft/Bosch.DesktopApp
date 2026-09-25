@@ -289,6 +289,9 @@ namespace ApiSyncData
         Net = record.Net,
         Tare = record.Tare,
         LicensePlate = record.LicensePlate,
+        Note = record.Note,
+        NameDriver = record.NameDriver,
+        IdCard = record.IdCard,
         StationId = GetSourceId(
           nameof(RecordWeight),
           record.Id,
