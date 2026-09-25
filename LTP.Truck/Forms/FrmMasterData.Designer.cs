@@ -40,6 +40,7 @@ namespace LTP.Truck.Forms
       txtSearch = new RJTextBox();
       btnSearch = new RJButton();
       btnAddnew = new RJButton();
+      cbbFilter = new ComboBox();
       label27 = new Label();
       tableLayoutPanel7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
@@ -110,16 +111,18 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel10
       // 
       tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel10.ColumnCount = 5;
+      tableLayoutPanel10.ColumnCount = 6;
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 250F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearch, 1, 0);
-      tableLayoutPanel10.Controls.Add(btnSearch, 4, 0);
-      tableLayoutPanel10.Controls.Add(btnAddnew, 3, 0);
+      tableLayoutPanel10.Controls.Add(btnSearch, 5, 0);
+      tableLayoutPanel10.Controls.Add(btnAddnew, 4, 0);
+      tableLayoutPanel10.Controls.Add(cbbFilter, 2, 0);
       tableLayoutPanel10.Location = new Point(0, 50);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -160,7 +163,7 @@ namespace LTP.Truck.Forms
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(516, 38);
+      txtSearch.Size = new Size(391, 38);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;
@@ -215,6 +218,16 @@ namespace LTP.Truck.Forms
       btnAddnew.UseVisualStyleBackColor = false;
       btnAddnew.Click += btnAddnew_Click;
       // 
+      // cbbFilter
+      // 
+      cbbFilter.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      cbbFilter.Font = new Font("Roboto", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      cbbFilter.FormattingEnabled = true;
+      cbbFilter.Location = new Point(497, 11);
+      cbbFilter.Name = "cbbFilter";
+      cbbFilter.Size = new Size(244, 37);
+      cbbFilter.TabIndex = 29;
+      // 
       // label27
       // 
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -255,5 +268,6 @@ namespace LTP.Truck.Forms
     private RJButton btnSearch;
     private Label label27;
     private RJButton btnAddnew;
+    private ComboBox cbbFilter;
   }
 }
