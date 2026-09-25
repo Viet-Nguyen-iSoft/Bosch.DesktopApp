@@ -16,12 +16,15 @@ namespace iSoft.Database.Models
     public string? Version { get; set; }
 
     public string? Key { get; set; }
-    public string? NamePrint { get; set; }
+    public string? NamePrintA4 { get; set; }
+    public string? NamePrintLabel { get; set; }
     public bool PermitCheckWeight { get; set; } = false;
     public double ValueCheckWeight { get; set; } = 0;
 
     public string? Company { get; set; }
     public string? Address { get; set; }
     public string? Phone { get; set; }
+
+    public double? ValueWeightGoodsCheckPermitConfirm { get; set; } = 0.0;
   }
 }

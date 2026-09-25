@@ -543,7 +543,7 @@ namespace LTP.Truck.Forms
         _recordTruck.NameDriver = txtNameDriver.Texts;
         _recordTruck.LicensePlate = validLicense.Plate;
         _recordTruck.IdCard = txtIdCard.Texts;
-        _recordTruck.Document = txtDocument.Text;
+        _recordTruck.Note = txtDocument.Text;
         _recordTruck.StationId = AppCore.Ins._station?.Id;
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
         _recordTruck.CreatedAt = DateTime.UtcNow;
@@ -622,7 +622,7 @@ namespace LTP.Truck.Forms
         _recordTruck.NameDriver = txtNameDriver.Texts;
         _recordTruck.LicensePlate = validLicense.Plate;
         _recordTruck.IdCard = txtIdCard.Texts;
-        _recordTruck.Document = txtDocument.Text;
+        _recordTruck.Note = txtDocument.Text;
         _recordTruck.StationId = AppCore.Ins._station?.Id;
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
         _recordTruck.UpdatedAt = DateTime.UtcNow;
@@ -844,7 +844,7 @@ namespace LTP.Truck.Forms
       txtNameDriver.Texts = recordTruck.NameDriver ?? string.Empty;
       txtLicensePlate.Texts = recordTruck.LicensePlate ?? string.Empty;
       txtIdCard.Texts = recordTruck.IdCard ?? string.Empty;
-      txtDocument.Text = recordTruck.Document ?? string.Empty;
+      txtDocument.Text = recordTruck.Note ?? string.Empty;
 
       txtClient.Texts = recordTruck.Client?.Name ?? string.Empty;
       txtWareHouse.Texts = recordTruck.Warehouse?.Name ?? string.Empty;
@@ -1543,7 +1543,7 @@ namespace LTP.Truck.Forms
           tempTableDetal = tempTableDetal.Replace("{{no}}", (no).ToString("D2"));
           tempTableDetal = tempTableDetal.Replace("{{name}}", recordWeightsByProduct[no - 1].ProductName);
           tempTableDetal = tempTableDetal.Replace("{{code}}", recordWeightsByProduct[no - 1].ProductCode);
-          tempTableDetal = tempTableDetal.Replace("{{quantity}}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
+          tempTableDetal = tempTableDetal.Replace("{{quantity}}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 2));
           tempTableDetal = tempTableDetal.Replace("{{note}}", "");
 
 
@@ -1635,7 +1635,7 @@ namespace LTP.Truck.Forms
                                 .Replace("{net}", net)
                                 .Replace("{time_tare}", timeTare)
                                 .Replace("{time_gross}", timeGross)
-                                .Replace("{note}", recordTruck.Document)
+                                .Replace("{note}", recordTruck.Note)
                                 .Replace("{path_file_logo}", fileImageLogo)
                                 ;
         //string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");

@@ -236,7 +236,7 @@ namespace LTP.Truck.Forms
       {
         _isPrintingLabel = true;
         dgv.Enabled = false;
-        string printerName = AppCore.Ins._appConfig.NamePrint;
+        string printerName = AppCore.Ins._appConfig.NamePrintA4;
         AppCore.Ins.PrinterLabelGoods(printerName, row);
       }
       catch (Exception ex)

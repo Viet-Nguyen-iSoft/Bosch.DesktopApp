@@ -71,7 +71,7 @@
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(624, 507);
+      tableLayoutPanel3.Size = new Size(975, 538);
       tableLayoutPanel3.TabIndex = 7;
       // 
       // tableLayoutPanel5
@@ -101,7 +101,7 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-      tableLayoutPanel5.Size = new Size(608, 366);
+      tableLayoutPanel5.Size = new Size(959, 397);
       tableLayoutPanel5.TabIndex = 8;
       // 
       // label1
@@ -113,7 +113,7 @@
       label1.Location = new Point(0, 0);
       label1.Margin = new Padding(0);
       label1.Name = "label1";
-      label1.Size = new Size(200, 61);
+      label1.Size = new Size(200, 66);
       label1.TabIndex = 43;
       label1.Text = "Tên công ty";
       label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -128,7 +128,7 @@
       txtOfficeAddress.BorderSize = 2;
       txtOfficeAddress.Font = new Font("Roboto", 14F);
       txtOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtOfficeAddress.Location = new Point(204, 72);
+      txtOfficeAddress.Location = new Point(204, 80);
       txtOfficeAddress.Margin = new Padding(4);
       txtOfficeAddress.Multiline = false;
       txtOfficeAddress.Name = "txtOfficeAddress";
@@ -136,7 +136,7 @@
       txtOfficeAddress.PasswordChar = false;
       txtOfficeAddress.PlaceholderColor = Color.DarkGray;
       txtOfficeAddress.PlaceholderText = "";
-      txtOfficeAddress.Size = new Size(400, 38);
+      txtOfficeAddress.Size = new Size(751, 38);
       txtOfficeAddress.TabIndex = 41;
       txtOfficeAddress.Texts = "";
       txtOfficeAddress.UnderlinedStyle = false;
@@ -151,7 +151,7 @@
       txtAgentAddressForOfficeAddress.BorderSize = 2;
       txtAgentAddressForOfficeAddress.Font = new Font("Roboto", 14F);
       txtAgentAddressForOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtAgentAddressForOfficeAddress.Location = new Point(204, 255);
+      txtAgentAddressForOfficeAddress.Location = new Point(204, 278);
       txtAgentAddressForOfficeAddress.Margin = new Padding(4);
       txtAgentAddressForOfficeAddress.Multiline = false;
       txtAgentAddressForOfficeAddress.Name = "txtAgentAddressForOfficeAddress";
@@ -159,7 +159,7 @@
       txtAgentAddressForOfficeAddress.PasswordChar = false;
       txtAgentAddressForOfficeAddress.PlaceholderColor = Color.DarkGray;
       txtAgentAddressForOfficeAddress.PlaceholderText = "";
-      txtAgentAddressForOfficeAddress.Size = new Size(400, 38);
+      txtAgentAddressForOfficeAddress.Size = new Size(751, 38);
       txtAgentAddressForOfficeAddress.TabIndex = 40;
       txtAgentAddressForOfficeAddress.Texts = "";
       txtAgentAddressForOfficeAddress.UnderlinedStyle = false;
@@ -170,10 +170,10 @@
       label6.AutoSize = true;
       label6.BackColor = Color.Transparent;
       label6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label6.Location = new Point(0, 244);
+      label6.Location = new Point(0, 264);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(200, 61);
+      label6.Size = new Size(200, 66);
       label6.TabIndex = 3;
       label6.Text = "ĐT";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -184,10 +184,10 @@
       label5.AutoSize = true;
       label5.BackColor = Color.Transparent;
       label5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label5.Location = new Point(0, 183);
+      label5.Location = new Point(0, 198);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
-      label5.Size = new Size(200, 61);
+      label5.Size = new Size(200, 66);
       label5.TabIndex = 3;
       label5.Text = "Địa chỉ cơ sở/đại lý";
       label5.TextAlign = ContentAlignment.MiddleLeft;
@@ -198,10 +198,10 @@
       label7.AutoSize = true;
       label7.BackColor = Color.Transparent;
       label7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label7.Location = new Point(0, 61);
+      label7.Location = new Point(0, 66);
       label7.Margin = new Padding(0);
       label7.Name = "label7";
-      label7.Size = new Size(200, 61);
+      label7.Size = new Size(200, 66);
       label7.TabIndex = 3;
       label7.Text = "Địa chỉ văn phòng";
       label7.TextAlign = ContentAlignment.MiddleLeft;
@@ -212,10 +212,10 @@
       label8.AutoSize = true;
       label8.BackColor = Color.Transparent;
       label8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label8.Location = new Point(0, 122);
+      label8.Location = new Point(0, 132);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(200, 61);
+      label8.Size = new Size(200, 66);
       label8.TabIndex = 3;
       label8.Text = "ĐT";
       label8.TextAlign = ContentAlignment.MiddleLeft;
@@ -230,7 +230,7 @@
       txtPhoneForOfficeAddress.BorderSize = 2;
       txtPhoneForOfficeAddress.Font = new Font("Roboto", 14F);
       txtPhoneForOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPhoneForOfficeAddress.Location = new Point(204, 133);
+      txtPhoneForOfficeAddress.Location = new Point(204, 146);
       txtPhoneForOfficeAddress.Margin = new Padding(4);
       txtPhoneForOfficeAddress.Multiline = false;
       txtPhoneForOfficeAddress.Name = "txtPhoneForOfficeAddress";
@@ -238,7 +238,7 @@
       txtPhoneForOfficeAddress.PasswordChar = false;
       txtPhoneForOfficeAddress.PlaceholderColor = Color.DarkGray;
       txtPhoneForOfficeAddress.PlaceholderText = "";
-      txtPhoneForOfficeAddress.Size = new Size(400, 38);
+      txtPhoneForOfficeAddress.Size = new Size(751, 38);
       txtPhoneForOfficeAddress.TabIndex = 6;
       txtPhoneForOfficeAddress.Texts = "";
       txtPhoneForOfficeAddress.UnderlinedStyle = false;
@@ -253,7 +253,7 @@
       txtDescription.BorderSize = 2;
       txtDescription.Font = new Font("Roboto", 14F);
       txtDescription.ForeColor = Color.FromArgb(64, 64, 64);
-      txtDescription.Location = new Point(204, 316);
+      txtDescription.Location = new Point(204, 344);
       txtDescription.Margin = new Padding(4);
       txtDescription.Multiline = false;
       txtDescription.Name = "txtDescription";
@@ -261,7 +261,7 @@
       txtDescription.PasswordChar = false;
       txtDescription.PlaceholderColor = Color.DarkGray;
       txtDescription.PlaceholderText = "";
-      txtDescription.Size = new Size(400, 38);
+      txtDescription.Size = new Size(751, 38);
       txtDescription.TabIndex = 4;
       txtDescription.Texts = "";
       txtDescription.UnderlinedStyle = false;
@@ -272,10 +272,10 @@
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
       label4.Font = new Font("Roboto", 14F);
-      label4.Location = new Point(0, 305);
+      label4.Location = new Point(0, 330);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(200, 61);
+      label4.Size = new Size(200, 67);
       label4.TabIndex = 2;
       label4.Text = "Mô tả";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -290,7 +290,7 @@
       txtAgentAddress.BorderSize = 2;
       txtAgentAddress.Font = new Font("Roboto", 14F);
       txtAgentAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtAgentAddress.Location = new Point(204, 194);
+      txtAgentAddress.Location = new Point(204, 212);
       txtAgentAddress.Margin = new Padding(4);
       txtAgentAddress.Multiline = false;
       txtAgentAddress.Name = "txtAgentAddress";
@@ -298,7 +298,7 @@
       txtAgentAddress.PasswordChar = false;
       txtAgentAddress.PlaceholderColor = Color.DarkGray;
       txtAgentAddress.PlaceholderText = "";
-      txtAgentAddress.Size = new Size(400, 38);
+      txtAgentAddress.Size = new Size(751, 38);
       txtAgentAddress.TabIndex = 3;
       txtAgentAddress.Texts = "";
       txtAgentAddress.UnderlinedStyle = false;
@@ -313,7 +313,7 @@
       txtCompanyName.BorderSize = 2;
       txtCompanyName.Font = new Font("Roboto", 14F);
       txtCompanyName.ForeColor = Color.FromArgb(64, 64, 64);
-      txtCompanyName.Location = new Point(204, 11);
+      txtCompanyName.Location = new Point(204, 14);
       txtCompanyName.Margin = new Padding(4);
       txtCompanyName.Multiline = false;
       txtCompanyName.Name = "txtCompanyName";
@@ -321,7 +321,7 @@
       txtCompanyName.PasswordChar = false;
       txtCompanyName.PlaceholderColor = Color.DarkGray;
       txtCompanyName.PlaceholderText = "";
-      txtCompanyName.Size = new Size(400, 38);
+      txtCompanyName.Size = new Size(751, 38);
       txtCompanyName.TabIndex = 42;
       txtCompanyName.Texts = "";
       txtCompanyName.UnderlinedStyle = false;
@@ -335,7 +335,7 @@
       lbTitle.Location = new Point(5, 5);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(614, 60);
+      lbTitle.Size = new Size(965, 60);
       lbTitle.TabIndex = 0;
       lbTitle.Text = "Thông tin Khách hàng giao";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -349,12 +349,12 @@
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(5, 437);
+      tableLayoutPanel2.Location = new Point(5, 468);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.Size = new Size(614, 60);
+      tableLayoutPanel2.Size = new Size(965, 60);
       tableLayoutPanel2.TabIndex = 5;
       // 
       // btnConfirm
@@ -371,7 +371,7 @@
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(257, 3);
+      btnConfirm.Location = new Point(608, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
       btnConfirm.Size = new Size(174, 54);
@@ -394,7 +394,7 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(437, 3);
+      btnClose.Location = new Point(788, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
       btnClose.Size = new Size(174, 54);
@@ -407,7 +407,7 @@
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(624, 507);
+      ClientSize = new Size(975, 538);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupDelivery";

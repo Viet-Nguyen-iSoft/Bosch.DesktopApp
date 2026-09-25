@@ -14,6 +14,9 @@ namespace iSoft.Database.Models
     public double Net { get; set; }
     public double Tare { get; set; }
     public string? LicensePlate { get; set; }
+    public string? NameDriver { get; set; }
+    public string? IdCard { get; set; }
+    public string? Note { get; set; }
 
 
     #region Mapping
@@ -28,6 +31,9 @@ namespace iSoft.Database.Models
 
     public Guid? CategoryTareId { get; set; }
     public CategoryTare CategoryTare { get; set; } = null!;
+
+    public Guid? DeliveryId { get; set; }
+    public Delivery Delivery { get; set; } = null!;
 
     public Guid? RecordTruckId { get; set; }
     public RecordTruck RecordTruck { get; set; } = null!;

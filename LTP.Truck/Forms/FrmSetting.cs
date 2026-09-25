@@ -28,7 +28,8 @@ namespace LTP.Truck.Forms
       flowCommWeight.FlowDirection = FlowDirection.LeftToRight;
       flowCommWeight.WrapContents = false;
       this.Load += FrmSetting_Load;
-      btnSavePrint.Click += btnSavePrint_Click;
+      btnSavePrintA4.Click += btnSavePrintA4_Click;
+      btnSavePrintLabel.Click += BtnSavePrintLabel_Click;
       btnSaveStation.Click += btnSaveStation_Click;
       btnAddCommWeight.Click += btnAddCommWeight_Click;
       txtPortServer.KeyPress += NonNegativeInteger_KeyPress;
@@ -38,6 +39,44 @@ namespace LTP.Truck.Forms
       txtTimeoutServer._TextChanged += NonNegativeInteger_TextChanged;
       txtValueWeightPermit._TextChanged += NonNegativeDecimal_TextChanged;
 
+      btnSaveValueWeightGoodsCheckPermitConfirm.Click += btnSaveValueWeightGoodsCheckPermitConfirm_Click;
+    }
+
+    private async void BtnSavePrintLabel_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      if (cbbPrintLabel.SelectedItem is not string printerName ||
+        string.IsNullOrWhiteSpace(printerName))
+      {
+        PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn máy in !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
+        return;
+      }
+
+      var appConfig = AppCore.Ins._appConfig;
+      if (appConfig == null)
+      {
+        PopupConfirm popupConfirm = new PopupConfirm("Không tìm thấy cấu hình ứng dụng !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
+        return;
+      }
+
+      try
+      {
+        appConfig.NamePrintLabel = printerName;
+        appConfig.UpdatedAt = DateTime.UtcNow;
+        AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
+          .AddOrUpdateAsync(appConfig);
+
+        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu thông tin máy in nhãn thành công.", EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+        popupConfirm.ShowDialog();
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        PopupConfirm popupConfirm = new PopupConfirm("Không thể lưu thông tin máy in nhãn. Vui lòng thử lại !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupConfirm.ShowDialog();
+      }
     }
 
     private static void NonNegativeInteger_KeyPress(object? sender, KeyPressEventArgs e)
@@ -327,30 +366,30 @@ namespace LTP.Truck.Forms
         .OrderBy(name => name)
         .ToList();
 
-      cbbPrint.BeginUpdate();
+      cbbPrintA4.BeginUpdate();
       try
       {
-        cbbPrint.Items.Clear();
-        cbbPrint.Items.AddRange(printerNames.Cast<object>().ToArray());
+        cbbPrintA4.Items.Clear();
+        cbbPrintA4.Items.AddRange(printerNames.Cast<object>().ToArray());
 
-        var savedPrinter = AppCore.Ins._appConfig?.NamePrint;
+        var savedPrinter = AppCore.Ins._appConfig?.NamePrintA4;
         if (!string.IsNullOrWhiteSpace(savedPrinter))
-          cbbPrint.SelectedItem = printerNames.FirstOrDefault(name =>
+          cbbPrintA4.SelectedItem = printerNames.FirstOrDefault(name =>
             string.Equals(name, savedPrinter, StringComparison.OrdinalIgnoreCase));
 
-        if (cbbPrint.SelectedIndex < 0 && cbbPrint.Items.Count > 0)
-          cbbPrint.SelectedIndex = 0;
+        if (cbbPrintA4.SelectedIndex < 0 && cbbPrintA4.Items.Count > 0)
+          cbbPrintA4.SelectedIndex = 0;
       }
       finally
       {
-        cbbPrint.EndUpdate();
+        cbbPrintA4.EndUpdate();
       }
     }
 
-    private async void btnSavePrint_Click(object? sender, EventArgs e)
+    private async void btnSavePrintA4_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      if (cbbPrint.SelectedItem is not string printerName ||
+      if (cbbPrintA4.SelectedItem is not string printerName ||
         string.IsNullOrWhiteSpace(printerName))
       {
         PopupConfirm popupConfirm = new PopupConfirm("Vui lòng chọn máy in !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
@@ -368,7 +407,7 @@ namespace LTP.Truck.Forms
 
       try
       {
-        appConfig.NamePrint = printerName;
+        appConfig.NamePrintA4 = printerName;
         appConfig.UpdatedAt = DateTime.UtcNow;
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
@@ -729,7 +768,11 @@ namespace LTP.Truck.Forms
           EnumImageMsg.Warning);
         popupError.ShowDialog(this);
       }
+    }
 
+    private void btnSaveValueWeightGoodsCheckPermitConfirm_Click(object? sender, EventArgs e)
+    {
+      
     }
   }
 }

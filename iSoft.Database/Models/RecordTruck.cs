@@ -23,7 +23,7 @@ namespace iSoft.Database.Models
     public string? NameDriver { get; set; }
     public string? IdCard { get; set; }
     public string? LicensePlate { get; set; }
-    public string? Document { get; set; }
+    public string? Note { get; set; }
     public string? ReasonDelete { get; set; }
 
     public DateTime? WeighInAt { get; set; }

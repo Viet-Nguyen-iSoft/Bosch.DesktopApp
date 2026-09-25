@@ -112,7 +112,7 @@ namespace iSoft.Database.Repositorys
           (record.LicensePlate != null && EF.Functions.Collate(record.LicensePlate, SearchCollation).Contains(searchKey)) ||
           (record.NameDriver != null && EF.Functions.Collate(record.NameDriver, SearchCollation).Contains(searchKey)) ||
           (record.IdCard != null && EF.Functions.Collate(record.IdCard, SearchCollation).Contains(searchKey)) ||
-          (record.Document != null && EF.Functions.Collate(record.Document, SearchCollation).Contains(searchKey)) ||
+          (record.Note != null && EF.Functions.Collate(record.Note, SearchCollation).Contains(searchKey)) ||
           (record.Client != null && record.Client.Name != null && EF.Functions.Collate(record.Client.Name, SearchCollation).Contains(searchKey)) ||
           (record.TypeGoods != null && record.TypeGoods.Name != null && EF.Functions.Collate(record.TypeGoods.Name, SearchCollation).Contains(searchKey)) ||
           (record.Warehouse != null && record.Warehouse.Name != null && EF.Functions.Collate(record.Warehouse.Name, SearchCollation).Contains(searchKey)) ||

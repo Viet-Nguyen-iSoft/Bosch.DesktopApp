@@ -48,7 +48,7 @@ namespace iSoft.Database
         NameDriver = recordTruck.NameDriver,
         IdCard = recordTruck.IdCard,
         LicensePlate = recordTruck.LicensePlate,
-        Document = recordTruck.Document,
+        Document = recordTruck.Note,
         Station = recordTruck.Station?.Name,
       };
     }
@@ -87,12 +87,13 @@ namespace iSoft.Database
           No = orderedRecords.Count - index,
           Datetime = record.CreatedAt!=null ? ((DateTime)record.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") : string.Empty,
           LicensePlate = record?.LicensePlate,
+          NameDriver = record?.NameDriver,
           ProductGroup = record?.Product?.ProductGroup?.Name,
           Product = record?.Product?.Name,
           CategoryTare = record?.CategoryTare?.Name,
-          Gross = WeightFormatHelper.Format((record?.Net ?? 0.0) + (record?.Tare ?? 0.0), 3),
-          Net = WeightFormatHelper.Format(record?.Net ?? 0.0, 3),
-          Tare = WeightFormatHelper.Format(record?.Tare ?? 0.0, 3),
+          Gross = WeightFormatHelper.Format((record?.Net ?? 0.0) + (record?.Tare ?? 0.0), 2),
+          Net = WeightFormatHelper.Format(record?.Net ?? 0.0, 2),
+          Tare = WeightFormatHelper.Format(record?.Tare ?? 0.0, 2),
         })
         .ToList();
     }
@@ -178,7 +179,7 @@ namespace iSoft.Database
             Code = e.Code,
             Name = e.Name,
             Description = e.Description,
-            Value = WeightFormatHelper.Format(e?.Value ?? 0.0, 3),
+            Value = WeightFormatHelper.Format(e?.Value ?? 0.0, 2),
             UpdatedAt = e?.UpdatedAt != null ? (((DateTime)e?.UpdatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? "") :
                                               (((DateTime)e?.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? ""),
           })

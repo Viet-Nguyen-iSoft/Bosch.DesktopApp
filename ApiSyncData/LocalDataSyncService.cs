@@ -247,7 +247,7 @@ namespace ApiSyncData
         NameDriver = record.NameDriver,
         IdCard = record.IdCard,
         LicensePlate = record.LicensePlate,
-        Document = record.Document,
+        Document = record.Note,
         ReasonDelete = record.ReasonDelete,
         ClientId = GetSourceId(
           nameof(RecordTruck),

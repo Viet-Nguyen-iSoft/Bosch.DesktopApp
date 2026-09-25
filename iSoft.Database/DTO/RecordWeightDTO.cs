@@ -15,6 +15,8 @@ namespace iSoft.Database.DTO
     public string? Datetime { get; set; }
     [DisplayName("Biển số xe")]
     public string? LicensePlate { get; set; }
+    [DisplayName("Tên tài xế")]
+    public string? NameDriver { get; set; }
 
     [DisplayName("Nhóm")]
     public string? ProductGroup { get; set; }

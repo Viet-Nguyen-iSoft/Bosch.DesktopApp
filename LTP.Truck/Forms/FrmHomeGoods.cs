@@ -25,6 +25,7 @@ namespace LTP.Truck.Forms
     private int _productGroupRefreshVersion;
     private int _productRefreshVersion;
     private int _tareRefreshVersion;
+    private int _deliveryRefreshVersion;
     private int _sumWeightLoadVersion;
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private RecordTruckDTO _recordTruckDTO { get; set; }
@@ -116,6 +117,7 @@ namespace LTP.Truck.Forms
 
         cbbProductGroup.SelectedIndex = -1;
         cbbTare.SelectedIndex = -1;
+        cbbDelivery.SelectedIndex = -1;
 
         //Đăng kí sự kiện
         cbbProductGroup.SelectedValueChanged += cbbProductGroup_SelectedValueChanged;
@@ -142,6 +144,8 @@ namespace LTP.Truck.Forms
         Instance_OnChangeProduct(sender, EventArgs.Empty);
       else if (entityType == typeof(CategoryTare))
         Instance_OnChangeTare(sender, EventArgs.Empty);
+      else if (entityType == typeof(Delivery))
+        Instance_OnChangeDelivery(sender, EventArgs.Empty);
     }
 
     private async Task LoadLicensePlateSuggestionsAsync()
@@ -223,19 +227,19 @@ namespace LTP.Truck.Forms
       }
 
       //Net
-      lbWeightValue.Text = WeightFormatHelper.Format(messageData.IndicatedWeight, 3);
+      lbWeightValue.Text = WeightFormatHelper.Format(messageData.IndicatedWeight, 2);
 
       //Tare
-      lbTareSrc.Text = WeightFormatHelper.Format(messageData.TareWeight, 3);
+      lbTareSrc.Text = WeightFormatHelper.Format(messageData.TareWeight, 2);
 
       //Tare
       if (_categoryTare != null)
       {
-        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight + (messageData?.TareWeight ?? 0.0), 3);
+        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight + (messageData?.TareWeight ?? 0.0), 2);
       }
       else
       {
-        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight, 3);
+        lbGross.Text = WeightFormatHelper.Format(messageData.IndicatedWeight, 2);
       }
     }
 
@@ -260,6 +264,34 @@ namespace LTP.Truck.Forms
 
         SetTare(categoryTares);
         cbbTare.SelectedIndex = selectedTareIndex;
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    private async void Instance_OnChangeDelivery(object? sender, EventArgs e)
+    {
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() => Instance_OnChangeDelivery(sender, e)));
+        return;
+      }
+
+      var refreshVersion = ++_deliveryRefreshVersion;
+
+      try
+      {
+        var deliveries = await AppCore.Ins._deliveryService.GetAllAsync();
+        if (IsDisposed || Disposing || refreshVersion != _deliveryRefreshVersion)
+          return;
+
+        var selectedDeliveryId = (cbbDelivery.SelectedItem as Delivery)?.Id;
+        var selectedDeliveryIndex = deliveries.FindIndex(delivery => delivery.Id == selectedDeliveryId);
+
+        SetDelivery(deliveries);
+        cbbDelivery.SelectedIndex = selectedDeliveryIndex;
       }
       catch (Exception ex)
       {
@@ -336,9 +368,11 @@ namespace LTP.Truck.Forms
       _products = await AppCore.Ins._productService.GetAllAsync();
       var productGroups = await AppCore.Ins._productGroupService.GetAllAsync();
       var categoryTares = await AppCore.Ins._categoryTareService.GetAllAsync();
+      var deliveries = await AppCore.Ins._deliveryService.GetAllAsync();
 
       SetProductGroup(productGroups);
       SetTare(categoryTares);
+      SetDelivery(deliveries);
     }
 
     private void SetProductGroup(List<ProductGroup> productGroups)
@@ -372,21 +406,34 @@ namespace LTP.Truck.Forms
       cbbTare.DataSource = categoryTares;
     }
 
+    private void SetDelivery(List<Delivery> deliveries)
+    {
+      if (InvokeRequired)
+      {
+        Invoke(new Action(() => SetDelivery(deliveries)));
+        return;
+      }
+
+      cbbDelivery.DisplayMember = nameof(Delivery.Name);
+      cbbDelivery.ValueMember = nameof(Delivery.Id);
+      cbbDelivery.DataSource = deliveries;
+    }
+
     private void cbbTare_SelectedValueChanged(object? sender, EventArgs e)
     {
       _categoryTare = cbbTare.SelectedItem as CategoryTare;
       if (_categoryTare?.Value is double tareValue)
       {
-        lbTare.Text = WeightFormatHelper.Format(tareValue, 3);
+        lbTare.Text = WeightFormatHelper.Format(tareValue, 2);
         ExecuteScaleCommand(
           sender ?? cbbTare,
           () => AppCore.Ins.SetTareWeight(tareValue),
-          $"Đã gửi giá trị tare {WeightFormatHelper.Format(tareValue, 3)} kg xuống cân thành công.",
+          $"Đã gửi giá trị tare {WeightFormatHelper.Format(tareValue, 2)} kg xuống cân thành công.",
           "Không thể gửi giá trị tare xuống cân. Vui lòng thử lại !");
       }
       else
       {
-        lbTare.Text = WeightFormatHelper.Format(0.0, 3);
+        lbTare.Text = WeightFormatHelper.Format(0.0, 2);
       }
     }
 
@@ -513,12 +560,12 @@ namespace LTP.Truck.Forms
           BeginInvoke(new Action(() =>
           {
             if (loadVersion == _sumWeightLoadVersion)
-              lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 3);
+              lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 2);
           }));
           return;
         }
 
-        lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 3);
+        lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 2);
       }
       catch (Exception ex)
       {
@@ -567,14 +614,6 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      //if (_recordTruckDTO?.RecordTruck is not RecordTruck selectedRecordTruck)
-      //{
-      //  using var popupMsg = new PopupConfirm("Vui lòng chọn biển số xe !",
-      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
-      //  popupMsg.ShowDialog();
-      //  return;
-      //}
-
       if (cbbProductGroup.SelectedItem is not ProductGroup selectedProductGroup)
       {
         using var popupMsg = new PopupConfirm("Vui lòng chọn nhóm sản phẩm !",
@@ -602,16 +641,29 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      if (cbbDelivery.SelectedItem is not Delivery selectedDelivery)
+      {
+        using var popupMsg = new PopupConfirm("Vui lòng chọn bên giao hàng !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+        popupMsg.ShowDialog(this);
+        cbbDelivery.Focus();
+        return;
+      }
+
       var recordWeight = new RecordWeight
       {
         ProductId = selectedProduct.Id,
         CategoryTareId = selectedTare.Id,
+        DeliveryId = selectedDelivery.Id,
         //RecordTruckId = selectedRecordTruck.Id,
         Net = _msgDataWeight.IndicatedWeight,
         Tare = selectedTare.Value ?? 0.0,
         UserId = AppCore.Ins._userCurrent?.Id,
         StationId = AppCore.Ins._station?.Id,
         LicensePlate = validLicense.Plate,
+        IdCard = txtIdCard.Texts,
+        NameDriver = txtNameDriver.Texts,
+        Note = txtNote.Text,
         CreatedAt = DateTime.UtcNow,
         EnableFlag = true
       };
@@ -767,6 +819,7 @@ namespace LTP.Truck.Forms
         nameof(RecordWeightDTO.Net),
         nameof(RecordWeightDTO.Tare),
         nameof(RecordWeightDTO.Gross),
+        nameof(RecordWeightDTO.NameDriver),
       };
       foreach (var columnName in autoSizeColumns)
       {
@@ -822,7 +875,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      string printerName = AppCore.Ins._appConfig.NamePrint;
+      string printerName = AppCore.Ins._appConfig.NamePrintA4;
       foreach (var row in selectedData)
       {
         AppCore.Ins.PrinterLabelGoods(printerName, row);

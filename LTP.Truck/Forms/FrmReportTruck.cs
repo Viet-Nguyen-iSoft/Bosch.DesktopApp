@@ -414,7 +414,7 @@ namespace LTP.Truck.Forms
         worksheet.Cell(row, 13).Value = record.Client?.Name ?? string.Empty;
         worksheet.Cell(row, 14).Value = record.Warehouse?.Name ?? string.Empty;
         worksheet.Cell(row, 15).Value = record.TypeGoods?.Name ?? string.Empty;
-        worksheet.Cell(row, 16).Value = record.Document ?? string.Empty;
+        worksheet.Cell(row, 16).Value = record.Note ?? string.Empty;
         worksheet.Cell(row, 17).Value = record.Station?.Name ?? string.Empty;
         worksheet.Cell(row, 18).Value = operatorName ?? string.Empty;
         worksheet.Cell(row, 19).Value = record.ReasonDelete ?? string.Empty;
