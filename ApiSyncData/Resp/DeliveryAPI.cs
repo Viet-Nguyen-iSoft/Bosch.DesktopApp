@@ -13,7 +13,7 @@ namespace ApiSyncData.Resp
     public string? OfficeAddress { get; set; }
     public string? PhoneForOfficeAddress { get; set; }
     public string? AgentAddress { get; set; }
-    public string? AgentAddressForOfficeAddress { get; set; }
+    public string? PhoneForAgentAddress { get; set; }
     public string? Description { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

@@ -226,7 +226,7 @@ namespace iSoft.Database
             OfficeAddress = delivery.OfficeAddress,
             PhoneForOfficeAddress = delivery.PhoneForOfficeAddress,
             AgentAddress = delivery.AgentAddress,
-            AgentAddressForOfficeAddress = delivery.AgentAddressForOfficeAddress,
+            AgentAddressForOfficeAddress = delivery.PhoneForAgentAddress,
             Description = delivery.Description,
             UpdatedAt = (delivery.UpdatedAt ?? delivery.CreatedAt)?.AddHours(utc)
               .ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,

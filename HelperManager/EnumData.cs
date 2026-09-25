@@ -178,6 +178,7 @@ namespace HelperManager
       MD_Tare,
       MD_ProductGroup,
       MD_Product,
+      MD_Delivery,
     }
 
     public enum EnumStatusAPI

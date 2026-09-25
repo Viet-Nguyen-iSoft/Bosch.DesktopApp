@@ -30,7 +30,6 @@ namespace LTP.Truck.Forms
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmHomeGoods));
       DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
       DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
       DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
@@ -342,7 +341,6 @@ namespace LTP.Truck.Forms
       btnTare.FlatStyle = FlatStyle.Flat;
       btnTare.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnTare.ForeColor = Color.White;
-      btnTare.Image = (Image)resources.GetObject("btnTare.Image");
       btnTare.Location = new Point(599, 7);
       btnTare.Name = "btnTare";
       btnTare.Size = new Size(154, 55);
@@ -423,7 +421,6 @@ namespace LTP.Truck.Forms
       btnZero.FlatStyle = FlatStyle.Flat;
       btnZero.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnZero.ForeColor = Color.White;
-      btnZero.Image = (Image)resources.GetObject("btnZero.Image");
       btnZero.Location = new Point(439, 7);
       btnZero.Name = "btnZero";
       btnZero.Size = new Size(154, 55);

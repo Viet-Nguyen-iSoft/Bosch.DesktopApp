@@ -237,6 +237,27 @@ namespace LTP.Truck.Forms
     {
       try
       {
+        var deliveryUpsertRequest = new DeliveryUpsertRequest
+        {
+          Id = delivery.IdSrc ?? delivery.Id,
+          Name = delivery.Name ?? string.Empty,
+          OfficeAddress = delivery.OfficeAddress,
+          PhoneForOfficeAddress = delivery.PhoneForOfficeAddress,
+          AgentAddress = delivery.AgentAddress,
+          PhoneForAgentAddress = delivery.PhoneForAgentAddress,
+          Description = delivery.Description,
+          DeletedFlag = delivery.DeletedFlag,
+        };
+
+        var apiJob = new ApiJobs
+        {
+          Json = JsonHelper.ToJson(deliveryUpsertRequest),
+          EnumTypeAPI = EnumTypeAPI.MD_Delivery,
+          EnumStatusAPI = EnumStatusAPI.Created,
+          CreatedAt = DateTime.UtcNow,
+        };
+
+        await _apiJobsService.AddOrUpdateAsync(apiJob);
         await LoadData(_enumTypeMasterDataCurrent);
         MasterDataChangeNotifier.Notify<Delivery>();
         ShowSaveSuccess(delivery.UpdatedAt.HasValue
@@ -1238,6 +1259,28 @@ namespace LTP.Truck.Forms
             delivery.DeletedFlag = true;
             delivery.UpdatedAt = DateTime.UtcNow;
             await _deliveryService.AddOrUpdateAsync(delivery);
+
+            var deliveryUpsertRequest = new DeliveryUpsertRequest
+            {
+              Id = delivery.IdSrc ?? delivery.Id,
+              Name = delivery.Name ?? string.Empty,
+              OfficeAddress = delivery.OfficeAddress,
+              PhoneForOfficeAddress = delivery.PhoneForOfficeAddress,
+              AgentAddress = delivery.AgentAddress,
+              PhoneForAgentAddress = delivery.PhoneForAgentAddress,
+              Description = delivery.Description,
+              DeletedFlag = true,
+            };
+
+            var apiJob = new ApiJobs
+            {
+              Json = JsonHelper.ToJson(deliveryUpsertRequest),
+              EnumTypeAPI = EnumTypeAPI.MD_Delivery,
+              EnumStatusAPI = EnumStatusAPI.Created,
+              CreatedAt = DateTime.UtcNow,
+            };
+
+            await _apiJobsService.AddOrUpdateAsync(apiJob);
             await LoadData(_enumTypeMasterDataCurrent);
             MasterDataChangeNotifier.Notify<Delivery>();
           }

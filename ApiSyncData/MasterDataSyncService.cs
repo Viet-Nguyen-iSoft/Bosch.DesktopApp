@@ -41,7 +41,7 @@ namespace ApiSyncData
           l.OfficeAddress = s.OfficeAddress;
           l.PhoneForOfficeAddress = s.PhoneForOfficeAddress;
           l.AgentAddress = s.AgentAddress;
-          l.AgentAddressForOfficeAddress = s.AgentAddressForOfficeAddress;
+          l.PhoneForAgentAddress = s.PhoneForAgentAddress;
           l.Description = s.Description;
         }, token);
 

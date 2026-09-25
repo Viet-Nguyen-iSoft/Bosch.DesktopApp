@@ -295,6 +295,58 @@ namespace ApiSyncData
       }
     }
 
+    public async Task<string> UpsertDeliveryAsync(
+      Req.DeliveryUpsertRequest delivery,
+      string lang = "vi",
+      CancellationToken cancellationToken = default)
+    {
+      ArgumentNullException.ThrowIfNull(delivery);
+      ArgumentException.ThrowIfNullOrWhiteSpace(delivery.Name);
+      ArgumentException.ThrowIfNullOrWhiteSpace(lang);
+
+      if (delivery.Id == Guid.Empty)
+        throw new ArgumentException("Delivery Id không được là Guid.Empty.", nameof(delivery));
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/ClientGoods/upsert-multi-lang?lang={Uri.EscapeDataString(lang.Trim())}";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+      using var formData = new MultipartFormDataContent
+      {
+        { new StringContent(delivery.Id?.ToString() ?? string.Empty), "Id" },
+        { new StringContent(delivery.Name.Trim()), "Name" },
+        { new StringContent(delivery.OfficeAddress?.Trim() ?? string.Empty), "OfficeAddress" },
+        { new StringContent(delivery.PhoneForOfficeAddress?.Trim() ?? string.Empty), "PhoneForOfficeAddress" },
+        { new StringContent(delivery.AgentAddress?.Trim() ?? string.Empty), "AgentAddress" },
+        { new StringContent(delivery.PhoneForAgentAddress?.Trim() ?? string.Empty), "PhoneForAgentAddress" },
+        { new StringContent(delivery.Description?.Trim() ?? string.Empty), "Description" },
+        { new StringContent(delivery.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag" },
+      };
+
+      using var response = await httpClient.PostAsync(
+        apiUrl,
+        formData,
+        cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"UpsertDelivery. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
+      }
+
+      return responseContent;
+    }
+
     public Task<string> UpsertLicensePlateAsync(
       LicensePlateUpsertRequest licensePlate,
       string lang = "vi",

@@ -14,7 +14,7 @@ namespace iSoft.Database.Models
     public string? PhoneForOfficeAddress { get; set; }
 
     public string? AgentAddress { get; set; }
-    public string? AgentAddressForOfficeAddress { get; set; }
+    public string? PhoneForAgentAddress { get; set; }
     public string? Description { get; set; }
 
     #region Mapping
