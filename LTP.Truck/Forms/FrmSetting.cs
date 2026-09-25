@@ -2,7 +2,6 @@ using Common;
 using Common.Settings;
 using HelperManager;
 using iSoft.Communication.JsonPayload;
-using iSoft.Communication.Mode;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
@@ -10,8 +9,6 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Drawing.Printing;
 using System.Globalization;
-using System.Threading.Tasks;
-using TestConnectPrinter;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 
@@ -68,7 +65,7 @@ namespace LTP.Truck.Forms
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
 
-        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu thông tin máy in nhãn thành công.", EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu thông tin máy in nhãn thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
         popupConfirm.ShowDialog();
       }
       catch (Exception ex)
@@ -179,6 +176,14 @@ namespace LTP.Truck.Forms
       ElipseControl elipseControl07 = new ElipseControl();
       elipseControl07.CornerRadius = 20;
       elipseControl07.TargetControl = tableLayoutPanel17;
+
+      ElipseControl elipseControl08 = new ElipseControl();
+      elipseControl08.CornerRadius = 20;
+      elipseControl08.TargetControl = tableLayoutPanel22;
+
+      ElipseControl elipseControl09 = new ElipseControl();
+      elipseControl09.CornerRadius = 20;
+      elipseControl09.TargetControl = tableLayoutPanel25;
     }
 
     private async void FrmSetting_Load(object? sender, EventArgs e)
@@ -384,6 +389,25 @@ namespace LTP.Truck.Forms
       {
         cbbPrintA4.EndUpdate();
       }
+
+      cbbPrintLabel.BeginUpdate();
+      try
+      {
+        cbbPrintLabel.Items.Clear();
+        cbbPrintLabel.Items.AddRange(printerNames.Cast<object>().ToArray());
+
+        var savedPrinter = AppCore.Ins._appConfig?.NamePrintLabel;
+        if (!string.IsNullOrWhiteSpace(savedPrinter))
+          cbbPrintLabel.SelectedItem = printerNames.FirstOrDefault(name =>
+            string.Equals(name, savedPrinter, StringComparison.OrdinalIgnoreCase));
+
+        if (cbbPrintLabel.SelectedIndex < 0 && cbbPrintLabel.Items.Count > 0)
+          cbbPrintLabel.SelectedIndex = 0;
+      }
+      finally
+      {
+        cbbPrintLabel.EndUpdate();
+      }
     }
 
     private async void btnSavePrintA4_Click(object? sender, EventArgs e)
@@ -412,13 +436,13 @@ namespace LTP.Truck.Forms
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
 
-        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu máy in.", EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
+        PopupConfirm popupConfirm = new PopupConfirm("Đã lưu thông tin máy in A4 thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
         popupConfirm.ShowDialog();
       }
       catch (Exception ex)
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        PopupConfirm popupConfirm = new PopupConfirm("Không thể lưu máy in. Vui lòng thử lại !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        PopupConfirm popupConfirm = new PopupConfirm("Không thể lưu thông tin máy in A4. Vui lòng thử lại !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupConfirm.ShowDialog();
       }
     }
@@ -772,7 +796,7 @@ namespace LTP.Truck.Forms
 
     private void btnSaveValueWeightGoodsCheckPermitConfirm_Click(object? sender, EventArgs e)
     {
-      
+
     }
   }
 }
