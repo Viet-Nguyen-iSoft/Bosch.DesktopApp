@@ -23,6 +23,9 @@ namespace iSoft.Database.DTO
     [DisplayName("Nhóm")]
     public string? ProductGroup { get; set; }
 
+    [DisplayName("Loại")]
+    public string? Type { get; set; }
+
     [DisplayName("Phế phẩm")]
     public string? Product { get; set; }
 

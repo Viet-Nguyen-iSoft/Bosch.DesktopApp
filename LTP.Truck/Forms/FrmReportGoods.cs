@@ -891,11 +891,11 @@ namespace LTP.Truck.Forms
     private async void btnTracking_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "Tracking.xlsx");
+      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateTracking.xlsx");
       if (!File.Exists(templatePath))
       {
         using var popup = new PopupConfirm(
-          "Không tìm thấy file mẫu Tracking.xlsx.",
+          "Không tìm thấy file mẫu TemplateTracking.xlsx.",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popup.ShowDialog(this);
@@ -1029,158 +1029,222 @@ namespace LTP.Truck.Forms
       IReadOnlyList<RecordWeight> records,
       int reportYear)
     {
-      //if (records.Any(record => record.Product == null || !record.CreatedAt.HasValue))
-      //  throw new InvalidOperationException("Có dữ liệu cân thiếu sản phẩm hoặc ngày cân.");
+      if (records.Any(record => record.Product == null || !record.CreatedAt.HasValue))
+        throw new InvalidOperationException("Có dữ liệu cân thiếu sản phẩm hoặc ngày cân.");
 
-      //using var template = new XLWorkbook(templatePath);
-      //using var workbook = new XLWorkbook();
-      //var groups = records.GroupBy(record => record.Product.EnumWasteType)
-      //  .OrderBy(group => group.Key);
-      //foreach (var group in groups)
-      //{
-      //  var hazardous = group.Key == iSoft.Database.EnumData.EnumWasteType.Hazardous;
-      //  var sheetName = group.Key switch
-      //  {
-      //    iSoft.Database.EnumData.EnumWasteType.Hazardous => "Nguy hai",
-      //    iSoft.Database.EnumData.EnumWasteType.NonRecyclable => "Khong tai che",
-      //    iSoft.Database.EnumData.EnumWasteType.Recyclable => "Tai che",
-      //    _ => "Chua phan loai"
-      //  };
-      //  var source = template.Worksheet(hazardous ? "HW_HcP" : "Non HW_HcP");
-      //  var sheet = workbook.Worksheets.Add(sheetName);
-      //  WriteDynamicTrackingSheet(sheet, source, group.ToList(), reportYear, hazardous);
-      //}
-      //workbook.RecalculateAllFormulas();
-      //workbook.SaveAs(outputPath);
+      using var workbook = new XLWorkbook(templatePath);
+      WriteTrackingSheet(
+        workbook.Worksheet("HW_HcP"),
+        records.Where(record =>
+          record.Product.EnumWasteType == iSoft.Database.EnumData.EnumWasteType.Hazardous)
+          .ToList(),
+        reportYear,
+        hazardous: true);
+      WriteTrackingSheet(
+        workbook.Worksheet("Non HW_HcP"),
+        records.Where(record =>
+          record.Product.EnumWasteType is
+            iSoft.Database.EnumData.EnumWasteType.NonRecyclable or
+            iSoft.Database.EnumData.EnumWasteType.Recyclable)
+          .ToList(),
+        reportYear,
+        hazardous: false);
+
+      workbook.CalculateMode = XLCalculateMode.Auto;
+      workbook.RecalculateAllFormulas();
+      workbook.SaveAs(outputPath);
     }
 
-    //private static void WriteDynamicTrackingSheet(
-    //  IXLWorksheet sheet,
-    //  IXLWorksheet template,
-    //  IReadOnlyList<RecordWeight> records,
-    //  int year,
-    //  bool hazardous)
-    //{
-    //  // Each distinct product has its own column, even when names/codes are shared.
-    //  var products = records.Select(record => record.Product)
-    //    .GroupBy(product => product.Id)
-    //    .Select(group => group.First())
-    //    .OrderBy(product => product.Code)
-    //    .ThenBy(product => product.Name)
-    //    .ThenBy(product => product.Id)
-    //    .ToList();
-    //  if (products.Count > 16380)
-    //    throw new InvalidOperationException("Số sản phẩm vượt giới hạn cột của Excel.");
+    private static void WriteTrackingSheet(
+      IXLWorksheet sheet,
+      IReadOnlyList<RecordWeight> records,
+      int year,
+      bool hazardous)
+    {
+      const int firstProductColumn = 2;
+      var products = records.Select(record => record.Product)
+        .GroupBy(product => product.Id)
+        .Select(group => group.First())
+        .OrderBy(product => product.EnumWasteType)
+        .ThenBy(product => product.Code)
+        .ThenBy(product => product.Name)
+        .ThenBy(product => product.Id)
+        .ToList();
+      if (products.Count > 16382)
+        throw new InvalidOperationException("Số sản phẩm vượt giới hạn cột của Excel.");
 
-    //  int firstProductColumn = 2;
-    //  int plateColumn = products.Count + 2;
-    //  int operatorColumn = plateColumn + 1;
-    //  int totalColumn = operatorColumn + 1;
-    //  int sourceProductColumn = hazardous ? 3 : 2;
-    //  var productColumns = products.Select((product, index) => new
-    //  {
-    //    product.Id,
-    //    Column = firstProductColumn + index
-    //  }).ToDictionary(item => item.Id, item => item.Column);
+      var totalColumn = firstProductColumn + products.Count;
+      var productColumns = products.Select((product, index) => new
+      {
+        product.Id,
+        Column = firstProductColumn + index
+      }).ToDictionary(item => item.Id, item => item.Column);
 
-    //  sheet.ShowGridLines = false;
-    //  sheet.Column(1).Width = 24;
-    //  sheet.Columns(firstProductColumn, plateColumn - 1).Width = 24;
-    //  sheet.Column(plateColumn).Width = 32;
-    //  sheet.Column(operatorColumn).Width = 32;
-    //  sheet.Column(totalColumn).Width = 20;
-    //  sheet.Range(1, 1, 1, totalColumn).Merge();
-    //  sheet.Cell(1, 1).Style = template.Cell(1, 1).Style;
-    //  sheet.Cell(1, 1).Value = $"TRACKING CHẤT THẢI - {sheet.Name.ToUpperInvariant()} - {year}";
-    //  sheet.Row(1).Height = 32;
-    //  sheet.Cell(2, 1).Value = "Ngày xuất";
-    //  sheet.Cell(2, 2).Value = DateTime.Now;
-    //  sheet.Cell(2, 2).Style.DateFormat.Format = "dd/MM/yyyy HH:mm";
-    //  sheet.Cell(3, 1).Value = "Đơn vị";
-    //  sheet.Cell(3, 2).Value = "Khối lượng Net (kg)";
-    //  sheet.Cell(4, 1).Value = "Phạm vi";
-    //  sheet.Cell(4, 2).Value = "Dữ liệu theo bộ lọc đã chọn";
+      var productHeaderStyle = sheet.Cell(7, 2).Style;
+      var recyclableHeaderStyle = hazardous ? productHeaderStyle : sheet.Cell(7, 3).Style;
+      var productNameStyle = sheet.Cell(8, 2).Style;
+      var productCodeStyle = sheet.Cell(9, 2).Style;
+      var totalHeaderStyle = sheet.Cell(7, hazardous ? 3 : 4).Style;
+      var totalHeaderMiddleStyle = sheet.Cell(8, hazardous ? 3 : 4).Style;
+      var totalHeaderBottomStyle = sheet.Cell(9, hazardous ? 3 : 4).Style;
+      var monthlyLabelStyle = sheet.Cell(10, 1).Style;
+      var monthlyValueStyle = sheet.Cell(10, 2).Style;
+      var monthlyTotalStyle = sheet.Cell(10, hazardous ? 3 : 4).Style;
+      var dateStyle = sheet.Cell(11, 1).Style;
+      var dailyValueStyle = sheet.Cell(11, 2).Style;
+      var dailyTotalStyle = sheet.Cell(11, hazardous ? 3 : 4).Style;
+      var firstColumnWidth = sheet.Column(1).Width;
+      var productColumnWidth = sheet.Column(2).Width;
+      var totalColumnWidth = sheet.Column(hazardous ? 3 : 4).Width;
 
-    //  for (int column = 1; column <= totalColumn; column++)
-    //  {
-    //    sheet.Cell(7, column).Style = template.Cell(7, sourceProductColumn).Style;
-    //    sheet.Cell(8, column).Style = template.Cell(9, sourceProductColumn).Style;
-    //    sheet.Cell(10, column).Style = template.Cell(10, sourceProductColumn).Style;
-    //  }
-    //  sheet.Cell(7, 1).Value = "Ngày";
-    //  sheet.Cell(8, 1).Value = "Ngày cân";
-    //  foreach (var product in products)
-    //  {
-    //    int column = productColumns[product.Id];
-    //    sheet.Cell(7, column).Value = product.Code ?? string.Empty;
-    //    sheet.Cell(8, column).Value = product.Name ?? string.Empty;
-    //  }
-    //  sheet.Cell(7, plateColumn).Value = "Biển số xe";
-    //  sheet.Cell(7, operatorColumn).Value = "Người nhập";
-    //  sheet.Cell(7, totalColumn).Value = "Tổng (kg)";
-    //  sheet.Range(7, 1, 8, totalColumn).Style.Alignment.WrapText = true;
-    //  sheet.Row(7).Height = 28;
-    //  sheet.Row(8).Height = 80;
-    //  sheet.Cell(10, 1).Value = $"{year} - Tổng (kg)";
-    //  var days = records.GroupBy(record => record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date)
-    //    .ToDictionary(group => group.Key, group => group.ToList());
-    //  var monthlyTotalRows = new List<int>();
-    //  int row = 11;
-    //  for (int month = 1; month <= 12; month++)
-    //  {
-    //    int firstRow = row;
-    //    for (int day = 1; day <= DateTime.DaysInMonth(year, month); day++, row++)
-    //    {
-    //      var date = new DateTime(year, month, day);
-    //      sheet.Cell(row, 1).Value = date;
-    //      sheet.Cell(row, 1).Style.DateFormat.Format = "dd/MM/yyyy";
-    //      if (days.TryGetValue(date, out var dayRecords))
-    //      {
-    //        foreach (var productGroup in dayRecords.GroupBy(record => record.Product.Id))
-    //          sheet.Cell(row, productColumns[productGroup.Key]).Value =
-    //            productGroup.Sum(record => record.Net);
-    //        sheet.Cell(row, plateColumn).Value = string.Join(", ", dayRecords
-    //          .Select(record => record.LicensePlate)
-    //          .Where(value => !string.IsNullOrWhiteSpace(value))
-    //          .Distinct(StringComparer.OrdinalIgnoreCase));
-    //        sheet.Cell(row, operatorColumn).Value = string.Join(", ", dayRecords
-    //          .Select(GetOperatorName).Where(value => !string.IsNullOrWhiteSpace(value))
-    //          .Distinct(StringComparer.OrdinalIgnoreCase));
-    //      }
-    //      sheet.Cell(row, totalColumn).FormulaA1 =
-    //        $"SUM(B{row}:{XLHelper.GetColumnLetterFromNumber(plateColumn - 1)}{row})";
-    //    }
-    //    monthlyTotalRows.Add(row);
-    //    sheet.Cell(row, 1).Value = $"Tháng {month:00} - Tổng (kg)";
-    //    for (int column = 1; column <= totalColumn; column++)
-    //    {
-    //      sheet.Cell(row, column).Style = template.Cell(hazardous ? 43 : 42, sourceProductColumn).Style;
-    //      if (column >= firstProductColumn && column < plateColumn || column == totalColumn)
-    //      {
-    //        var letter = XLHelper.GetColumnLetterFromNumber(column);
-    //        sheet.Cell(row, column).FormulaA1 = $"SUM({letter}{firstRow}:{letter}{row - 1})";
-    //      }
-    //    }
-    //    row++;
-    //  }
-    //  for (int column = firstProductColumn; column <= totalColumn; column++)
-    //  {
-    //    if (column == plateColumn || column == operatorColumn)
-    //      continue;
-    //    var letter = XLHelper.GetColumnLetterFromNumber(column);
-    //    sheet.Cell(10, column).FormulaA1 =
-    //      "SUM(" + string.Join(",", monthlyTotalRows.Select(totalRow => $"{letter}{totalRow}")) + ")";
-    //    sheet.Range(10, column, row - 1, column).Style.NumberFormat.Format = "#,##0.000";
-    //  }
-    //  sheet.Range(11, plateColumn, row - 1, operatorColumn).Style.Alignment.WrapText = true;
-    //  sheet.Rows(11, row - 1).AdjustToContents();
-    //  sheet.SheetView.FreezeRows(10);
-    //  sheet.SheetView.FreezeColumns(1);
-    //  sheet.PageSetup.PageOrientation = XLPageOrientation.Landscape;
-    //  sheet.PageSetup.FitToPages(1, 0);
-    //  sheet.PageSetup.SetRowsToRepeatAtTop(7, 8);
-    //  sheet.PageSetup.PrintAreas.Add(sheet.Range(1, 1, row - 1, totalColumn));
-    //}
+      foreach (var mergedRange in sheet.MergedRanges
+        .Where(range => range.RangeAddress.FirstAddress.RowNumber >= 7)
+        .ToList())
+      {
+        mergedRange.Unmerge();
+      }
+
+      var lastTemplateRow = sheet.LastRowUsed()?.RowNumber() ?? 19;
+      var lastTemplateColumn = sheet.LastColumnUsed()?.ColumnNumber() ?? totalColumn;
+      sheet.Rows(1, Math.Max(lastTemplateRow, 400)).Ungroup(fromAll: true);
+      sheet.Range(
+        7,
+        1,
+        Math.Max(lastTemplateRow, 400),
+        Math.Max(lastTemplateColumn, totalColumn)).Clear(XLClearOptions.Contents);
+
+      sheet.Cell(3, 2).Value = DateTime.Now;
+      sheet.Cell(3, 2).Style.DateFormat.Format = "dd-MMM-yy";
+      sheet.Column(1).Width = firstColumnWidth;
+      for (var column = firstProductColumn; column < totalColumn; column++)
+        sheet.Column(column).Width = productColumnWidth;
+      sheet.Column(totalColumn).Width = totalColumnWidth;
+
+      sheet.Cell(7, 1).Value = "CATAGORIES";
+      sheet.Cell(8, 1).Value = "PHÂN LOẠI";
+      if (hazardous)
+      {
+        sheet.Cell(9, 1).Value = "MÃ";
+      }
+      else
+      {
+        sheet.Range(8, 1, 9, 1).Merge();
+      }
+
+      for (var index = 0; index < products.Count; index++)
+      {
+        var product = products[index];
+        var column = firstProductColumn + index;
+        var recyclable = product.EnumWasteType ==
+          iSoft.Database.EnumData.EnumWasteType.Recyclable;
+        sheet.Cell(7, column).Style = recyclable
+          ? recyclableHeaderStyle
+          : productHeaderStyle;
+        sheet.Cell(7, column).Value = $"{index + 1:00} - {GetTrackingWasteTypeName(product.EnumWasteType)}";
+        sheet.Cell(8, column).Style = productNameStyle;
+        sheet.Cell(8, column).Value = product.Name ?? string.Empty;
+        if (hazardous)
+        {
+          sheet.Cell(9, column).Style = productCodeStyle;
+          sheet.Cell(9, column).Value = product.Code ?? string.Empty;
+        }
+        else
+        {
+          sheet.Cell(9, column).Style = productCodeStyle;
+          sheet.Range(8, column, 9, column).Merge();
+        }
+      }
+
+      sheet.Cell(7, totalColumn).Style = totalHeaderStyle;
+      sheet.Cell(8, totalColumn).Style = totalHeaderMiddleStyle;
+      sheet.Cell(9, totalColumn).Style = totalHeaderBottomStyle;
+      sheet.Cell(7, totalColumn).Value = "Tổng Khối lượng (Kg)";
+      sheet.Range(7, totalColumn, 9, totalColumn).Merge();
+      sheet.Range(7, 1, 9, totalColumn).Style.Alignment.WrapText = true;
+      sheet.Row(7).Height = 25.5;
+      sheet.Row(8).Height = 53.25;
+      sheet.Row(9).Height = hazardous ? 24 : 19.5;
+
+      var recordsByDate = records
+        .GroupBy(record => record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date)
+        .ToDictionary(group => group.Key, group => group.ToList());
+      sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
+      var row = 10;
+      for (var month = 1; month <= 12; month++)
+      {
+        var monthlyTotalRow = row++;
+        var firstDayRow = row;
+        var daysInMonth = DateTime.DaysInMonth(year, month);
+        for (var day = 1; day <= daysInMonth; day++, row++)
+        {
+          var date = new DateTime(year, month, day);
+          sheet.Cell(row, 1).Style = dateStyle;
+          sheet.Cell(row, 1).Value = date;
+          sheet.Cell(row, 1).Style.DateFormat.Format = "dd/MM/yyyy";
+          for (var column = firstProductColumn; column < totalColumn; column++)
+            sheet.Cell(row, column).Style = dailyValueStyle;
+          sheet.Cell(row, totalColumn).Style = dailyTotalStyle;
+
+          if (recordsByDate.TryGetValue(date, out var dayRecords))
+          {
+            foreach (var productGroup in dayRecords.GroupBy(record => record.Product.Id))
+              sheet.Cell(row, productColumns[productGroup.Key]).Value =
+                productGroup.Sum(record => record.Net);
+          }
+
+          if (products.Count == 0)
+          {
+            sheet.Cell(row, totalColumn).Value = 0;
+          }
+          else
+          {
+            var lastProductColumn = XLHelper.GetColumnLetterFromNumber(totalColumn - 1);
+            sheet.Cell(row, totalColumn).FormulaA1 =
+              $"SUM(B{row}:{lastProductColumn}{row})";
+          }
+          sheet.Row(row).Height = 18.75;
+        }
+        sheet.Rows(firstDayRow, row - 1).Group();
+
+        sheet.Cell(monthlyTotalRow, 1).Style = monthlyLabelStyle;
+        sheet.Cell(monthlyTotalRow, 1).Value = $"Tháng {month:00} - Grand total (Kg)";
+        for (var column = firstProductColumn; column < totalColumn; column++)
+        {
+          sheet.Cell(monthlyTotalRow, column).Style = monthlyValueStyle;
+          var columnLetter = XLHelper.GetColumnLetterFromNumber(column);
+          sheet.Cell(monthlyTotalRow, column).FormulaA1 =
+            $"SUM({columnLetter}{firstDayRow}:{columnLetter}{row - 1})";
+        }
+        sheet.Cell(monthlyTotalRow, totalColumn).Style = monthlyTotalStyle;
+        var totalColumnLetter = XLHelper.GetColumnLetterFromNumber(totalColumn);
+        sheet.Cell(monthlyTotalRow, totalColumn).FormulaA1 =
+          $"SUM({totalColumnLetter}{firstDayRow}:{totalColumnLetter}{row - 1})";
+        sheet.Row(monthlyTotalRow).Height = 18.75;
+      }
+
+      sheet.Range(10, firstProductColumn, row - 1, totalColumn)
+        .Style.NumberFormat.Format = "#,##0.000";
+      sheet.SheetView.FreezeRows(9);
+      sheet.SheetView.FreezeColumns(1);
+      sheet.PageSetup.PageOrientation = XLPageOrientation.Landscape;
+      sheet.PageSetup.FitToPages(1, 0);
+      sheet.PageSetup.SetRowsToRepeatAtTop(7, 9);
+      sheet.PageSetup.PrintAreas.Clear();
+      sheet.PageSetup.PrintAreas.Add(
+        $"A1:{XLHelper.GetColumnLetterFromNumber(totalColumn)}{row - 1}");
+    }
+
+    private static string GetTrackingWasteTypeName(
+      iSoft.Database.EnumData.EnumWasteType wasteType)
+    {
+      return wasteType switch
+      {
+        iSoft.Database.EnumData.EnumWasteType.Hazardous => "Nguy hại",
+        iSoft.Database.EnumData.EnumWasteType.NonRecyclable => "Không tái chế",
+        iSoft.Database.EnumData.EnumWasteType.Recyclable => "Tái chế",
+        _ => string.Empty
+      };
+    }
 
     private static string GetOperatorName(RecordWeight record)
     {

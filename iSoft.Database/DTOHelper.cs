@@ -90,6 +90,7 @@ namespace iSoft.Database
           Delivery = record?.Delivery?.Name,
           NameDriver = record?.NameDriver,
           ProductGroup = record?.Product?.ProductGroup?.Name,
+          Type = EnumHelper.GetDescription(record?.Product?.EnumWasteType),
           Product = record?.Product?.Name,
           CategoryTare = record?.CategoryTare?.Name,
           Gross = WeightFormatHelper.Format((record?.Net ?? 0.0) + (record?.Tare ?? 0.0), 2),

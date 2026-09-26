@@ -61,7 +61,7 @@ namespace iSoft.Database
     {
       [Description("---")]
       None,
-      [Description("Nguy hiểm")]
+      [Description("Nguy hại")]
       Hazardous = 1,
       [Description("Không thể tái chế")]
       NonRecyclable = 2,
