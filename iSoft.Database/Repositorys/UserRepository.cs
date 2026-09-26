@@ -13,7 +13,6 @@ namespace iSoft.Database.Repositorys
     public Task<List<User>> GetAllAsync(bool isContainDelete = false)
     {
       var query = Context.Set<User>()
-        .Include(user => user.Permissions)
         .AsNoTracking()
         .AsQueryable();
       if (!isContainDelete)
@@ -28,7 +27,6 @@ namespace iSoft.Database.Repositorys
     public Task<User?> GetByIdAsync(Guid id, bool isContainDelete = false)
     {
       var query = Context.Set<User>()
-        .Include(user => user.Permissions)
         .AsNoTracking()
         .AsQueryable();
       if (!isContainDelete)
@@ -45,7 +43,6 @@ namespace iSoft.Database.Repositorys
         throw new ArgumentException("Username is required.", nameof(username));
 
       var query = Context.Set<User>()
-        .Include(user => user.Permissions)
         .AsNoTracking()
         .AsQueryable();
       if (!isContainDelete)
@@ -98,7 +95,6 @@ namespace iSoft.Database.Repositorys
     {
       return Context.Set<User>()
         .Where(x=>x.Username == account && x.Password == pass && x.DeletedFlag == false)
-        .Include(user => user.Permissions)
         .AsNoTracking()
         .AsQueryable()
         .FirstOrDefaultAsync();

@@ -576,7 +576,7 @@ namespace ApiSyncData
     {
       try
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API_AUTH");
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
         string apiKey = Environment.GetEnvironmentVariable("API_KEY");
 
         var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/User/get-list-simplify";
@@ -612,7 +612,7 @@ namespace ApiSyncData
     }
 
     public async Task<RecordTruckAPI> RecordTruckFromServer(
-      Guid stationId,
+      Guid? stationId,
       int numberLastDay)
     {
       if (numberLastDay <= 0)

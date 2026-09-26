@@ -71,7 +71,6 @@ namespace LTP.Truck.Controls
     public readonly StationService _stationService = new();
     public readonly ConnectionService _connectionService = new();
     public readonly UserService _userService = new();
-    public readonly PermissionService _permissionService = new();
     public readonly LicensePlateService _licensePlateService = new();
     public readonly ApiJobsService _apiJobsService = new();
     private readonly ApiJobsBackgroundService _apiJobsBackgroundService = new();

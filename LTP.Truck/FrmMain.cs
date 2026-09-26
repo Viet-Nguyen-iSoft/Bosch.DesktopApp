@@ -156,27 +156,24 @@ namespace LTP.Truck
     {
       try
       {
-        if (AppCore.Ins._station!=null)
+        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 2, _syncCts.Token);
+        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
+        PeriodicRunner.EntityChanged += (sender, e) =>
         {
-          _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station.Id, 2, _syncCts.Token);
-          _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
-          PeriodicRunner.EntityChanged += (sender, e) =>
+          if (e.EntityType == typeof(ProductGroup))
           {
-            if (e.EntityType == typeof(ProductGroup))
-            {
-              OnChangeProductGroup?.Invoke(this, e);
-            }
-            else if (e.EntityType == typeof(Product))
-            {
-              OnChangeProduct?.Invoke(this, e);
-            }
-            else if (e.EntityType == typeof(CategoryTare))
-            {
-              OnChangeTare?.Invoke(this, e);
-            }
-          };
-        }
-        
+            OnChangeProductGroup?.Invoke(this, e);
+          }
+          else if (e.EntityType == typeof(Product))
+          {
+            OnChangeProduct?.Invoke(this, e);
+          }
+          else if (e.EntityType == typeof(CategoryTare))
+          {
+            OnChangeTare?.Invoke(this, e);
+          }
+        };
+
         AppCore.Ins.CheckConnectServer();
         AppCore.Ins.ConnectWeight();
         //CheckOpenMulApp();

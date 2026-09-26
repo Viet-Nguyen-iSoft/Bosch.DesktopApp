@@ -7,7 +7,7 @@ namespace ApiSyncData
     public static event EventHandler<MasterDataChangedEventArgs>? EntityChanged;
     private static Func<bool> _serverAvailabilityCheck = static () => false;
 
-    public static Guid StationId { get; private set; }
+    public static Guid? StationId { get; private set; }
     public static int NumberLastDay { get; set; } = 30;
     // Dữ liệu của lần đồng bộ thành công gần nhất; null trước lần đầu thành công.
     public static Resp.StationAPI? Stations { get; private set; }
@@ -44,7 +44,7 @@ namespace ApiSyncData
     /// Chỉ gọi một lần khi khởi động để tránh tạo nhiều vòng lặp.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
-      Guid stationId,
+      Guid? stationId,
       int numberLastDay,
       CancellationToken cancellationToken = default,
       Action<Exception>? onError = null)
@@ -96,13 +96,16 @@ namespace ApiSyncData
 
         //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
         //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");
-        var recordTrucks = await api.RecordTruckFromServer(StationId, NumberLastDay)
+        if (StationId!=null)
+        {
+          var recordTrucks = await api.RecordTruckFromServer(StationId, NumberLastDay)
           .ConfigureAwait(false);
-        var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
-          recordTrucks,
-          cancellationToken).ConfigureAwait(false);
-        if (recordTruckChanges != null)
-          NotifyEntityChanged(recordTruckChanges);
+          var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
+            recordTrucks,
+            cancellationToken).ConfigureAwait(false);
+          if (recordTruckChanges != null)
+            NotifyEntityChanged(recordTruckChanges);
+        } 
       }
       catch (Exception ex)
       {

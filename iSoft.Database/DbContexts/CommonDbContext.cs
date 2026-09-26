@@ -29,7 +29,6 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<ApiJobs>? ApiJobs { get; set; }
     public virtual DbSet<Delivery>? Deliveries { get; set; }
     public virtual DbSet<User>? Users { get; set; }
-    public virtual DbSet<Permission>? Permissions { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -105,27 +104,6 @@ namespace iSoft.Database.DbContexts
         .HasIndex(log => new { log.CreatedAt, log.eAction })
         .HasDatabaseName("IX_LogActions_CreatedAt_Action");
 
-      modelBuilder.Entity<User>()
-        .HasMany(user => user.Permissions)
-        .WithMany(permission => permission.Users)
-        .UsingEntity<Dictionary<string, object>>(
-          "ref_permission_user",
-          join => join
-            .HasOne<Permission>()
-            .WithMany()
-            .HasForeignKey("PermissionId")
-            .OnDelete(DeleteBehavior.ClientSetNull),
-          join => join
-            .HasOne<User>()
-            .WithMany()
-            .HasForeignKey("UserId")
-            .OnDelete(DeleteBehavior.ClientSetNull),
-          join =>
-          {
-            join.HasKey("UserId", "PermissionId");
-            join.Property<Guid>("UserId").HasColumnType("char(36)");
-            join.Property<Guid>("PermissionId").HasColumnType("char(36)");
-          });
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

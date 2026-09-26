@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iSoft.Database.Models
 {
-  [Table("m_users")]
   public class User : BaseModel
   {
     [Required]
@@ -29,9 +28,6 @@ namespace iSoft.Database.Models
     [Required]
     [MaxLength(10)]
     public string Role { get; set; } = string.Empty;
-
-    public ICollection<Permission> Permissions { get; set; } =
-      new List<Permission>();
 
     public ICollection<RecordTruck>? RecordTrucks { get; set; }
     public ICollection<RecordWeight>? RecordWeights { get; set; }
