@@ -8,6 +8,7 @@ namespace ApiSyncData
     private static Func<bool> _serverAvailabilityCheck = static () => false;
 
     public static Guid StationId { get; private set; }
+    public static int NumberLastDay { get; set; } = 30;
     // Dữ liệu của lần đồng bộ thành công gần nhất; null trước lần đầu thành công.
     public static Resp.StationAPI? Stations { get; private set; }
     public static Resp.WarehouseAPI? Warehouses { get; private set; }
@@ -44,10 +45,12 @@ namespace ApiSyncData
     /// </summary>
     public static Task RunEvery5SecondsAsync(
       Guid stationId,
+      int numberLastDay,
       CancellationToken cancellationToken = default,
       Action<Exception>? onError = null)
     {
       StationId = stationId;
+      NumberLastDay = numberLastDay;
       var api = new ApiService();
       return RunEvery5SecondsAsync(
         token => CanCallApi()
@@ -87,12 +90,13 @@ namespace ApiSyncData
           value => Users = value, cancellationToken);
 
 
-        //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
-        //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");
+       
         await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
           products, categoryTares, clients, deliveries, users).ConfigureAwait(false);
 
-        var recordTrucks = await api.RecordTruckFromServer(StationId)
+        //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
+        //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");
+        var recordTrucks = await api.RecordTruckFromServer(StationId, NumberLastDay)
           .ConfigureAwait(false);
         var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
           recordTrucks,

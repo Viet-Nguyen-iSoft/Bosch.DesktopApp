@@ -611,16 +611,31 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<RecordTruckAPI> RecordTruckFromServer(Guid stationId)
+    public async Task<RecordTruckAPI> RecordTruckFromServer(
+      Guid stationId,
+      int numberLastDay)
     {
+      if (numberLastDay <= 0)
+        throw new ArgumentOutOfRangeException(
+          nameof(numberLastDay),
+          "NumberLastDay phải lớn hơn 0.");
+
       string baseAPI = Environment.GetEnvironmentVariable("URL_API")
         ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
       string apiKey = Environment.GetEnvironmentVariable("API_KEY")
         ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
 
+      var dateTo = DateTime.UtcNow;
+      var dateFrom = dateTo.AddDays(-numberLastDay);
+      var dateFromQuery = Uri.EscapeDataString(
+        dateFrom.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture));
+      var dateToQuery = Uri.EscapeDataString(
+        dateTo.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture));
       var apiUrl =
         $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/get-list-simplify" +
-        $"?ExcludeStationId={stationId:D}";
+        $"?ExcludeStationId={stationId:D}" +
+        $"&dateFrom={dateFromQuery}" +
+        $"&dateTo={dateToQuery}";
       using var httpClient = new HttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 

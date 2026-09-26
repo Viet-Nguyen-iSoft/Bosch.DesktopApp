@@ -158,7 +158,7 @@ namespace LTP.Truck
       {
         if (AppCore.Ins._station!=null)
         {
-          _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station.Id, _syncCts.Token);
+          _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station.Id, 2, _syncCts.Token);
           _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
           PeriodicRunner.EntityChanged += (sender, e) =>
           {
