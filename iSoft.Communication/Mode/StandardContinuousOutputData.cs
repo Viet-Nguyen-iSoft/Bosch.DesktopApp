@@ -1,291 +1,213 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
+using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
 using static iSoft.Communication.EnumCommunication;
 
 namespace iSoft.Communication.Mode
 {
+  /// <summary>
+  /// Standard Continuous Output của Mettler Toledo IND570.
+  /// Frame gồm 17 byte, hoặc 18 byte khi bật checksum.
+  /// </summary>
   public class StandardContinuousOutputData
   {
-    public byte[] DataBytes;
+    private const int FrameLength = 17;
+    private const int FrameLengthWithChecksum = 18;
 
-    // byte 0
-    public readonly byte StartChar = 0x02; // STX | Start of text
-    // byte 1
-    public StatusA StatusA;
-    // byte 2
-    public StatusB StatusB;
-    // byte 3
-    public StatusC StatusC;
-    // byte 4
+    public byte[] DataBytes = Array.Empty<byte>();
+    public readonly byte StartChar = 0x02;
+    public StatusA StatusA = new();
+    public StatusB StatusB = new();
+    public StatusC StatusC = new();
     public double? IndicatedWeight;
-
     public double? TareWeight;
-
     public UnitOfWeight Unit;
-
-    public readonly byte CarriageReturnChar = 0x0D; // CR
-
-
+    public readonly byte CarriageReturnChar = 0x0D;
     public bool CheckSumEnabled;
 
-    public StandardContinuousOutputData()
+    public ActiveWeighingStatus ActiveWeighingStatus =>
+      StatusB.OutOfRange == OutOfRange.True
+        ? ActiveWeighingStatus.Overload
+        : StatusB.ActiveWeighingStatus;
+
+    public static StandardContinuousOutputData Decode(
+      byte[] dataBytes,
+      bool validateChecksum = true)
     {
+      if (!TryDecode(dataBytes, out var output, validateChecksum) || output == null)
+      {
+        throw new FormatException(
+          "Dữ liệu Standard Continuous phải là frame IND570 hợp lệ gồm 17 hoặc 18 byte.");
+      }
+
+      return output;
     }
 
-    public StandardContinuousOutputData(byte[] bytes, bool isCheckSum = false) : this()
+    public static bool TryDecode(
+      byte[]? dataBytes,
+      out StandardContinuousOutputData? output,
+      bool validateChecksum = true)
     {
-      this.DataBytes = bytes;
-      if (bytes.Length == 18 && isCheckSum)
+      output = null;
+      if (dataBytes == null ||
+          (dataBytes.Length != FrameLength &&
+           dataBytes.Length != FrameLengthWithChecksum) ||
+          dataBytes[0] != 0x02 ||
+          dataBytes[16] != 0x0D)
       {
-        this.CheckSumEnabled = true;
-        if (!CheckSumOK()) throw new ChecksumException();
+        return false;
       }
+
+      bool hasChecksum = dataBytes.Length == FrameLengthWithChecksum;
+      if (hasChecksum && validateChecksum && !HasValidChecksum(dataBytes))
+        return false;
+
+      var statusA = StatusA.Decode(dataBytes[1]);
+      var statusB = StatusB.Decode(dataBytes[2]);
+      var statusC = StatusC.Decode(dataBytes[3]);
+
+      if (!TryDecodeWeight(dataBytes, 4, statusA, statusB.Sign,
+            out double indicatedWeight) ||
+          !TryDecodeWeight(dataBytes, 10, statusA, Sign.Positive,
+            out double tareWeight))
+      {
+        return false;
+      }
+
+      if (statusC.ExpandDataOrNormal == ExpandData.x10)
+      {
+        indicatedWeight *= 10;
+        tareWeight *= 10;
+      }
+
+      output = new StandardContinuousOutputData
+      {
+        DataBytes = dataBytes.ToArray(),
+        StatusA = statusA,
+        StatusB = statusB,
+        StatusC = statusC,
+        IndicatedWeight = indicatedWeight,
+        TareWeight = tareWeight,
+        Unit = DecodeUnit(statusB, statusC),
+        CheckSumEnabled = hasChecksum,
+      };
+
+      return true;
     }
 
     public bool CheckSumOK()
     {
-      var len = DataBytes.Length;
-      var data = DataBytes.Take(len - 1).ToArray();
-      var sum = CheckSumMe.Calculate(data);
-
-      return sum == DataBytes[len - 1];
+      return DataBytes.Length == FrameLengthWithChecksum &&
+             HasValidChecksum(DataBytes);
     }
 
-    public string CalculateCheckSum(byte[] data)
+    private static bool TryDecodeWeight(
+      byte[] dataBytes,
+      int startIndex,
+      StatusA statusA,
+      Sign sign,
+      out double weight)
     {
-      byte sum = 0;
-      foreach (var b in data)
+      weight = 0;
+      string rawValue = Encoding.ASCII
+        .GetString(dataBytes, startIndex, 6)
+        .Trim();
+
+      if (rawValue.Length == 0 ||
+          !rawValue.All(char.IsDigit) ||
+          !double.TryParse(rawValue, NumberStyles.None,
+            CultureInfo.InvariantCulture, out weight))
       {
-        sum += b;
+        return false;
       }
-      string hexValue = (sum % 256).ToString("X");
-      return hexValue.Replace("0x", "");
+
+      weight *= statusA.DecimalPointLocation switch
+      {
+        DecimalPointLocation.XXXXX00 => 100d,
+        DecimalPointLocation.XXXXX0 => 10d,
+        DecimalPointLocation.XXXXXX => 1d,
+        DecimalPointLocation.XXXXX_X => 0.1d,
+        DecimalPointLocation.XXXX_XX => 0.01d,
+        DecimalPointLocation.XXX_XXX => 0.001d,
+        DecimalPointLocation.XX_XXXX => 0.0001d,
+        DecimalPointLocation.X_XXXXX => 0.00001d,
+        _ => 1d,
+      };
+
+      if (sign == Sign.Negative)
+        weight = -weight;
+
+      return true;
     }
 
-    public static StandardContinuousOutputData Decode(byte[] dataBytes, bool isChecksum = false)
+    private static UnitOfWeight DecodeUnit(StatusB statusB, StatusC statusC)
     {
-      var outputData = new StandardContinuousOutputData(dataBytes, isChecksum);
-      outputData.StatusA = StatusA.Decode(dataBytes[1]);
-      outputData.StatusB = StatusB.Decode(dataBytes[2]);
-      outputData.StatusC = StatusC.Decode(dataBytes[3]);
-
-      double? _indicatedWeight;
-      double? _taredWeight;
-
-
-      int MSD_index = 4;
-      int LSD_index = 9;
-      _indicatedWeight = decodeWeightValue(dataBytes, outputData.StatusA, MSD_index, LSD_index, outputData.StatusB.Sign);
-
-      MSD_index = 10;
-      LSD_index = 15;
-      _taredWeight = decodeWeightValue(dataBytes, outputData.StatusA, MSD_index, LSD_index);
-
-      outputData.IndicatedWeight = _indicatedWeight;
-      outputData.TareWeight = _taredWeight;
-
-      if (outputData.StatusC.WeightDescription == WeightDescription.SelectedByStatusByteB)
+      return statusC.WeightDescription switch
       {
-        //check status B
-        outputData.Unit = outputData.StatusB.UnitOfWeight;
-      }
-      else if (outputData.StatusC.WeightDescription == WeightDescription.Grams)
-      {
-        outputData.Unit = UnitOfWeight.Grams;
-      }
-      else if (outputData.StatusC.WeightDescription == WeightDescription.Ounces)
-      {
-        outputData.Unit = UnitOfWeight.Ounces;
-      }
-
-      return outputData;
+        WeightDescription.SelectedByStatusByteB => statusB.UnitOfWeight,
+        WeightDescription.Grams => UnitOfWeight.Grams,
+        WeightDescription.Ounces => UnitOfWeight.Ounces,
+        _ => UnitOfWeight.None,
+      };
     }
 
-    private static double? decodeWeightValue(byte[] dataBytes, StatusA statusA, int MSD_index, int LSD_index, Sign sign = Sign.Positive)
+    private static bool HasValidChecksum(byte[] dataBytes)
     {
-      if (dataBytes.Length != 16 && dataBytes.Length != 18)
-        throw new Exception("Độ dài data chưa đúng!");
-
-      double? _weightValue = null;
-      string value = "";
-      for (int i = MSD_index; (i <= LSD_index); i++)
-      {
-        if (dataBytes[i] != 0x0D)
-        {
-          if (dataBytes[i] >= 0x30)
-          {
-            value = value + Convert.ToChar(dataBytes[i]);
-          }
-        }
-      }
-      value = value.Trim();
-      try
-      {
-        value = value.Trim();
-        _weightValue = Convert.ToDouble(value); //value / 10;
-
-        if (statusA.DecimalPointLocation == DecimalPointLocation.XXXXX00)
-        {
-          _weightValue = _weightValue * 100;
-          value = String.Format("{0}", _weightValue.ToString());
-        }
-        else if (statusA.DecimalPointLocation == DecimalPointLocation.XXXXX0)
-        {
-          _weightValue = _weightValue * 10;
-        }
-        else if (statusA.DecimalPointLocation == DecimalPointLocation.XXXXX_X)
-        {
-          _weightValue = _weightValue / 10;
-        }
-        else if (statusA.DecimalPointLocation == DecimalPointLocation.XXXX_XX)
-        {
-          _weightValue = _weightValue / 100;
-        }
-        else if (statusA.DecimalPointLocation == DecimalPointLocation.XXX_XXX)
-        {
-          _weightValue = _weightValue / 1000;
-        }
-        else if (statusA.DecimalPointLocation == DecimalPointLocation.XX_XXXX)
-        {
-          _weightValue = _weightValue / 1000;
-        }
-        else if (statusA.DecimalPointLocation == DecimalPointLocation.X_XXXXX)
-        {
-          _weightValue = _weightValue / 10000;
-        }
-        else if (statusA.DecimalPointLocation == DecimalPointLocation.XXXXXX)
-        {
-          ;
-        }
-      }
-      catch { }
-      _weightValue = sign == Sign.Positive ? _weightValue : -_weightValue;
-      return _weightValue;
+      return CalculateChecksum(dataBytes.AsSpan(0, FrameLength)) ==
+             dataBytes[FrameLength];
     }
 
-    private static double? decodeIndicaltedWeightValue(byte[] dataBytes, StandardContinuousOutputData outputData, int MSD_index, int LSD_index)
+    private static byte CalculateChecksum(ReadOnlySpan<byte> data)
     {
-      double? _weightValue = null;
-      string value = "";
-      for (int i = MSD_index; (i <= LSD_index); i++)
-      {
-        if (dataBytes[i] != 0x0D)
-        {
-          if (dataBytes[i] >= 0x30)
-          {
-            value = value + Convert.ToChar(dataBytes[i]);
-          }
-        }
-      }
-      value = value.Trim();
-      try
-      {
-        //value = value.Split(' ')[0];
-        value = value.Trim();
-        _weightValue = Convert.ToDouble(value); //value / 10;
-        string sign = outputData.StatusB.Sign == Sign.Positive ? "+" : "-";
+      int sum = 0;
+      foreach (byte value in data)
+        sum += value;
 
-        if (outputData.StatusB.Sign == Sign.Negative)
-        {
-          sign = "-";
-        }
-        if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.XXXXX00)
-        {
-          //double_value = double_value * 100;
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-        else if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.XXXXX0)
-        {
-          //double_value = double_value * 10;
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-        else if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.XXXXXX)
-        {
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-        else if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.XXXXX_X)
-        {
-          _weightValue = _weightValue / 10;
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-        else if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.XXXX_XX)
-        {
-          _weightValue = _weightValue / 100;
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-        else if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.XXX_XXX)
-        {
-          _weightValue = _weightValue / 1000;
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-        else if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.XX_XXXX)
-        {
-          _weightValue = _weightValue / 1000;
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-        else if (outputData.StatusA.DecimalPointLocation == DecimalPointLocation.X_XXXXX)
-        {
-          _weightValue = _weightValue / 10000;
-          value = String.Format("{0}{1}", sign, _weightValue.ToString());
-        }
-      }
-      catch { }
-
-      return _weightValue;
+      return (byte)((-(sum & 0x7F)) & 0x7F);
     }
 
-    public static byte[] Encode(StandardContinuousOutputData standardContinuousOutputData)
+    public static byte[] Encode(StandardContinuousOutputData data)
     {
-      byte[] data = new byte[18];
+      ArgumentNullException.ThrowIfNull(data);
 
-      // Start Char
-      data[0] = standardContinuousOutputData.StartChar;
+      var result = new byte[FrameLengthWithChecksum];
+      result[0] = data.StartChar;
+      result[1] = StatusA.Encode(data.StatusA);
+      result[2] = StatusB.Encode(data.StatusB);
+      result[3] = StatusC.Encode(data.StatusC);
+      EncodeWeight(result, 4, data.IndicatedWeight ?? 0, data.StatusA);
+      EncodeWeight(result, 10, data.TareWeight ?? 0, data.StatusA);
+      result[16] = data.CarriageReturnChar;
+      result[17] = CalculateChecksum(result.AsSpan(0, FrameLength));
+      return result;
+    }
 
-      // Status byte A
-      StatusA statusA = standardContinuousOutputData.StatusA;
-      data[1] = StatusA.Encode(statusA);
+    private static void EncodeWeight(
+      byte[] destination,
+      int startIndex,
+      double weight,
+      StatusA statusA)
+    {
+      double divisor = statusA.DecimalPointLocation switch
+      {
+        DecimalPointLocation.XXXXX00 => 100d,
+        DecimalPointLocation.XXXXX0 => 10d,
+        DecimalPointLocation.XXXXXX => 1d,
+        DecimalPointLocation.XXXXX_X => 0.1d,
+        DecimalPointLocation.XXXX_XX => 0.01d,
+        DecimalPointLocation.XXX_XXX => 0.001d,
+        DecimalPointLocation.XX_XXXX => 0.0001d,
+        DecimalPointLocation.X_XXXXX => 0.00001d,
+        _ => 1d,
+      };
 
-      // Status byte B
-      StatusB statusB = standardContinuousOutputData.StatusB;
-      data[2] = StatusB.Encode(statusB);
+      string rawValue = Math.Abs(Math.Round(weight / divisor))
+        .ToString("0", CultureInfo.InvariantCulture)
+        .PadLeft(6, ' ');
 
-      // Status byte C
-      StatusC statusC = standardContinuousOutputData.StatusC;
-      data[3] = StatusC.Encode(statusC);
+      if (rawValue.Length > 6)
+        throw new ArgumentOutOfRangeException(nameof(weight));
 
-      // Indicated Weight
-      var indicatedWeight = standardContinuousOutputData.IndicatedWeight;
-      var indicatedWeightStr = indicatedWeight.ToString().Trim('-').Trim('+').Trim(' ').Replace(".", string.Empty).PadLeft(6, ' ');
-      var indicatedWeightData = Encoding.ASCII.GetBytes(indicatedWeightStr);
-
-      data[4] = indicatedWeightData[0]; // MSD
-      data[5] = indicatedWeightData[1];
-      data[6] = indicatedWeightData[2];
-      data[7] = indicatedWeightData[3];
-      data[8] = indicatedWeightData[4];
-      data[9] = indicatedWeightData[5]; // LSD
-
-      // Tare Weight
-      var tareWeight = standardContinuousOutputData.TareWeight;
-      var tareWeightStr = tareWeight.ToString().Trim('-').Trim('+').Trim(' ').Replace(".", string.Empty).PadLeft(6, ' ');
-      var tareWeighttData = Encoding.ASCII.GetBytes(tareWeightStr);
-
-      data[10] = tareWeighttData[0]; // MSD
-      data[11] = tareWeighttData[1];
-      data[12] = tareWeighttData[2];
-      data[13] = tareWeighttData[3];
-      data[14] = tareWeighttData[4];
-      data[15] = tareWeighttData[5]; // LSD
-
-      // Carriage Return
-      data[16] = standardContinuousOutputData.CarriageReturnChar;
-      data[17] = CheckSumMe.Calculate(data);
-
-      return data;
+      Encoding.ASCII.GetBytes(rawValue, 0, 6, destination, startIndex);
     }
   }
 }

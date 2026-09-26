@@ -137,7 +137,7 @@ namespace iSoft.Communication.Serial
           _messageDataInput.DataAsString = recievedStringData;
           _messageDataInput.DataAsBytes = Encoding.UTF8.GetBytes(recievedStringData);
           _messageDataInput.SourceDateTime = DateTime.Now;
-          OnDataReceived(_messageDataInput, EnumModeCommunication.SCOD);
+          OnDataReceived(_messageDataInput, EModeCommunication);
         }
       }
       catch (Exception ex)

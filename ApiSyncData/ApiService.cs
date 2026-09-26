@@ -41,6 +41,9 @@ namespace ApiSyncData
         AddOptionalFormField(formData, "Username", user.Username);
         AddOptionalFormField(formData, "EmployeeCode", user.EmployeeCode);
         AddOptionalFormField(formData, "IdCardCode", user.IdCardCode);
+        AddOptionalFormField(formData, "DisplayName", user.DisplayName);
+        AddOptionalFormField(formData, "FullName", user.FullName);
+        AddOptionalFormField(formData, "IdCardCode", user.IdCardCode);
         formData.Add(new StringContent(user.EnableFlag.ToString().ToLowerInvariant()), "EnableFlag");
         formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
         formData.Add(new StringContent(lang), "lang");

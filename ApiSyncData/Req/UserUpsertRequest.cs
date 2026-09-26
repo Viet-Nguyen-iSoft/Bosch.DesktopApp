@@ -8,6 +8,8 @@ namespace ApiSyncData.Req
   {
     public Guid? Id { get; set; }
     public List<UserTranslateFormData> TranslateFormDatas { get; set; } = new();
+    public string? DisplayName { get; set; }
+    public string? FullName { get; set; }
     public string? Username { get; set; }
     public string? EmployeeCode { get; set; }
     public string? IdCardCode { get; set; }

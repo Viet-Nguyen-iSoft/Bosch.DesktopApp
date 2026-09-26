@@ -181,25 +181,65 @@ namespace iSoft.Communication.Interface
         }  
         else if (eModeCommunication == EnumModeCommunication.SCOD)
         {
-          var data = StandardContinuousOutputData.Decode(messageDataInput?.DataAsBytes);
-          if (data != null)
+          if (StandardContinuousOutputData.TryDecode(
+                messageDataInput?.DataAsBytes,
+                out var data) &&
+              data != null)
           {
-            DataWeightInterface.IndicatedWeight = data?.IndicatedWeight ?? 0.0;
-            DataWeightInterface.TareWeight = data?.TareWeight ?? 0.0;
-            DataWeightInterface.Unit = data?.Unit ?? UnitOfWeight.None;
-            DataWeightInterface.ActiveWeighingStatus = data?.StatusB.ActiveWeighingStatus?? ActiveWeighingStatus.Default;
-            DataWeightReceived?.Invoke(this, DataWeightInterface);
+            PublishContinuousData(
+              data.IndicatedWeight ?? 0,
+              data.TareWeight ?? 0,
+              data.Unit,
+              data.ActiveWeighingStatus);
           }
         }
         else if (eModeCommunication == EnumModeCommunication.Continuous)
         {
-          
+          byte[]? bytes = messageDataInput?.DataAsBytes;
+          if (StandardContinuousOutputData.TryDecode(bytes, out var standard) &&
+              standard != null)
+          {
+            PublishContinuousData(
+              standard.IndicatedWeight ?? 0,
+              standard.TareWeight ?? 0,
+              standard.Unit,
+              standard.ActiveWeighingStatus);
+          }
+          else if (ExtendedContinuousOutputData.TryDecode(bytes, out var extended) &&
+                   extended != null)
+          {
+            PublishContinuousData(
+              extended.IndicatedWeight,
+              extended.TareWeight,
+              extended.Unit,
+              extended.ActiveWeighingStatus);
+          }
         }
       }
       catch (Exception)
       {
         throw;
       }
+    }
+
+    private void PublishContinuousData(
+      double indicatedWeight,
+      double tareWeight,
+      UnitOfWeight unit,
+      ActiveWeighingStatus weighingStatus)
+    {
+      DataWeightInterface.IndicatedWeight = indicatedWeight;
+      DataWeightInterface.TareWeight = tareWeight;
+      DataWeightInterface.Unit = unit;
+      DataWeightInterface.ActiveWeighingStatus = weighingStatus;
+
+      if (ActiveWeighingStatus != weighingStatus)
+      {
+        ActiveWeighingStatus = weighingStatus;
+        OnActiveWeighingStatusChangeEvent?.Invoke(this, weighingStatus);
+      }
+
+      DataWeightReceived?.Invoke(this, DataWeightInterface);
     }
 
     protected virtual void OnConnectionStatusChanged(bool isConnected)
