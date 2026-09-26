@@ -1,12 +1,15 @@
 using Common;
+using ApiSyncData.Req;
 using HelperManager;
 using iSoft.Database;
 using iSoft.Database.DTO;
+using iSoft.Database.Models;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
 using LTP.Truck.Popup;
 using static Common.EnumData;
+using static HelperManager.EnumData;
 
 namespace LTP.Truck.Forms
 {
@@ -289,14 +292,20 @@ namespace LTP.Truck.Forms
     private async Task EditUserAsync(iSoft.Database.Models.User user)
     {
       bool isUpdated = false;
+      iSoft.Database.Models.User? updatedUser = null;
       using var popup = new PopupUser(user);
 
-      popup.OnSendSuccess += _ => isUpdated = true;
+      popup.OnSendSuccess += value =>
+      {
+        isUpdated = true;
+        updatedUser = value;
+      };
       popup.ShowDialog(this);
 
       if (!isUpdated)
         return;
 
+      await QueueUserUpsertJobAsync(updatedUser ?? user);
       await LoadData(resetPage: false);
       ShowSuccess("Cập nhật tài khoản thành công.");
     }
@@ -320,6 +329,7 @@ namespace LTP.Truck.Forms
       try
       {
         await AppCore.Ins._userService.DeleteAsync(user);
+        await QueueUserUpsertJobAsync(user);
         await LoadData(resetPage: false);
         ShowSuccess("Xóa tài khoản thành công.");
       }
@@ -337,14 +347,20 @@ namespace LTP.Truck.Forms
     private async Task ChangePasswordAsync(iSoft.Database.Models.User user)
     {
       bool isUpdated = false;
+      iSoft.Database.Models.User? updatedUser = null;
       using var popup = new PopupUser(user, isChangePassword: true);
 
-      popup.OnSendSuccess += _ => isUpdated = true;
+      popup.OnSendSuccess += value =>
+      {
+        isUpdated = true;
+        updatedUser = value;
+      };
       popup.ShowDialog(this);
 
       if (!isUpdated)
         return;
 
+      await QueueUserUpsertJobAsync(updatedUser ?? user);
       await LoadData(resetPage: false);
       ShowSuccess("Cập nhật mật khẩu thành công.");
     }
@@ -352,16 +368,49 @@ namespace LTP.Truck.Forms
     private async Task EditRolesAsync(iSoft.Database.Models.User user)
     {
       bool isUpdated = false;
+      iSoft.Database.Models.User? updatedUser = null;
       using var popup = new PopupRoles(user);
 
-      popup.OnSendSuccess += _ => isUpdated = true;
+      popup.OnSendSuccess += value =>
+      {
+        isUpdated = true;
+        updatedUser = value;
+      };
       popup.ShowDialog(this);
 
       if (!isUpdated)
         return;
 
+      await QueueUserUpsertJobAsync(updatedUser ?? user);
       await LoadData(resetPage: false);
       ShowSuccess("Cập nhật phân quyền thành công.");
+    }
+
+    private static async Task QueueUserUpsertJobAsync(iSoft.Database.Models.User user)
+    {
+      var permissionCodes = JsonHelper.FromJson<List<string>>(user.Role ?? string.Empty)
+        ?? new List<string>();
+      var userUpsertRequest = new UserUpsertRequest
+      {
+        Id = user.IdSrc ?? user.Id,
+        IsDelete = user.DeletedFlag,
+        DisplayName = user.DisplayName,
+        Username = user.Username,
+        Password = user.Password,
+        EmployeeCode = user.EmployeeCode,
+        IdCardCode = user.IdCardCode,
+        Permission = permissionCodes,
+      };
+
+      var apiJob = new ApiJobs
+      {
+        Json = JsonHelper.ToJson(userUpsertRequest),
+        EnumTypeAPI = EnumTypeAPI.MD_User,
+        EnumStatusAPI = EnumStatusAPI.Created,
+        CreatedAt = DateTime.UtcNow,
+      };
+
+      await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
     }
 
     private void ShowSuccess(string message)

@@ -179,6 +179,7 @@ namespace HelperManager
       MD_ProductGroup,
       MD_Product,
       MD_Delivery,
+      MD_User,
     }
 
     public enum EnumStatusAPI

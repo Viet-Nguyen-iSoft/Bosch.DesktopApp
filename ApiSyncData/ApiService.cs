@@ -9,6 +9,73 @@ namespace ApiSyncData
 {
   public class ApiService
   {
+    public async Task<string> UpsertUserAsync(
+      UserUpsertRequest user,
+      string lang = "vi",
+      CancellationToken cancellationToken = default)
+    {
+      try
+      {
+        ArgumentNullException.ThrowIfNull(user);
+
+        if (user.Id == Guid.Empty)
+          throw new ArgumentException("User Id không được là Guid.Empty.", nameof(user));
+
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+        string apiUrl =
+          $"{baseAPI.TrimEnd('/')}/v1/User/upsert-multi-lang?lang={Uri.EscapeDataString(lang)}";
+
+        using var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+        using var formData = new MultipartFormDataContent();
+        if (user.Id.HasValue)
+          formData.Add(new StringContent(user.Id.Value.ToString()), "Id");
+
+        formData.Add(new StringContent((user.IsDelete ?? false).ToString().ToLowerInvariant()), "IsDelete");
+        AddOptionalFormField(formData, "DisplayName", user.DisplayName);
+        AddOptionalFormField(formData, "Username", user.Username);
+        AddOptionalFormField(formData, "Password", user.Password);
+        AddOptionalFormField(formData, "EmployeeCode", user.EmployeeCode);
+        AddOptionalFormField(formData, "IdCardCode", user.IdCardCode);
+        formData.Add(
+          new StringContent(JsonConvert.SerializeObject(user.Permission ?? new List<string>())),
+          "Permission");
+
+        using var response = await httpClient.PostAsync(apiUrl, formData, cancellationToken)
+          .ConfigureAwait(false);
+        string responseContent = await response.Content.ReadAsStringAsync(cancellationToken)
+          .ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+        {
+          throw new HttpRequestException(
+            $"UpsertUser. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+            $"({response.ReasonPhrase}). Response: {responseContent}");
+        }
+
+        return responseContent;
+      }
+      catch (Exception ex)
+      {
+        throw;
+      }
+    }
+
+    private static void AddOptionalFormField(
+      MultipartFormDataContent formData,
+      string fieldName,
+      string? value)
+    {
+      if (!string.IsNullOrWhiteSpace(value))
+        formData.Add(new StringContent(value.Trim()), fieldName);
+      else
+        formData.Add(new StringContent(fieldName), "DeleteFields");
+    }
+
     public async Task<StationAPI> Station(bool isContainDelete = false)
     {
       try
