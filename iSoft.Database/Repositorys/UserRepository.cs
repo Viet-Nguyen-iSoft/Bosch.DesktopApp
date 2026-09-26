@@ -51,6 +51,16 @@ namespace iSoft.Database.Repositorys
       return query.FirstOrDefaultAsync(user => user.Username == username);
     }
 
+    public Task<bool> ExistsUsernameAsync(string username)
+    {
+      if (string.IsNullOrWhiteSpace(username))
+        throw new ArgumentException("Username is required.", nameof(username));
+
+      string normalizedUsername = username.Trim();
+      return Context.Set<User>().AnyAsync(user =>
+        !user.DeletedFlag && user.Username == normalizedUsername);
+    }
+
     public async Task<User> AddOrUpdateAsync(User user)
     {
       ArgumentNullException.ThrowIfNull(user);

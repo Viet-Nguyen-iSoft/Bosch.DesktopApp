@@ -16,6 +16,7 @@ namespace LTP.Truck.MasterData
     private readonly User? _userUpdate;
     private readonly EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     private readonly bool _isChangePassword;
+    private bool _isActive = true;
 
     public PopupUser()
     {
@@ -23,6 +24,8 @@ namespace LTP.Truck.MasterData
 
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += BtnClose_Click;
+      picActive.Click += PicActive_Click;
+      picActive.Cursor = Cursors.Hand;
       txtPassword.PasswordChar = true;
       txtRePassword.PasswordChar = true;
     }
@@ -56,6 +59,7 @@ namespace LTP.Truck.MasterData
       txtDisplayName.Texts = user.DisplayName ?? string.Empty;
       txtFullName.Texts = user.FullName ?? string.Empty;
       txtEmployeeCode.Texts = user.EmployeeCode ?? string.Empty;
+      SetActiveUser(user.EnableFlag);
 
       // Không hiển thị mật khẩu đã mã hóa. Người dùng phải nhập mật khẩu mới.
       txtPassword.Texts = string.Empty;
@@ -166,14 +170,9 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        var users = await _userService.GetAllAsync(isContainDelete: true);
-        bool isDuplicateUsername = users.Any(user =>
-          !user.DeletedFlag &&
-          user.Id != _userUpdate?.Id &&
-          string.Equals(user.Username?.Trim(), username,
-            StringComparison.CurrentCultureIgnoreCase));
-
-        if (isDuplicateUsername)
+        // Khi chỉnh sửa, username bị khóa nên không cần truy vấn DB kiểm tra lại.
+        if (_enumTypePopup == EnumTypePopup.Add &&
+            await _userService.ExistsUsernameAsync(username))
         {
           ShowWarning("Tên đăng nhập đã tồn tại !");
           txtUsername.Focus();
@@ -199,7 +198,7 @@ namespace LTP.Truck.MasterData
         userToSave.DisplayName = displayName;
         userToSave.FullName = fullName;
         userToSave.EmployeeCode = employeeCode;
-        userToSave.EnableFlag = true;
+        userToSave.EnableFlag = _isActive;
         if (hasPasswordInput)
           userToSave.Password = SecurityHelper.EncodePassword(username, password);
 
@@ -224,6 +223,28 @@ namespace LTP.Truck.MasterData
         EnumTypeMsg.MessageManualClose,
         EnumImageMsg.Warning);
       popup.ShowDialog(this);
+    }
+
+    private void SetActiveUser(bool check)
+    {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(() =>
+        {
+          SetActiveUser(check);
+        }));
+        return;
+      }
+
+      _isActive = check;
+      picActive.Image = !check
+        ? Properties.Resources.icon_toggle_on
+        : Properties.Resources.icon_toggle_off;
+    }
+
+    private void PicActive_Click(object? sender, EventArgs e)
+    {
+      SetActiveUser(!_isActive);
     }
   }
 }

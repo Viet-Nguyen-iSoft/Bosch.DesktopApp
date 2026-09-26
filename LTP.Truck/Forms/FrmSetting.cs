@@ -48,7 +48,7 @@ namespace LTP.Truck.Forms
 
     private static void NonNegativeInteger_TextChanged(object? sender, EventArgs e)
     {
-      if (sender is not Common.Custom.RJTextBox textBox)
+      if (sender is not LTP.Truck.Custom.RJTextBox textBox)
         return;
 
       string value = textBox.Texts;
@@ -66,7 +66,7 @@ namespace LTP.Truck.Forms
         return;
 
       if ((e.KeyChar == '.' || e.KeyChar == ',') &&
-          sender is Common.Custom.RJTextBox textBox &&
+          sender is LTP.Truck.Custom.RJTextBox textBox &&
           !textBox.Texts.Contains('.') && !textBox.Texts.Contains(','))
         return;
 
@@ -75,7 +75,7 @@ namespace LTP.Truck.Forms
 
     private static void NonNegativeDecimal_TextChanged(object? sender, EventArgs e)
     {
-      if (sender is not Common.Custom.RJTextBox textBox)
+      if (sender is not LTP.Truck.Custom.RJTextBox textBox)
         return;
 
       string value = textBox.Texts;

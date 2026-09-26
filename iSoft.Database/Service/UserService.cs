@@ -33,6 +33,14 @@ namespace iSoft.Database.Service
         .ConfigureAwait(false);
     }
 
+    public async Task<bool> ExistsUsernameAsync(string username)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new UserRepository(context);
+      return await repository.ExistsUsernameAsync(username)
+        .ConfigureAwait(false);
+    }
+
     public async Task<User> AddOrUpdateAsync(User user)
     {
       await using var context = new MySqlDbContext();

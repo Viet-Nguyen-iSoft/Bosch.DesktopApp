@@ -17,7 +17,6 @@ namespace LTP.Truck.Forms
   {
     private const string EditButtonColumnName = "btnEdit";
     private const string DeleteButtonColumnName = "btnDelete";
-    private const string ChangePasswordButtonColumnName = "btnChangePassword";
     private const string RolesButtonColumnName = "btnRoles";
     private CancellationTokenSource? _searchDebounceCancellation;
     private int _loadVersion;
@@ -155,7 +154,7 @@ namespace LTP.Truck.Forms
 
       dgv.DataSource = null;
       dgv.DataSource = users;
-      EnsureChangePasswordColumn();
+      EnsureActionColumns();
 
       if (dgv.Columns.Contains(nameof(UserDTO.User)))
         dgv.Columns[nameof(UserDTO.User)].Visible = false;
@@ -186,23 +185,8 @@ namespace LTP.Truck.Forms
       dgv.CurrentCell = null;
     }
 
-    private void EnsureChangePasswordColumn()
+    private void EnsureActionColumns()
     {
-      if (!dgv.Columns.Contains(ChangePasswordButtonColumnName))
-      {
-        dgv.Columns.Add(new DataGridViewButtonColumn
-        {
-          Name = ChangePasswordButtonColumnName,
-          HeaderText = string.Empty,
-          Text = "Đổi mật khẩu",
-          UseColumnTextForButtonValue = true,
-          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-          Width = 160,
-          Resizable = DataGridViewTriState.False,
-          SortMode = DataGridViewColumnSortMode.NotSortable,
-        });
-      }
-
       if (!dgv.Columns.Contains(RolesButtonColumnName))
       {
         dgv.Columns.Add(new DataGridViewButtonColumn
@@ -250,11 +234,9 @@ namespace LTP.Truck.Forms
 
       // Đặt từ cột cuối ngược về trước để DataGridView không dịch
       // một cột dữ liệu chen vào giữa các cột thao tác.
-      dgv.Columns[ChangePasswordButtonColumnName].DisplayIndex =
-        dgv.Columns.Count - 1;
-      dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
-      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 3;
-      dgv.Columns[RolesButtonColumnName].DisplayIndex = dgv.Columns.Count - 4;
+      dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 1;
+      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
+      dgv.Columns[RolesButtonColumnName].DisplayIndex = dgv.Columns.Count - 3;
     }
 
     private async void dgv_CellContentClick(
@@ -270,23 +252,12 @@ namespace LTP.Truck.Forms
       }
 
       string columnName = dgv.Columns[e.ColumnIndex].Name;
-      try
-      {
-        dgv.Enabled = false;
-
-        if (columnName == EditButtonColumnName)
-          await EditUserAsync(row.User);
-        else if (columnName == DeleteButtonColumnName)
-          await DeleteUserAsync(row.User);
-        else if (columnName == ChangePasswordButtonColumnName)
-          await ChangePasswordAsync(row.User);
-        else if (columnName == RolesButtonColumnName)
-          await EditRolesAsync(row.User);
-      }
-      finally
-      {
-        dgv.Enabled = true;
-      }
+      if (columnName == EditButtonColumnName)
+        await EditUserAsync(row.User);
+      else if (columnName == DeleteButtonColumnName)
+        await DeleteUserAsync(row.User);
+      else if (columnName == RolesButtonColumnName)
+        await EditRolesAsync(row.User);
     }
 
     private async Task EditUserAsync(iSoft.Database.Models.User user)
@@ -305,8 +276,9 @@ namespace LTP.Truck.Forms
       if (!isUpdated)
         return;
 
-      await QueueUserUpsertJobAsync(updatedUser ?? user);
-      await LoadData(resetPage: false);
+      await Task.WhenAll(
+        QueueUserUpsertJobAsync(updatedUser ?? user),
+        LoadData(resetPage: false));
       ShowSuccess("Cập nhật tài khoản thành công.");
     }
 
@@ -342,27 +314,6 @@ namespace LTP.Truck.Forms
           EnumImageMsg.Warning);
         errorPopup.ShowDialog(this);
       }
-    }
-
-    private async Task ChangePasswordAsync(iSoft.Database.Models.User user)
-    {
-      bool isUpdated = false;
-      iSoft.Database.Models.User? updatedUser = null;
-      using var popup = new PopupUser(user, isChangePassword: true);
-
-      popup.OnSendSuccess += value =>
-      {
-        isUpdated = true;
-        updatedUser = value;
-      };
-      popup.ShowDialog(this);
-
-      if (!isUpdated)
-        return;
-
-      await QueueUserUpsertJobAsync(updatedUser ?? user);
-      await LoadData(resetPage: false);
-      ShowSuccess("Cập nhật mật khẩu thành công.");
     }
 
     private async Task EditRolesAsync(iSoft.Database.Models.User user)

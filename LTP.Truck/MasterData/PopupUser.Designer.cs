@@ -31,6 +31,12 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupUser));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
+      txtEmployeeCode = new Common.Custom.RJTextBox();
+      txtFullName = new Common.Custom.RJTextBox();
+      txtRePassword = new Common.Custom.RJTextBox();
+      tableLayoutPanel7 = new TableLayoutPanel();
+      label2 = new Label();
+      label7 = new Label();
       tableLayoutPanel1 = new TableLayoutPanel();
       label15 = new Label();
       label8 = new Label();
@@ -43,31 +49,25 @@
       txtPassword = new Common.Custom.RJTextBox();
       txtUsername = new Common.Custom.RJTextBox();
       txtDisplayName = new Common.Custom.RJTextBox();
+      tableLayoutPanel8 = new TableLayoutPanel();
+      label9 = new Label();
+      label10 = new Label();
+      label12 = new Label();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      tableLayoutPanel7 = new TableLayoutPanel();
-      label2 = new Label();
-      label7 = new Label();
-      tableLayoutPanel8 = new TableLayoutPanel();
-      label9 = new Label();
-      label10 = new Label();
-      tableLayoutPanel9 = new TableLayoutPanel();
-      label11 = new Label();
-      label12 = new Label();
-      txtRePassword = new Common.Custom.RJTextBox();
-      txtFullName = new Common.Custom.RJTextBox();
-      txtEmployeeCode = new Common.Custom.RJTextBox();
+      label4 = new Label();
+      picActive = new PictureBox();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
+      tableLayoutPanel7.SuspendLayout();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
-      tableLayoutPanel2.SuspendLayout();
-      tableLayoutPanel7.SuspendLayout();
       tableLayoutPanel8.SuspendLayout();
-      tableLayoutPanel9.SuspendLayout();
+      tableLayoutPanel2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)picActive).BeginInit();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -89,7 +89,7 @@
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(800, 549);
+      tableLayoutPanel3.Size = new Size(800, 616);
       tableLayoutPanel3.TabIndex = 6;
       // 
       // tableLayoutPanel5
@@ -98,6 +98,8 @@
       tableLayoutPanel5.ColumnCount = 2;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel5.Controls.Add(picActive, 1, 6);
+      tableLayoutPanel5.Controls.Add(label4, 0, 6);
       tableLayoutPanel5.Controls.Add(txtEmployeeCode, 1, 5);
       tableLayoutPanel5.Controls.Add(txtFullName, 1, 4);
       tableLayoutPanel5.Controls.Add(txtRePassword, 1, 3);
@@ -109,19 +111,133 @@
       tableLayoutPanel5.Controls.Add(txtUsername, 1, 0);
       tableLayoutPanel5.Controls.Add(txtDisplayName, 1, 1);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel8, 0, 4);
-      tableLayoutPanel5.Controls.Add(tableLayoutPanel9, 0, 5);
+      tableLayoutPanel5.Controls.Add(label12, 0, 5);
       tableLayoutPanel5.Location = new Point(8, 68);
       tableLayoutPanel5.Name = "tableLayoutPanel5";
-      tableLayoutPanel5.RowCount = 6;
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6666641F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6666679F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6666679F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6666679F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6666679F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6666641F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel5.Size = new Size(784, 408);
+      tableLayoutPanel5.RowCount = 7;
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.Size = new Size(784, 475);
       tableLayoutPanel5.TabIndex = 8;
+      // 
+      // txtEmployeeCode
+      // 
+      txtEmployeeCode.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtEmployeeCode.BackColor = SystemColors.Window;
+      txtEmployeeCode.BorderColor = Color.Black;
+      txtEmployeeCode.BorderFocusColor = Color.HotPink;
+      txtEmployeeCode.BorderRadius = 5;
+      txtEmployeeCode.BorderSize = 2;
+      txtEmployeeCode.Font = new Font("Roboto", 14F);
+      txtEmployeeCode.ForeColor = Color.FromArgb(64, 64, 64);
+      txtEmployeeCode.Location = new Point(206, 349);
+      txtEmployeeCode.Margin = new Padding(4);
+      txtEmployeeCode.Multiline = false;
+      txtEmployeeCode.Name = "txtEmployeeCode";
+      txtEmployeeCode.Padding = new Padding(10, 7, 10, 7);
+      txtEmployeeCode.PasswordChar = false;
+      txtEmployeeCode.PlaceholderColor = Color.DarkGray;
+      txtEmployeeCode.PlaceholderText = "";
+      txtEmployeeCode.Size = new Size(574, 38);
+      txtEmployeeCode.TabIndex = 46;
+      txtEmployeeCode.Texts = "";
+      txtEmployeeCode.UnderlinedStyle = false;
+      // 
+      // txtFullName
+      // 
+      txtFullName.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtFullName.BackColor = SystemColors.Window;
+      txtFullName.BorderColor = Color.Black;
+      txtFullName.BorderFocusColor = Color.HotPink;
+      txtFullName.BorderRadius = 5;
+      txtFullName.BorderSize = 2;
+      txtFullName.Font = new Font("Roboto", 14F);
+      txtFullName.ForeColor = Color.FromArgb(64, 64, 64);
+      txtFullName.Location = new Point(206, 282);
+      txtFullName.Margin = new Padding(4);
+      txtFullName.Multiline = false;
+      txtFullName.Name = "txtFullName";
+      txtFullName.Padding = new Padding(10, 7, 10, 7);
+      txtFullName.PasswordChar = false;
+      txtFullName.PlaceholderColor = Color.DarkGray;
+      txtFullName.PlaceholderText = "";
+      txtFullName.Size = new Size(574, 38);
+      txtFullName.TabIndex = 45;
+      txtFullName.Texts = "";
+      txtFullName.UnderlinedStyle = false;
+      // 
+      // txtRePassword
+      // 
+      txtRePassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtRePassword.BackColor = SystemColors.Window;
+      txtRePassword.BorderColor = Color.Black;
+      txtRePassword.BorderFocusColor = Color.HotPink;
+      txtRePassword.BorderRadius = 5;
+      txtRePassword.BorderSize = 2;
+      txtRePassword.Font = new Font("Roboto", 14F);
+      txtRePassword.ForeColor = Color.FromArgb(64, 64, 64);
+      txtRePassword.Location = new Point(206, 215);
+      txtRePassword.Margin = new Padding(4);
+      txtRePassword.Multiline = false;
+      txtRePassword.Name = "txtRePassword";
+      txtRePassword.Padding = new Padding(10, 7, 10, 7);
+      txtRePassword.PasswordChar = false;
+      txtRePassword.PlaceholderColor = Color.DarkGray;
+      txtRePassword.PlaceholderText = "";
+      txtRePassword.Size = new Size(574, 38);
+      txtRePassword.TabIndex = 44;
+      txtRePassword.Texts = "";
+      txtRePassword.UnderlinedStyle = false;
+      // 
+      // tableLayoutPanel7
+      // 
+      tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel7.ColumnCount = 2;
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel7.Controls.Add(label2, 1, 0);
+      tableLayoutPanel7.Controls.Add(label7, 0, 0);
+      tableLayoutPanel7.Location = new Point(0, 201);
+      tableLayoutPanel7.Margin = new Padding(0);
+      tableLayoutPanel7.Name = "tableLayoutPanel7";
+      tableLayoutPanel7.RowCount = 1;
+      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel7.Size = new Size(202, 67);
+      tableLayoutPanel7.TabIndex = 41;
+      // 
+      // label2
+      // 
+      label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label2.AutoSize = true;
+      label2.BackColor = Color.Transparent;
+      label2.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label2.ForeColor = Color.Red;
+      label2.Location = new Point(163, 0);
+      label2.Margin = new Padding(0);
+      label2.Name = "label2";
+      label2.Size = new Size(39, 67);
+      label2.TabIndex = 4;
+      label2.Text = "*";
+      label2.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label7
+      // 
+      label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label7.AutoSize = true;
+      label7.BackColor = Color.Transparent;
+      label7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label7.Location = new Point(0, 0);
+      label7.Margin = new Padding(0);
+      label7.Name = "label7";
+      label7.Size = new Size(163, 67);
+      label7.TabIndex = 3;
+      label7.Text = "Nhập lại mật khẩu";
+      label7.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel1
       // 
@@ -131,12 +247,12 @@
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel1.Controls.Add(label15, 1, 0);
       tableLayoutPanel1.Controls.Add(label8, 0, 0);
-      tableLayoutPanel1.Location = new Point(0, 135);
+      tableLayoutPanel1.Location = new Point(0, 134);
       tableLayoutPanel1.Margin = new Padding(0);
       tableLayoutPanel1.Name = "tableLayoutPanel1";
       tableLayoutPanel1.RowCount = 1;
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel1.Size = new Size(202, 68);
+      tableLayoutPanel1.Size = new Size(202, 67);
       tableLayoutPanel1.TabIndex = 38;
       // 
       // label15
@@ -149,7 +265,7 @@
       label15.Location = new Point(88, 0);
       label15.Margin = new Padding(0);
       label15.Name = "label15";
-      label15.Size = new Size(114, 68);
+      label15.Size = new Size(114, 67);
       label15.TabIndex = 4;
       label15.Text = "*";
       label15.TextAlign = ContentAlignment.MiddleLeft;
@@ -163,7 +279,7 @@
       label8.Location = new Point(0, 0);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(88, 68);
+      label8.Size = new Size(88, 67);
       label8.TabIndex = 3;
       label8.Text = "Mật khẩu";
       label8.TextAlign = ContentAlignment.MiddleLeft;
@@ -226,7 +342,7 @@
       tableLayoutPanel4.Name = "tableLayoutPanel4";
       tableLayoutPanel4.RowCount = 1;
       tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel4.Size = new Size(202, 68);
+      tableLayoutPanel4.Size = new Size(202, 67);
       tableLayoutPanel4.TabIndex = 39;
       // 
       // label3
@@ -239,7 +355,7 @@
       label3.Location = new Point(108, 0);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
-      label3.Size = new Size(94, 68);
+      label3.Size = new Size(94, 67);
       label3.TabIndex = 4;
       label3.Text = "*";
       label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -253,7 +369,7 @@
       label5.Location = new Point(0, 0);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
-      label5.Size = new Size(108, 68);
+      label5.Size = new Size(108, 67);
       label5.TabIndex = 3;
       label5.Text = "Tên hiển thị";
       label5.TextAlign = ContentAlignment.MiddleLeft;
@@ -268,7 +384,7 @@
       txtPassword.BorderSize = 2;
       txtPassword.Font = new Font("Roboto", 14F);
       txtPassword.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPassword.Location = new Point(206, 150);
+      txtPassword.Location = new Point(206, 148);
       txtPassword.Margin = new Padding(4);
       txtPassword.Multiline = false;
       txtPassword.Name = "txtPassword";
@@ -314,7 +430,7 @@
       txtDisplayName.BorderSize = 2;
       txtDisplayName.Font = new Font("Roboto", 14F);
       txtDisplayName.ForeColor = Color.FromArgb(64, 64, 64);
-      txtDisplayName.Location = new Point(206, 82);
+      txtDisplayName.Location = new Point(206, 81);
       txtDisplayName.Margin = new Padding(4);
       txtDisplayName.Multiline = false;
       txtDisplayName.Name = "txtDisplayName";
@@ -326,6 +442,65 @@
       txtDisplayName.TabIndex = 3;
       txtDisplayName.Texts = "";
       txtDisplayName.UnderlinedStyle = false;
+      // 
+      // tableLayoutPanel8
+      // 
+      tableLayoutPanel8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel8.ColumnCount = 2;
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel8.Controls.Add(label9, 1, 0);
+      tableLayoutPanel8.Controls.Add(label10, 0, 0);
+      tableLayoutPanel8.Location = new Point(0, 268);
+      tableLayoutPanel8.Margin = new Padding(0);
+      tableLayoutPanel8.Name = "tableLayoutPanel8";
+      tableLayoutPanel8.RowCount = 1;
+      tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel8.Size = new Size(202, 67);
+      tableLayoutPanel8.TabIndex = 42;
+      // 
+      // label9
+      // 
+      label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label9.AutoSize = true;
+      label9.BackColor = Color.Transparent;
+      label9.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label9.ForeColor = Color.Red;
+      label9.Location = new Point(91, 0);
+      label9.Margin = new Padding(0);
+      label9.Name = "label9";
+      label9.Size = new Size(111, 67);
+      label9.TabIndex = 4;
+      label9.Text = "*";
+      label9.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label10
+      // 
+      label10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label10.AutoSize = true;
+      label10.BackColor = Color.Transparent;
+      label10.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label10.Location = new Point(0, 0);
+      label10.Margin = new Padding(0);
+      label10.Name = "label10";
+      label10.Size = new Size(91, 67);
+      label10.TabIndex = 3;
+      label10.Text = "Họ và tên";
+      label10.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label12
+      // 
+      label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label12.AutoSize = true;
+      label12.BackColor = Color.Transparent;
+      label12.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label12.Location = new Point(0, 335);
+      label12.Margin = new Padding(0);
+      label12.Name = "label12";
+      label12.Size = new Size(202, 67);
+      label12.TabIndex = 3;
+      label12.Text = "Mã nhân viên";
+      label12.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // lbTitle
       // 
@@ -350,7 +525,7 @@
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(5, 479);
+      tableLayoutPanel2.Location = new Point(5, 546);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
@@ -404,215 +579,36 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // tableLayoutPanel7
+      // label4
       // 
-      tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel7.ColumnCount = 2;
-      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel7.Controls.Add(label2, 1, 0);
-      tableLayoutPanel7.Controls.Add(label7, 0, 0);
-      tableLayoutPanel7.Location = new Point(0, 203);
-      tableLayoutPanel7.Margin = new Padding(0);
-      tableLayoutPanel7.Name = "tableLayoutPanel7";
-      tableLayoutPanel7.RowCount = 1;
-      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel7.Size = new Size(202, 68);
-      tableLayoutPanel7.TabIndex = 41;
+      label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label4.AutoSize = true;
+      label4.BackColor = Color.Transparent;
+      label4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label4.Location = new Point(0, 402);
+      label4.Margin = new Padding(0);
+      label4.Name = "label4";
+      label4.Size = new Size(202, 73);
+      label4.TabIndex = 47;
+      label4.Text = "Kích hoạt";
+      label4.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // label2
+      // picActive
       // 
-      label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label2.AutoSize = true;
-      label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label2.ForeColor = Color.Red;
-      label2.Location = new Point(163, 0);
-      label2.Margin = new Padding(0);
-      label2.Name = "label2";
-      label2.Size = new Size(39, 68);
-      label2.TabIndex = 4;
-      label2.Text = "*";
-      label2.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // label7
-      // 
-      label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label7.AutoSize = true;
-      label7.BackColor = Color.Transparent;
-      label7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label7.Location = new Point(0, 0);
-      label7.Margin = new Padding(0);
-      label7.Name = "label7";
-      label7.Size = new Size(163, 68);
-      label7.TabIndex = 3;
-      label7.Text = "Nhập lại mật khẩu";
-      label7.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // tableLayoutPanel8
-      // 
-      tableLayoutPanel8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel8.ColumnCount = 2;
-      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel8.Controls.Add(label9, 1, 0);
-      tableLayoutPanel8.Controls.Add(label10, 0, 0);
-      tableLayoutPanel8.Location = new Point(0, 271);
-      tableLayoutPanel8.Margin = new Padding(0);
-      tableLayoutPanel8.Name = "tableLayoutPanel8";
-      tableLayoutPanel8.RowCount = 1;
-      tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel8.Size = new Size(202, 68);
-      tableLayoutPanel8.TabIndex = 42;
-      // 
-      // label9
-      // 
-      label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label9.AutoSize = true;
-      label9.BackColor = Color.Transparent;
-      label9.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label9.ForeColor = Color.Red;
-      label9.Location = new Point(91, 0);
-      label9.Margin = new Padding(0);
-      label9.Name = "label9";
-      label9.Size = new Size(111, 68);
-      label9.TabIndex = 4;
-      label9.Text = "*";
-      label9.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // label10
-      // 
-      label10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label10.AutoSize = true;
-      label10.BackColor = Color.Transparent;
-      label10.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label10.Location = new Point(0, 0);
-      label10.Margin = new Padding(0);
-      label10.Name = "label10";
-      label10.Size = new Size(91, 68);
-      label10.TabIndex = 3;
-      label10.Text = "Họ và tên";
-      label10.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // tableLayoutPanel9
-      // 
-      tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel9.ColumnCount = 2;
-      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel9.Controls.Add(label11, 1, 0);
-      tableLayoutPanel9.Controls.Add(label12, 0, 0);
-      tableLayoutPanel9.Location = new Point(0, 339);
-      tableLayoutPanel9.Margin = new Padding(0);
-      tableLayoutPanel9.Name = "tableLayoutPanel9";
-      tableLayoutPanel9.RowCount = 1;
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel9.Size = new Size(202, 69);
-      tableLayoutPanel9.TabIndex = 43;
-      // 
-      // label11
-      // 
-      label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label11.AutoSize = true;
-      label11.BackColor = Color.Transparent;
-      label11.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label11.ForeColor = Color.Red;
-      label11.Location = new Point(129, 0);
-      label11.Margin = new Padding(0);
-      label11.Name = "label11";
-      label11.Size = new Size(73, 69);
-      label11.TabIndex = 4;
-      label11.Text = "*";
-      label11.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // label12
-      // 
-      label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label12.AutoSize = true;
-      label12.BackColor = Color.Transparent;
-      label12.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label12.Location = new Point(0, 0);
-      label12.Margin = new Padding(0);
-      label12.Name = "label12";
-      label12.Size = new Size(129, 69);
-      label12.TabIndex = 3;
-      label12.Text = "Mã nhân viên:";
-      label12.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtRePassword
-      // 
-      txtRePassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtRePassword.BackColor = SystemColors.Window;
-      txtRePassword.BorderColor = Color.Black;
-      txtRePassword.BorderFocusColor = Color.HotPink;
-      txtRePassword.BorderRadius = 5;
-      txtRePassword.BorderSize = 2;
-      txtRePassword.Font = new Font("Roboto", 14F);
-      txtRePassword.ForeColor = Color.FromArgb(64, 64, 64);
-      txtRePassword.Location = new Point(206, 218);
-      txtRePassword.Margin = new Padding(4);
-      txtRePassword.Multiline = false;
-      txtRePassword.Name = "txtRePassword";
-      txtRePassword.Padding = new Padding(10, 7, 10, 7);
-      txtRePassword.PasswordChar = false;
-      txtRePassword.PlaceholderColor = Color.DarkGray;
-      txtRePassword.PlaceholderText = "";
-      txtRePassword.Size = new Size(574, 38);
-      txtRePassword.TabIndex = 44;
-      txtRePassword.Texts = "";
-      txtRePassword.UnderlinedStyle = false;
-      // 
-      // txtFullName
-      // 
-      txtFullName.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtFullName.BackColor = SystemColors.Window;
-      txtFullName.BorderColor = Color.Black;
-      txtFullName.BorderFocusColor = Color.HotPink;
-      txtFullName.BorderRadius = 5;
-      txtFullName.BorderSize = 2;
-      txtFullName.Font = new Font("Roboto", 14F);
-      txtFullName.ForeColor = Color.FromArgb(64, 64, 64);
-      txtFullName.Location = new Point(206, 286);
-      txtFullName.Margin = new Padding(4);
-      txtFullName.Multiline = false;
-      txtFullName.Name = "txtFullName";
-      txtFullName.Padding = new Padding(10, 7, 10, 7);
-      txtFullName.PasswordChar = false;
-      txtFullName.PlaceholderColor = Color.DarkGray;
-      txtFullName.PlaceholderText = "";
-      txtFullName.Size = new Size(574, 38);
-      txtFullName.TabIndex = 45;
-      txtFullName.Texts = "";
-      txtFullName.UnderlinedStyle = false;
-      // 
-      // txtEmployeeCode
-      // 
-      txtEmployeeCode.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtEmployeeCode.BackColor = SystemColors.Window;
-      txtEmployeeCode.BorderColor = Color.Black;
-      txtEmployeeCode.BorderFocusColor = Color.HotPink;
-      txtEmployeeCode.BorderRadius = 5;
-      txtEmployeeCode.BorderSize = 2;
-      txtEmployeeCode.Font = new Font("Roboto", 14F);
-      txtEmployeeCode.ForeColor = Color.FromArgb(64, 64, 64);
-      txtEmployeeCode.Location = new Point(206, 354);
-      txtEmployeeCode.Margin = new Padding(4);
-      txtEmployeeCode.Multiline = false;
-      txtEmployeeCode.Name = "txtEmployeeCode";
-      txtEmployeeCode.Padding = new Padding(10, 7, 10, 7);
-      txtEmployeeCode.PasswordChar = false;
-      txtEmployeeCode.PlaceholderColor = Color.DarkGray;
-      txtEmployeeCode.PlaceholderText = "";
-      txtEmployeeCode.Size = new Size(574, 38);
-      txtEmployeeCode.TabIndex = 46;
-      txtEmployeeCode.Texts = "";
-      txtEmployeeCode.UnderlinedStyle = false;
+      picActive.Anchor = AnchorStyles.Left;
+      picActive.Image = Properties.Resources.icon_toggle_off;
+      picActive.Location = new Point(205, 409);
+      picActive.Name = "picActive";
+      picActive.Size = new Size(94, 58);
+      picActive.SizeMode = PictureBoxSizeMode.StretchImage;
+      picActive.TabIndex = 48;
+      picActive.TabStop = false;
       // 
       // PopupUser
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(800, 549);
+      ClientSize = new Size(800, 616);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupUser";
@@ -620,19 +616,19 @@
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel5.ResumeLayout(false);
+      tableLayoutPanel5.PerformLayout();
+      tableLayoutPanel7.ResumeLayout(false);
+      tableLayoutPanel7.PerformLayout();
       tableLayoutPanel1.ResumeLayout(false);
       tableLayoutPanel1.PerformLayout();
       tableLayoutPanel6.ResumeLayout(false);
       tableLayoutPanel6.PerformLayout();
       tableLayoutPanel4.ResumeLayout(false);
       tableLayoutPanel4.PerformLayout();
-      tableLayoutPanel2.ResumeLayout(false);
-      tableLayoutPanel7.ResumeLayout(false);
-      tableLayoutPanel7.PerformLayout();
       tableLayoutPanel8.ResumeLayout(false);
       tableLayoutPanel8.PerformLayout();
-      tableLayoutPanel9.ResumeLayout(false);
-      tableLayoutPanel9.PerformLayout();
+      tableLayoutPanel2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)picActive).EndInit();
       ResumeLayout(false);
     }
 
@@ -662,11 +658,11 @@
     private TableLayoutPanel tableLayoutPanel8;
     private Label label9;
     private Label label10;
-    private TableLayoutPanel tableLayoutPanel9;
-    private Label label11;
     private Label label12;
     private Common.Custom.RJTextBox txtEmployeeCode;
     private Common.Custom.RJTextBox txtFullName;
     private Common.Custom.RJTextBox txtRePassword;
+    private Label label4;
+    private PictureBox picActive;
   }
 }
