@@ -1089,10 +1089,8 @@ namespace LTP.Truck.Forms
       var totalHeaderBottomStyle = sheet.Cell(9, hazardous ? 3 : 4).Style;
       var monthlyLabelStyle = sheet.Cell(10, 1).Style;
       var monthlyValueStyle = sheet.Cell(10, 2).Style;
-      var monthlyTotalStyle = sheet.Cell(10, hazardous ? 3 : 4).Style;
       var dateStyle = sheet.Cell(11, 1).Style;
       var dailyValueStyle = sheet.Cell(11, 2).Style;
-      var dailyTotalStyle = sheet.Cell(11, hazardous ? 3 : 4).Style;
       var firstColumnWidth = sheet.Column(1).Width;
       var productColumnWidth = sheet.Column(2).Width;
       var totalColumnWidth = sheet.Column(hazardous ? 3 : 4).Width;
@@ -1183,7 +1181,7 @@ namespace LTP.Truck.Forms
           sheet.Cell(row, 1).Style.DateFormat.Format = "dd/MM/yyyy";
           for (var column = firstProductColumn; column < totalColumn; column++)
             sheet.Cell(row, column).Style = dailyValueStyle;
-          sheet.Cell(row, totalColumn).Style = dailyTotalStyle;
+          sheet.Cell(row, totalColumn).Style = dailyValueStyle;
 
           if (recordsByDate.TryGetValue(date, out var dayRecords))
           {
@@ -1215,7 +1213,7 @@ namespace LTP.Truck.Forms
           sheet.Cell(monthlyTotalRow, column).FormulaA1 =
             $"SUM({columnLetter}{firstDayRow}:{columnLetter}{row - 1})";
         }
-        sheet.Cell(monthlyTotalRow, totalColumn).Style = monthlyTotalStyle;
+        sheet.Cell(monthlyTotalRow, totalColumn).Style = monthlyValueStyle;
         var totalColumnLetter = XLHelper.GetColumnLetterFromNumber(totalColumn);
         sheet.Cell(monthlyTotalRow, totalColumn).FormulaA1 =
           $"SUM({totalColumnLetter}{firstDayRow}:{totalColumnLetter}{row - 1})";
