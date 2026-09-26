@@ -30,6 +30,7 @@ namespace ApiSyncData.Resp
     public string? Password { get; set; }
     public string? EmployeeCode { get; set; }
     public string? IdCardCode { get; set; }
+    public bool? EnableFlag { get; set; }
 
     [JsonProperty("Permission")]
     public List<string>? Permission { get; set; }

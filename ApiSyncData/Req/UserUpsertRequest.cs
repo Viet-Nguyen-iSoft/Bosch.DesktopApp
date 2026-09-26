@@ -1,23 +1,26 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApiSyncData.Req
 {
   public class UserUpsertRequest
   {
     public Guid? Id { get; set; }
-    public bool? IsDelete { get; set; }
-    public string? DisplayName { get; set; }
+    public List<UserTranslateFormData> TranslateFormDatas { get; set; } = new();
     public string? Username { get; set; }
-    public string? Password { get; set; }
     public string? EmployeeCode { get; set; }
     public string? IdCardCode { get; set; }
+    public bool EnableFlag { get; set; }
+    public bool SyncFlag { get; set; }
+  }
 
-    [JsonProperty("Permission")]
-    public List<string>? Permission { get; set; }
+  public class UserTranslateFormData
+  {
+    [JsonProperty("Lang")]
+    public string Lang { get; set; } = string.Empty;
+
+    [JsonProperty("FullName")]
+    public string FullName { get; set; } = string.Empty;
   }
 }

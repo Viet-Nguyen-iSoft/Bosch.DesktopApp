@@ -191,6 +191,10 @@ namespace iSoft.Communication.Interface
             DataWeightReceived?.Invoke(this, DataWeightInterface);
           }
         }
+        else if (eModeCommunication == EnumModeCommunication.Continuous)
+        {
+          
+        }
       }
       catch (Exception)
       {

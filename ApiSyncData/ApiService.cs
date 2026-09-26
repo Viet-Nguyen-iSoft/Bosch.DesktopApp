@@ -23,10 +23,10 @@ namespace ApiSyncData
 
         string baseAPI = Environment.GetEnvironmentVariable("URL_API")
           ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+        baseAPI = "http://100.101.160.94:7101/api";
         string apiKey = Environment.GetEnvironmentVariable("API_KEY")
           ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
-        string apiUrl =
-          $"{baseAPI.TrimEnd('/')}/v1/User/upsert-multi-lang?lang={Uri.EscapeDataString(lang)}";
+        string apiUrl = $"{baseAPI.TrimEnd('/')}/v1/User/upsert-multi-lang";
 
         using var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
@@ -35,15 +35,15 @@ namespace ApiSyncData
         if (user.Id.HasValue)
           formData.Add(new StringContent(user.Id.Value.ToString()), "Id");
 
-        formData.Add(new StringContent((user.IsDelete ?? false).ToString().ToLowerInvariant()), "IsDelete");
-        AddOptionalFormField(formData, "DisplayName", user.DisplayName);
+        formData.Add(
+          new StringContent(JsonConvert.SerializeObject(user.TranslateFormDatas)),
+          "TranslateFormDatas");
         AddOptionalFormField(formData, "Username", user.Username);
-        AddOptionalFormField(formData, "Password", user.Password);
         AddOptionalFormField(formData, "EmployeeCode", user.EmployeeCode);
         AddOptionalFormField(formData, "IdCardCode", user.IdCardCode);
-        formData.Add(
-          new StringContent(JsonConvert.SerializeObject(user.Permission ?? new List<string>())),
-          "Permission");
+        formData.Add(new StringContent(user.EnableFlag.ToString().ToLowerInvariant()), "EnableFlag");
+        formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
+        formData.Add(new StringContent(lang), "lang");
 
         using var response = await httpClient.PostAsync(apiUrl, formData, cancellationToken)
           .ConfigureAwait(false);

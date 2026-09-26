@@ -199,6 +199,7 @@ namespace LTP.Truck.MasterData
         userToSave.DisplayName = displayName;
         userToSave.FullName = fullName;
         userToSave.EmployeeCode = employeeCode;
+        userToSave.EnableFlag = true;
         if (hasPasswordInput)
           userToSave.Password = SecurityHelper.EncodePassword(username, password);
 

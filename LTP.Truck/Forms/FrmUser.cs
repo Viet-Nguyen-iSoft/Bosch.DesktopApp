@@ -386,20 +386,21 @@ namespace LTP.Truck.Forms
       ShowSuccess("Cập nhật phân quyền thành công.");
     }
 
-    private static async Task QueueUserUpsertJobAsync(iSoft.Database.Models.User user)
+    private static async Task QueueUserUpsertJobAsync(User user)
     {
-      var permissionCodes = JsonHelper.FromJson<List<string>>(user.Role ?? string.Empty)
-        ?? new List<string>();
       var userUpsertRequest = new UserUpsertRequest
       {
         Id = user.IdSrc ?? user.Id,
-        IsDelete = user.DeletedFlag,
-        DisplayName = user.DisplayName,
+        TranslateFormDatas = new List<UserTranslateFormData>
+        {
+          new() { Lang = "EN", FullName = string.Empty },
+          new() { Lang = "VI", FullName = user.FullName },
+        },
         Username = user.Username,
-        Password = user.Password,
         EmployeeCode = user.EmployeeCode,
         IdCardCode = user.IdCardCode,
-        Permission = permissionCodes,
+        EnableFlag = user.EnableFlag,
+        SyncFlag = user.SyncFlag,
       };
 
       var apiJob = new ApiJobs
@@ -432,14 +433,20 @@ namespace LTP.Truck.Forms
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       bool isAdded = false;
+      User? addedUser = null;
       using var popup = new PopupUser();
 
-      popup.OnSendSuccess += _ => isAdded = true;
+      popup.OnSendSuccess += value =>
+      {
+        isAdded = true;
+        addedUser = value;
+      };
       popup.ShowDialog(this);
 
       if (!isAdded)
         return;
 
+      await QueueUserUpsertJobAsync(addedUser!);
       await LoadData(resetPage: true);
       ShowSuccess("Thêm tài khoản thành công.");
     }
