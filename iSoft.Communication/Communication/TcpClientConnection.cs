@@ -126,13 +126,19 @@ namespace iSoft.Communication.Communication
     private readonly List<byte> _receiveBytes = new();
     private void Client_DataReceived(object? sender, DataReceivedEventArgs e)
     {
+      string chunk = Encoding.UTF8.GetString(e.Data);
+      _receiveBuffer.Append(chunk);
+      string buffer = _receiveBuffer.ToString();
+      buffer = GetLatestMessage(buffer);
+
+
       _messageDataInput.Source = this.ConnectionId;
       _messageDataInput.MachineId = this.MachineId;
-      _messageDataInput.DataAsString = Encoding.UTF8.GetString(e.Data);
+      _messageDataInput.DataAsString = buffer;
       _messageDataInput.DataAsBytes = e.Data.ToArray();
       _messageDataInput.SourceDateTime = DateTime.Now;
       _messageDataInput.eModeCommunication = this.EModeCommunication;
-      OnDataReceived(_messageDataInput, EnumModeCommunication.Continuous);
+      OnDataReceived(_messageDataInput, EnumModeCommunication.Digi);
     
 
 
@@ -177,7 +183,16 @@ namespace iSoft.Communication.Communication
 
 
 
-    
+    public static string? GetLatestMessage(string data)
+    {
+      int end = data.LastIndexOf('\r');
+      if (end < 0) return null;
+
+      int start = data.LastIndexOf('\u0002', end);
+      if (start < 0) return null;
+
+      return data.Substring(start + 1, end - start - 1);
+    }
 
 
 

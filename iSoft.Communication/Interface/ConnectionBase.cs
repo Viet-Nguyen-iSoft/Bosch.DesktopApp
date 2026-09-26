@@ -1,5 +1,8 @@
 ﻿using iSoft.Communication.Mode;
+using System.Globalization;
+using System.Text;
 using static iSoft.Communication.EnumCommunication;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace iSoft.Communication.Interface
 {
@@ -178,13 +181,12 @@ namespace iSoft.Communication.Interface
             DataWeightInterface.ActiveWeighingStatus = data.ActiveWeighingStatus;
             DataWeightReceived?.Invoke(this, DataWeightInterface);
           }
-        }  
+        }
         else if (eModeCommunication == EnumModeCommunication.SCOD)
         {
-          if (StandardContinuousOutputData.TryDecode(
-                messageDataInput?.DataAsBytes,
-                out var data) &&
-              data != null)
+          var data = StandardContinuousOutputData.DecodeCTN(
+            messageDataInput?.DataAsBytes);
+          if (data != null)
           {
             PublishContinuousData(
               data.IndicatedWeight ?? 0,
@@ -196,8 +198,8 @@ namespace iSoft.Communication.Interface
         else if (eModeCommunication == EnumModeCommunication.Continuous)
         {
           byte[]? bytes = messageDataInput?.DataAsBytes;
-          if (StandardContinuousOutputData.TryDecode(bytes, out var standard) &&
-              standard != null)
+          var standard = StandardContinuousOutputData.DecodeCTN(bytes);
+          if (standard != null)
           {
             PublishContinuousData(
               standard.IndicatedWeight ?? 0,
@@ -215,11 +217,59 @@ namespace iSoft.Communication.Interface
               extended.ActiveWeighingStatus);
           }
         }
+        else if (eModeCommunication == EnumModeCommunication.Digi)
+        {
+          var a = LayBytes(messageDataInput.DataAsBytes, 4, 10);
+          string chunk = Encoding.UTF8.GetString(a);
+          var standard = StandardContinuousOutputData.DecodeCTN(messageDataInput.DataAsBytes);
+          var rs = DataWeightFormat(messageDataInput.DataAsString);
+          DataWeightInterface.IndicatedWeight = rs;
+          DataWeightInterface.Unit = UnitOfWeight.Kilograms;
+          DataWeightInterface.ActiveWeighingStatus = ActiveWeighingStatus.Default;
+          DataWeightReceived?.Invoke(this, DataWeightInterface);
+        }  
       }
       catch (Exception)
       {
         throw;
       }
+    }
+
+    public static byte[] LayBytes(byte[] data, int start, int end)
+    {
+      ArgumentNullException.ThrowIfNull(data);
+
+      if (start < 0 || end < start || end > data.Length)
+        throw new ArgumentOutOfRangeException(
+            nameof(start), "Vị trí start/end không hợp lệ.");
+
+      byte[] result = new byte[end - start];
+      Array.Copy(data, start, result, 0, result.Length);
+      return result;
+    }
+
+    private static double DataWeightFormat(string message)
+    {
+      if (message != null &&
+          message.Length >= 10 &&
+          double.TryParse(
+              message.Substring(4, 6).Trim(),
+              NumberStyles.Float,
+              CultureInfo.InvariantCulture,
+              out double value))
+      {
+        var data = message.ToArray();
+        if (data[1] == '2')
+        {
+          return -value;
+        }
+        else
+        {
+          return value;
+        }
+      }
+
+      return 0.0;
     }
 
     private void PublishContinuousData(

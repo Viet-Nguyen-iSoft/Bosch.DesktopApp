@@ -42,6 +42,22 @@ namespace iSoft.Communication.Mode
       return output;
     }
 
+    /// <summary>
+    /// Giải mã dữ liệu Standard Continuous Output của IND570.
+    /// Frame hợp lệ gồm 17 byte, hoặc 18 byte khi có checksum.
+    /// </summary>
+    /// <returns>
+    /// Dữ liệu cân đã giải mã; trả về null nếu frame không hợp lệ.
+    /// </returns>
+    public static StandardContinuousOutputData? DecodeCTN(
+      byte[]? dataBytes,
+      bool validateChecksum = true)
+    {
+      return TryDecode(dataBytes, out var output, validateChecksum)
+        ? output
+        : null;
+    }
+
     public static bool TryDecode(
       byte[]? dataBytes,
       out StandardContinuousOutputData? output,
