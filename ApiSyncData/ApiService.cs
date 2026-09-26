@@ -1,5 +1,6 @@
 ﻿using ApiSyncData.Req;
 using ApiSyncData.Resp;
+using iSoft.Database.Models;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.Net.Http.Headers;
@@ -610,8 +611,47 @@ namespace ApiSyncData
       }
     }
 
+    public async Task<UserAPI> RecordTruckFromServer(Guid stationId)
+    {
+      try
+      {
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API_AUTH");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
 
-    public async Task<string> SyncRecordTruck(
+        var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/get-list-filter-multi-lang";
+      http://100.101.160.94:7902/api/v1/RecordTruck/get-list-filter-multi-lang?page=1&pageSize=20&searchStr=&sortStr=&filterStr=&dateFrom=2026-03-25T06:17:00.000Z&dateTo=2026-09-25T06:17:59.999Z&isDeleted=true&lang=vi
+        using var httpClient = new HttpClient();
+
+        // Giống cấu hình Authorization trong Postman:
+        // API Key, Key = X-API-KEY, Add to = Header
+        httpClient.DefaultRequestHeaders.Add(
+            "X-API-KEY",
+            apiKey.Trim());
+
+        using var response = await httpClient.GetAsync(apiUrl);
+
+        var responseContent =
+            await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+          throw new HttpRequestException(
+              $"RecordTruckFromServer. " +
+              $"URL: {apiUrl}. " +
+              $"HTTP {(int)response.StatusCode} " +
+              $"({response.ReasonPhrase}). " +
+              $"Response: {responseContent}");
+        }
+
+        return JsonConvert.DeserializeObject<UserAPI>(responseContent);
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+    }
+
+    public async Task<string> SyncRecordTruckFromLocal(
       string rawData,
       CancellationToken cancellationToken = default)
     {
@@ -651,7 +691,7 @@ namespace ApiSyncData
       return responseContent;
     }
 
-    public async Task<string> SyncRecordWeight(
+    public async Task<string> SyncRecordWeightFromLocal(
       string rawData,
       CancellationToken cancellationToken = default)
     {

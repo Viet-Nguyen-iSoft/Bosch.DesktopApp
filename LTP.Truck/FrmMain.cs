@@ -3,6 +3,7 @@ using HelperManager;
 using iSoft.Database.Models;
 using LTP.Truck.Custom;
 using LTP.Truck.Forms;
+using SixLabors.Fonts;
 using System.Diagnostics;
 using static LTP.Truck.EnumData;
 using AppCore = LTP.Truck.Controls.AppCore;
@@ -155,24 +156,27 @@ namespace LTP.Truck
     {
       try
       {
-        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(_syncCts.Token);
-        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(_syncCts02.Token, pathFolderSrc: Application.StartupPath);
-        PeriodicRunner.EntityChanged += (sender, e) =>
+        if (AppCore.Ins._station!=null)
         {
-          if (e.EntityType == typeof(ProductGroup))
+          _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station.Id, _syncCts.Token);
+          _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
+          PeriodicRunner.EntityChanged += (sender, e) =>
           {
-            OnChangeProductGroup?.Invoke(this, e);
-          }
-          else if (e.EntityType == typeof(Product))
-          {
-            OnChangeProduct?.Invoke(this, e);
-          }
-          else if (e.EntityType == typeof(CategoryTare))
-          {
-            OnChangeTare?.Invoke(this, e);
-          }
-        };
-
+            if (e.EntityType == typeof(ProductGroup))
+            {
+              OnChangeProductGroup?.Invoke(this, e);
+            }
+            else if (e.EntityType == typeof(Product))
+            {
+              OnChangeProduct?.Invoke(this, e);
+            }
+            else if (e.EntityType == typeof(CategoryTare))
+            {
+              OnChangeTare?.Invoke(this, e);
+            }
+          };
+        }
+        
         AppCore.Ins.CheckConnectServer();
         AppCore.Ins.ConnectWeight();
         //CheckOpenMulApp();

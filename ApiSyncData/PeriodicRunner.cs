@@ -1,9 +1,12 @@
+using iSoft.Database.Models;
+
 namespace ApiSyncData
 {
   public static class PeriodicRunner
   {
     public static event EventHandler<MasterDataChangedEventArgs>? EntityChanged;
 
+    public static Guid StationId { get; private set; }
     // Dữ liệu của lần đồng bộ thành công gần nhất; null trước lần đầu thành công.
     public static Resp.StationAPI? Stations { get; private set; }
     public static Resp.WarehouseAPI? Warehouses { get; private set; }
@@ -21,9 +24,11 @@ namespace ApiSyncData
     /// Chỉ gọi một lần khi khởi động để tránh tạo nhiều vòng lặp.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
+      Guid stationId,
       CancellationToken cancellationToken = default,
       Action<Exception>? onError = null)
     {
+      StationId = stationId;
       var api = new ApiService();
       return RunEvery5SecondsAsync(
         token => RunDefaultFunctionsAsync(api, token),
@@ -60,6 +65,7 @@ namespace ApiSyncData
         var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
           value => Users = value, cancellationToken);
 
+        await api.RecordTruckFromServer(StationId);
 
         await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
           products, categoryTares, clients, deliveries, users).ConfigureAwait(false);

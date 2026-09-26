@@ -14,13 +14,14 @@ namespace ApiSyncData
 
     public static int LastSynchronizedCount { get; private set; }
     public static string? PathFolderSrc { get; private set; }
-
+    
     /// <summary>
     /// Đồng bộ RecordTruck và RecordWeight local chưa được gửi lên server sau mỗi 5 giây.
     /// Bản ghi lỗi sẽ giữ SyncFlag = false để được thử lại ở chu kỳ tiếp theo.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
-      CancellationToken cancellationToken = default, string? pathFolderSrc = null,
+      string? pathFolderSrc,
+      CancellationToken cancellationToken = default,
       Action<Exception>? onError = null)
     {
       PathFolderSrc = pathFolderSrc;
@@ -112,7 +113,7 @@ namespace ApiSyncData
           List<RecordTruckSync> recordTruckSyncs = new List<RecordTruckSync>();
           recordTruckSyncs.Add(payload);
           var rawData = JsonConvert.SerializeObject(recordTruckSyncs);
-          await api.SyncRecordTruck(rawData, cancellationToken).ConfigureAwait(false);
+          await api.SyncRecordTruckFromLocal(rawData, cancellationToken).ConfigureAwait(false);
 
           if (await MarkAsSynchronizedAsync(
             record.Id,
@@ -163,7 +164,7 @@ namespace ApiSyncData
           List<RecordWeightSync> recordWeightSyncs = new List<RecordWeightSync>();
           recordWeightSyncs.Add(payload);
           var rawData = JsonConvert.SerializeObject(recordWeightSyncs);
-          await api.SyncRecordWeight(rawData, cancellationToken).ConfigureAwait(false);
+          await api.SyncRecordWeightFromLocal(rawData, cancellationToken).ConfigureAwait(false);
 
           if (await MarkRecordWeightAsSynchronizedAsync(
             record.Id,
