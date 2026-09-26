@@ -1077,8 +1077,7 @@ namespace LTP.Truck.Forms
       var licensePlateColumnCount = licensePlatesByDate.Count == 0
         ? 0
         : licensePlatesByDate.Max(item => item.Value.Count);
-      const int firstLicensePlateColumn = 2;
-      var firstProductColumn = firstLicensePlateColumn + licensePlateColumnCount;
+      const int firstProductColumn = 2;
       var products = records.Select(record => record.Product)
         .GroupBy(product => product.Id)
         .Select(group => group.First())
@@ -1091,6 +1090,8 @@ namespace LTP.Truck.Forms
         throw new InvalidOperationException("Số sản phẩm và biển số xe vượt giới hạn cột của Excel.");
 
       var totalColumn = firstProductColumn + products.Count;
+      var firstLicensePlateColumn = totalColumn + 1;
+      var lastColumn = totalColumn + licensePlateColumnCount;
       var productColumns = products.Select((product, index) => new
       {
         product.Id,
@@ -1120,22 +1121,22 @@ namespace LTP.Truck.Forms
       }
 
       var lastTemplateRow = sheet.LastRowUsed()?.RowNumber() ?? 19;
-      var lastTemplateColumn = sheet.LastColumnUsed()?.ColumnNumber() ?? totalColumn;
+      var lastTemplateColumn = sheet.LastColumnUsed()?.ColumnNumber() ?? lastColumn;
       sheet.Rows(1, Math.Max(lastTemplateRow, 400)).Ungroup(fromAll: true);
       sheet.Range(
         7,
         1,
         Math.Max(lastTemplateRow, 400),
-        Math.Max(lastTemplateColumn, totalColumn)).Clear(XLClearOptions.Contents);
+        Math.Max(lastTemplateColumn, lastColumn)).Clear(XLClearOptions.Contents);
 
       sheet.Cell(3, 2).Value = DateTime.Now;
       sheet.Cell(3, 2).Style.DateFormat.Format = "dd-MMM-yy";
       sheet.Column(1).Width = firstColumnWidth;
-      for (var column = firstLicensePlateColumn; column < firstProductColumn; column++)
-        sheet.Column(column).Width = Math.Max(productColumnWidth, 14);
       for (var column = firstProductColumn; column < totalColumn; column++)
         sheet.Column(column).Width = productColumnWidth;
       sheet.Column(totalColumn).Width = totalColumnWidth;
+      for (var column = firstLicensePlateColumn; column <= lastColumn; column++)
+        sheet.Column(column).Width = Math.Max(productColumnWidth, 14);
 
       sheet.Cell(7, 1).Value = "CATAGORIES";
       sheet.Cell(8, 1).Value = "PHÂN LOẠI";
@@ -1151,9 +1152,9 @@ namespace LTP.Truck.Forms
       for (var index = 0; index < licensePlateColumnCount; index++)
       {
         var column = firstLicensePlateColumn + index;
-        sheet.Cell(7, column).Style = productHeaderStyle;
-        sheet.Cell(8, column).Style = productNameStyle;
-        sheet.Cell(9, column).Style = productCodeStyle;
+        sheet.Cell(7, column).Style = totalHeaderStyle;
+        sheet.Cell(8, column).Style = totalHeaderMiddleStyle;
+        sheet.Cell(9, column).Style = totalHeaderBottomStyle;
         sheet.Cell(7, column).Value = $"Biển số xe {index + 1}";
         sheet.Range(7, column, 9, column).Merge();
       }
@@ -1187,7 +1188,7 @@ namespace LTP.Truck.Forms
       sheet.Cell(9, totalColumn).Style = totalHeaderBottomStyle;
       sheet.Cell(7, totalColumn).Value = "Tổng Khối lượng (Kg)";
       sheet.Range(7, totalColumn, 9, totalColumn).Merge();
-      sheet.Range(7, 1, 9, totalColumn).Style.Alignment.WrapText = true;
+      sheet.Range(7, 1, 9, lastColumn).Style.Alignment.WrapText = true;
       sheet.Row(7).Height = 25.5;
       sheet.Row(8).Height = 53.25;
       sheet.Row(9).Height = hazardous ? 24 : 19.5;
@@ -1205,7 +1206,7 @@ namespace LTP.Truck.Forms
           sheet.Cell(row, 1).Style = dateStyle;
           sheet.Cell(row, 1).Value = date;
           sheet.Cell(row, 1).Style.DateFormat.Format = "dd/MM/yyyy";
-          for (var column = firstLicensePlateColumn; column < firstProductColumn; column++)
+          for (var column = firstLicensePlateColumn; column <= lastColumn; column++)
             sheet.Cell(row, column).Style = dailyValueStyle;
           for (var column = firstProductColumn; column < totalColumn; column++)
             sheet.Cell(row, column).Style = dailyValueStyle;
@@ -1228,17 +1229,20 @@ namespace LTP.Truck.Forms
           }
           else
           {
+            var firstProductColumnLetter = XLHelper.GetColumnLetterFromNumber(firstProductColumn);
             var lastProductColumn = XLHelper.GetColumnLetterFromNumber(totalColumn - 1);
             sheet.Cell(row, totalColumn).FormulaA1 =
-              $"SUM(B{row}:{lastProductColumn}{row})";
+              $"SUM({firstProductColumnLetter}{row}:{lastProductColumn}{row})";
           }
           sheet.Row(row).Height = 18.75;
         }
-        sheet.Rows(firstDayRow, row - 1).Group();
+        var dailyRows = sheet.Rows(firstDayRow, row - 1);
+        dailyRows.Group();
+        dailyRows.Collapse();
 
         sheet.Cell(monthlyTotalRow, 1).Style = monthlyLabelStyle;
         sheet.Cell(monthlyTotalRow, 1).Value = $"Tháng {month:00} - Grand total (Kg)";
-        for (var column = firstLicensePlateColumn; column < firstProductColumn; column++)
+        for (var column = firstLicensePlateColumn; column <= lastColumn; column++)
           sheet.Cell(monthlyTotalRow, column).Style = monthlyValueStyle;
         for (var column = firstProductColumn; column < totalColumn; column++)
         {
@@ -1263,7 +1267,7 @@ namespace LTP.Truck.Forms
       sheet.PageSetup.SetRowsToRepeatAtTop(7, 9);
       sheet.PageSetup.PrintAreas.Clear();
       sheet.PageSetup.PrintAreas.Add(
-        $"A1:{XLHelper.GetColumnLetterFromNumber(totalColumn)}{row - 1}");
+        $"A1:{XLHelper.GetColumnLetterFromNumber(lastColumn)}{row - 1}");
     }
 
     private static string GetTrackingWasteTypeName(
