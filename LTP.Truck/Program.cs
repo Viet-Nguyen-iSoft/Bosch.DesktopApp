@@ -31,9 +31,10 @@ namespace LTP.Truck
 
       try
       {
-        var a = PasswordEncryptor.Encrypt("Admin@1234");
-        var b = SecurityHelper.EncodePassword("VietNguyen", "WHj/9niZdWnILIFjR3VMAg==");
-        var c = SecurityHelper.EncodePassword("VietNguyen", "Hsf@2026");
+        //var a = PasswordEncryptor.Encrypt("Admin@1234");
+        //var b = SecurityHelper.EncodePassword("VietNguyen", "WHj/9niZdWnILIFjR3VMAg==");
+        //var c = SecurityHelper.EncodePassword("VietNguyen", "Hsf@2026");
+        //var d = SecurityHelper.EncodePassword("VietNguyen", "Hsf@2026");
         ApplicationConfiguration.Initialize();
         InitDb().GetAwaiter().GetResult();
         AppCore.Ins.Init();
