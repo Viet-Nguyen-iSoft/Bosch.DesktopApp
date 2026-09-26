@@ -1061,7 +1061,24 @@ namespace LTP.Truck.Forms
       int year,
       bool hazardous)
     {
-      const int firstProductColumn = 2;
+      var recordsByDate = records
+        .GroupBy(record => record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date)
+        .ToDictionary(group => group.Key, group => group.ToList());
+      var licensePlatesByDate = recordsByDate.ToDictionary(
+        item => item.Key,
+        item => item.Value
+          .Where(record => !string.IsNullOrWhiteSpace(record.LicensePlate))
+          .GroupBy(
+            record => LicensePlateRepository.Normalize(record.LicensePlate),
+            StringComparer.OrdinalIgnoreCase)
+          .Select(group => group.First().LicensePlate!.Trim())
+          .OrderBy(licensePlate => licensePlate, StringComparer.OrdinalIgnoreCase)
+          .ToList());
+      var licensePlateColumnCount = licensePlatesByDate.Count == 0
+        ? 0
+        : licensePlatesByDate.Max(item => item.Value.Count);
+      const int firstLicensePlateColumn = 2;
+      var firstProductColumn = firstLicensePlateColumn + licensePlateColumnCount;
       var products = records.Select(record => record.Product)
         .GroupBy(product => product.Id)
         .Select(group => group.First())
@@ -1070,8 +1087,8 @@ namespace LTP.Truck.Forms
         .ThenBy(product => product.Name)
         .ThenBy(product => product.Id)
         .ToList();
-      if (products.Count > 16382)
-        throw new InvalidOperationException("Số sản phẩm vượt giới hạn cột của Excel.");
+      if (products.Count + licensePlateColumnCount > 16382)
+        throw new InvalidOperationException("Số sản phẩm và biển số xe vượt giới hạn cột của Excel.");
 
       var totalColumn = firstProductColumn + products.Count;
       var productColumns = products.Select((product, index) => new
@@ -1114,6 +1131,8 @@ namespace LTP.Truck.Forms
       sheet.Cell(3, 2).Value = DateTime.Now;
       sheet.Cell(3, 2).Style.DateFormat.Format = "dd-MMM-yy";
       sheet.Column(1).Width = firstColumnWidth;
+      for (var column = firstLicensePlateColumn; column < firstProductColumn; column++)
+        sheet.Column(column).Width = Math.Max(productColumnWidth, 14);
       for (var column = firstProductColumn; column < totalColumn; column++)
         sheet.Column(column).Width = productColumnWidth;
       sheet.Column(totalColumn).Width = totalColumnWidth;
@@ -1127,6 +1146,16 @@ namespace LTP.Truck.Forms
       else
       {
         sheet.Range(8, 1, 9, 1).Merge();
+      }
+
+      for (var index = 0; index < licensePlateColumnCount; index++)
+      {
+        var column = firstLicensePlateColumn + index;
+        sheet.Cell(7, column).Style = productHeaderStyle;
+        sheet.Cell(8, column).Style = productNameStyle;
+        sheet.Cell(9, column).Style = productCodeStyle;
+        sheet.Cell(7, column).Value = $"Biển số xe {index + 1}";
+        sheet.Range(7, column, 9, column).Merge();
       }
 
       for (var index = 0; index < products.Count; index++)
@@ -1163,9 +1192,6 @@ namespace LTP.Truck.Forms
       sheet.Row(8).Height = 53.25;
       sheet.Row(9).Height = hazardous ? 24 : 19.5;
 
-      var recordsByDate = records
-        .GroupBy(record => record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date)
-        .ToDictionary(group => group.Key, group => group.ToList());
       sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
       var row = 10;
       for (var month = 1; month <= 12; month++)
@@ -1179,12 +1205,18 @@ namespace LTP.Truck.Forms
           sheet.Cell(row, 1).Style = dateStyle;
           sheet.Cell(row, 1).Value = date;
           sheet.Cell(row, 1).Style.DateFormat.Format = "dd/MM/yyyy";
+          for (var column = firstLicensePlateColumn; column < firstProductColumn; column++)
+            sheet.Cell(row, column).Style = dailyValueStyle;
           for (var column = firstProductColumn; column < totalColumn; column++)
             sheet.Cell(row, column).Style = dailyValueStyle;
           sheet.Cell(row, totalColumn).Style = dailyValueStyle;
 
           if (recordsByDate.TryGetValue(date, out var dayRecords))
           {
+            var dayLicensePlates = licensePlatesByDate[date];
+            for (var index = 0; index < dayLicensePlates.Count; index++)
+              sheet.Cell(row, firstLicensePlateColumn + index).Value = dayLicensePlates[index];
+
             foreach (var productGroup in dayRecords.GroupBy(record => record.Product.Id))
               sheet.Cell(row, productColumns[productGroup.Key]).Value =
                 productGroup.Sum(record => record.Net);
@@ -1206,6 +1238,8 @@ namespace LTP.Truck.Forms
 
         sheet.Cell(monthlyTotalRow, 1).Style = monthlyLabelStyle;
         sheet.Cell(monthlyTotalRow, 1).Value = $"Tháng {month:00} - Grand total (Kg)";
+        for (var column = firstLicensePlateColumn; column < firstProductColumn; column++)
+          sheet.Cell(monthlyTotalRow, column).Style = monthlyValueStyle;
         for (var column = firstProductColumn; column < totalColumn; column++)
         {
           sheet.Cell(monthlyTotalRow, column).Style = monthlyValueStyle;
