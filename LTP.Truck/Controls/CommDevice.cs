@@ -175,8 +175,12 @@ namespace LTP.Truck.Controls
 
     #region Check kết nối Server
     public System.Timers.Timer _timerCheckConnectServer = new System.Timers.Timer();
+    private volatile bool _isServerConnected;
+    public bool IsServerConnected => _isServerConnected;
+
     public void CheckConnectServer()
     {
+      ApiSyncData.PeriodicRunner.SetServerAvailabilityCheck(() => IsServerConnected);
       _timerCheckConnectServer.Interval = 2000;
       _timerCheckConnectServer.Elapsed += TimerCheckConnectServer_Elapsed;
       _timerCheckConnectServer.Start();
@@ -188,24 +192,20 @@ namespace LTP.Truck.Controls
       {
         _timerCheckConnectServer.Stop();
 
-        EnumStatusConnectTcp enumStatusConnectCurrent = EnumStatusConnectTcp.Disconnect;
-        if (_appConfig != null)
-        {
-          var rsPing = CanPingServer(_appConfig?.IpServer??string.Empty, _appConfig?.PortServer ?? 8000, _appConfig?.TimeoutConnectServer ?? 500);
-          if (rsPing)
-          {
-            enumStatusConnectCurrent = EnumStatusConnectTcp.Connect;
-          }
-          else
-          {
-            enumStatusConnectCurrent = EnumStatusConnectTcp.Disconnect;
-          }
-        }
+        _isServerConnected = _appConfig != null &&
+          CanPingServer(
+            _appConfig.IpServer ?? string.Empty,
+            _appConfig.PortServer ?? 8000,
+            _appConfig.TimeoutConnectServer ?? 500);
+        var enumStatusConnectCurrent = _isServerConnected
+          ? EnumStatusConnectTcp.Connect
+          : EnumStatusConnectTcp.Disconnect;
 
         OnSendStatusServer?.Invoke(sender, enumStatusConnectCurrent);
       }
       catch (Exception ex)
       {
+        _isServerConnected = false;
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
       finally

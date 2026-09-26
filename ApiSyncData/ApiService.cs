@@ -611,44 +611,35 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<UserAPI> RecordTruckFromServer(Guid stationId)
+    public async Task<RecordTruckAPI> RecordTruckFromServer(Guid stationId)
     {
-      try
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+
+      var apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/get-list-simplify" +
+        $"?ExcludeStationId={stationId:D}";
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+      using var response = await httpClient.GetAsync(apiUrl).ConfigureAwait(false);
+      var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API_AUTH");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
-
-        var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/get-list-filter-multi-lang";
-      http://100.101.160.94:7902/api/v1/RecordTruck/get-list-filter-multi-lang?page=1&pageSize=20&searchStr=&sortStr=&filterStr=&dateFrom=2026-03-25T06:17:00.000Z&dateTo=2026-09-25T06:17:59.999Z&isDeleted=true&lang=vi
-        using var httpClient = new HttpClient();
-
-        // Giống cấu hình Authorization trong Postman:
-        // API Key, Key = X-API-KEY, Add to = Header
-        httpClient.DefaultRequestHeaders.Add(
-            "X-API-KEY",
-            apiKey.Trim());
-
-        using var response = await httpClient.GetAsync(apiUrl);
-
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-          throw new HttpRequestException(
-              $"RecordTruckFromServer. " +
-              $"URL: {apiUrl}. " +
-              $"HTTP {(int)response.StatusCode} " +
-              $"({response.ReasonPhrase}). " +
-              $"Response: {responseContent}");
-        }
-
-        return JsonConvert.DeserializeObject<UserAPI>(responseContent);
+        throw new HttpRequestException(
+          $"RecordTruckFromServer. " +
+          $"URL: {apiUrl}. " +
+          $"HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). " +
+          $"Response: {responseContent}");
       }
-      catch (Exception)
-      {
-        throw;
-      }
+
+      return JsonConvert.DeserializeObject<RecordTruckAPI>(responseContent)
+        ?? throw new InvalidOperationException(
+          "RecordTruckFromServer API trả về dữ liệu không hợp lệ.");
     }
 
     public async Task<string> SyncRecordTruckFromLocal(

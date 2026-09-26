@@ -1,5 +1,4 @@
 using ApiSyncData.Record;
-using HelperManager;
 using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +43,7 @@ namespace ApiSyncData
     {
       ArgumentNullException.ThrowIfNull(api);
 
-      if (!await CanReachServerAsync(cancellationToken).ConfigureAwait(false))
+      if (!PeriodicRunner.CanCallApi())
       {
         LastSynchronizedCount = 0;
         return 0;
@@ -73,25 +72,6 @@ namespace ApiSyncData
       {
         SyncLock.Release();
       }
-    }
-
-    private static async Task<bool> CanReachServerAsync(
-      CancellationToken cancellationToken)
-    {
-      await using var db = new MySqlDbContext();
-      var appConfig = await db.Set<AppConfig>()
-        .AsNoTracking()
-        .Where(config => !config.DeletedFlag)
-        .FirstOrDefaultAsync(cancellationToken)
-        .ConfigureAwait(false);
-
-      cancellationToken.ThrowIfCancellationRequested();
-
-      if (appConfig == null || string.IsNullOrWhiteSpace(appConfig.IpServer))
-        return false;
-
-      var pingTimeout = Math.Clamp(appConfig.TimeoutConnectServer ?? 500, 100, 1000);
-      return TcpHelper.IsPing(appConfig.IpServer.Trim(), pingTimeout);
     }
 
     private static async Task<int> SyncRecordTrucksAsync(

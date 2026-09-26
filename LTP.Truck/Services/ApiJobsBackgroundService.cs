@@ -17,12 +17,7 @@ namespace LTP.Truck.Services
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      var appConfig = AppCore.Ins._appConfig;
-      if (appConfig == null || string.IsNullOrWhiteSpace(appConfig.IpServer))
-        return;
-
-      var pingTimeout = Math.Clamp(appConfig.TimeoutConnectServer ?? 500, 100, 1000);
-      if (!TcpHelper.IsPing(appConfig.IpServer.Trim(), pingTimeout))
+      if (!AppCore.Ins.IsServerConnected)
         return;
 
       var apiJobs = await _apiJobsService

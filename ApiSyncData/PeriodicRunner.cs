@@ -5,6 +5,7 @@ namespace ApiSyncData
   public static class PeriodicRunner
   {
     public static event EventHandler<MasterDataChangedEventArgs>? EntityChanged;
+    private static Func<bool> _serverAvailabilityCheck = static () => false;
 
     public static Guid StationId { get; private set; }
     // Dữ liệu của lần đồng bộ thành công gần nhất; null trước lần đầu thành công.
@@ -17,6 +18,24 @@ namespace ApiSyncData
     public static Resp.ClientAPI? Clients { get; private set; }
     public static Resp.DeliveryAPI? Deliveries { get; private set; }
     public static Resp.UserAPI? Users { get; private set; }
+
+    public static void SetServerAvailabilityCheck(Func<bool> serverAvailabilityCheck)
+    {
+      ArgumentNullException.ThrowIfNull(serverAvailabilityCheck);
+      _serverAvailabilityCheck = serverAvailabilityCheck;
+    }
+
+    public static bool CanCallApi()
+    {
+      try
+      {
+        return _serverAvailabilityCheck();
+      }
+      catch
+      {
+        return false;
+      }
+    }
 
     /// <summary>
     /// Chạy các API mặc định sau mỗi 5 giây. Giữ Task và hủy token khi cần dừng.
@@ -31,7 +50,9 @@ namespace ApiSyncData
       StationId = stationId;
       var api = new ApiService();
       return RunEvery5SecondsAsync(
-        token => RunDefaultFunctionsAsync(api, token),
+        token => CanCallApi()
+          ? RunDefaultFunctionsAsync(api, token)
+          : Task.CompletedTask,
         cancellationToken,
         onError ?? (ex => System.Diagnostics.Trace.TraceError(ex.ToString())));
     }
@@ -65,10 +86,19 @@ namespace ApiSyncData
         var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
           value => Users = value, cancellationToken);
 
-        await api.RecordTruckFromServer(StationId);
 
+        //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
+        //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");
         await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
           products, categoryTares, clients, deliveries, users).ConfigureAwait(false);
+
+        var recordTrucks = await api.RecordTruckFromServer(StationId)
+          .ConfigureAwait(false);
+        var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
+          recordTrucks,
+          cancellationToken).ConfigureAwait(false);
+        if (recordTruckChanges != null)
+          NotifyEntityChanged(recordTruckChanges);
       }
       catch (Exception ex)
       {
