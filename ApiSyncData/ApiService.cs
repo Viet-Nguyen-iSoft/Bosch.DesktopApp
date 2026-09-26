@@ -611,43 +611,108 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<UserAPI> RemoveRole(Guid idUser, List<string> rolesRemove)
+    public async Task<string> RemoveRole(
+      Guid userId,
+      IEnumerable<string> phanQuyenCodes,
+      CancellationToken cancellationToken = default)
     {
-      try
+      if (userId == Guid.Empty)
+        throw new ArgumentException("UserId không được là Guid.Empty.", nameof(userId));
+      ArgumentNullException.ThrowIfNull(phanQuyenCodes);
+
+      var codes = phanQuyenCodes
+        .Where(code => !string.IsNullOrWhiteSpace(code))
+        .Select(code => code.Trim())
+        .Distinct(StringComparer.Ordinal)
+        .ToList();
+      if (codes.Count == 0)
+        throw new ArgumentException("Phải có ít nhất một mã quyền.", nameof(phanQuyenCodes));
+
+      string baseApi = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+      string apiUrl = $"{baseApi.TrimEnd('/')}/v1/PhanQuyen/remove-codes";
+      string body = JsonConvert.SerializeObject(new
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+        UserId = userId,
+        PhanQuyenCodes = codes,
+      });
 
-        var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/User/get-list-simplify";
-        using var httpClient = new HttpClient();
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+      using var requestContent = new StringContent(
+        body,
+        System.Text.Encoding.UTF8,
+        "application/json");
+      using var response = await httpClient.PostAsync(
+        apiUrl,
+        requestContent,
+        cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
 
-        // Giống cấu hình Authorization trong Postman:
-        // API Key, Key = X-API-KEY, Add to = Header
-        httpClient.DefaultRequestHeaders.Add(
-            "X-API-KEY",
-            apiKey.Trim());
-
-        using var response = await httpClient.GetAsync(apiUrl);
-
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-          throw new HttpRequestException(
-              $"User. " +
-              $"URL: {apiUrl}. " +
-              $"HTTP {(int)response.StatusCode} " +
-              $"({response.ReasonPhrase}). " +
-              $"Response: {responseContent}");
-        }
-
-        return JsonConvert.DeserializeObject<UserAPI>(responseContent);
-      }
-      catch (Exception)
+      if (!response.IsSuccessStatusCode)
       {
-        throw;
+        throw new HttpRequestException(
+          $"RemoveRole. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
       }
+
+      return responseContent;
+    }
+
+    public async Task<string> AssignRole(
+      Guid userId,
+      IEnumerable<string> phanQuyenCodes,
+      CancellationToken cancellationToken = default)
+    {
+      if (userId == Guid.Empty)
+        throw new ArgumentException("UserId không được là Guid.Empty.", nameof(userId));
+      ArgumentNullException.ThrowIfNull(phanQuyenCodes);
+
+      var codes = phanQuyenCodes
+        .Where(code => !string.IsNullOrWhiteSpace(code))
+        .Select(code => code.Trim())
+        .Distinct(StringComparer.Ordinal)
+        .ToList();
+      if (codes.Count == 0)
+        throw new ArgumentException("Phải có ít nhất một mã quyền.", nameof(phanQuyenCodes));
+
+      string baseApi = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+      string apiUrl = $"{baseApi.TrimEnd('/')}/v1/PhanQuyen/assign-codes";
+      string body = JsonConvert.SerializeObject(new
+      {
+        UserId = userId,
+        PhanQuyenCodes = codes,
+      });
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+      using var requestContent = new StringContent(
+        body,
+        System.Text.Encoding.UTF8,
+        "application/json");
+      using var response = await httpClient.PostAsync(
+        apiUrl,
+        requestContent,
+        cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"RemoveRole. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
+      }
+
+      return responseContent;
     }
 
     public async Task<RecordTruckAPI> RecordTruckFromServer(

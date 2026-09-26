@@ -156,6 +156,27 @@ namespace LTP.Truck.Popup
         _user.Role = Newtonsoft.Json.JsonConvert.SerializeObject(
           _selectedCodes.OrderBy(code => code, StringComparer.Ordinal));
         var updatedUser = await _userService.AddOrUpdateAsync(_user);
+
+        //CALL API UPDATE
+        if (addedCodes.Count > 0)
+        {
+          var api = new ApiSyncData.ApiService();
+          var remoteUserId = _user.IdSrc.GetValueOrDefault();
+          if (remoteUserId == Guid.Empty)
+            remoteUserId = _user.Id;
+
+          await api.AssignRole(remoteUserId, addedCodes);
+        }
+        if (removedCodes.Count > 0)
+        {
+          var api = new ApiSyncData.ApiService();
+          var remoteUserId = _user.IdSrc.GetValueOrDefault();
+          if (remoteUserId == Guid.Empty)
+            remoteUserId = _user.Id;
+
+          await api.RemoveRole(remoteUserId, removedCodes);
+        }
+
         OnSendSuccess?.Invoke(updatedUser);
         OnSendPermissionChanges?.Invoke(updatedUser, addedCodes, removedCodes);
         Close();
