@@ -5,6 +5,7 @@ using iSoft.Database.DTO;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
+using LTP.Truck.Popup;
 using static Common.EnumData;
 
 namespace LTP.Truck.Forms
@@ -14,6 +15,7 @@ namespace LTP.Truck.Forms
     private const string EditButtonColumnName = "btnEdit";
     private const string DeleteButtonColumnName = "btnDelete";
     private const string ChangePasswordButtonColumnName = "btnChangePassword";
+    private const string RolesButtonColumnName = "btnRoles";
     private CancellationTokenSource? _searchDebounceCancellation;
     private int _loadVersion;
 
@@ -198,6 +200,21 @@ namespace LTP.Truck.Forms
         });
       }
 
+      if (!dgv.Columns.Contains(RolesButtonColumnName))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = RolesButtonColumnName,
+          HeaderText = string.Empty,
+          Text = "Phân quyền",
+          UseColumnTextForButtonValue = true,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 140,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+
       if (!dgv.Columns.Contains(EditButtonColumnName))
       {
         dgv.Columns.Add(new DataGridViewButtonColumn
@@ -234,6 +251,7 @@ namespace LTP.Truck.Forms
         dgv.Columns.Count - 1;
       dgv.Columns[DeleteButtonColumnName].DisplayIndex = dgv.Columns.Count - 2;
       dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 3;
+      dgv.Columns[RolesButtonColumnName].DisplayIndex = dgv.Columns.Count - 4;
     }
 
     private async void dgv_CellContentClick(
@@ -259,6 +277,8 @@ namespace LTP.Truck.Forms
           await DeleteUserAsync(row.User);
         else if (columnName == ChangePasswordButtonColumnName)
           await ChangePasswordAsync(row.User);
+        else if (columnName == RolesButtonColumnName)
+          await EditRolesAsync(row.User);
       }
       finally
       {
@@ -327,6 +347,21 @@ namespace LTP.Truck.Forms
 
       await LoadData(resetPage: false);
       ShowSuccess("Cập nhật mật khẩu thành công.");
+    }
+
+    private async Task EditRolesAsync(iSoft.Database.Models.User user)
+    {
+      bool isUpdated = false;
+      using var popup = new PopupRoles(user);
+
+      popup.OnSendSuccess += _ => isUpdated = true;
+      popup.ShowDialog(this);
+
+      if (!isUpdated)
+        return;
+
+      await LoadData(resetPage: false);
+      ShowSuccess("Cập nhật phân quyền thành công.");
     }
 
     private void ShowSuccess(string message)
