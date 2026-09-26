@@ -16,15 +16,21 @@ namespace LTP.Truck.Popup
     private readonly iSoft.Database.Service.RoleService _roleService = new();
     private readonly iSoft.Database.Service.UserService _userService = new();
     private readonly iSoft.Database.Models.User _user;
+    private readonly HashSet<string> _initialCodes;
     private readonly HashSet<string> _selectedCodes;
     private List<iSoft.Database.Models.Role> _roles = new();
 
     public event Action<iSoft.Database.Models.User>? OnSendSuccess;
+    public event Action<
+      iSoft.Database.Models.User,
+      IReadOnlyCollection<string>,
+      IReadOnlyCollection<string>>? OnSendPermissionChanges;
 
     public PopupRoles(iSoft.Database.Models.User user)
     {
       _user = user ?? throw new ArgumentNullException(nameof(user));
-      _selectedCodes = DeserializeRoleCodes(user.Role);
+      _initialCodes = DeserializeRoleCodes(user.Role);
+      _selectedCodes = new HashSet<string>(_initialCodes, StringComparer.Ordinal);
       InitializeComponent();
 
       lbTitle.Text = $"Phân quyền: {_user.DisplayName ?? _user.Username}";
@@ -138,10 +144,20 @@ namespace LTP.Truck.Popup
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
+        var addedCodes = _selectedCodes
+          .Except(_initialCodes, StringComparer.Ordinal)
+          .OrderBy(code => code, StringComparer.Ordinal)
+          .ToList();
+        var removedCodes = _initialCodes
+          .Except(_selectedCodes, StringComparer.Ordinal)
+          .OrderBy(code => code, StringComparer.Ordinal)
+          .ToList();
+
         _user.Role = Newtonsoft.Json.JsonConvert.SerializeObject(
           _selectedCodes.OrderBy(code => code, StringComparer.Ordinal));
         var updatedUser = await _userService.AddOrUpdateAsync(_user);
         OnSendSuccess?.Invoke(updatedUser);
+        OnSendPermissionChanges?.Invoke(updatedUser, addedCodes, removedCodes);
         Close();
       }
       catch (Exception ex)

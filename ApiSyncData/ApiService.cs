@@ -572,7 +572,46 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<UserAPI> Users(bool isContainDelete = false)
+    public async Task<UserAPI> Users()
+    {
+      try
+      {
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+
+        var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/User/get-list-simplify";
+        using var httpClient = new HttpClient();
+
+        // Giống cấu hình Authorization trong Postman:
+        // API Key, Key = X-API-KEY, Add to = Header
+        httpClient.DefaultRequestHeaders.Add(
+            "X-API-KEY",
+            apiKey.Trim());
+
+        using var response = await httpClient.GetAsync(apiUrl);
+
+        var responseContent =
+            await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+          throw new HttpRequestException(
+              $"User. " +
+              $"URL: {apiUrl}. " +
+              $"HTTP {(int)response.StatusCode} " +
+              $"({response.ReasonPhrase}). " +
+              $"Response: {responseContent}");
+        }
+
+        return JsonConvert.DeserializeObject<UserAPI>(responseContent);
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+    }
+
+    public async Task<UserAPI> RemoveRole(Guid idUser, List<string> rolesRemove)
     {
       try
       {
