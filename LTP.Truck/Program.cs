@@ -53,6 +53,26 @@ namespace LTP.Truck
 
 
 
+    private static Dictionary<string, string> PermissionsTruck = new Dictionary<string, string>
+    {
+      ["0043"] = "Cho phép vận hành",
+      ["0044"] = "Cho phép cập nhật dữ liệu masterdata bằng cách nhập thêm",
+      ["0045"] = "Cho phép cân khi số liệu sai lệch quá ngưỡng cài đặt",
+      ["0046"] = "Cho phép xem cài đặt",
+      ["0047"] = "Cho phép chỉnh sửa cài đặt",
+      ["0048"] = "Cho phép xem dữ liệu masterdata",
+      ["0049"] = "Cho phép xem lịch sử cân",
+    };
+    private static Dictionary<string, string> PermissionsGoods = new Dictionary<string, string>
+    {
+      ["0050"] = "Cho phép vận hành",
+      ["0051"] = "Cho phép cập nhật dữ liệu masterdata bằng cách nhập thêm",
+      ["0052"] = "Cho phép xem cài đặt",
+      ["0053"] = "Cho phép chỉnh sửa cài đặt",
+      ["0054"] = "Cho phép xem dữ liệu masterdata",
+      ["0055"] = "Cho phép xem lịch sử cân"
+    };
+
     static async Task<bool> InitDb()
     {
       try
@@ -83,6 +103,48 @@ namespace LTP.Truck
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
               });
+            }
+
+            if (db?.Roles?.Count() <= 0)
+            {
+              List<Role> roles = new List<Role>();
+              if (PermissionsTruck.Count()>0)
+              {
+                foreach (var role in PermissionsTruck)
+                {
+                  roles.Add(new Role()
+                  {
+                    Type = 1,
+                    Code = role.Key,
+                    Name = role.Value,
+                    Description = "",
+                    DeletedFlag = false,
+                    EnableFlag = true,
+                    SyncFlag = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                  });
+                }  
+              }
+              if (PermissionsGoods.Count() > 0)
+              {
+                foreach (var role in PermissionsGoods)
+                {
+                  roles.Add(new Role()
+                  {
+                    Type = 2,
+                    Code = role.Key,
+                    Name = role.Value,
+                    Description = "",
+                    DeletedFlag = false,
+                    EnableFlag = true,
+                    SyncFlag = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                  });
+                }
+              }
+              await db.Roles.AddRangeAsync(roles);
             }
 
             await db!.SaveChangesAsync();

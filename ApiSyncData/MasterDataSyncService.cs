@@ -2,6 +2,7 @@ using ApiSyncData.Resp;
 using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace ApiSyncData
 {
@@ -57,6 +58,7 @@ namespace ApiSyncData
           l.Password = s.Password;
           l.EmployeeCode = s.EmployeeCode;
           l.IdCardCode = s.IdCardCode;
+          l.Role = JsonConvert.SerializeObject(s.Permission ?? new List<string>());
         }, token,
         initializeAdded: user => user.CreatedAt = DateTime.UtcNow);
 

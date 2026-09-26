@@ -25,9 +25,7 @@ namespace iSoft.Database.Models
     [MaxLength(50)]
     public string? DisplayName { get; set; }
 
-    [Required]
-    [MaxLength(10)]
-    public string Role { get; set; } = string.Empty;
+    public string? Role { get; set; } = string.Empty;
 
     public ICollection<RecordTruck>? RecordTrucks { get; set; }
     public ICollection<RecordWeight>? RecordWeights { get; set; }

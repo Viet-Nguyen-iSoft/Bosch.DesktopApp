@@ -29,6 +29,7 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<ApiJobs>? ApiJobs { get; set; }
     public virtual DbSet<Delivery>? Deliveries { get; set; }
     public virtual DbSet<User>? Users { get; set; }
+    public virtual DbSet<Role>? Roles { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

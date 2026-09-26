@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ApiSyncData.Resp
 {
@@ -29,6 +30,9 @@ namespace ApiSyncData.Resp
     public string? Password { get; set; }
     public string? EmployeeCode { get; set; }
     public string? IdCardCode { get; set; }
+
+    [JsonProperty("Permission")]
+    public List<string>? Permission { get; set; }
   }
 
   
