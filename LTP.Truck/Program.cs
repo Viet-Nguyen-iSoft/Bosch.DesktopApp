@@ -2,6 +2,7 @@ using HelperManager;
 using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
+using LTP.Truck.SecurityPassword;
 using Microsoft.EntityFrameworkCore;
 
 namespace LTP.Truck
@@ -30,6 +31,9 @@ namespace LTP.Truck
 
       try
       {
+        var a = PasswordEncryptor.Encrypt("Admin@1234");
+        var b = SecurityHelper.EncodePassword("VietNguyen", "WHj/9niZdWnILIFjR3VMAg==");
+        var c = SecurityHelper.EncodePassword("VietNguyen", "Hsf@2026");
         ApplicationConfiguration.Initialize();
         InitDb().GetAwaiter().GetResult();
         AppCore.Ins.Init();
