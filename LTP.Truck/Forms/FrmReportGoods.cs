@@ -28,6 +28,7 @@ namespace LTP.Truck.Forms
     public FrmReportGoods()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
 
       btnSearchHistorical.Click += btnSearchHistorical_Click;
@@ -136,7 +137,7 @@ namespace LTP.Truck.Forms
         var (records, totalRecords) = await AppCore.Ins._recordWeightService.GetReportPageAsync(
           fromUtc,
           toUtcExclusive,
-          "",
+          string.Empty,
           pageNumber,
           pageSize);
 
@@ -276,7 +277,7 @@ namespace LTP.Truck.Forms
       foreach (var columnName in autoSizeColumns)
       {
         if (grid.Columns.Contains(columnName))
-          grid.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+          grid.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
 
       var weightColumns = new[]
@@ -603,7 +604,7 @@ namespace LTP.Truck.Forms
       {
         var column = FindGridColumn(grid, columnName);
         if (column != null)
-          column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+          column.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
     }
 

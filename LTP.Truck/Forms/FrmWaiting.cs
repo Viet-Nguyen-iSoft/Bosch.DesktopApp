@@ -125,14 +125,24 @@ namespace LTP.Truck.Forms
 
     private async void PopupApplyVersionNew_OnSendApply(object? sender, string e)
     {
-      AppCore.Ins._appConfig.Version = e;
-      AppCore.Ins._appConfig.UpdatedAt = DateTime.UtcNow;
-      await AppCore.Ins._appConfigService.AddOrUpdateAsync(AppCore.Ins._appConfig);
+      try
+      {
+        if (AppCore.Ins._appConfig == null)
+          return;
 
-      string app = Path.Combine(Application.StartupPath, "Versions\\ApplyVersion\\ApplyNewVersion.exe");
-      Process.Start(app);
+        AppCore.Ins._appConfig.Version = e;
+        AppCore.Ins._appConfig.UpdatedAt = DateTime.UtcNow;
+        await AppCore.Ins._appConfigService.AddOrUpdateAsync(AppCore.Ins._appConfig);
 
-      Application.Exit();
+        string app = Path.Combine(Application.StartupPath, "Versions\\ApplyVersion\\ApplyNewVersion.exe");
+        Process.Start(app);
+
+        Application.Exit();
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
     #endregion
 
@@ -168,14 +178,14 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void UcPanelLogin1_OnSendLogin(object? sender, EventArgs e)
+    private void UcPanelLogin1_OnSendLogin(object? sender, EventArgs e)
     {
-      FrmMain.Instance.ChangePage(EnumScreen.Operation);
+      FrmMain.Instance.StartUserSession();
       //AppCore.Ins._userCurrent = await AppCore.Ins._userService.CheckLogin(ucPanelLogin1.Account, ucPanelLogin1.Password);
       //if (AppCore.Ins._userCurrent != null)
       //{
       //  FrmOperation.Instance.LoadAccount(AppCore.Ins._userCurrent);
-      //  FrmMain.Instance.ChangePage(EnumScreen.Operation);
+      //  FrmMain.Instance.StartUserSession();
       //}
       //else
       //{
@@ -235,7 +245,6 @@ namespace LTP.Truck.Forms
       catch (Exception ex)
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        throw;
       }
     }
 

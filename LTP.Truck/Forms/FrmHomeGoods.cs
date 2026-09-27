@@ -28,6 +28,7 @@ namespace LTP.Truck.Forms
     private int _tareRefreshVersion;
     private int _deliveryRefreshVersion;
     private int _sumWeightLoadVersion;
+    private bool _initialLoadStarted;
     private bool _waitingForWeightReset;
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private RecordTruckDTO _recordTruckDTO { get; set; }
@@ -35,6 +36,7 @@ namespace LTP.Truck.Forms
     public FrmHomeGoods()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
 
       cbbTare.SelectionChangeCommitted += cbbTare_SelectedValueChanged;
@@ -111,11 +113,20 @@ namespace LTP.Truck.Forms
 
     private async void FrmHomeGoods_Load(object? sender, EventArgs e)
     {
+      if (_initialLoadStarted)
+        return;
+
+      _initialLoadStarted = true;
+
       try
       {
-        await LoadDataFirst();
-        await LoadHistorical();
-        await LoadLicensePlateSuggestionsAsync();
+        // Let the first frame paint before binding data-heavy controls. The
+        // queries use separate DbContext instances, so they can safely overlap.
+        await Task.Yield();
+        await Task.WhenAll(
+          LoadDataFirst(),
+          LoadHistorical(),
+          LoadLicensePlateSuggestionsAsync());
 
         cbbProductGroup.SelectedIndex = -1;
         cbbTare.SelectedIndex = -1;
@@ -377,14 +388,33 @@ namespace LTP.Truck.Forms
 
     private async Task LoadDataFirst()
     {
-      _products = await AppCore.Ins._productService.GetAllAsync();
-      var productGroups = await AppCore.Ins._productGroupService.GetAllAsync();
-      var categoryTares = await AppCore.Ins._categoryTareService.GetAllAsync();
-      var deliveries = await AppCore.Ins._deliveryService.GetAllAsync();
+      var productsTask = AppCore.Ins._productService.GetAllAsync();
+      var productGroupsTask = AppCore.Ins._productGroupService.GetAllAsync();
+      var categoryTaresTask = AppCore.Ins._categoryTareService.GetAllAsync();
+      var deliveriesTask = AppCore.Ins._deliveryService.GetAllAsync();
 
-      SetProductGroup(productGroups);
-      SetTare(categoryTares);
-      SetDelivery(deliveries);
+      await Task.WhenAll(productsTask, productGroupsTask, categoryTaresTask, deliveriesTask);
+
+      SuspendLayout();
+      cbbProductGroup.BeginUpdate();
+      cbbProduct.BeginUpdate();
+      cbbTare.BeginUpdate();
+      cbbDelivery.BeginUpdate();
+      try
+      {
+        _products = await productsTask;
+        SetProductGroup(await productGroupsTask);
+        SetTare(await categoryTaresTask);
+        SetDelivery(await deliveriesTask);
+      }
+      finally
+      {
+        cbbDelivery.EndUpdate();
+        cbbTare.EndUpdate();
+        cbbProduct.EndUpdate();
+        cbbProductGroup.EndUpdate();
+        ResumeLayout(true);
+      }
     }
 
     private void SetProductGroup(List<ProductGroup> productGroups)
@@ -839,7 +869,7 @@ namespace LTP.Truck.Forms
       foreach (var columnName in autoSizeColumns)
       {
         if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
 
       var weightColumns = new[]

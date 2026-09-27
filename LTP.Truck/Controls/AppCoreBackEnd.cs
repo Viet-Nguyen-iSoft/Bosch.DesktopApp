@@ -73,6 +73,7 @@ namespace LTP.Truck.Controls
     public readonly UserService _userService = new();
     public readonly LicensePlateService _licensePlateService = new();
     public readonly ApiJobsService _apiJobsService = new();
+    public readonly AutoLogoutService _autoLogoutService = new();
     private readonly ApiJobsBackgroundService _apiJobsBackgroundService = new();
     private readonly CancellationTokenSource _apiJobsCancellation = new();
     private Task? _apiJobsTask;
@@ -93,7 +94,11 @@ namespace LTP.Truck.Controls
         _apiJobsTask ??= _apiJobsBackgroundService.RunAsync(
           _apiJobsCancellation.Token,
           ex => LogHelper.LogErrorToFileLog(ex, _folderFileLog));
-        Application.ApplicationExit += (_, _) => _apiJobsCancellation.Cancel();
+        Application.ApplicationExit += (_, _) =>
+        {
+          _apiJobsCancellation.Cancel();
+          _autoLogoutService.Dispose();
+        };
 
         StartShowUI();
       }
@@ -157,7 +162,7 @@ namespace LTP.Truck.Controls
         int rowIndex = 0;
         Brush brush = Brushes.Black;
 
-        PrintDocument pd = new PrintDocument();
+        using PrintDocument pd = new PrintDocument();
         pd.PrinterSettings.PrinterName = printer;
 
         pd.PrintPage += (sender, e) =>
@@ -205,9 +210,9 @@ namespace LTP.Truck.Controls
 
 
           // Font family and styles to match the mockup
-          Font fontTitlePallet = new Font("Arial", 10, FontStyle.Bold);
-          Font fontTilte = new Font("Arial", 10, FontStyle.Regular);
-          Font fontValue = new Font("Arial", 10, FontStyle.Bold);
+          using Font fontTitlePallet = new Font("Arial", 10, FontStyle.Bold);
+          using Font fontTilte = new Font("Arial", 10, FontStyle.Regular);
+          using Font fontValue = new Font("Arial", 10, FontStyle.Bold);
 
           // Draw PALLET LẺ
           e.Graphics.DrawString("PHIẾU CÂN HÀNG", fontTitlePallet, brush, new PointF(startX, 2));
@@ -269,8 +274,8 @@ namespace LTP.Truck.Controls
         Directory.CreateDirectory(folderOutput);
       }
 
-      string template = File.ReadAllText(pathFileTemplate);
-      string table = File.ReadAllText(pathFileTemplateTable);
+      string template = await File.ReadAllTextAsync(pathFileTemplate).ConfigureAwait(false);
+      string table = await File.ReadAllTextAsync(pathFileTemplateTable).ConfigureAwait(false);
       string result = template.Replace("{documentNo}", "      /2025/BBGN/BOSCH – SDV")
                               .Replace("{day}", dt.Day.ToString())
                               .Replace("{month}", dt.Month.ToString())
@@ -298,7 +303,7 @@ namespace LTP.Truck.Controls
         .ToList();
 
 
-      string tableDetails = string.Empty;
+      var tableDetails = new StringBuilder();
       double value = 0.0;
       if (recordWeightsByProduct?.Count() > 0)
       {
@@ -312,19 +317,19 @@ namespace LTP.Truck.Controls
           tempTableDetal = tempTableDetal.Replace("{note}", "");
 
 
-          tableDetails = tableDetails + tempTableDetal;
+          tableDetails.Append(tempTableDetal);
           value += recordWeightsByProduct[no - 1].SumNet;
         }
       }
 
       result = result.Replace("{totalQuantity}", FormatWeight(value, 3));
-      result = result.Replace("{table}", tableDetails);
+      result = result.Replace("{table}", tableDetails.ToString());
 
       string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
-      File.WriteAllText(outputPath, result);
+      await File.WriteAllTextAsync(outputPath, result).ConfigureAwait(false);
 
       string pdfPath = Path.ChangeExtension(outputPath, ".pdf");
-      await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath);
+      await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath).ConfigureAwait(false);
       return pdfPath;
     }
 
@@ -344,7 +349,7 @@ namespace LTP.Truck.Controls
         int rowIndex = 0;
         Brush brush = Brushes.Black;
 
-        PrintDocument pd = new PrintDocument();
+        using PrintDocument pd = new PrintDocument();
         pd.PrinterSettings.PrinterName = printer;
 
         pd.PrintPage += (sender, e) =>
@@ -356,9 +361,9 @@ namespace LTP.Truck.Controls
           e.Graphics.DrawRectangle(Pens.Black, startX - 2, startY - 2, 100, 60);
 
           // Font family and styles to match the mockup
-          Font fontTitlePallet = new Font("Arial", 10, FontStyle.Bold);
-          Font fontTilte = new Font("Arial", 10, FontStyle.Regular);
-          Font fontValue = new Font("Arial", 10, FontStyle.Bold);
+          using Font fontTitlePallet = new Font("Arial", 10, FontStyle.Bold);
+          using Font fontTilte = new Font("Arial", 10, FontStyle.Regular);
+          using Font fontValue = new Font("Arial", 10, FontStyle.Bold);
 
           // Draw PALLET LẺ
           e.Graphics.DrawString("Phiếu in phế phẩm", fontTitlePallet, brush, new PointF(startX, startY + rowIndex * offsetY));

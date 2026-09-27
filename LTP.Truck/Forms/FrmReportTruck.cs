@@ -22,6 +22,7 @@ namespace LTP.Truck.Forms
     public FrmReportTruck()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
       CustomUI();
 
@@ -201,7 +202,7 @@ namespace LTP.Truck.Forms
       foreach (var columnName in autoSizeColumns)
       {
         if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
 
       var alignmentMiddleCenterColumns = new[]

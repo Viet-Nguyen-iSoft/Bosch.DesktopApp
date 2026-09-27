@@ -34,6 +34,8 @@ namespace LTP.Truck.Forms
     private string _deleteReasonToolTipText = string.Empty;
     private int _statusFilterIndex = 1;
     private int _licensePlateLookupVersion;
+    private int _historicalLoadVersion;
+    private bool _initialLoadStarted;
     private bool _isLoadingRecordFromLicensePlate;
     private bool _isViewingHistoricalDetail;
     private static string FormatWeight(double value)
@@ -44,6 +46,7 @@ namespace LTP.Truck.Forms
     public FrmHomeTruck()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       this.Load += FrmHome_Load;
@@ -157,8 +160,14 @@ namespace LTP.Truck.Forms
 
     private async void FrmHomeTruck_Shown(object? sender, EventArgs e)
     {
-      await LoadHistorical();
-      await LoadLicensePlateSuggestionsAsync();
+      if (_initialLoadStarted)
+        return;
+
+      _initialLoadStarted = true;
+
+      // Give WinForms a chance to present the form before the grid is bound.
+      await Task.Yield();
+      await Task.WhenAll(LoadHistorical(), LoadLicensePlateSuggestionsAsync());
     }
 
     private async Task LoadLicensePlateSuggestionsAsync()
@@ -186,34 +195,55 @@ namespace LTP.Truck.Forms
     private async void btnLoadClient_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      var clients = await AppCore.Ins._clientService.GetAllAsync(IsContainDelete: false);
-      PopupLoadMD popupLoadMD = new PopupLoadMD();
-      popupLoadMD.SetData(clients);
-      popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
-      popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
-      popupLoadMD.ShowDialog();
+      try
+      {
+        var clients = await AppCore.Ins._clientService.GetAllAsync(IsContainDelete: false);
+        using var popupLoadMD = new PopupLoadMD();
+        popupLoadMD.SetData(clients);
+        popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
+        popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
+        popupLoadMD.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async void btnLoadTypeGoods_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      var typeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync(IsContainDelete: false);
-      PopupLoadMD popupLoadMD = new PopupLoadMD();
-      popupLoadMD.SetData(typeGoods);
-      popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
-      popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
-      popupLoadMD.ShowDialog();
+      try
+      {
+        var typeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync(IsContainDelete: false);
+        using var popupLoadMD = new PopupLoadMD();
+        popupLoadMD.SetData(typeGoods);
+        popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
+        popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
+        popupLoadMD.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async void btnLoadWarehouse_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      var warehouses = await AppCore.Ins._warehouseService.GetAllAsync(IsContainDelete: false);
-      PopupLoadMD popupLoadMD = new PopupLoadMD();
-      popupLoadMD.SetData(warehouses);
-      popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
-      popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
-      popupLoadMD.ShowDialog();
+      try
+      {
+        var warehouses = await AppCore.Ins._warehouseService.GetAllAsync(IsContainDelete: false);
+        using var popupLoadMD = new PopupLoadMD();
+        popupLoadMD.SetData(warehouses);
+        popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
+        popupLoadMD.OnAddData += type => PopupLoadMD_OnAddData(popupLoadMD, type);
+        popupLoadMD.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private void PopupLoadMD_OnAddData(PopupLoadMD popupLoadMD, Common.EnumData.EnumTypeData type)
@@ -376,7 +406,6 @@ namespace LTP.Truck.Forms
 
     private RecordTruck _recordTruck { get; set; } = new RecordTruck();
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
-    private int _weightGoodsLoadVersion;
     private async void btnTriggerWeight_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -950,28 +979,38 @@ namespace LTP.Truck.Forms
 
     private async Task LoadHistorical()
     {
-      var fromDateTime = ucTimeSearchFrom.Value;
-      var toDateTime = ucTimeSearchTo.Value;
-      if (fromDateTime > toDateTime)
+      var loadVersion = Interlocked.Increment(ref _historicalLoadVersion);
+      try
       {
-        using var popup = new PopupConfirm("Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popup.ShowDialog();
-        return;
+        var fromDateTime = ucTimeSearchFrom.Value;
+        var toDateTime = ucTimeSearchTo.Value;
+        if (fromDateTime > toDateTime)
+        {
+          using var popup = new PopupConfirm("Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popup.ShowDialog(this);
+          return;
+        }
+
+        var fromUtc = fromDateTime.ToUniversalTime();
+        var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
+        var statusIndex = _statusFilterIndex;
+        var searchKey = txtSearchKey.Texts.Trim();
+
+        var records = await AppCore.Ins._recordTruckService.GetReportAsync(
+          fromUtc,
+          toUtcExclusive,
+          searchKey,
+          statusIndex);
+        var dto = DTOHelper.ConvertRecordTruckDTO(records);
+
+        if (loadVersion == _historicalLoadVersion && !IsDisposed && !Disposing)
+          SetDgvHistorical(dto);
       }
-
-      var fromUtc = fromDateTime.ToUniversalTime();
-      var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
-      var statusIndex = _statusFilterIndex;
-      var searchKey = txtSearchKey.Texts.Trim();
-
-      var records = await AppCore.Ins._recordTruckService.GetReportAsync(
-        fromUtc,
-        toUtcExclusive,
-        searchKey,
-        statusIndex);
-      var dto = DTOHelper.ConvertRecordTruckDTO(records);
-      SetDgvHistorical(dto);
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async void dgv_CellContentClick(object? sender, DataGridViewCellEventArgs e)
@@ -1038,15 +1077,22 @@ namespace LTP.Truck.Forms
 
     private async void Popup_OnSendConfirm(object? sender, ResponMsg e)
     {
-      RecordTruck recordTruck = e.Obj as RecordTruck;
-      if (recordTruck != null)
+      try
       {
-        recordTruck.ReasonDelete = string.Empty;
-        recordTruck.DeletedFlag = false;
+        RecordTruck recordTruck = e.Obj as RecordTruck;
+        if (recordTruck != null)
+        {
+          recordTruck.ReasonDelete = string.Empty;
+          recordTruck.DeletedFlag = false;
 
-        recordTruck.UpdatedAt = DateTime.UtcNow;
-        await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
-        await LoadHistorical();
+          recordTruck.UpdatedAt = DateTime.UtcNow;
+          await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
+          await LoadHistorical();
+        }
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -1156,7 +1202,7 @@ namespace LTP.Truck.Forms
       foreach (var columnName in autoSizeColumns)
       {
         if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
 
       if (dgv.Columns.Contains(nameof(RecordTruckDTO.Status)))
@@ -1530,8 +1576,8 @@ namespace LTP.Truck.Forms
       string folderOutput = Application.StartupPath + "Template\\OutputFiles";
 
 
-      string template = File.ReadAllText(pathFileTemplate);
-      string table = File.ReadAllText(pathFileTemplateTable);
+      string template = await File.ReadAllTextAsync(pathFileTemplate).ConfigureAwait(false);
+      string table = await File.ReadAllTextAsync(pathFileTemplateTable).ConfigureAwait(false);
       string result = template.Replace("{{documentNo}}", "A26-00001")
                               .Replace("{documentNo}", "A26-00001")
                               .Replace("{{day}}", dt.Day.ToString())
@@ -1563,7 +1609,7 @@ namespace LTP.Truck.Forms
         .ToList();
 
 
-      string tableDetails = string.Empty;
+      var tableDetails = new System.Text.StringBuilder();
       double value = 0.0;
       if (recordWeightsByProduct?.Count() > 0)
       {
@@ -1577,16 +1623,16 @@ namespace LTP.Truck.Forms
           tempTableDetal = tempTableDetal.Replace("{{note}}", "");
 
 
-          tableDetails = tableDetails + tempTableDetal;
+          tableDetails.Append(tempTableDetal);
           value += recordWeightsByProduct[no - 1].SumNet;
         }
       }
 
       result = result.Replace("{{totalQuantity}}", FormatWeight(value));
-      result = result.Replace("{table}", tableDetails);
+      result = result.Replace("{table}", tableDetails.ToString());
 
       string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
-      File.WriteAllText(outputPath, result);
+      await File.WriteAllTextAsync(outputPath, result).ConfigureAwait(false);
 
       await CreateFile(outputPath);
     }
@@ -1610,7 +1656,7 @@ namespace LTP.Truck.Forms
         }
 
         string fileImageLogo = Application.StartupPath + "Template\\LogoBosch.png";
-        string template = File.ReadAllText(pathFileTemplate);
+        string template = await File.ReadAllTextAsync(pathFileTemplate).ConfigureAwait(false);
         string company = AppCore.Ins._appConfig?.Company ?? string.Empty;
         string address = AppCore.Ins._appConfig?.OfficeAddress ?? string.Empty;
         string phone = AppCore.Ins._appConfig?.PhoneForOfficeAddress ?? string.Empty;
@@ -1670,12 +1716,12 @@ namespace LTP.Truck.Forms
                                 ;
         //string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");
         string outputPath = Path.Combine(folderOutput, $"{recordTruck.Id.ToString().Replace("-", "").Replace(" ", "")}.html");
-        File.WriteAllText(outputPath, result);
+        await File.WriteAllTextAsync(outputPath, result).ConfigureAwait(false);
 
         if (withoutConsole)
         {
           string pdfPath = Path.ChangeExtension(outputPath, ".pdf");
-          await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath);
+          await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath).ConfigureAwait(false);
           return pdfPath;
         }
 

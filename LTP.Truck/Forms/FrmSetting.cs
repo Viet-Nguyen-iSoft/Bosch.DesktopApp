@@ -20,6 +20,7 @@ namespace LTP.Truck.Forms
     public FrmSetting()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
       flowCommWeight.AutoScroll = true;
       flowCommWeight.FlowDirection = FlowDirection.LeftToRight;
@@ -156,21 +157,29 @@ namespace LTP.Truck.Forms
 
     private async void FrmSetting_Load(object? sender, EventArgs e)
     {
-      LoadInstalledPrinters();
-      LoadShowInformationServer(AppCore.Ins._appConfig);
-      LoadReportInformation(AppCore.Ins._appConfig);
-      await LoadStationsAsync();
-      await LoadWeightConnectionsAsync();
+      try
+      {
+        LoadInstalledPrinters();
+        LoadShowInformationServer(AppCore.Ins._appConfig);
+        LoadReportInformation(AppCore.Ins._appConfig);
 
-      _permitCheck = AppCore.Ins._appConfig?.PermitCheckWeight ?? false;
-      SetStatusPermitCheckWeight(_permitCheck);
-      txtValueWeightPermit.Texts = (AppCore.Ins._appConfig?.ValueCheckWeight ?? 0)
-        .ToString(CultureInfo.CurrentCulture);
-      txtValueWeightGoodsCheckPermitConfirm.Texts =
-        (AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm ?? 0)
-        .ToString(CultureInfo.CurrentCulture);
+        // Hai truy vấn dùng DbContext riêng và không phụ thuộc nhau.
+        await Task.WhenAll(LoadStationsAsync(), LoadWeightConnectionsAsync());
 
-      LoadConfig();
+        _permitCheck = AppCore.Ins._appConfig?.PermitCheckWeight ?? false;
+        SetStatusPermitCheckWeight(_permitCheck);
+        txtValueWeightPermit.Texts = (AppCore.Ins._appConfig?.ValueCheckWeight ?? 0)
+          .ToString(CultureInfo.CurrentCulture);
+        txtValueWeightGoodsCheckPermitConfirm.Texts =
+          (AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm ?? 0)
+          .ToString(CultureInfo.CurrentCulture);
+
+        LoadConfig();
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private void LoadConfig()
@@ -578,15 +587,22 @@ namespace LTP.Truck.Forms
     private async void btnAddCommWeight_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      if (await HasWeightConnectionAsync())
+      try
       {
-        ShowSingleWeightConnectionWarning();
-        return;
-      }
+        if (await HasWeightConnectionAsync())
+        {
+          ShowSingleWeightConnectionWarning();
+          return;
+        }
 
-      PopupChooseComm popupChooseComm = new PopupChooseComm();
-      popupChooseComm.OnSendConfirm += PopupChooseComm_OnSendConfirm;
-      popupChooseComm.ShowDialog();
+        using var popupChooseComm = new PopupChooseComm();
+        popupChooseComm.OnSendConfirm += PopupChooseComm_OnSendConfirm;
+        popupChooseComm.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private void PopupChooseComm_OnSendConfirm(object? sender, Common.EnumData.EnumCommunication e)
@@ -607,17 +623,24 @@ namespace LTP.Truck.Forms
 
     private async void Connection_OnSendConfirm(object? sender, Connection e)
     {
-      if (e.Id == Guid.Empty && await HasWeightConnectionAsync())
+      try
       {
-        ShowSingleWeightConnectionWarning();
-        return;
+        if (e.Id == Guid.Empty && await HasWeightConnectionAsync())
+        {
+          ShowSingleWeightConnectionWarning();
+          return;
+        }
+
+        e.StationId = AppCore.Ins._station?.Id;
+
+        var savedConnection = await AppCore.Ins._connectionService.AddOrUpdateAsync(e);
+        AppCore.Ins.ConnectWeight(savedConnection);
+        await LoadWeightConnectionsAsync();
       }
-
-      e.StationId = AppCore.Ins._station?.Id;
-
-      var savedConnection = await AppCore.Ins._connectionService.AddOrUpdateAsync(e);
-      AppCore.Ins.ConnectWeight(savedConnection);
-      await LoadWeightConnectionsAsync();
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async Task<bool> HasWeightConnectionAsync()
@@ -640,11 +663,13 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        AppCore.Ins._appConfig.IpServer = txtIpServer.Texts.Trim();
-        AppCore.Ins._appConfig.PortServer = int.Parse(txtPortServer.Texts.Trim());
-        AppCore.Ins._appConfig.TimeoutConnectServer = int.Parse(txtTimeoutServer.Texts.Trim());
-        AppCore.Ins._appConfig.UpdatedAt = DateTime.UtcNow;
-        await AppCore.Ins._appConfigService.AddOrUpdateAsync(AppCore.Ins._appConfig);
+        var appConfig = AppCore.Ins._appConfig ??
+          throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng.");
+        appConfig.IpServer = txtIpServer.Texts.Trim();
+        appConfig.PortServer = int.Parse(txtPortServer.Texts.Trim());
+        appConfig.TimeoutConnectServer = int.Parse(txtTimeoutServer.Texts.Trim());
+        appConfig.UpdatedAt = DateTime.UtcNow;
+        await AppCore.Ins._appConfigService.AddOrUpdateAsync(appConfig);
 
         using var popupMsg = new PopupConfirm("Cập nhật thành công.",
             EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);

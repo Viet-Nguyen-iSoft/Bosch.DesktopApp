@@ -38,6 +38,7 @@ namespace LTP.Truck.Forms
     public FrmMasterData()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
 
       RegisterService();
@@ -584,7 +585,7 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
         var alignmentMiddleCenterColumns = new[]
@@ -618,7 +619,7 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
         var alignmentMiddleCenterColumns = new[]
@@ -651,7 +652,7 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
         var alignmentMiddleCenterColumns = new[]
@@ -686,7 +687,7 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
         var alignmentMiddleCenterColumns = new[]
@@ -720,7 +721,7 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
         var alignmentMiddleCenterColumns = new[]
@@ -756,7 +757,7 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
         var alignmentMiddleCenterColumns = new[]
@@ -789,7 +790,7 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
         if (dgv.Columns.Contains(nameof(DeliveryDTO.No)))
@@ -847,10 +848,17 @@ namespace LTP.Truck.Forms
       var columnName = dgv.Columns[e.ColumnIndex].Name;
       var rowData = dgv.Rows[e.RowIndex].DataBoundItem;
 
-      if (columnName == EditButtonColumnName)
-        await EditMasterDataAsync(rowData);
-      else if (columnName == DeleteButtonColumnName)
-        await DeleteMasterDataAsync(rowData);
+      try
+      {
+        if (columnName == EditButtonColumnName)
+          await EditMasterDataAsync(rowData);
+        else if (columnName == DeleteButtonColumnName)
+          await DeleteMasterDataAsync(rowData);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private Task EditMasterDataAsync(object? rowData)

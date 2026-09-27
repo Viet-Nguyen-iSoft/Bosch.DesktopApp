@@ -18,12 +18,14 @@ namespace LTP.Truck
     public FrmMain()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
       this.FormBorderStyle = FormBorderStyle.None;
       this.WindowState = FormWindowState.Maximized;
 
       this.Load += FrmMain_Load;
       this.Shown += FrmMain_Shown;
+      AppCore.Ins._autoLogoutService.Elapsed += AutoLogoutService_Elapsed;
     }
 
     #region Instance
@@ -103,23 +105,27 @@ namespace LTP.Truck
       }
       if (Is_same_form == false)
       {
-        if (CurrentForm != null)
+        panelMain.SuspendLayout();
+        try
         {
-          CurrentForm.Visible = false;
+          if (CurrentForm != null)
+          {
+            CurrentForm.Visible = false;
+          }
+          this.panelMain.Controls.Clear();
+          this.panelMain.Tag = Tuple.Create(enumScreen, childForm);
+          CurrentForm = childForm;
+          childForm.TopLevel = false;
+          childForm.FormBorderStyle = FormBorderStyle.None;
+          childForm.Dock = DockStyle.Fill;
+          this.panelMain.Controls.Add(childForm);
+          childForm.Show();
+          childForm.BringToFront();
         }
-        this.panelMain.Controls.Clear();
-        this.panelMain.Tag = Tuple.Create(enumScreen, childForm);
-        CurrentForm = childForm;
-        childForm.TopLevel = false;
-        childForm.FormBorderStyle = FormBorderStyle.None;
-        childForm.Dock = DockStyle.Fill;
-        childForm.BringToFront();
-        this.panelMain.Controls.Add(childForm);
-        childForm.Show();
-      }
-      else
-      {
-
+        finally
+        {
+          panelMain.ResumeLayout(true);
+        }
       }
     }
     #endregion
@@ -216,6 +222,52 @@ namespace LTP.Truck
     public void MiniTab()
     {
       this.WindowState = FormWindowState.Minimized;
+    }
+
+    public void StartUserSession()
+    {
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(StartUserSession));
+        return;
+      }
+
+      try
+      {
+        AppCore.Ins._autoLogoutService.Start(
+          AppCore.Ins._appConfig?.TimeAutoLogOut);
+        ChangePage(EnumScreen.Operation);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    public void Logout()
+    {
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(Logout));
+        return;
+      }
+
+      try
+      {
+        AppCore.Ins._autoLogoutService.Stop();
+        AppCore.Ins._userCurrent = null;
+        FrmOperation.Instance.LoadAccount(null);
+        ChangePage(EnumScreen.Waiting);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    private void AutoLogoutService_Elapsed(object? sender, EventArgs e)
+    {
+      Logout();
     }
 
   }

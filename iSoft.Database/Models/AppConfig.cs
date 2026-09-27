@@ -14,6 +14,7 @@ namespace iSoft.Database.Models
     public int? TimeoutConnectServer { get; set; }
     public Guid? StationId { get; set; }
     public string? Version { get; set; }
+    public int? TimeAutoLogOut { get; set; } //Phuts
 
     public string? Key { get; set; }
     public DateTime? LabelSequenceDate { get; set; }

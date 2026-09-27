@@ -24,6 +24,7 @@ namespace LTP.Truck.Forms
     public FrmUser()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
 
       btnSearch.Click += btnSearch_Click;
@@ -170,7 +171,7 @@ namespace LTP.Truck.Forms
       {
         if (dgv.Columns.Contains(columnName))
           dgv.Columns[columnName].AutoSizeMode =
-            DataGridViewAutoSizeColumnMode.AllCells;
+            DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
 
       if (dgv.Columns.Contains(nameof(UserDTO.No)))
@@ -251,13 +252,20 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      string columnName = dgv.Columns[e.ColumnIndex].Name;
-      if (columnName == EditButtonColumnName)
-        await EditUserAsync(row.User);
-      else if (columnName == DeleteButtonColumnName)
-        await DeleteUserAsync(row.User);
-      else if (columnName == RolesButtonColumnName)
-        await EditRolesAsync(row.User);
+      try
+      {
+        string columnName = dgv.Columns[e.ColumnIndex].Name;
+        if (columnName == EditButtonColumnName)
+          await EditUserAsync(row.User);
+        else if (columnName == DeleteButtonColumnName)
+          await DeleteUserAsync(row.User);
+        else if (columnName == RolesButtonColumnName)
+          await EditRolesAsync(row.User);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async Task EditUserAsync(iSoft.Database.Models.User user)
@@ -388,24 +396,31 @@ namespace LTP.Truck.Forms
     private async void btnAddnew_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      bool isAdded = false;
-      Task queueApiJobTask = Task.CompletedTask;
-      using var popup = new PopupUser();
-
-      popup.OnSendSuccess += value =>
+      try
       {
-        isAdded = true;
-        // Lưu job ngay sau khi User được ghi DB, trước khi reload giao diện.
-        queueApiJobTask = QueueUserUpsertJobAsync(value);
-      };
-      popup.ShowDialog(this);
+        bool isAdded = false;
+        Task queueApiJobTask = Task.CompletedTask;
+        using var popup = new PopupUser();
 
-      if (!isAdded)
-        return;
+        popup.OnSendSuccess += value =>
+        {
+          isAdded = true;
+          // Lưu job ngay sau khi User được ghi DB, trước khi reload giao diện.
+          queueApiJobTask = QueueUserUpsertJobAsync(value);
+        };
+        popup.ShowDialog(this);
 
-      await queueApiJobTask;
-      await LoadData(resetPage: true);
-      ShowSuccess("Thêm tài khoản thành công.");
+        if (!isAdded)
+          return;
+
+        await queueApiJobTask;
+        await LoadData(resetPage: true);
+        ShowSuccess("Thêm tài khoản thành công.");
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async void txtSearch_TextChanged(object? sender, EventArgs e)

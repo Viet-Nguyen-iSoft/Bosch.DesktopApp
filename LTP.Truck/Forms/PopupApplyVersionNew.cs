@@ -143,7 +143,14 @@ namespace LTP.Truck.Forms
       try
       {
         LockByDownload(true);
-        string versionUpdate = GitHubReleaseDTO?.TagName.Replace(".", "_") ?? string.Empty;
+        var release = GitHubReleaseDTO;
+        if (release == null)
+        {
+          MessageBox.Show("Không tìm thấy thông tin phiên bản cập nhật.");
+          return;
+        }
+
+        string versionUpdate = release.TagName.Replace(".", "_");
         if (!string.IsNullOrEmpty(versionUpdate))
         {
           string folder = Path.Combine(Application.StartupPath, "Versions");
@@ -154,7 +161,7 @@ namespace LTP.Truck.Forms
           }
 
           string pathFileZip = Path.Combine(folder, $"update_{versionUpdate}.zip");
-          var ok = await ApiGetRelease.DownloadReleaseAsync(GitHubReleaseDTO, pathFileZip);
+          var ok = await ApiGetRelease.DownloadReleaseAsync(release, pathFileZip);
           if (ok)
           {
             btnApply.Visible = true;

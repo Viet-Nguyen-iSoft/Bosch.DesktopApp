@@ -20,13 +20,16 @@ namespace LTP.Truck.Popup
 
     private EnumTypeData _enumTypeData {  get; set; }
     private Action<string>? _applySearch;
+    private CancellationTokenSource? _searchDebounceCancellation;
     public PopupLoadMD()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
       btnAdd.Click += btnAdd_Click;
       btnSearch.Click += btnSearch_Click;
       txtSearch._TextChanged += txtSearch_TextChanged;
+      Disposed += (_, _) => _searchDebounceCancellation?.Cancel();
     }
 
     private void CustomUI()
@@ -54,7 +57,7 @@ namespace LTP.Truck.Popup
         ConfigureSearch(dto);
         dgv.DataSource = dto;
 
-        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
 
         dgv.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
@@ -67,7 +70,7 @@ namespace LTP.Truck.Popup
         ConfigureSearch(dto);
         dgv.DataSource = dto;
 
-        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
 
         dgv.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
@@ -79,7 +82,7 @@ namespace LTP.Truck.Popup
         ConfigureSearch(items);
         dgv.DataSource = items;
         dgv.Columns[nameof(RecordTruckDTO.NetTime02)].Visible = false;
-        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         dgv.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
         var hideColumns = new[]
@@ -107,7 +110,7 @@ namespace LTP.Truck.Popup
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
       }
       else if (typeof(T) == typeof(Warehouse))
@@ -119,7 +122,7 @@ namespace LTP.Truck.Popup
         ConfigureSearch(dto);
         dgv.DataSource = dto;
 
-        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        dgv.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
 
         dgv.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
@@ -134,12 +137,38 @@ namespace LTP.Truck.Popup
 
     private void btnSearch_Click(object? sender, EventArgs e)
     {
+      _searchDebounceCancellation?.Cancel();
       _applySearch?.Invoke(txtSearch.Texts);
     }
 
-    private void txtSearch_TextChanged(object? sender, EventArgs e)
+    private async void txtSearch_TextChanged(object? sender, EventArgs e)
     {
-      _applySearch?.Invoke(txtSearch.Texts);
+      _searchDebounceCancellation?.Cancel();
+      _searchDebounceCancellation?.Dispose();
+
+      var cancellation = new CancellationTokenSource();
+      _searchDebounceCancellation = cancellation;
+      try
+      {
+        await Task.Delay(250, cancellation.Token);
+        _applySearch?.Invoke(txtSearch.Texts);
+      }
+      catch (OperationCanceledException)
+      {
+        // Người dùng vẫn đang nhập; chỉ lọc theo nội dung mới nhất.
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, LTP.Truck.Controls.AppCore.Ins._folderFileLog);
+      }
+      finally
+      {
+        if (ReferenceEquals(_searchDebounceCancellation, cancellation))
+        {
+          cancellation.Dispose();
+          _searchDebounceCancellation = null;
+        }
+      }
     }
 
     private void btnClose_Click(object sender, EventArgs e)

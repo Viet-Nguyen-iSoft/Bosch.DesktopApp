@@ -26,6 +26,7 @@ namespace LTP.Truck.Forms
     public FrmOperation()
     {
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       AppTheme.Apply(this);
       InitializeMenuSelection();
       SetMasterDataExpanded(false);
@@ -213,7 +214,6 @@ namespace LTP.Truck.Forms
       this.btnProduct.Click += BtnProduct_Click;
       this.btnDelivery.Click += BtnDelivery_Click;
 
-      LoadConfig();
     }
 
     private void LoadConfig()
@@ -261,9 +261,21 @@ namespace LTP.Truck.Forms
       ucLogin.Account = user?.Username ?? "Login";
     }
 
-    private void FrmOperation_Shown(object? sender, EventArgs e)
+    private async void FrmOperation_Shown(object? sender, EventArgs e)
     {
-      InitClock();
+      try
+      {
+        InitClock();
+
+        // Show the application shell first. Creating and theming the large home
+        // form during Load made the whole first window visibly stutter.
+        await Task.Yield();
+        LoadConfig();
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private void LoadStation(Station? station)
@@ -520,20 +532,28 @@ namespace LTP.Truck.Forms
       }
       if (Is_same_form == false)
       {
-        if (CurrentForm != null)
+        panelMain.SuspendLayout();
+        try
         {
-          CurrentForm.Visible = false;
+          if (CurrentForm != null)
+          {
+            CurrentForm.Visible = false;
+          }
+          this.panelMain.Controls.Clear();
+          this.panelMain.Tag = Tuple.Create(modulSupport, childForm);
+          CurrentForm = childForm;
+          childForm.TopLevel = false;
+          childForm.FormBorderStyle = FormBorderStyle.None;
+          childForm.Dock = DockStyle.Fill;
+          AppTheme.Apply(childForm);
+          this.panelMain.Controls.Add(childForm);
+          childForm.Show();
+          childForm.BringToFront();
         }
-        this.panelMain.Controls.Clear();
-        this.panelMain.Tag = Tuple.Create(modulSupport, childForm);
-        CurrentForm = childForm;
-        childForm.TopLevel = false;
-        childForm.FormBorderStyle = FormBorderStyle.None;
-        childForm.Dock = DockStyle.Fill;
-        childForm.BringToFront();
-        AppTheme.Apply(childForm);
-        this.panelMain.Controls.Add(childForm);
-        childForm.Show();
+        finally
+        {
+          panelMain.ResumeLayout(true);
+        }
       }
     }
     #endregion
@@ -577,9 +597,7 @@ namespace LTP.Truck.Forms
 
     private void btnLogout_Click(object sender, EventArgs e)
     {
-      AppCore.Ins._userCurrent = null;
-      LoadAccount(null);
-      FrmMain.Instance.ChangePage(EnumScreen.Waiting);
+      FrmMain.Instance.Logout();
     }
 
     private async void btnReportTruck_Click(object? sender, EventArgs e)
