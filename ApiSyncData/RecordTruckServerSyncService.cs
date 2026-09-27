@@ -105,9 +105,8 @@ namespace ApiSyncData
       ListDatumRecordTruck source,
       RecordTruck target)
     {
-      target.NoLabelAuto = string.IsNullOrWhiteSpace(source.NoLabelAuto)
-        ? source.SerialCode
-        : source.NoLabelAuto;
+      target.NoLabelAuto = source.NoLabelAuto;
+      target.NoLabelManual = source.NoLabelManual;
       target.LicensePlate = LicensePlateRepository.Normalize(
         string.IsNullOrWhiteSpace(source.LicensePlate) ? source.Plate : source.LicensePlate);
       target.NetTime01 = source.Net01;
@@ -116,6 +115,7 @@ namespace ApiSyncData
       target.TareTime02 = source.Tare02;
       target.EnumTypeDataTruck = GetLocalStatus(source);
       target.WeighInAt = NormalizeTimestamp(source.WeighInAt);
+      target.WeighOutAt = NormalizeTimestamp(source.WeighOutAt);
       target.ClientId = NormalizeId(source.ClientId);
       target.TypeGoodsId = NormalizeId(source.TypeGoodsId);
       target.WarehouseId = NormalizeId(source.WarehouseId);
