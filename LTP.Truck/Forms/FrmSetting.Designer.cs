@@ -100,6 +100,8 @@ namespace LTP.Truck.Forms
       txtValueWeightPermit = new RJTextBox();
       label11 = new Label();
       picPermitCheckWeight = new PictureBox();
+      label17 = new Label();
+      rjTextBox1 = new RJTextBox();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel14.SuspendLayout();
@@ -1019,7 +1021,7 @@ namespace LTP.Truck.Forms
       label8.Name = "label8";
       label8.Size = new Size(592, 60);
       label8.TabIndex = 0;
-      label8.Text = "Thông tin trạm cân";
+      label8.Text = "Thông tin chung";
       label8.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel13
@@ -1031,6 +1033,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel13.Controls.Add(label9, 0, 0);
       tableLayoutPanel13.Controls.Add(cbbStations, 1, 0);
+      tableLayoutPanel13.Controls.Add(label17, 0, 1);
+      tableLayoutPanel13.Controls.Add(rjTextBox1, 1, 1);
       tableLayoutPanel13.Location = new Point(3, 63);
       tableLayoutPanel13.Name = "tableLayoutPanel13";
       tableLayoutPanel13.RowCount = 3;
@@ -1336,6 +1340,43 @@ namespace LTP.Truck.Forms
       picPermitCheckWeight.TabStop = false;
       picPermitCheckWeight.Click += picPermitCheckWeight_Click;
       // 
+      // label17
+      // 
+      label17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label17.AutoSize = true;
+      label17.BackColor = Color.Transparent;
+      label17.Font = new Font("Roboto", 14F);
+      label17.Location = new Point(0, 58);
+      label17.Margin = new Padding(0);
+      label17.Name = "label17";
+      label17.Size = new Size(94, 58);
+      label17.TabIndex = 3;
+      label17.Text = "Trạm cân:";
+      label17.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // rjTextBox1
+      // 
+      rjTextBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      rjTextBox1.BackColor = SystemColors.Window;
+      rjTextBox1.BorderColor = Color.Black;
+      rjTextBox1.BorderFocusColor = Color.HotPink;
+      rjTextBox1.BorderRadius = 5;
+      rjTextBox1.BorderSize = 2;
+      rjTextBox1.Font = new Font("Roboto", 14F);
+      rjTextBox1.ForeColor = Color.FromArgb(64, 64, 64);
+      rjTextBox1.Location = new Point(98, 68);
+      rjTextBox1.Margin = new Padding(4);
+      rjTextBox1.Multiline = false;
+      rjTextBox1.Name = "rjTextBox1";
+      rjTextBox1.Padding = new Padding(10, 7, 10, 7);
+      rjTextBox1.PasswordChar = false;
+      rjTextBox1.PlaceholderColor = Color.DarkGray;
+      rjTextBox1.PlaceholderText = "";
+      rjTextBox1.Size = new Size(479, 38);
+      rjTextBox1.TabIndex = 5;
+      rjTextBox1.Texts = "";
+      rjTextBox1.UnderlinedStyle = false;
+      // 
       // FrmSetting
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1456,5 +1497,7 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel23;
     private TableLayoutPanel tableLayoutPanel22;
     private TableLayoutPanel tableLayoutPanel14;
+    private RJTextBox rjTextBox1;
+    private Label label17;
   }
 }

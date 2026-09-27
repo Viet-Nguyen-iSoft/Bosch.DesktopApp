@@ -207,47 +207,7 @@ namespace LTP.Truck.Forms
       //}
     }
 
-    private async void pictureBox1_Click(object sender, EventArgs e)
-    {
-      try
-      {
-        //var warehouse = new WarehouseUpsertRequest
-        //{
-        //  Name = "Kho Shopee",
-        //};
-        //var response = await AppCore.Ins.Warehouse(warehouse);
-
-
-
-        //CategoryTareUpsertRequest categoryTareUpsertRequest = new CategoryTareUpsertRequest();
-        //categoryTareUpsertRequest.Name = "Rổ";
-        //categoryTareUpsertRequest.SerialCode = "B2032";
-        //categoryTareUpsertRequest.WeightTare = (decimal)15.600;
-        //categoryTareUpsertRequest.Description = "Rổ nhựa";
-        //var response = await AppCore.Ins.CategoryTare(categoryTareUpsertRequest);
-
-        //TypeGoodsUpsertRequest typeGoodsUpsertRequest = new TypeGoodsUpsertRequest();
-        //typeGoodsUpsertRequest.SerialCode = "HH003";
-        //typeGoodsUpsertRequest.Name = "Hóa chất";
-        //typeGoodsUpsertRequest.Description = "Nguy hại";
-        //var response = await AppCore.Ins.TypeGoods(typeGoodsUpsertRequest);
-
-        //ClientUpsertRequest client = new ClientUpsertRequest();
-        //client.Name = "Unilever";
-        //client.Description = "UCC";
-        //var response = await AppCore.Ins.Client(client);
-
-        LicensePlateUpsertRequest client = new LicensePlateUpsertRequest();
-        client.LicensePlateCode = "58C - 26548";
-        client.Description = "UCC";
-        var response = await AppCore.Ins.LicensePlate(client);
-      }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-      }
-    }
-
+   
 
 
   }
