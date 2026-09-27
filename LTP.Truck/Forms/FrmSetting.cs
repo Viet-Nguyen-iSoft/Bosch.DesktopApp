@@ -297,6 +297,16 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveStation_Click(object? sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0053"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (cbbStations.SelectedItem is not Station selectedStation)
       {
@@ -419,6 +429,16 @@ namespace LTP.Truck.Forms
 
     private async void btnSavePrint_Click(object? sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0053"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       if (cbbPrintA4.SelectedItem is not string printerNameA4 ||
         string.IsNullOrWhiteSpace(printerNameA4))
@@ -608,6 +628,16 @@ namespace LTP.Truck.Forms
 
     private async void btnAddCommWeight_Click(object? sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0053"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
@@ -682,6 +712,16 @@ namespace LTP.Truck.Forms
 
     private async void btnConfirm_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0053"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
@@ -729,6 +769,16 @@ namespace LTP.Truck.Forms
 
     private async void btnSavePermitCheckWeight_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0053"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       var appConfig = AppCore.Ins._appConfig;
       if (appConfig == null)
@@ -786,6 +836,16 @@ namespace LTP.Truck.Forms
 
     private async void btnInforReport_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0053"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       var appConfig = AppCore.Ins._appConfig;
       if (appConfig == null)
@@ -829,6 +889,16 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveValueWeightGoodsCheckPermitConfirm_Click(object? sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0053"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       var appConfig = AppCore.Ins._appConfig;
       if (appConfig == null)

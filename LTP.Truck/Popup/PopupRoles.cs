@@ -71,7 +71,18 @@ namespace LTP.Truck.Popup
       {
         btnSearch.Enabled = false;
         btnConfirm.Enabled = false;
-        _roles = await _roleService.GetAllAsync();
+        var stationValue = Environment.GetEnvironmentVariable("STATION");
+        if (!int.TryParse(stationValue, out int stationType))
+        {
+          _roles = new List<iSoft.Database.Models.Role>();
+        }
+        else
+        {
+          _roles = (await _roleService.GetAllAsync())
+            .Where(role => role.Type == stationType)
+            .ToList();
+        }
+
         BindRoles();
       }
       catch (Exception ex)
