@@ -178,21 +178,29 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void UcPanelLogin1_OnSendLogin(object? sender, EventArgs e)
+    private bool isLogin = false;
+    private async void UcPanelLogin1_OnSendLogin(object? sender, EventArgs e)
     {
-      FrmMain.Instance.StartUserSession();
-      //AppCore.Ins._userCurrent = await AppCore.Ins._userService.CheckLogin(ucPanelLogin1.Account, ucPanelLogin1.Password);
-      //if (AppCore.Ins._userCurrent != null)
-      //{
-      //  FrmOperation.Instance.LoadAccount(AppCore.Ins._userCurrent);
-      //  FrmMain.Instance.StartUserSession();
-      //}
-      //else
-      //{
-      //  using var popupMsg = new PopupConfirm("Tài khoản hoặc mật khẩu sai. Vui lòng thử lại !",
-      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
-      //  popupMsg.ShowDialog(this);
-      //}
+      if (isLogin)
+      {
+        FrmMain.Instance.StartUserSession();
+      }  
+      else
+      {
+        AppCore.Ins._userCurrent = await AppCore.Ins._userService.CheckLogin(ucPanelLogin1.Account, ucPanelLogin1.Password);
+        if (AppCore.Ins._userCurrent != null)
+        {
+          FrmOperation.Instance.LoadAccount(AppCore.Ins._userCurrent);
+          FrmMain.Instance.StartUserSession();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Tài khoản hoặc mật khẩu sai. Vui lòng thử lại !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
+
 
       //if (ucPanelLogin1.Account == "admin" && ucPanelLogin1.Password == "admin")
       //{

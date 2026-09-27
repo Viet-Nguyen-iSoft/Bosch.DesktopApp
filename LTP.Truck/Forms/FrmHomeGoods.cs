@@ -640,6 +640,16 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveData_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       var resetThreshold = AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm;
       //if (!resetThreshold.HasValue || resetThreshold.Value <= 0)
       //{
@@ -912,6 +922,16 @@ namespace LTP.Truck.Forms
 
     private void btnPrint_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       dgv.EndEdit();
 
       List<RecordWeightDTO> selectedData = dgv.Rows
@@ -939,6 +959,16 @@ namespace LTP.Truck.Forms
 
     private async void btnExport_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       dgv.EndEdit();
 
       List<RecordWeightDTO> selectedData = dgv.Rows
@@ -1075,6 +1105,16 @@ namespace LTP.Truck.Forms
 
     private void btnZero_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      } 
+      
       ExecuteScaleCommand(
         sender,
         AppCore.Ins.ZeroWeight,
@@ -1084,6 +1124,16 @@ namespace LTP.Truck.Forms
 
     private void btnTare_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       ExecuteScaleCommand(
         sender,
         AppCore.Ins.TareWeight,
