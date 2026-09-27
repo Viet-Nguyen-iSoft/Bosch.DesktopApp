@@ -244,7 +244,7 @@ namespace LTP.Truck.Forms
 
       var resetThreshold = AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm;
       if (_waitingForWeightReset &&
-          resetThreshold.HasValue && resetThreshold.Value > 0 &&
+          resetThreshold.HasValue && resetThreshold.Value >= 0 &&
           TryGetDisplayedWeight(out var displayedWeight) &&
           displayedWeight <= resetThreshold.Value)
       {
@@ -641,21 +641,31 @@ namespace LTP.Truck.Forms
     private async void btnSaveData_Click(object sender, EventArgs e)
     {
       var resetThreshold = AppCore.Ins._appConfig?.ValueWeightGoodsCheckPermitConfirm;
-      if (!resetThreshold.HasValue || resetThreshold.Value <= 0)
-      {
-        using var popupMsg = new PopupConfirm(
-          "Vui lòng cấu hình khối lượng xác nhận cân tiếp tục lớn hơn 0 !",
-          EnumTypeMsg.MessageManualClose,
-          EnumImageMsg.Warning);
-        popupMsg.ShowDialog(this);
-        return;
-      }
+      //if (!resetThreshold.HasValue || resetThreshold.Value <= 0)
+      //{
+      //  using var popupMsg = new PopupConfirm(
+      //    "Khối lượng cân phải lớn hơn 0 !",
+      //    EnumTypeMsg.MessageManualClose,
+      //    EnumImageMsg.Warning);
+      //  popupMsg.ShowDialog(this);
+      //  return;
+      //}
 
       if (_waitingForWeightReset)
       {
         using var popupMsg = new PopupConfirm(
           $"Vui lòng chờ khối lượng trên cân giảm xuống nhỏ hơn hoặc bằng " +
           $"{WeightFormatHelper.Format(resetThreshold.Value, 2)} kg trước khi cân tiếp tục !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      if (_msgDataWeight.IndicatedWeight <= 0)
+      {
+        using var popupMsg = new PopupConfirm(
+          "Khối lượng cân phải lớn hơn 0 !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
@@ -978,22 +988,40 @@ namespace LTP.Truck.Forms
         .ToList();
 
       string licensePlate = selectedData[0].LicensePlate?.Trim() ?? string.Empty;
-      string productGroupName = selectedData[0].ProductGroup?.Trim() ?? string.Empty;
+      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
+      {
+        Company = AppCore.Ins._appConfig?.Company,
+        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
+        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
+        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
+        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
+      };
 
-      await DownloadFileWorkReport(exportData, licensePlate);
+      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
+      {
+        Company = exportData.FirstOrDefault()?.Delivery?.Name,
+        OfficeAddress = exportData.FirstOrDefault()?.Delivery?.OfficeAddress,
+        PhoneOfficeAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
+        AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
+        PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
+      };
+
+      await DownloadFileWorkReport(exportData, licensePlate, inforCompanyDTO_A, inforCompanyDTO_B);
     }
 
 
     #region Export PDF Goods
     private async Task DownloadFileWorkReport(
       List<RecordWeight> exportData,
-      string licensePlate)
+      string licensePlate,
+      InforCompanyDTO inforCompanyA,
+      InforCompanyDTO inforCompanyB)
     {
       try
       {
         DateTime dt = DateTime.Now;
 
-        var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData);
+        var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData, inforCompanyA, inforCompanyB);
 
         var openReportFile = false;
         using (var popup = new PopupConfirm(

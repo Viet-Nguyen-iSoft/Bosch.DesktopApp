@@ -54,28 +54,28 @@ namespace LTP.Truck.Forms
       btnConfirm = new Common.Custom.RJButton();
       label2 = new Label();
       tableLayoutPanel5 = new TableLayoutPanel();
-      txtTimeoutServer = new LTP.Truck.Custom.RJTextBox();
+      txtTimeoutServer = new RJTextBox();
       label7 = new Label();
-      txtPortServer = new LTP.Truck.Custom.RJTextBox();
+      txtPortServer = new RJTextBox();
       label3 = new Label();
       label4 = new Label();
-      txtIpServer = new LTP.Truck.Custom.RJTextBox();
+      txtIpServer = new RJTextBox();
       tableLayoutPanel23 = new TableLayoutPanel();
       tableLayoutPanel17 = new TableLayoutPanel();
       label13 = new Label();
       tableLayoutPanel19 = new TableLayoutPanel();
-      txtCompany = new LTP.Truck.Custom.RJTextBox();
+      txtCompany = new RJTextBox();
       label14 = new Label();
       label15 = new Label();
       label20 = new Label();
       tableLayoutPanel8 = new TableLayoutPanel();
-      txtOfficeAddress = new LTP.Truck.Custom.RJTextBox();
+      txtOfficeAddress = new RJTextBox();
       label16 = new Label();
-      txtPhoneForOfficeAddress = new LTP.Truck.Custom.RJTextBox();
+      txtPhoneForOfficeAddress = new RJTextBox();
       tableLayoutPanel15 = new TableLayoutPanel();
-      txtAgentAddress = new LTP.Truck.Custom.RJTextBox();
+      txtAgentAddress = new RJTextBox();
       label22 = new Label();
-      txtPhoneForAgentAddress = new LTP.Truck.Custom.RJTextBox();
+      txtPhoneForAgentAddress = new RJTextBox();
       tableLayoutPanel20 = new TableLayoutPanel();
       btnInforReport = new Common.Custom.RJButton();
       tableLayoutPanel11 = new TableLayoutPanel();
@@ -90,14 +90,14 @@ namespace LTP.Truck.Forms
       label19 = new Label();
       tableLayoutPanel26 = new TableLayoutPanel();
       btnSaveValueWeightGoodsCheckPermitConfirm = new Common.Custom.RJButton();
-      txtValueWeightGoodsCheckPermitConfirm = new LTP.Truck.Custom.RJTextBox();
+      txtValueWeightGoodsCheckPermitConfirm = new RJTextBox();
       label21 = new Label();
       tableLayoutPanel16 = new TableLayoutPanel();
       label10 = new Label();
       tableLayoutPanel18 = new TableLayoutPanel();
       btnSavePermitCheckWeight = new Common.Custom.RJButton();
       label12 = new Label();
-      txtValueWeightPermit = new LTP.Truck.Custom.RJTextBox();
+      txtValueWeightPermit = new RJTextBox();
       label11 = new Label();
       picPermitCheckWeight = new PictureBox();
       tableLayoutPanel1.SuspendLayout();
@@ -616,9 +616,9 @@ namespace LTP.Truck.Forms
       // 
       tableLayoutPanel23.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tableLayoutPanel23.ColumnCount = 3;
-      tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+      tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
       tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 10F));
-      tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
+      tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
       tableLayoutPanel23.Controls.Add(tableLayoutPanel17, 2, 0);
       tableLayoutPanel23.Controls.Add(tableLayoutPanel11, 0, 0);
       tableLayoutPanel23.Location = new Point(0, 0);
@@ -638,7 +638,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel17.Controls.Add(label13, 0, 0);
       tableLayoutPanel17.Controls.Add(tableLayoutPanel19, 0, 1);
       tableLayoutPanel17.Controls.Add(tableLayoutPanel20, 0, 3);
-      tableLayoutPanel17.Location = new Point(518, 0);
+      tableLayoutPanel17.Location = new Point(602, 0);
       tableLayoutPanel17.Margin = new Padding(0);
       tableLayoutPanel17.Name = "tableLayoutPanel17";
       tableLayoutPanel17.RowCount = 5;
@@ -647,7 +647,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel17.Size = new Size(1186, 310);
+      tableLayoutPanel17.Size = new Size(1102, 310);
       tableLayoutPanel17.TabIndex = 6;
       // 
       // label13
@@ -659,7 +659,7 @@ namespace LTP.Truck.Forms
       label13.Location = new Point(0, 0);
       label13.Margin = new Padding(0);
       label13.Name = "label13";
-      label13.Size = new Size(1186, 60);
+      label13.Size = new Size(1102, 60);
       label13.TabIndex = 0;
       label13.Text = "Thông tin công ty";
       label13.TextAlign = ContentAlignment.MiddleLeft;
@@ -682,7 +682,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel19.Size = new Size(1180, 174);
+      tableLayoutPanel19.Size = new Size(1096, 174);
       tableLayoutPanel19.TabIndex = 7;
       // 
       // txtCompany
@@ -703,7 +703,7 @@ namespace LTP.Truck.Forms
       txtCompany.PasswordChar = false;
       txtCompany.PlaceholderColor = Color.DarkGray;
       txtCompany.PlaceholderText = "";
-      txtCompany.Size = new Size(999, 38);
+      txtCompany.Size = new Size(915, 38);
       txtCompany.TabIndex = 6;
       txtCompany.Texts = "";
       txtCompany.UnderlinedStyle = false;
@@ -765,7 +765,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.Name = "tableLayoutPanel8";
       tableLayoutPanel8.RowCount = 1;
       tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-      tableLayoutPanel8.Size = new Size(1001, 52);
+      tableLayoutPanel8.Size = new Size(917, 52);
       tableLayoutPanel8.TabIndex = 10;
       // 
       // txtOfficeAddress
@@ -786,7 +786,7 @@ namespace LTP.Truck.Forms
       txtOfficeAddress.PasswordChar = false;
       txtOfficeAddress.PlaceholderColor = Color.DarkGray;
       txtOfficeAddress.PlaceholderText = "";
-      txtOfficeAddress.Size = new Size(622, 38);
+      txtOfficeAddress.Size = new Size(538, 38);
       txtOfficeAddress.TabIndex = 4;
       txtOfficeAddress.Texts = "";
       txtOfficeAddress.UnderlinedStyle = false;
@@ -797,7 +797,7 @@ namespace LTP.Truck.Forms
       label16.AutoSize = true;
       label16.BackColor = Color.Transparent;
       label16.Font = new Font("Roboto", 14F);
-      label16.Location = new Point(650, 0);
+      label16.Location = new Point(566, 0);
       label16.Margin = new Padding(0);
       label16.Name = "label16";
       label16.Size = new Size(101, 60);
@@ -815,7 +815,7 @@ namespace LTP.Truck.Forms
       txtPhoneForOfficeAddress.BorderSize = 2;
       txtPhoneForOfficeAddress.Font = new Font("Roboto", 14F);
       txtPhoneForOfficeAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPhoneForOfficeAddress.Location = new Point(755, 11);
+      txtPhoneForOfficeAddress.Location = new Point(671, 11);
       txtPhoneForOfficeAddress.Margin = new Padding(4);
       txtPhoneForOfficeAddress.Multiline = false;
       txtPhoneForOfficeAddress.Name = "txtPhoneForOfficeAddress";
@@ -843,7 +843,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel15.Name = "tableLayoutPanel15";
       tableLayoutPanel15.RowCount = 1;
       tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-      tableLayoutPanel15.Size = new Size(1001, 52);
+      tableLayoutPanel15.Size = new Size(917, 52);
       tableLayoutPanel15.TabIndex = 11;
       // 
       // txtAgentAddress
@@ -864,7 +864,7 @@ namespace LTP.Truck.Forms
       txtAgentAddress.PasswordChar = false;
       txtAgentAddress.PlaceholderColor = Color.DarkGray;
       txtAgentAddress.PlaceholderText = "";
-      txtAgentAddress.Size = new Size(622, 38);
+      txtAgentAddress.Size = new Size(538, 38);
       txtAgentAddress.TabIndex = 4;
       txtAgentAddress.Texts = "";
       txtAgentAddress.UnderlinedStyle = false;
@@ -875,7 +875,7 @@ namespace LTP.Truck.Forms
       label22.AutoSize = true;
       label22.BackColor = Color.Transparent;
       label22.Font = new Font("Roboto", 14F);
-      label22.Location = new Point(650, 0);
+      label22.Location = new Point(566, 0);
       label22.Margin = new Padding(0);
       label22.Name = "label22";
       label22.Size = new Size(101, 60);
@@ -893,7 +893,7 @@ namespace LTP.Truck.Forms
       txtPhoneForAgentAddress.BorderSize = 2;
       txtPhoneForAgentAddress.Font = new Font("Roboto", 14F);
       txtPhoneForAgentAddress.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPhoneForAgentAddress.Location = new Point(755, 11);
+      txtPhoneForAgentAddress.Location = new Point(671, 11);
       txtPhoneForAgentAddress.Margin = new Padding(4);
       txtPhoneForAgentAddress.Multiline = false;
       txtPhoneForAgentAddress.Name = "txtPhoneForAgentAddress";
@@ -920,7 +920,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel20.Name = "tableLayoutPanel20";
       tableLayoutPanel20.RowCount = 1;
       tableLayoutPanel20.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel20.Size = new Size(1186, 60);
+      tableLayoutPanel20.Size = new Size(1102, 60);
       tableLayoutPanel20.TabIndex = 7;
       // 
       // btnInforReport
@@ -937,7 +937,7 @@ namespace LTP.Truck.Forms
       btnInforReport.ForeColor = Color.White;
       btnInforReport.Image = Properties.Resources.icon_save;
       btnInforReport.ImageAlign = ContentAlignment.MiddleLeft;
-      btnInforReport.Location = new Point(984, 3);
+      btnInforReport.Location = new Point(900, 3);
       btnInforReport.Name = "btnInforReport";
       btnInforReport.Padding = new Padding(10, 0, 0, 0);
       btnInforReport.Size = new Size(194, 54);
@@ -965,7 +965,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel11.Size = new Size(508, 310);
+      tableLayoutPanel11.Size = new Size(592, 310);
       tableLayoutPanel11.TabIndex = 4;
       // 
       // tableLayoutPanel12
@@ -982,7 +982,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel12.Name = "tableLayoutPanel12";
       tableLayoutPanel12.RowCount = 1;
       tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel12.Size = new Size(508, 60);
+      tableLayoutPanel12.Size = new Size(592, 60);
       tableLayoutPanel12.TabIndex = 6;
       // 
       // btnSaveStation
@@ -999,7 +999,7 @@ namespace LTP.Truck.Forms
       btnSaveStation.ForeColor = Color.White;
       btnSaveStation.Image = Properties.Resources.icon_save;
       btnSaveStation.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSaveStation.Location = new Point(306, 3);
+      btnSaveStation.Location = new Point(390, 3);
       btnSaveStation.Name = "btnSaveStation";
       btnSaveStation.Padding = new Padding(10, 0, 0, 0);
       btnSaveStation.Size = new Size(194, 54);
@@ -1017,7 +1017,7 @@ namespace LTP.Truck.Forms
       label8.Location = new Point(0, 0);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(508, 60);
+      label8.Size = new Size(592, 60);
       label8.TabIndex = 0;
       label8.Text = "Thông tin trạm cân";
       label8.TextAlign = ContentAlignment.MiddleLeft;
@@ -1037,7 +1037,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel13.Size = new Size(502, 174);
+      tableLayoutPanel13.Size = new Size(586, 174);
       tableLayoutPanel13.TabIndex = 7;
       // 
       // label9
@@ -1062,7 +1062,7 @@ namespace LTP.Truck.Forms
       cbbStations.FormattingEnabled = true;
       cbbStations.Location = new Point(97, 8);
       cbbStations.Name = "cbbStations";
-      cbbStations.Size = new Size(397, 41);
+      cbbStations.Size = new Size(481, 41);
       cbbStations.TabIndex = 2;
       // 
       // tableLayoutPanel21

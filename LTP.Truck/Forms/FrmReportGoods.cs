@@ -777,7 +777,24 @@ namespace LTP.Truck.Forms
 
       DateTime dt = DateTime.Now;
 
-      var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData);
+      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
+      {
+        Company = AppCore.Ins._appConfig?.Company,
+        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
+        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
+        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
+        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
+      };
+
+      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
+      {
+        Company = exportData.FirstOrDefault()?.Delivery?.Name,
+        OfficeAddress = exportData.FirstOrDefault()?.Delivery?.OfficeAddress,
+        PhoneOfficeAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
+        AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
+        PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
+      };
+      var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData, inforCompanyDTO_A, inforCompanyDTO_B);
 
       var openReportFile = false;
       using (var popup = new PopupConfirm(

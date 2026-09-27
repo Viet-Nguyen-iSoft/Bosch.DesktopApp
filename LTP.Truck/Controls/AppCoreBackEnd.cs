@@ -264,7 +264,11 @@ namespace LTP.Truck.Controls
     }
 
 
-    public async Task<string> ExportPdfGoods(DateTime dt, string licensePlate, List<RecordWeight> exportData)
+    public async Task<string> ExportPdfGoods(DateTime dt, 
+      string licensePlate, 
+      List<RecordWeight> exportData, 
+      InforCompanyDTO inforCompanyA,
+      InforCompanyDTO inforCompanyB)
     {
       string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
       string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
@@ -274,6 +278,7 @@ namespace LTP.Truck.Controls
         Directory.CreateDirectory(folderOutput);
       }
 
+      var dataFirst = exportData.FirstOrDefault()?.Delivery;
       string template = await File.ReadAllTextAsync(pathFileTemplate).ConfigureAwait(false);
       string table = await File.ReadAllTextAsync(pathFileTemplateTable).ConfigureAwait(false);
       string result = template.Replace("{documentNo}", "      /2025/BBGN/BOSCH – SDV")
@@ -282,6 +287,18 @@ namespace LTP.Truck.Controls
                               .Replace("{year}", dt.Year.ToString())
                               .Replace("{vehiclePlate}", licensePlate)
                               .Replace("{sealNo}", "")
+
+                              .Replace("{company_A}", inforCompanyA.Company)
+                              .Replace("{office_address_A}", inforCompanyA.OfficeAddress)
+                              .Replace("{phone_for_office_A}", inforCompanyA.PhoneOfficeAddress)
+                              .Replace("{agent_address_A}", inforCompanyA.AgentAddress)
+                              .Replace("{phone_for_agent_A}", inforCompanyA.PhoneAgentAddress)
+
+                              .Replace("{company_B}", inforCompanyB.Company)
+                              .Replace("{office_address_B}", inforCompanyB.OfficeAddress)
+                              .Replace("{phone_for_office_B}", inforCompanyB.PhoneOfficeAddress)
+                              .Replace("{agent_address_B}", inforCompanyB.AgentAddress)
+                              .Replace("{phone_for_agent_B}", inforCompanyB.PhoneAgentAddress)
 
                               .Replace("{signPlace}", "Đồng Nai")
                               .Replace("{signDay}", dt.Day.ToString())
