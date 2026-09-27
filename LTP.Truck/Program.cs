@@ -61,7 +61,7 @@ namespace LTP.Truck
     private static Dictionary<string, string> PermissionsTruck = new Dictionary<string, string>
     {
       ["0043"] = "Cho phép vận hành",
-      ["0044"] = "Cho phép cập nhật dữ liệu masterdata bằng cách nhập thêm",
+      ["0044"] = "Cho phép cập nhật dữ liệu masterdata",
       ["0045"] = "Cho phép cân khi số liệu sai lệch quá ngưỡng cài đặt",
       ["0046"] = "Cho phép xem cài đặt",
       ["0047"] = "Cho phép chỉnh sửa cài đặt",
@@ -71,7 +71,7 @@ namespace LTP.Truck
     private static Dictionary<string, string> PermissionsGoods = new Dictionary<string, string>
     {
       ["0050"] = "Cho phép vận hành",
-      ["0051"] = "Cho phép cập nhật dữ liệu masterdata bằng cách nhập thêm",
+      ["0051"] = "Cho phép cập nhật dữ liệu masterdata",
       ["0052"] = "Cho phép xem cài đặt",
       ["0053"] = "Cho phép chỉnh sửa cài đặt",
       ["0054"] = "Cho phép xem dữ liệu masterdata",

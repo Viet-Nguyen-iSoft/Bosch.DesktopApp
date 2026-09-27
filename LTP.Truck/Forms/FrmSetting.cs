@@ -297,7 +297,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveStation_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0053"))
+      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",
@@ -429,7 +429,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSavePrint_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0053"))
+      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",
@@ -628,7 +628,7 @@ namespace LTP.Truck.Forms
 
     private async void btnAddCommWeight_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0053"))
+      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",
@@ -712,7 +712,7 @@ namespace LTP.Truck.Forms
 
     private async void btnConfirm_Click(object sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0053"))
+      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",
@@ -769,7 +769,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSavePermitCheckWeight_Click(object sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0053"))
+      if (!AppCore.Ins.CheckPermission("0045"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",
@@ -836,7 +836,7 @@ namespace LTP.Truck.Forms
 
     private async void btnInforReport_Click(object sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0053"))
+      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",
@@ -889,7 +889,7 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveValueWeightGoodsCheckPermitConfirm_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0053"))
+      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",

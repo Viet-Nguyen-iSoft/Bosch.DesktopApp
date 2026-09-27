@@ -296,7 +296,7 @@ namespace LTP.Truck.Forms
 
     private void btnAddnew_Click(object sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0051"))
+      if (!AppCore.Ins.CheckPermission("0044") || !AppCore.Ins.CheckPermission("0051"))
       {
         using var openErrorPopup = new PopupConfirm(
               "Tài khoản không có phân quyền thực hiện !",

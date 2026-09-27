@@ -147,6 +147,16 @@ namespace LTP.Truck.Forms
 
     private void BtnFilter_Click(object? sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var popupFilter = new PopupFilter(_statusFilterIndex);
       popupFilter.OnSendData += PopupFilter_OnSendData;
       popupFilter.ShowDialog();
@@ -408,6 +418,16 @@ namespace LTP.Truck.Forms
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private async void btnTriggerWeight_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
@@ -538,6 +558,16 @@ namespace LTP.Truck.Forms
 
     private async void btnWeightTime01_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
@@ -611,6 +641,16 @@ namespace LTP.Truck.Forms
 
     private async void btnWeightTime02_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
@@ -699,6 +739,16 @@ namespace LTP.Truck.Forms
 
     private void btnBack_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       if ((_recordTruck.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime01) ||
           (_recordTruck.EnumTypeDataTruck == EnumTypeDataTruck.WeightedTime02))
       {
@@ -1297,6 +1347,16 @@ namespace LTP.Truck.Forms
 
     private void btnCreate_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       _isViewingHistoricalDetail = false;
       _recordTruck = new RecordTruck();
       ShowDataHistorical(_recordTruck);
@@ -1405,6 +1465,26 @@ namespace LTP.Truck.Forms
     public readonly RecordTruckService _recordTruckService = new();
     private void btnZero_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
@@ -1436,6 +1516,16 @@ namespace LTP.Truck.Forms
 
     private async void btnPrint_Click(object sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0043"))
+      {
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
