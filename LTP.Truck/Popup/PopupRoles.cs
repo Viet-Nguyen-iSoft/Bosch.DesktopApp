@@ -40,13 +40,14 @@ namespace LTP.Truck.Popup
       lbTitle.Text = $"Phân quyền: {_user.DisplayName ?? _user.Username}";
       btnAdd.Visible = false;
       dgv.ReadOnly = false;
+      dgv.EditMode = DataGridViewEditMode.EditProgrammatically;
 
       Shown += async (_, _) => await LoadRolesAsync();
       btnSearch.Click += async (_, _) => await LoadRolesAsync();
       txtSearch._TextChanged += (_, _) => BindRoles();
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += (_, _) => Close();
-      dgv.CurrentCellDirtyStateChanged += Dgv_CurrentCellDirtyStateChanged;
+      dgv.CellClick += Dgv_CellClick;
       dgv.CellValueChanged += Dgv_CellValueChanged;
     }
 
@@ -139,10 +140,16 @@ namespace LTP.Truck.Popup
       }
     }
 
-    private void Dgv_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
+    private void Dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
     {
-      if (dgv.IsCurrentCellDirty)
-        dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
+      if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != SelectedColumnName)
+      {
+        return;
+      }
+
+      var checkBoxCell = dgv.Rows[e.RowIndex].Cells[SelectedColumnName];
+      checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value ?? false);
     }
 
     private void Dgv_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
