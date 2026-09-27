@@ -53,6 +53,9 @@ namespace LTP.Truck.UserControls
       ElipseControl elipseControl01 = new ElipseControl();
       elipseControl01.TargetControl = tableLayoutPanel1;
       elipseControl01.CornerRadius = 50;
+
+      txtPass.PlaceholderText = "Nhập mật khẩu";
+      txtAccount.PlaceholderText = "Nhập tài khoản";
     }
 
     private void btnLogin_Click(object sender, EventArgs e)
