@@ -16,6 +16,7 @@ namespace ApiSyncData.Req
     public string? IdCardCode { get; set; }
     public bool EnableFlag { get; set; }
     public bool SyncFlag { get; set; }
+    public bool DeletedFlag { get; set; }
   }
 
   public class UserTranslateFormData

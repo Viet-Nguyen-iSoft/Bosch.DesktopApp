@@ -350,7 +350,7 @@ namespace LTP.Truck.Forms
       var userUpsertRequest = new UserUpsertRequest
       {
         // User mới chưa có IdSrc: không gửi Id để API tự tạo như payload web.
-        Id = user.IdSrc,
+        Id = user.Id,
         TranslateFormDatas = new List<UserTranslateFormData>
         {
           new() { Lang = "VI", FullName = user.FullName },
@@ -363,6 +363,7 @@ namespace LTP.Truck.Forms
         IdCardCode = user.IdCardCode,
         EnableFlag = user.EnableFlag,
         SyncFlag = user.SyncFlag,
+        DeletedFlag = user.DeletedFlag,
       };
 
       var apiJob = new ApiJobs

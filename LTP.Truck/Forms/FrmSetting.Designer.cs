@@ -101,7 +101,7 @@ namespace LTP.Truck.Forms
       label11 = new Label();
       picPermitCheckWeight = new PictureBox();
       label17 = new Label();
-      rjTextBox1 = new RJTextBox();
+      txtTimeAutoLogOut = new RJTextBox();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel14.SuspendLayout();
@@ -1034,7 +1034,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.Controls.Add(label9, 0, 0);
       tableLayoutPanel13.Controls.Add(cbbStations, 1, 0);
       tableLayoutPanel13.Controls.Add(label17, 0, 1);
-      tableLayoutPanel13.Controls.Add(rjTextBox1, 1, 1);
+      tableLayoutPanel13.Controls.Add(txtTimeAutoLogOut, 1, 1);
       tableLayoutPanel13.Location = new Point(3, 63);
       tableLayoutPanel13.Name = "tableLayoutPanel13";
       tableLayoutPanel13.RowCount = 3;
@@ -1351,31 +1351,31 @@ namespace LTP.Truck.Forms
       label17.Name = "label17";
       label17.Size = new Size(94, 58);
       label17.TabIndex = 3;
-      label17.Text = "Trạm cân:";
+      label17.Text = "Tự đăng xuất (phút):";
       label17.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // rjTextBox1
-      // 
-      rjTextBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      rjTextBox1.BackColor = SystemColors.Window;
-      rjTextBox1.BorderColor = Color.Black;
-      rjTextBox1.BorderFocusColor = Color.HotPink;
-      rjTextBox1.BorderRadius = 5;
-      rjTextBox1.BorderSize = 2;
-      rjTextBox1.Font = new Font("Roboto", 14F);
-      rjTextBox1.ForeColor = Color.FromArgb(64, 64, 64);
-      rjTextBox1.Location = new Point(98, 68);
-      rjTextBox1.Margin = new Padding(4);
-      rjTextBox1.Multiline = false;
-      rjTextBox1.Name = "rjTextBox1";
-      rjTextBox1.Padding = new Padding(10, 7, 10, 7);
-      rjTextBox1.PasswordChar = false;
-      rjTextBox1.PlaceholderColor = Color.DarkGray;
-      rjTextBox1.PlaceholderText = "";
-      rjTextBox1.Size = new Size(479, 38);
-      rjTextBox1.TabIndex = 5;
-      rjTextBox1.Texts = "";
-      rjTextBox1.UnderlinedStyle = false;
+      // txtTimeAutoLogOut
+      //
+      txtTimeAutoLogOut.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtTimeAutoLogOut.BackColor = SystemColors.Window;
+      txtTimeAutoLogOut.BorderColor = Color.Black;
+      txtTimeAutoLogOut.BorderFocusColor = Color.HotPink;
+      txtTimeAutoLogOut.BorderRadius = 5;
+      txtTimeAutoLogOut.BorderSize = 2;
+      txtTimeAutoLogOut.Font = new Font("Roboto", 14F);
+      txtTimeAutoLogOut.ForeColor = Color.FromArgb(64, 64, 64);
+      txtTimeAutoLogOut.Location = new Point(98, 68);
+      txtTimeAutoLogOut.Margin = new Padding(4);
+      txtTimeAutoLogOut.Multiline = false;
+      txtTimeAutoLogOut.Name = "txtTimeAutoLogOut";
+      txtTimeAutoLogOut.Padding = new Padding(10, 7, 10, 7);
+      txtTimeAutoLogOut.PasswordChar = false;
+      txtTimeAutoLogOut.PlaceholderColor = Color.DarkGray;
+      txtTimeAutoLogOut.PlaceholderText = "";
+      txtTimeAutoLogOut.Size = new Size(479, 38);
+      txtTimeAutoLogOut.TabIndex = 5;
+      txtTimeAutoLogOut.Texts = "";
+      txtTimeAutoLogOut.UnderlinedStyle = false;
       // 
       // FrmSetting
       // 
@@ -1497,7 +1497,7 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel23;
     private TableLayoutPanel tableLayoutPanel22;
     private TableLayoutPanel tableLayoutPanel14;
-    private RJTextBox rjTextBox1;
+    private RJTextBox txtTimeAutoLogOut;
     private Label label17;
   }
 }

@@ -31,10 +31,12 @@ namespace LTP.Truck.Forms
       btnAddCommWeight.Click += btnAddCommWeight_Click;
       txtPortServer.KeyPress += NonNegativeInteger_KeyPress;
       txtTimeoutServer.KeyPress += NonNegativeInteger_KeyPress;
+      txtTimeAutoLogOut.KeyPress += NonNegativeInteger_KeyPress;
       txtValueWeightPermit.KeyPress += NonNegativeDecimal_KeyPress;
       txtValueWeightGoodsCheckPermitConfirm.KeyPress += NonNegativeDecimal_KeyPress;
       txtPortServer._TextChanged += NonNegativeInteger_TextChanged;
       txtTimeoutServer._TextChanged += NonNegativeInteger_TextChanged;
+      txtTimeAutoLogOut._TextChanged += NonNegativeInteger_TextChanged;
       txtValueWeightPermit._TextChanged += NonNegativeDecimal_TextChanged;
       txtValueWeightGoodsCheckPermitConfirm._TextChanged += NonNegativeDecimal_TextChanged;
 
@@ -168,6 +170,8 @@ namespace LTP.Truck.Forms
 
         _permitCheck = AppCore.Ins._appConfig?.PermitCheckWeight ?? false;
         SetStatusPermitCheckWeight(_permitCheck);
+        txtTimeAutoLogOut.Texts = (AppCore.Ins._appConfig?.TimeAutoLogOut ?? 2)
+          .ToString(CultureInfo.InvariantCulture);
         txtValueWeightPermit.Texts = (AppCore.Ins._appConfig?.ValueCheckWeight ?? 0)
           .ToString(CultureInfo.CurrentCulture);
         txtValueWeightGoodsCheckPermitConfirm.Texts =
@@ -315,16 +319,34 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      string timeAutoLogOutInput = txtTimeAutoLogOut.Texts.Trim();
+      if (!int.TryParse(
+            timeAutoLogOutInput,
+            NumberStyles.None,
+            CultureInfo.InvariantCulture,
+            out int timeAutoLogOut) ||
+          timeAutoLogOut < 2)
+      {
+        using var popupWarning = new PopupConfirm(
+          "Thời gian tự động đăng xuất phải là số nguyên và tối thiểu 2 phút !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupWarning.ShowDialog(this);
+        txtTimeAutoLogOut.Focus();
+        return;
+      }
+
       try
       {
         appConfig.StationId = selectedStation.Id;
+        appConfig.TimeAutoLogOut = timeAutoLogOut;
         appConfig.UpdatedAt = DateTime.UtcNow;
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
         AppCore.Ins.ChangeStation(selectedStation);
 
         using var popupSuccess = new PopupConfirm(
-          "Đã lưu trạm cân.",
+          "Lưu thông tin thành công.",
           EnumTypeMsg.MessageAutoClose,
           EnumImageMsg.Information);
         popupSuccess.ShowDialog(this);
@@ -333,7 +355,7 @@ namespace LTP.Truck.Forms
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popupError = new PopupConfirm(
-          "Không thể lưu trạm. Vui lòng thử lại !",
+          "Lưu thông tin thất bại. Vui lòng thử lại !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupError.ShowDialog(this);

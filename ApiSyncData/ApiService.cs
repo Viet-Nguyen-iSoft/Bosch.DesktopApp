@@ -37,12 +37,15 @@ namespace ApiSyncData
         formData.Add(
           new StringContent(JsonConvert.SerializeObject(user.TranslateFormDatas)),
           "TranslateFormDatas");
+        AddOptionalFormField(formData, "Id", user.Id.ToString());
         AddOptionalFormField(formData, "Username", user.Username);
         AddOptionalFormField(formData, "Password", user.Password);
         AddOptionalFormField(formData, "EmployeeCode", user.EmployeeCode);
         AddOptionalFormField(formData, "IdCardCode", "");
         formData.Add(new StringContent(user.EnableFlag.ToString().ToLowerInvariant()), "EnableFlag");
         formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
+        formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
+        formData.Add(new StringContent(user.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag");
         formData.Add(new StringContent(lang), "lang");
 
         using var response = await httpClient.PostAsync(apiUrl, formData, cancellationToken)
