@@ -44,11 +44,16 @@ namespace Common.Settings
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
+      label7 = new Label();
+      cbbDecode = new ComboBox();
+      tableLayoutPanel4 = new TableLayoutPanel();
+      txtTimeSendReq = new Common.Custom.RJTextBox();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)iconAutoConnect).BeginInit();
       ((System.ComponentModel.ISupportInitialize)iconSendReq).BeginInit();
       tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanel4.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -92,25 +97,28 @@ namespace Common.Settings
       tableLayoutPanel1.ColumnCount = 2;
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel1.Controls.Add(iconAutoConnect, 1, 4);
+      tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 1, 4);
+      tableLayoutPanel1.Controls.Add(cbbDecode, 1, 3);
+      tableLayoutPanel1.Controls.Add(label7, 0, 3);
+      tableLayoutPanel1.Controls.Add(iconAutoConnect, 1, 5);
       tableLayoutPanel1.Controls.Add(txtTimeout, 1, 2);
       tableLayoutPanel1.Controls.Add(txtPort, 1, 1);
       tableLayoutPanel1.Controls.Add(label3, 0, 1);
       tableLayoutPanel1.Controls.Add(label2, 0, 0);
-      tableLayoutPanel1.Controls.Add(label5, 0, 3);
+      tableLayoutPanel1.Controls.Add(label5, 0, 4);
       tableLayoutPanel1.Controls.Add(label4, 0, 2);
-      tableLayoutPanel1.Controls.Add(label6, 0, 4);
+      tableLayoutPanel1.Controls.Add(label6, 0, 5);
       tableLayoutPanel1.Controls.Add(txtIP, 1, 0);
-      tableLayoutPanel1.Controls.Add(iconSendReq, 1, 3);
       tableLayoutPanel1.Location = new Point(10, 60);
       tableLayoutPanel1.Margin = new Padding(10, 0, 10, 0);
       tableLayoutPanel1.Name = "tableLayoutPanel1";
-      tableLayoutPanel1.RowCount = 5;
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20.666666F));
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 19.333334F));
+      tableLayoutPanel1.RowCount = 6;
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
       tableLayoutPanel1.Size = new Size(514, 350);
       tableLayoutPanel1.TabIndex = 3;
       // 
@@ -118,9 +126,9 @@ namespace Common.Settings
       // 
       iconAutoConnect.Anchor = AnchorStyles.Left;
       iconAutoConnect.Image = Properties.Resources.switch_off;
-      iconAutoConnect.Location = new Point(181, 285);
+      iconAutoConnect.Location = new Point(181, 293);
       iconAutoConnect.Name = "iconAutoConnect";
-      iconAutoConnect.Size = new Size(104, 62);
+      iconAutoConnect.Size = new Size(104, 54);
       iconAutoConnect.SizeMode = PictureBoxSizeMode.StretchImage;
       iconAutoConnect.TabIndex = 12;
       iconAutoConnect.TabStop = false;
@@ -136,7 +144,7 @@ namespace Common.Settings
       txtTimeout.BorderSize = 2;
       txtTimeout.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtTimeout.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTimeout.Location = new Point(182, 156);
+      txtTimeout.Location = new Point(182, 126);
       txtTimeout.Margin = new Padding(4);
       txtTimeout.Multiline = false;
       txtTimeout.Name = "txtTimeout";
@@ -159,7 +167,7 @@ namespace Common.Settings
       txtPort.BorderSize = 2;
       txtPort.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtPort.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPort.Location = new Point(182, 86);
+      txtPort.Location = new Point(182, 68);
       txtPort.Margin = new Padding(4);
       txtPort.Multiline = false;
       txtPort.Name = "txtPort";
@@ -178,10 +186,10 @@ namespace Common.Settings
       label3.AutoSize = true;
       label3.BackColor = Color.Transparent;
       label3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label3.Location = new Point(0, 70);
+      label3.Location = new Point(0, 58);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
-      label3.Size = new Size(178, 70);
+      label3.Size = new Size(178, 58);
       label3.TabIndex = 3;
       label3.Text = "Port:";
       label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -195,7 +203,7 @@ namespace Common.Settings
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
-      label2.Size = new Size(178, 70);
+      label2.Size = new Size(178, 58);
       label2.TabIndex = 1;
       label2.Text = "Địa chỉ IP:";
       label2.TextAlign = ContentAlignment.MiddleLeft;
@@ -206,10 +214,10 @@ namespace Common.Settings
       label5.AutoSize = true;
       label5.BackColor = Color.Transparent;
       label5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label5.Location = new Point(0, 210);
+      label5.Location = new Point(0, 232);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
-      label5.Size = new Size(178, 72);
+      label5.Size = new Size(178, 58);
       label5.TabIndex = 5;
       label5.Text = "Gửi lệnh lấy dữ liệu:";
       label5.TextAlign = ContentAlignment.MiddleLeft;
@@ -220,10 +228,10 @@ namespace Common.Settings
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
       label4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label4.Location = new Point(0, 140);
+      label4.Location = new Point(0, 116);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(178, 70);
+      label4.Size = new Size(178, 58);
       label4.TabIndex = 4;
       label4.Text = "Timeout (s):";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -234,10 +242,10 @@ namespace Common.Settings
       label6.AutoSize = true;
       label6.BackColor = Color.Transparent;
       label6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label6.Location = new Point(0, 282);
+      label6.Location = new Point(0, 290);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(178, 68);
+      label6.Size = new Size(178, 60);
       label6.TabIndex = 6;
       label6.Text = "Tự động kết nối:";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -252,7 +260,7 @@ namespace Common.Settings
       txtIP.BorderSize = 2;
       txtIP.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtIP.ForeColor = Color.FromArgb(64, 64, 64);
-      txtIP.Location = new Point(182, 16);
+      txtIP.Location = new Point(182, 10);
       txtIP.Margin = new Padding(4);
       txtIP.Multiline = false;
       txtIP.Name = "txtIP";
@@ -269,9 +277,9 @@ namespace Common.Settings
       // 
       iconSendReq.Anchor = AnchorStyles.Left;
       iconSendReq.Image = Properties.Resources.switch_off;
-      iconSendReq.Location = new Point(181, 213);
+      iconSendReq.Location = new Point(3, 3);
       iconSendReq.Name = "iconSendReq";
-      iconSendReq.Size = new Size(104, 66);
+      iconSendReq.Size = new Size(104, 52);
       iconSendReq.SizeMode = PictureBoxSizeMode.StretchImage;
       iconSendReq.TabIndex = 11;
       iconSendReq.TabStop = false;
@@ -343,6 +351,71 @@ namespace Common.Settings
       btnClose.UseVisualStyleBackColor = false;
       btnClose.Click += btnClose_Click;
       // 
+      // label7
+      // 
+      label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label7.AutoSize = true;
+      label7.BackColor = Color.Transparent;
+      label7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label7.Location = new Point(0, 174);
+      label7.Margin = new Padding(0);
+      label7.Name = "label7";
+      label7.Size = new Size(178, 58);
+      label7.TabIndex = 22;
+      label7.Text = "Chuẩn kết nối:";
+      label7.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // cbbDecode
+      // 
+      cbbDecode.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      cbbDecode.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbDecode.Font = new Font("Roboto", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbDecode.FormattingEnabled = true;
+      cbbDecode.Location = new Point(181, 184);
+      cbbDecode.Name = "cbbDecode";
+      cbbDecode.Size = new Size(330, 37);
+      cbbDecode.TabIndex = 23;
+      // 
+      // tableLayoutPanel4
+      // 
+      tableLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel4.ColumnCount = 2;
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel4.Controls.Add(txtTimeSendReq, 1, 0);
+      tableLayoutPanel4.Controls.Add(iconSendReq, 0, 0);
+      tableLayoutPanel4.Location = new Point(178, 232);
+      tableLayoutPanel4.Margin = new Padding(0);
+      tableLayoutPanel4.Name = "tableLayoutPanel4";
+      tableLayoutPanel4.RowCount = 1;
+      tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel4.Size = new Size(336, 58);
+      tableLayoutPanel4.TabIndex = 24;
+      // 
+      // txtTimeSendReq
+      // 
+      txtTimeSendReq.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtTimeSendReq.BackColor = SystemColors.Window;
+      txtTimeSendReq.BorderColor = Color.Black;
+      txtTimeSendReq.BorderFocusColor = Color.HotPink;
+      txtTimeSendReq.BorderRadius = 5;
+      txtTimeSendReq.BorderSize = 2;
+      txtTimeSendReq.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtTimeSendReq.ForeColor = Color.FromArgb(64, 64, 64);
+      txtTimeSendReq.Location = new Point(172, 10);
+      txtTimeSendReq.Margin = new Padding(4);
+      txtTimeSendReq.Multiline = false;
+      txtTimeSendReq.Name = "txtTimeSendReq";
+      txtTimeSendReq.Padding = new Padding(10, 7, 10, 7);
+      txtTimeSendReq.PasswordChar = false;
+      txtTimeSendReq.PlaceholderColor = Color.DarkGray;
+      txtTimeSendReq.PlaceholderText = "";
+      txtTimeSendReq.Size = new Size(160, 38);
+      txtTimeSendReq.TabIndex = 12;
+      txtTimeSendReq.Texts = "";
+      txtTimeSendReq.UnderlinedStyle = false;
+      // 
       // PopupSettingTcpClient
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -359,6 +432,7 @@ namespace Common.Settings
       ((System.ComponentModel.ISupportInitialize)iconAutoConnect).EndInit();
       ((System.ComponentModel.ISupportInitialize)iconSendReq).EndInit();
       tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanel4.ResumeLayout(false);
       ResumeLayout(false);
     }
 
@@ -380,5 +454,9 @@ namespace Common.Settings
     private Custom.RJTextBox txtPort;
     private PictureBox iconSendReq;
     private PictureBox iconAutoConnect;
+    private Label label7;
+    private TableLayoutPanel tableLayoutPanel4;
+    private ComboBox cbbDecode;
+    private Custom.RJTextBox txtTimeSendReq;
   }
 }

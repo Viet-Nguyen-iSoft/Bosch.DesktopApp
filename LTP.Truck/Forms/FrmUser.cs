@@ -359,7 +359,9 @@ namespace LTP.Truck.Forms
 
       var apiJob = new ApiJobs
       {
+        Id = Guid.NewGuid(),
         Json = JsonHelper.ToJson(userUpsertRequest),
+        Description = $"Đồng bộ tài khoản {user.Username}",
         EnumTypeAPI = EnumTypeAPI.MD_User,
         EnumStatusAPI = EnumStatusAPI.Created,
         CreatedAt = DateTime.UtcNow,
@@ -387,20 +389,21 @@ namespace LTP.Truck.Forms
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       bool isAdded = false;
-      User? addedUser = null;
+      Task queueApiJobTask = Task.CompletedTask;
       using var popup = new PopupUser();
 
       popup.OnSendSuccess += value =>
       {
         isAdded = true;
-        addedUser = value;
+        // Lưu job ngay sau khi User được ghi DB, trước khi reload giao diện.
+        queueApiJobTask = QueueUserUpsertJobAsync(value);
       };
       popup.ShowDialog(this);
 
       if (!isAdded)
         return;
 
-      await QueueUserUpsertJobAsync(addedUser!);
+      await queueApiJobTask;
       await LoadData(resetPage: true);
       ShowSuccess("Thêm tài khoản thành công.");
     }
