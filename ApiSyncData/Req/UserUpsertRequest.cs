@@ -11,6 +11,7 @@ namespace ApiSyncData.Req
     public string? DisplayName { get; set; }
     public string? FullName { get; set; }
     public string? Username { get; set; }
+    public string? Password { get; set; }
     public string? EmployeeCode { get; set; }
     public string? IdCardCode { get; set; }
     public bool EnableFlag { get; set; }

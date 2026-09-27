@@ -121,9 +121,16 @@ namespace LTP.Truck.Controls
     {
       try
       {
-        _appConfig = await _appConfigService.GetAppConfigAsync();
-        _station = await _stationService.GetByCodeAsync(_appConfig?.StationId);
-        _connection = await _connectionService.GetFirstDataConnection();
+        // AppConfig và Connection dùng DbContext riêng nên có thể đọc song song.
+        var appConfigTask = _appConfigService.GetAppConfigAsync();
+        var connectionTask = _connectionService.GetFirstDataConnection();
+
+        _appConfig = await appConfigTask.ConfigureAwait(false);
+        var stationTask = _stationService.GetByCodeAsync(_appConfig?.StationId);
+
+        await Task.WhenAll(stationTask, connectionTask).ConfigureAwait(false);
+        _station = await stationTask.ConfigureAwait(false);
+        _connection = await connectionTask.ConfigureAwait(false);
  
         //var employees = _employees.FirstOrDefault();
         //foreach (var item in _employees)

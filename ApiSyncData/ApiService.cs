@@ -21,9 +21,8 @@ namespace ApiSyncData
         if (user.Id == Guid.Empty)
           throw new ArgumentException("User Id không được là Guid.Empty.", nameof(user));
 
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API_AUTH")
           ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
-        baseAPI = "http://100.101.160.94:7101/api";
         string apiKey = Environment.GetEnvironmentVariable("API_KEY")
           ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
         string apiUrl = $"{baseAPI.TrimEnd('/')}/v1/User/upsert-multi-lang";
@@ -39,11 +38,9 @@ namespace ApiSyncData
           new StringContent(JsonConvert.SerializeObject(user.TranslateFormDatas)),
           "TranslateFormDatas");
         AddOptionalFormField(formData, "Username", user.Username);
+        AddOptionalFormField(formData, "Password", user.Password);
         AddOptionalFormField(formData, "EmployeeCode", user.EmployeeCode);
-        AddOptionalFormField(formData, "IdCardCode", user.IdCardCode);
-        AddOptionalFormField(formData, "DisplayName", user.DisplayName);
-        AddOptionalFormField(formData, "FullName", user.FullName);
-        AddOptionalFormField(formData, "IdCardCode", user.IdCardCode);
+        AddOptionalFormField(formData, "IdCardCode", "");
         formData.Add(new StringContent(user.EnableFlag.ToString().ToLowerInvariant()), "EnableFlag");
         formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
         formData.Add(new StringContent(lang), "lang");

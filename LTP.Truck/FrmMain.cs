@@ -23,6 +23,7 @@ namespace LTP.Truck
       this.WindowState = FormWindowState.Maximized;
 
       this.Load += FrmMain_Load;
+      this.Shown += FrmMain_Shown;
     }
 
     #region Instance
@@ -146,7 +147,7 @@ namespace LTP.Truck
       }
     }
 
-    // Khai b�o trong class FrmMain
+    // Khai báo trong class FrmMain
     private readonly CancellationTokenSource _syncCts = new();
     private readonly CancellationTokenSource _syncCts02 = new();
     private Task? _syncTask;
@@ -156,32 +157,49 @@ namespace LTP.Truck
     {
       try
       {
-        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 2, _syncCts.Token);
-        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
-        PeriodicRunner.EntityChanged += (sender, e) =>
-        {
-          if (e.EntityType == typeof(ProductGroup))
-          {
-            OnChangeProductGroup?.Invoke(this, e);
-          }
-          else if (e.EntityType == typeof(Product))
-          {
-            OnChangeProduct?.Invoke(this, e);
-          }
-          else if (e.EntityType == typeof(CategoryTare))
-          {
-            OnChangeTare?.Invoke(this, e);
-          }
-        };
-
-        AppCore.Ins.CheckConnectServer();
-        AppCore.Ins.ConnectWeight();
-        //CheckOpenMulApp();
+        // Hiển thị trang đầu tiên trước khi khởi động đồng bộ và kết nối thiết bị.
         ChangePage(EnumScreen.Waiting);
+        PeriodicRunner.EntityChanged += PeriodicRunner_EntityChanged;
       }
       catch (Exception ex)
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    private async void FrmMain_Shown(object? sender, EventArgs e)
+    {
+      try
+      {
+        // Cho message loop thực hiện lần paint đầu tiên trước.
+        await Task.Yield();
+
+        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 2, _syncCts.Token);
+        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
+
+        AppCore.Ins.CheckConnectServer();
+        await Task.Run(() => AppCore.Ins.ConnectWeight());
+        //CheckOpenMulApp();
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    private void PeriodicRunner_EntityChanged(object? sender, MasterDataChangedEventArgs e)
+    {
+      if (e.EntityType == typeof(ProductGroup))
+      {
+        OnChangeProductGroup?.Invoke(this, e);
+      }
+      else if (e.EntityType == typeof(Product))
+      {
+        OnChangeProduct?.Invoke(this, e);
+      }
+      else if (e.EntityType == typeof(CategoryTare))
+      {
+        OnChangeTare?.Invoke(this, e);
       }
     }
 

@@ -341,13 +341,16 @@ namespace LTP.Truck.Forms
     {
       var userUpsertRequest = new UserUpsertRequest
       {
-        Id = user.IdSrc ?? user.Id,
+        // User mới chưa có IdSrc: không gửi Id để API tự tạo như payload web.
+        Id = user.IdSrc,
         TranslateFormDatas = new List<UserTranslateFormData>
         {
-          new() { Lang = "EN", FullName = string.Empty },
           new() { Lang = "VI", FullName = user.FullName },
+          new() { Lang = "EN", FullName = user.FullName },
         },
+
         Username = user.Username,
+        Password = user.Password,
         EmployeeCode = user.EmployeeCode,
         IdCardCode = user.IdCardCode,
         EnableFlag = user.EnableFlag,

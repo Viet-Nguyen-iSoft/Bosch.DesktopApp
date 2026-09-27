@@ -88,9 +88,17 @@ namespace LTP.Truck
           {
             await db.Database.EnsureCreatedAsync();
             await UpdateDatabaseSchemaAsync(db);
+
+            var needsAppConfig = !await db.AppConfigs!.AnyAsync();
+            var needsRoles = !await db.Roles!.AnyAsync();
+
+            // Bỏ transaction/SaveChanges trong các lần mở app thông thường.
+            if (!needsAppConfig && !needsRoles)
+              return true;
+
             await db.Database.BeginTransactionAsync();
 
-            if (db?.AppConfigs?.Count() <= 0)
+            if (needsAppConfig)
             {
               await db.AppConfigs.AddAsync(new AppConfig
               {
@@ -110,7 +118,7 @@ namespace LTP.Truck
               });
             }
 
-            if (db?.Roles?.Count() <= 0)
+            if (needsRoles)
             {
               List<Role> roles = new List<Role>();
               if (PermissionsTruck.Count()>0)
