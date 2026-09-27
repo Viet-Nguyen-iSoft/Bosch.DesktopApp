@@ -64,11 +64,11 @@
       tableLayoutPanel3.Name = "tableLayoutPanel3";
       tableLayoutPanel3.RowCount = 5;
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 55F));
+      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel3.Size = new Size(924, 524);
+      tableLayoutPanel3.Size = new Size(1260, 696);
       tableLayoutPanel3.TabIndex = 2;
       // 
       // tableLayoutPanel10
@@ -89,7 +89,7 @@
       tableLayoutPanel10.Name = "tableLayoutPanel10";
       tableLayoutPanel10.RowCount = 1;
       tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel10.Size = new Size(924, 55);
+      tableLayoutPanel10.Size = new Size(1260, 60);
       tableLayoutPanel10.TabIndex = 23;
       // 
       // label4
@@ -101,7 +101,7 @@
       label4.Location = new Point(0, 0);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(90, 55);
+      label4.Size = new Size(90, 60);
       label4.TabIndex = 17;
       label4.Text = "Tìm kiếm";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -116,7 +116,7 @@
       txtSearch.BorderSize = 2;
       txtSearch.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtSearch.ForeColor = Color.FromArgb(64, 64, 64);
-      txtSearch.Location = new Point(94, 8);
+      txtSearch.Location = new Point(94, 11);
       txtSearch.Margin = new Padding(4);
       txtSearch.Multiline = false;
       txtSearch.Name = "txtSearch";
@@ -124,7 +124,7 @@
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(295, 38);
+      txtSearch.Size = new Size(531, 38);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;
@@ -144,10 +144,10 @@
       btnSearch.ForeColor = Color.White;
       btnSearch.Image = Properties.Resources.icon_search;
       btnSearch.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearch.Location = new Point(526, 3);
+      btnSearch.Location = new Point(863, 3);
       btnSearch.Name = "btnSearch";
       btnSearch.Padding = new Padding(10, 0, 0, 0);
-      btnSearch.Size = new Size(194, 49);
+      btnSearch.Size = new Size(194, 54);
       btnSearch.TabIndex = 27;
       btnSearch.Text = "Tìm kiếm";
       btnSearch.TextColor = Color.White;
@@ -168,10 +168,10 @@
       btnAdd.ForeColor = Color.White;
       btnAdd.Image = Properties.Resources.icon_add_new;
       btnAdd.ImageAlign = ContentAlignment.MiddleLeft;
-      btnAdd.Location = new Point(726, 3);
+      btnAdd.Location = new Point(1063, 3);
       btnAdd.Name = "btnAdd";
       btnAdd.Padding = new Padding(10, 0, 0, 0);
-      btnAdd.Size = new Size(195, 49);
+      btnAdd.Size = new Size(194, 54);
       btnAdd.TabIndex = 28;
       btnAdd.Text = "Thêm mới";
       btnAdd.TextColor = Color.White;
@@ -186,7 +186,7 @@
       lbTitle.Location = new Point(0, 0);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(924, 60);
+      lbTitle.Size = new Size(1260, 60);
       lbTitle.TabIndex = 0;
       lbTitle.Text = "Danh sách dữ liệu";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -200,12 +200,12 @@
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(0, 459);
+      tableLayoutPanel2.Location = new Point(0, 631);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.Size = new Size(924, 60);
+      tableLayoutPanel2.Size = new Size(1260, 60);
       tableLayoutPanel2.TabIndex = 5;
       // 
       // btnConfirm
@@ -222,7 +222,7 @@
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(567, 3);
+      btnConfirm.Location = new Point(903, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
       btnConfirm.Size = new Size(174, 54);
@@ -245,7 +245,7 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(747, 3);
+      btnClose.Location = new Point(1083, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
       btnClose.Size = new Size(174, 54);
@@ -280,7 +280,7 @@
       dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
       dgv.DefaultCellStyle = dataGridViewCellStyle2;
       dgv.EnableHeadersVisualStyles = false;
-      dgv.Location = new Point(3, 118);
+      dgv.Location = new Point(3, 123);
       dgv.Name = "dgv";
       dgv.ReadOnly = true;
       dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -293,17 +293,18 @@
       dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-      dgv.Size = new Size(918, 338);
+      dgv.Size = new Size(1254, 505);
       dgv.TabIndex = 6;
       // 
       // PopupRoles
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(924, 524);
+      ClientSize = new Size(1260, 696);
+      ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupRoles";
-      Text = "PopupRoles";
+      StartPosition = FormStartPosition.CenterParent;
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel10.ResumeLayout(false);

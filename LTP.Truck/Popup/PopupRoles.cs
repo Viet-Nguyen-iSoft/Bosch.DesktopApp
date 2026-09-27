@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LTP.Truck.Controls;
 
 namespace LTP.Truck.Popup
 {
@@ -32,6 +33,9 @@ namespace LTP.Truck.Popup
       _initialCodes = DeserializeRoleCodes(user.Role);
       _selectedCodes = new HashSet<string>(_initialCodes, StringComparer.Ordinal);
       InitializeComponent();
+      SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+      AppTheme.Apply(this);
+      CustomUI();
 
       lbTitle.Text = $"Phân quyền: {_user.DisplayName ?? _user.Username}";
       btnAdd.Visible = false;
@@ -44,6 +48,20 @@ namespace LTP.Truck.Popup
       btnClose.Click += (_, _) => Close();
       dgv.CurrentCellDirtyStateChanged += Dgv_CurrentCellDirtyStateChanged;
       dgv.CellValueChanged += Dgv_CellValueChanged;
+    }
+
+    private void CustomUI()
+    {
+      dgv.EnableHeadersVisualStyles = false;
+      dgv.ColumnHeadersHeight = 50;
+      dgv.ColumnHeadersHeightSizeMode =
+        DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+      dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+      dgv.RowTemplate.Height = 60;
+      dgv.BorderStyle = BorderStyle.None;
+      dgv.MultiSelect = false;
+      dgv.ColumnHeadersDefaultCellStyle.Alignment =
+        DataGridViewContentAlignment.MiddleCenter;
     }
 
     private async Task LoadRolesAsync()
@@ -103,6 +121,10 @@ namespace LTP.Truck.Popup
       }
 
       dgv.Columns[SelectedColumnName].DisplayIndex = 0;
+      dgv.Columns[SelectedColumnName].HeaderCell.Style.Alignment =
+        DataGridViewContentAlignment.MiddleCenter;
+      dgv.Columns[SelectedColumnName].DefaultCellStyle.Alignment =
+        DataGridViewContentAlignment.MiddleCenter;
       dgv.Columns["Code"].HeaderText = "Mã quyền";
       dgv.Columns["Name"].HeaderText = "Tên quyền";
       dgv.Columns["Description"].HeaderText = "Mô tả";

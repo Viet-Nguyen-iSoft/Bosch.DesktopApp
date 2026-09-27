@@ -153,6 +153,8 @@ namespace LTP.Truck.Forms
       ucPanelLogin1.Password = "Hsf@2026";
       ucPanelLogin1.Account = "admin";
       ucPanelLogin1.Password = "admin";
+      ucPanelLogin1.Account = "HaiThanh";
+      ucPanelLogin1.Password = "HaiThanh@123";
       ucPanelLogin1.OnSendLogin += UcPanelLogin1_OnSendLogin;
     }
 

@@ -44,7 +44,6 @@ namespace ApiSyncData
         AddOptionalFormField(formData, "IdCardCode", "");
         formData.Add(new StringContent(user.EnableFlag.ToString().ToLowerInvariant()), "EnableFlag");
         formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
-        formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
         formData.Add(new StringContent(user.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag");
         formData.Add(new StringContent(lang), "lang");
 
