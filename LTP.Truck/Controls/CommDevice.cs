@@ -120,7 +120,7 @@ namespace LTP.Truck.Controls
         NameDevice = connection.Name ?? "Cân TCP",
         Host = configData.Host,
         Port = configData.Port,
-        eModeCommunication = EnumModeCommunication.SICS,
+        eModeCommunication = configData.eModeCommunication,
         AutoConnect = configData.AutoConnect,
         TimeoutMs = configData.TimeoutMs,
         Request = configData.Request,
@@ -144,6 +144,7 @@ namespace LTP.Truck.Controls
         DataBits = configData.DataBits,
         StopBits = configData.StopBits,
         Parity = configData.Parity,
+        eModeCommunication = configData.eModeCommunication,
         AutoConnect = configData.AutoConnect,
         Request = configData.Request,
         TimeRequest = configData.TimeRequest

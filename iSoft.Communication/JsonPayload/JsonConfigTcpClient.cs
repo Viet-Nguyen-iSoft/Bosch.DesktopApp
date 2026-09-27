@@ -6,11 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static iSoft.Communication.EnumCommunication;
+using Newtonsoft.Json;
 
 namespace iSoft.Communication.JsonPayload
 {
   public class JsonConfigTcpClient
   {
+    [DisplayName("Chuẩn giải mã")]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public EnumModeCommunication eModeCommunication { get; set; } =
+      EnumModeCommunication.SICS;
+
     [Browsable(false)]
     [DisplayName("Mã kết nối")]
     public Guid Id { get; set; }

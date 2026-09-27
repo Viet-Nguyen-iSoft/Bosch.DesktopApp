@@ -1048,89 +1048,89 @@ namespace ApiSyncData
       return responseContent;
     }
 
-    public async Task<string> UploadReportTruckPdf(Guid? recordTruck, string pdfFilePath)
-    {
-      try
-      {
-        if (!recordTruck.HasValue || recordTruck.Value == Guid.Empty)
-          throw new ArgumentException(
-              "recordTruck không hợp lệ.",
-              nameof(recordTruck));
+    //public async Task<string> UploadReportTruckPdf(Guid? recordTruck, string pdfFilePath)
+    //{
+    //  try
+    //  {
+    //    if (!recordTruck.HasValue || recordTruck.Value == Guid.Empty)
+    //      throw new ArgumentException(
+    //          "recordTruck không hợp lệ.",
+    //          nameof(recordTruck));
 
-        if (string.IsNullOrWhiteSpace(pdfFilePath))
-          throw new ArgumentException(
-              "Đường dẫn file PDF không được để trống.",
-              nameof(pdfFilePath));
+    //    if (string.IsNullOrWhiteSpace(pdfFilePath))
+    //      throw new ArgumentException(
+    //          "Đường dẫn file PDF không được để trống.",
+    //          nameof(pdfFilePath));
 
-        if (!File.Exists(pdfFilePath))
-          throw new FileNotFoundException(
-              "Không tìm thấy file PDF.",
-              pdfFilePath);
+    //    if (!File.Exists(pdfFilePath))
+    //      throw new FileNotFoundException(
+    //          "Không tìm thấy file PDF.",
+    //          pdfFilePath);
 
-        if (!string.Equals(
-                Path.GetExtension(pdfFilePath),
-                ".pdf",
-                StringComparison.OrdinalIgnoreCase))
-        {
-          throw new ArgumentException(
-              "File tải lên phải có định dạng PDF.",
-              nameof(pdfFilePath));
-        }
+    //    if (!string.Equals(
+    //            Path.GetExtension(pdfFilePath),
+    //            ".pdf",
+    //            StringComparison.OrdinalIgnoreCase))
+    //    {
+    //      throw new ArgumentException(
+    //          "File tải lên phải có định dạng PDF.",
+    //          nameof(pdfFilePath));
+    //    }
 
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
-          ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
-          ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
-        string apiUrl =
-          $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/upload-pdf";
+    //    string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+    //      ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+    //    string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+    //      ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+    //    string apiUrl =
+    //      $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/upload-pdf";
 
-        using var httpClient = new HttpClient();
-        using var formData = new MultipartFormDataContent();
-        using var fileStream = File.OpenRead(pdfFilePath);
-        using var fileContent = new StreamContent(fileStream);
+    //    using var httpClient = new HttpClient();
+    //    using var formData = new MultipartFormDataContent();
+    //    using var fileStream = File.OpenRead(pdfFilePath);
+    //    using var fileContent = new StreamContent(fileStream);
 
-        // Giống cấu hình Authorization trong Postman:
-        // API Key, Key = X-API-KEY, Add to = Header
-        httpClient.DefaultRequestHeaders.Add(
-            "X-API-KEY",
-            apiKey);
+    //    // Giống cấu hình Authorization trong Postman:
+    //    // API Key, Key = X-API-KEY, Add to = Header
+    //    httpClient.DefaultRequestHeaders.Add(
+    //        "X-API-KEY",
+    //        apiKey);
 
-        fileContent.Headers.ContentType =
-            new MediaTypeHeaderValue("application/pdf");
+    //    fileContent.Headers.ContentType =
+    //        new MediaTypeHeaderValue("application/pdf");
 
-        formData.Add(
-            fileContent,
-            "pdfFile",
-            Path.GetFileName(pdfFilePath));
+    //    formData.Add(
+    //        fileContent,
+    //        "pdfFile",
+    //        Path.GetFileName(pdfFilePath));
 
-        formData.Add(
-            new StringContent(recordTruck.Value.ToString()),
-            "recordTruckId");
+    //    formData.Add(
+    //        new StringContent(recordTruck.Value.ToString()),
+    //        "recordTruckId");
 
-        using var response = await httpClient.PostAsync(
-            apiUrl,
-            formData);
+    //    using var response = await httpClient.PostAsync(
+    //        apiUrl,
+    //        formData);
 
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
+    //    var responseContent =
+    //        await response.Content.ReadAsStringAsync();
 
-        if (!response.IsSuccessStatusCode)
-        {
-          throw new HttpRequestException(
-              $"Upload PDF thất bại. " +
-              $"URL: {apiUrl}. " +
-              $"HTTP {(int)response.StatusCode} " +
-              $"({response.ReasonPhrase}). " +
-              $"Response: {responseContent}");
-        }
+    //    if (!response.IsSuccessStatusCode)
+    //    {
+    //      throw new HttpRequestException(
+    //          $"Upload PDF thất bại. " +
+    //          $"URL: {apiUrl}. " +
+    //          $"HTTP {(int)response.StatusCode} " +
+    //          $"({response.ReasonPhrase}). " +
+    //          $"Response: {responseContent}");
+    //    }
 
-        return responseContent;
-      }
-      catch (Exception ex)
-      {
-        throw;
-      }
-    }
+    //    return responseContent;
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    throw;
+    //  }
+    //}
 
   }
 }

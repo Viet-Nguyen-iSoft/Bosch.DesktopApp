@@ -7,11 +7,17 @@ using Newtonsoft.Json.Converters;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static iSoft.Communication.EnumCommunication;
 
 namespace iSoft.Communication.JsonPayload
 {
   public class JsonConfigTcpSerial
   {
+    [DisplayName("Chuẩn giải mã")]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public EnumModeCommunication eModeCommunication { get; set; } =
+      EnumModeCommunication.SICS;
+
     [Browsable(false)]
     [DisplayName("Mã kết nối")]
     public Guid Id { get; set; }

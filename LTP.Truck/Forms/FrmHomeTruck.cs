@@ -572,14 +572,6 @@ namespace LTP.Truck.Forms
 
         await LoadLicensePlateSuggestionsAsync();
         await LoadHistorical();
-
-        ////POST PDF
-        RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
-        if (record != null)
-        {
-          var pathPdf = await DownloadReportTruck02(DateTime.Now, record);
-          //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
-        }
       }
       catch (Exception ex)
       {
@@ -642,6 +634,32 @@ namespace LTP.Truck.Forms
         {
           var pathPdf = await DownloadReportTruck02(DateTime.Now, record);
           //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
+
+          //Printer
+          if (!string.IsNullOrEmpty(AppCore.Ins._appConfig?.NamePrintA4))
+          {
+            var rs = PrinterUSBHelper.GetPrinterStatus(AppCore.Ins._appConfig.NamePrintA4);
+            if (rs.StatusPrintA4 == StatusPrintA4.Idle)
+            {
+              PdfPrinter.PrintPdf(pathPdf, AppCore.Ins._appConfig?.NamePrintA4);
+            }
+            else
+            {
+              using var popupMsg = new PopupConfirm(
+                                 "Không tìm thấy thông tin máy in !",
+                                 EnumTypeMsg.MessageManualClose,
+                                 EnumImageMsg.Warning);
+              popupMsg.ShowDialog(this);
+            }  
+          }
+          else
+          {
+            using var popupMsg = new PopupConfirm(
+                                 "Không tìm thấy thông tin máy in !",
+                                 EnumTypeMsg.MessageManualClose,
+                                 EnumImageMsg.Warning);
+            popupMsg.ShowDialog(this);
+          }  
         }
       }
       catch (Exception ex)
@@ -1426,67 +1444,75 @@ namespace LTP.Truck.Forms
           }
         }
 
-        var rs = await DownloadReportTruck02(DateTime.Now, record);
+        var pathFilePdf = await DownloadReportTruck02(DateTime.Now, record);
 
         //Đồng bộ pdf
-        if (File.Exists(pathPdf))
+        if (File.Exists(pathFilePdf))
         {
-          await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
-        }
-
-        var openReportFile = false;
-        using (var popup = new PopupConfirm(
-          "Tạo phiếu thành công. Bạn có muốn mở file không?",
-          EnumTypeMsg.Confirm,
-          EnumImageMsg.Question))
-        {
-          popup.OnSendConfirm += (_, response) =>
-            openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
-          popup.ShowDialog(this);
-        }
-
-        if (openReportFile)
-        {
-          try
+          //Printer
+          if (!string.IsNullOrEmpty(AppCore.Ins._appConfig?.NamePrintA4))
           {
-            Process.Start(new ProcessStartInfo
+            var rs = PrinterUSBHelper.GetPrinterStatus(AppCore.Ins._appConfig.NamePrintA4);
+            if (rs.StatusPrintA4 == StatusPrintA4.Idle)
             {
-              FileName = rs,
-              UseShellExecute = true,
-            });
+              PdfPrinter.PrintPdf(pathFilePdf, AppCore.Ins._appConfig?.NamePrintA4);
+
+              using var popup = new PopupConfirm(
+                                                  "In phiếu thành công.",
+                                                  EnumTypeMsg.MessageAutoClose,
+                                                  EnumImageMsg.Information);
+                                                  popup.ShowDialog(this);
+            }
+            else
+            {
+              using var popupMsg = new PopupConfirm(
+                                 "Không tìm thấy thông tin máy in !",
+                                 EnumTypeMsg.MessageManualClose,
+                                 EnumImageMsg.Warning);
+              popupMsg.ShowDialog(this);
+            }
           }
-          catch (Exception openException)
+          else
           {
-            HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
-            using var openErrorPopup = new PopupConfirm(
-              "Đã tạo phiếu nhưng không thể mở file.",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-            openErrorPopup.ShowDialog(this);
+            using var popupMsg = new PopupConfirm(
+                                 "Không tìm thấy thông tin máy in !",
+                                 EnumTypeMsg.MessageManualClose,
+                                 EnumImageMsg.Warning);
+            popupMsg.ShowDialog(this);
           }
         }
 
-        //POST PDF
-        //await (new ApiService()).UploadReportTruckPdf(record.Id, rs);
-
-
-        //var recordWeightsByProduct = (record.RecordWeights ?? Enumerable.Empty<RecordWeight>())
-        //.GroupBy(recordWeight => recordWeight.ProductId)
-        //.Select(group => new
+        //var openReportFile = false;
+        //using (var popup = new PopupConfirm(
+        //  "Tạo phiếu thành công. Bạn có muốn mở file không?",
+        //  EnumTypeMsg.Confirm,
+        //  EnumImageMsg.Question))
         //{
-        //  ProductGroup = group.First().Product.ProductGroup?.Name,
-        //  ProductName = group.First().Product?.Name ?? string.Empty,
-        //  ProductCode = group.First().Product?.Code ?? string.Empty,
-        //  SumNet = group.Sum(recordWeight => recordWeight.Net)
-        //})
-        //.ToList();
+        //  popup.OnSendConfirm += (_, response) =>
+        //    openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
+        //  popup.ShowDialog(this);
+        //}
 
-        //await Download(DateTime.Now, record);
-
-
-
-        //PopupConfirm popupConfirm = new PopupConfirm("In phiếu giao nhận thành công.", EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
-        //popupConfirm.ShowDialog();
+        //if (openReportFile)
+        //{
+        //  try
+        //  {
+        //    Process.Start(new ProcessStartInfo
+        //    {
+        //      FileName = rs,
+        //      UseShellExecute = true,
+        //    });
+        //  }
+        //  catch (Exception openException)
+        //  {
+        //    HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
+        //    using var openErrorPopup = new PopupConfirm(
+        //      "Đã tạo phiếu nhưng không thể mở file.",
+        //      EnumTypeMsg.MessageManualClose,
+        //      EnumImageMsg.Warning);
+        //    openErrorPopup.ShowDialog(this);
+        //  }
+        //}
       }
       catch (Exception ex)
       {

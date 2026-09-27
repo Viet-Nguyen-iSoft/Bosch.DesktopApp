@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Common.EnumData;
 using static HelperManager.EnumData;
+using static iSoft.Communication.EnumCommunication;
 
 namespace Common.Settings
 {
@@ -29,6 +30,9 @@ namespace Common.Settings
 
       iconAutoConnect.Tag = false;
       iconAutoConnect.Image = Properties.Resources.switch_off;
+
+      BindDecodeModes();
+      txtTimeSendReq.Texts = "200";
     }
     public PopupSettingTcpClient(Connection connection):this()
     {
@@ -50,6 +54,9 @@ namespace Common.Settings
       txtIP.Texts = jsonConfigTcpClient?.Host ?? string.Empty;
       txtPort.Texts = jsonConfigTcpClient?.Port.ToString() ?? string.Empty;
       txtTimeout.Texts = jsonConfigTcpClient?.TimeoutMs.ToString() ?? string.Empty;
+      cbbDecode.SelectedValue = jsonConfigTcpClient?.eModeCommunication ??
+        EnumModeCommunication.SICS;
+      txtTimeSendReq.Texts = (jsonConfigTcpClient?.TimeRequest ?? 200).ToString();
 
       iconAutoConnect.Image = jsonConfigTcpClient?.AutoConnect??false ? Properties.Resources.switch_on : Properties.Resources.switch_off;
       iconSendReq.Image = jsonConfigTcpClient?.Request ?? false ? Properties.Resources.switch_on : Properties.Resources.switch_off;
@@ -60,13 +67,25 @@ namespace Common.Settings
 
     private void btnConfirm_Click(object sender, EventArgs e)
     {
+      if (!int.TryParse(txtTimeSendReq.Texts.Trim(), out int timeRequest) ||
+          timeRequest <= 0)
+      {
+        MessageBox.Show("Thời gian gửi yêu cầu phải là số millisecond lớn hơn 0.");
+        txtTimeSendReq.Focus();
+        return;
+      }
+
       JsonConfigTcpClient jsonConfigTcpClient = new JsonConfigTcpClient();
       jsonConfigTcpClient.Host = txtIP.Texts;
       jsonConfigTcpClient.Port = int.Parse(txtPort.Texts);
       jsonConfigTcpClient.TimeoutMs = int.Parse(txtTimeout.Texts);
       jsonConfigTcpClient.AutoConnect = (bool)iconAutoConnect.Tag;
       jsonConfigTcpClient.Request = (bool)iconSendReq.Tag;
-      jsonConfigTcpClient.TimeRequest = 500;
+      jsonConfigTcpClient.eModeCommunication =
+        cbbDecode.SelectedValue is EnumModeCommunication decodeMode
+          ? decodeMode
+          : EnumModeCommunication.SICS;
+      jsonConfigTcpClient.TimeRequest = timeRequest;
       string json = JsonHelper.ToJson(jsonConfigTcpClient);
 
       if (_connection==null)
@@ -123,6 +142,20 @@ namespace Common.Settings
       iconAutoConnect.Image = isOn
         ? Properties.Resources.switch_on
         : Properties.Resources.switch_off;
+    }
+
+    private void BindDecodeModes()
+    {
+      cbbDecode.DisplayMember = "Description";
+      cbbDecode.ValueMember = "Value";
+      cbbDecode.DataSource = Enum.GetValues<EnumModeCommunication>()
+        .Select(value => new
+        {
+          Value = value,
+          Description = EnumHelper.GetDescription(value)
+        })
+        .ToList();
+      cbbDecode.SelectedValue = EnumModeCommunication.SICS;
     }
   }
 }

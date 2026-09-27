@@ -3,6 +3,7 @@ using iSoft.Communication.JsonPayload;
 using iSoft.Database.Models;
 using System.IO.Ports;
 using static HelperManager.EnumData;
+using static iSoft.Communication.EnumCommunication;
 
 namespace Common.Settings
 {
@@ -28,6 +29,9 @@ namespace Common.Settings
       cbbDataBits.DataSource = new[] { 5, 6, 7, 8 };
       cbbStopBit.DataSource = new[] { StopBits.One, StopBits.OnePointFive, StopBits.Two };
       cbbParity.DataSource = Enum.GetValues<Parity>();
+
+      BindDecodeModes();
+      txtTimeSendReq.Texts = "200";
     }
 
     public PopupSettingSerial(Connection connection) : this()
@@ -54,6 +58,9 @@ namespace Common.Settings
       cbbDataBits.SelectedItem = config?.DataBits ?? 8;
       cbbStopBit.SelectedItem = config?.StopBits ?? StopBits.One;
       cbbParity.SelectedItem = config?.Parity ?? Parity.None;
+      cbbDecode.SelectedValue = config?.eModeCommunication ??
+        EnumModeCommunication.SICS;
+      txtTimeSendReq.Texts = (config?.TimeRequest ?? 200).ToString();
 
       var autoConnect = config?.AutoConnect ?? false;
       var sendRequest = config?.Request ?? false;
@@ -65,6 +72,14 @@ namespace Common.Settings
 
     private void btnConfirm_Click(object sender, EventArgs e)
     {
+      if (!int.TryParse(txtTimeSendReq.Texts.Trim(), out int timeRequest) ||
+          timeRequest <= 0)
+      {
+        MessageBox.Show("Thời gian gửi yêu cầu phải là số millisecond lớn hơn 0.");
+        txtTimeSendReq.Focus();
+        return;
+      }
+
       var config = new JsonConfigTcpSerial
       {
         COM = cbbComm.SelectedItem?.ToString(),
@@ -74,7 +89,11 @@ namespace Common.Settings
         Parity = cbbParity.SelectedItem is Parity parity ? parity : Parity.None,
         AutoConnect = iconAutoConnect.Tag is bool autoConnect && autoConnect,
         Request = iconSendReq.Tag is bool sendRequest && sendRequest,
-        TimeRequest = 500
+        eModeCommunication =
+          cbbDecode.SelectedValue is EnumModeCommunication decodeMode
+            ? decodeMode
+            : EnumModeCommunication.SICS,
+        TimeRequest = timeRequest
       };
 
       _connection ??= new Connection
@@ -110,6 +129,20 @@ namespace Common.Settings
       var isOn = !(icon.Tag is bool value && value);
       icon.Tag = isOn;
       icon.Image = isOn ? Properties.Resources.switch_on : Properties.Resources.switch_off;
+    }
+
+    private void BindDecodeModes()
+    {
+      cbbDecode.DisplayMember = "Description";
+      cbbDecode.ValueMember = "Value";
+      cbbDecode.DataSource = Enum.GetValues<EnumModeCommunication>()
+        .Select(value => new
+        {
+          Value = value,
+          Description = EnumHelper.GetDescription(value)
+        })
+        .ToList();
+      cbbDecode.SelectedValue = EnumModeCommunication.SICS;
     }
   }
 }
