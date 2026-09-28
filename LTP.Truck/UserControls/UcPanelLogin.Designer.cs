@@ -112,7 +112,7 @@ namespace LTP.Truck.UserControls
       label2.Location = new Point(0, 0);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
-      label2.Size = new Size(590, 33);
+      label2.Size = new Size(590, 37);
       label2.TabIndex = 1;
       label2.Text = "Tên đăng nhập";
       label2.TextAlign = ContentAlignment.MiddleLeft;
@@ -127,7 +127,7 @@ namespace LTP.Truck.UserControls
       txtAccount.BorderSize = 2;
       txtAccount.Font = new Font("Roboto", 26.25F);
       txtAccount.ForeColor = Color.FromArgb(64, 64, 64);
-      txtAccount.Location = new Point(4, 43);
+      txtAccount.Location = new Point(4, 45);
       txtAccount.Margin = new Padding(4);
       txtAccount.Multiline = false;
       txtAccount.Name = "txtAccount";
@@ -165,7 +165,7 @@ namespace LTP.Truck.UserControls
       label3.Location = new Point(0, 0);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
-      label3.Size = new Size(590, 33);
+      label3.Size = new Size(590, 37);
       label3.TabIndex = 1;
       label3.Text = "Mật khẩu";
       label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -178,11 +178,11 @@ namespace LTP.Truck.UserControls
       tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 13.356164F));
       tableLayoutPanel4.Controls.Add(txtPass, 0, 0);
       tableLayoutPanel4.Controls.Add(btnHide, 1, 0);
-      tableLayoutPanel4.Location = new Point(3, 36);
+      tableLayoutPanel4.Location = new Point(3, 40);
       tableLayoutPanel4.Name = "tableLayoutPanel4";
       tableLayoutPanel4.RowCount = 1;
       tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-      tableLayoutPanel4.Size = new Size(584, 71);
+      tableLayoutPanel4.Size = new Size(584, 67);
       tableLayoutPanel4.TabIndex = 2;
       // 
       // txtPass
@@ -195,7 +195,7 @@ namespace LTP.Truck.UserControls
       txtPass.BorderSize = 2;
       txtPass.Font = new Font("Roboto", 26.25F);
       txtPass.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPass.Location = new Point(4, 7);
+      txtPass.Location = new Point(4, 5);
       txtPass.Margin = new Padding(4);
       txtPass.Multiline = false;
       txtPass.Name = "txtPass";
@@ -211,8 +211,8 @@ namespace LTP.Truck.UserControls
       // btnHide
       // 
       btnHide.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnHide.BackColor = Color.FromArgb(255, 128, 128);
-      btnHide.BackgroundColor = Color.FromArgb(255, 128, 128);
+      btnHide.BackColor = Color.FromArgb(64, 107, 177);
+      btnHide.BackgroundColor = Color.FromArgb(64, 107, 177);
       btnHide.BorderColor = Color.PaleVioletRed;
       btnHide.BorderRadius = 5;
       btnHide.BorderSize = 0;
@@ -220,7 +220,7 @@ namespace LTP.Truck.UserControls
       btnHide.FlatStyle = FlatStyle.Flat;
       btnHide.ForeColor = Color.White;
       btnHide.Image = Properties.Resources.icon_hide;
-      btnHide.Location = new Point(509, 7);
+      btnHide.Location = new Point(509, 5);
       btnHide.Name = "btnHide";
       btnHide.Size = new Size(72, 57);
       btnHide.TabIndex = 4;

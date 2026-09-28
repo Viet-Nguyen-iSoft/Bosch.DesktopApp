@@ -198,42 +198,24 @@ namespace iSoft.Communication.Interface
         else if (eModeCommunication == EnumModeCommunication.Continuous)
         {
           byte[]? bytes = messageDataInput?.DataAsBytes;
-          if (bytes?.Count()==17)
+          var standard = StandardContinuousOutputData.DecodeCTN(bytes);
+          if (standard != null)
           {
-            var rs = StandardContinuousOutputData.Decode(bytes, false);
-            DataWeightInterface.IndicatedWeight = rs.IndicatedWeight??0.0;
-            DataWeightInterface.Unit = UnitOfWeight.Kilograms;
-            DataWeightInterface.ActiveWeighingStatus = ActiveWeighingStatus.Default;
-            DataWeightReceived?.Invoke(this, DataWeightInterface);
-          } 
-          else if (bytes?.Count() == 18)
+            PublishContinuousData(
+              standard.IndicatedWeight ?? 0,
+              standard.TareWeight ?? 0,
+              standard.Unit,
+              standard.ActiveWeighingStatus);
+          }
+          else if (ExtendedContinuousOutputData.TryDecode(bytes, out var extended) &&
+                   extended != null)
           {
-            var rs = StandardContinuousOutputData.Decode(bytes, false);
-            DataWeightInterface.IndicatedWeight = rs.IndicatedWeight ?? 0.0;
-            DataWeightInterface.Unit = UnitOfWeight.Kilograms;
-            DataWeightInterface.ActiveWeighingStatus = ActiveWeighingStatus.Default;
-            DataWeightReceived?.Invoke(this, DataWeightInterface);
-          }  
-          
-          
-          //var standard = StandardContinuousOutputData.DecodeCTN(bytes);
-          //if (standard != null)
-          //{
-          //  PublishContinuousData(
-          //    standard.IndicatedWeight ?? 0,
-          //    standard.TareWeight ?? 0,
-          //    standard.Unit,
-          //    standard.ActiveWeighingStatus);
-          //}
-          //else if (ExtendedContinuousOutputData.TryDecode(bytes, out var extended) &&
-          //         extended != null)
-          //{
-          //  PublishContinuousData(
-          //    extended.IndicatedWeight,
-          //    extended.TareWeight,
-          //    extended.Unit,
-          //    extended.ActiveWeighingStatus);
-          //}
+            PublishContinuousData(
+              extended.IndicatedWeight,
+              extended.TareWeight,
+              extended.Unit,
+              extended.ActiveWeighingStatus);
+          }
         }
         else if (eModeCommunication == EnumModeCommunication.Digi)
         {

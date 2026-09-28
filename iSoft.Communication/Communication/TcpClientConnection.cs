@@ -126,20 +126,19 @@ namespace iSoft.Communication.Communication
     private readonly List<byte> _receiveBytes = new();
     private void Client_DataReceived(object? sender, DataReceivedEventArgs e)
     {
-      try
-      {
-        _messageDataInput.Source = this.ConnectionId;
-        _messageDataInput.MachineId = this.MachineId;
-        _messageDataInput.DataAsString = Encoding.UTF8.GetString(e.Data);
-        _messageDataInput.DataAsBytes = e.Data.ToArray();
-        _messageDataInput.SourceDateTime = DateTime.Now;
-        _messageDataInput.eModeCommunication = this.EModeCommunication;
-        OnDataReceived(_messageDataInput, this.EModeCommunication);
-      }
-      catch (Exception)
-      {
+      //string chunk = Encoding.UTF8.GetString(e.Data);
+      //_receiveBuffer.Append(chunk);
+      //string buffer = _receiveBuffer.ToString();
+      //buffer = GetLatestMessage(buffer);
 
-      }
+
+      //_messageDataInput.Source = this.ConnectionId;
+      //_messageDataInput.MachineId = this.MachineId;
+      //_messageDataInput.DataAsString = buffer;
+      //_messageDataInput.DataAsBytes = e.Data.ToArray();
+      //_messageDataInput.SourceDateTime = DateTime.Now;
+      //_messageDataInput.eModeCommunication = this.EModeCommunication;
+      //OnDataReceived(_messageDataInput, EnumModeCommunication.SICS);
 
 
 
@@ -147,39 +146,39 @@ namespace iSoft.Communication.Communication
 
 
       //return;
-      //string chunk = Encoding.UTF8.GetString(e.Data);
-      //_receiveBuffer.Append(chunk);
+      string chunk = Encoding.UTF8.GetString(e.Data);
+      _receiveBuffer.Append(chunk);
 
-      //string buffer = _receiveBuffer.ToString();
+      string buffer = _receiveBuffer.ToString();
 
-      //int index;
-      //while ((index = buffer.IndexOf("\n")) >= 0)
-      //{
-      //  try
-      //  {
-      //    string fullMessage = buffer.Substring(0, index).Trim();
-      //    buffer = buffer.Substring(index + 1);
-      //    byte[] dataByte = System.Text.Encoding.UTF8.GetBytes(fullMessage);
+      int index;
+      while ((index = buffer.IndexOf("\n")) >= 0)
+      {
+        try
+        {
+          string fullMessage = buffer.Substring(0, index).Trim();
+          buffer = buffer.Substring(index + 1);
+          byte[] dataByte = System.Text.Encoding.UTF8.GetBytes(fullMessage);
 
-      //    _messageDataInput.Source = this.ConnectionId;
-      //    _messageDataInput.MachineId = this.MachineId;
-      //    _messageDataInput.DataAsString = fullMessage;
-      //    _messageDataInput.DataAsBytes = dataByte;
-      //    _messageDataInput.SourceDateTime = DateTime.Now;
-      //    _messageDataInput.eValueWeightType = EnumValueWeightType.Tare;
-      //    _messageDataInput.eModeCommunication = this.EModeCommunication;
+          _messageDataInput.Source = this.ConnectionId;
+          _messageDataInput.MachineId = this.MachineId;
+          _messageDataInput.DataAsString = fullMessage;
+          _messageDataInput.DataAsBytes = dataByte;
+          _messageDataInput.SourceDateTime = DateTime.Now;
+          _messageDataInput.eValueWeightType = EnumValueWeightType.Tare;
+          _messageDataInput.eModeCommunication = this.EModeCommunication;
 
-      //    OnDataReceived(_messageDataInput, EnumModeCommunication.SICS);
-      //  }
-      //  catch (Exception)
-      //  {
-      //    throw;
-      //  }
+          OnDataReceived(_messageDataInput, EnumModeCommunication.SICS);
+        }
+        catch (Exception)
+        {
+          throw;
+        }
 
-      //}
+      }
 
-      //_receiveBuffer.Clear();
-      //_receiveBuffer.Append(buffer);
+      _receiveBuffer.Clear();
+      _receiveBuffer.Append(buffer);
     }
 
 

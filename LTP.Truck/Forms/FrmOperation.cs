@@ -386,29 +386,14 @@ namespace LTP.Truck.Forms
     }
     private async void btnMasterData_Click(object sender, EventArgs e)
     {
-      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      if ((!AppCore.Ins.CheckPermission("0048")) || (!AppCore.Ins.CheckPermission("0054")))
       {
-        if (!AppCore.Ins.CheckPermission("0048"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return;
-        }
-      }
-      else
-      {
-        if (!AppCore.Ins.CheckPermission("0054"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return;
-        }
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -437,30 +422,15 @@ namespace LTP.Truck.Forms
     }
     private async void btnSetting_Click(object sender, EventArgs e)
     {
-      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      if (!AppCore.Ins.CheckPermission("0046") || !AppCore.Ins.CheckPermission("0052"))
       {
-        if (!AppCore.Ins.CheckPermission("0046"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return;
-        }
-      }  
-      else
-      {
-        if (!AppCore.Ins.CheckPermission("0052"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return;
-        }
-      }  
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.Setting);

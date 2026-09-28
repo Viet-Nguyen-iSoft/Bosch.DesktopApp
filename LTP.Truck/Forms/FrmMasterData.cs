@@ -296,29 +296,14 @@ namespace LTP.Truck.Forms
 
     private void btnAddnew_Click(object sender, EventArgs e)
     {
-      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      if (!AppCore.Ins.CheckPermission("0044") || !AppCore.Ins.CheckPermission("0051"))
       {
-        if (!AppCore.Ins.CheckPermission("0044"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return;
-        }
-      }
-      else
-      {
-        if (!AppCore.Ins.CheckPermission("0051"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return;
-        }
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return;
       }
 
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
@@ -888,29 +873,14 @@ namespace LTP.Truck.Forms
 
     private Task EditMasterDataAsync(object? rowData)
     {
-      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      if (!AppCore.Ins.CheckPermission("0051"))
       {
-        if (!AppCore.Ins.CheckPermission("0044"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return Task.CompletedTask;
-        }
-      }
-      else
-      {
-        if (!AppCore.Ins.CheckPermission("0051"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return Task.CompletedTask;
-        }
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return Task.CompletedTask;
       }
 
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
@@ -1121,29 +1091,14 @@ namespace LTP.Truck.Forms
 
     private Task DeleteMasterDataAsync(object? rowData)
     {
-      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      if (!AppCore.Ins.CheckPermission("0051"))
       {
-        if (!AppCore.Ins.CheckPermission("0044"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return Task.CompletedTask;
-        }
-      }
-      else
-      {
-        if (!AppCore.Ins.CheckPermission("0051"))
-        {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-          return Task.CompletedTask;
-        }
+        using var openErrorPopup = new PopupConfirm(
+              "Tài khoản không có phân quyền thực hiện !",
+              EnumTypeMsg.MessageManualClose,
+              EnumImageMsg.Warning);
+        openErrorPopup.ShowDialog(this);
+        return Task.CompletedTask;
       }
 
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
