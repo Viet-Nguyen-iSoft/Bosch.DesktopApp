@@ -258,6 +258,7 @@ namespace LTP.Truck
         AppCore.Ins._userCurrent = null;
         FrmOperation.Instance.LoadAccount(null);
         ChangePage(EnumScreen.Waiting);
+        FrmWaiting.Instance.ClearAccount();
       }
       catch (Exception ex)
       {

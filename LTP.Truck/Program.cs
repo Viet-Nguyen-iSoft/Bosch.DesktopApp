@@ -67,6 +67,10 @@ namespace LTP.Truck
       ["0047"] = "Cho phép chỉnh sửa cài đặt",
       ["0048"] = "Cho phép xem dữ liệu masterdata",
       ["0049"] = "Cho phép xem lịch sử cân",
+
+      ["0100"] = "Cho phép xem danh sách tài khoản",
+      ["0101"] = "Cho phép thêm tài khoản",
+      ["0102"] = "Cho phép chỉnh sửa/xóa tài khoản",
     };
     private static Dictionary<string, string> PermissionsGoods = new Dictionary<string, string>
     {
@@ -75,7 +79,11 @@ namespace LTP.Truck
       ["0052"] = "Cho phép xem cài đặt",
       ["0053"] = "Cho phép chỉnh sửa cài đặt",
       ["0054"] = "Cho phép xem dữ liệu masterdata",
-      ["0055"] = "Cho phép xem lịch sử cân"
+      ["0055"] = "Cho phép xem lịch sử cân",
+
+      ["0110"] = "Cho phép xem danh sách tài khoản",
+      ["0111"] = "Cho phép thêm tài khoản",
+      ["0112"] = "Cho phép chỉnh sửa/xóa tài khoản",
     };
 
     static async Task<bool> InitDb()
@@ -90,7 +98,9 @@ namespace LTP.Truck
             await UpdateDatabaseSchemaAsync(db);
 
             var needsAppConfig = !await db.AppConfigs!.AnyAsync();
+            var needsUsers = !await db.Users!.AnyAsync();
             var needsRoles = !await db.Roles!.AnyAsync();
+            var needStation = !await db.Stations!.AnyAsync();
 
             // Bỏ transaction/SaveChanges trong các lần mở app thông thường.
             if (!needsAppConfig && !needsRoles)
@@ -110,6 +120,7 @@ namespace LTP.Truck
                 OfficeAddress = "Đường số 8, KCN Long Thành, An Phước, T. Đồng Nai",
                 PhoneForOfficeAddress = "0251.628.0340",
                 PermitCheckWeight = false,
+                Version = "1.0.0",
                 DeletedFlag = false,
                 EnableFlag = true,
                 SyncFlag = true,
@@ -118,8 +129,57 @@ namespace LTP.Truck
               });
             }
 
+            if (needStation)
+            {
+              List<Station> stations = new List<Station>();
+              stations.Add(new Station
+              {
+                Name = "Cân xe tải 80 tấn - Trạm 01",
+                Code = "ST01",
+                Description = "",
+                WeightDeviation = 0,
+                DeletedFlag = false,
+                EnableFlag = true,
+                SyncFlag = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+
+              });
+              stations.Add(new Station
+              {
+                Name = "Cân xe tải 80 tấn - Trạm 02",
+                Code = "ST02",
+                Description = "",
+                WeightDeviation = 0,
+                DeletedFlag = false,
+                EnableFlag = true,
+                SyncFlag = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+
+              });
+              stations.Add(new Station
+              {
+                Name = "Cân phế phẩm 3 tấn - Trạm 03",
+                Code = "ST03",
+                Description = "",
+                WeightDeviation = 0,
+                DeletedFlag = false,
+                EnableFlag = true,
+                SyncFlag = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+
+              });
+
+              await db.Stations.AddRangeAsync(stations);
+            }
+
+
+
             if (needsRoles)
             {
+              List<string> rolesStr = new List<string>();
               List<Role> roles = new List<Role>();
               if (PermissionsTruck.Count()>0)
               {
@@ -137,6 +197,8 @@ namespace LTP.Truck
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                   });
+
+                  rolesStr.Add(role.Key);
                 }  
               }
               if (PermissionsGoods.Count() > 0)
@@ -155,9 +217,29 @@ namespace LTP.Truck
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                   });
+                  rolesStr.Add(role.Key);
                 }
               }
               await db.Roles.AddRangeAsync(roles);
+
+              if (needsUsers)
+              {
+                await db.Users.AddAsync(new User
+                {
+                  FullName = "i-Soft",
+                  EmployeeCode = "IS000",
+                  IdCardCode = "",
+                  Username = "ISOFT",
+                  Password = "gbMPGkbKY/Fw2ySUZogOUw==",
+                  DisplayName = "i-Soft",
+                  Role =JsonHelper.ToJson(rolesStr),
+                  DeletedFlag = false,
+                  EnableFlag = true,
+                  SyncFlag = true,
+                  CreatedAt = DateTime.UtcNow,
+                  UpdatedAt = DateTime.UtcNow,
+                });
+              }
             }
 
             await db!.SaveChangesAsync();
