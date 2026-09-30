@@ -86,13 +86,13 @@ namespace ApiSyncData
         var deliveries = LoadAndSyncAsync(api.Delivery(), MasterDataSyncService.SyncDeliveriesAsync,
           value => Deliveries = value, cancellationToken);
 
-        //var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
-        //  value => Users = value, cancellationToken);
+        var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
+          value => Users = value, cancellationToken);
 
 
 
         await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
-          products, categoryTares, clients, deliveries).ConfigureAwait(false);
+          products, categoryTares, clients, deliveries, users).ConfigureAwait(false);
 
         //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
         //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");

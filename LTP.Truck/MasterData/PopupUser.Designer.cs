@@ -55,7 +55,6 @@
       tableLayoutPanel8 = new TableLayoutPanel();
       label9 = new Label();
       label10 = new Label();
-      label12 = new Label();
       tableLayoutPanel9 = new TableLayoutPanel();
       btnHidePassword = new Common.Custom.RJButton();
       txtPassword = new Common.Custom.RJTextBox();
@@ -63,6 +62,9 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
+      tableLayoutPanel11 = new TableLayoutPanel();
+      label11 = new Label();
+      label13 = new Label();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel10.SuspendLayout();
@@ -74,6 +76,7 @@
       tableLayoutPanel8.SuspendLayout();
       tableLayoutPanel9.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanel11.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -104,6 +107,7 @@
       tableLayoutPanel5.ColumnCount = 2;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel5.Controls.Add(tableLayoutPanel11, 0, 5);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel10, 1, 3);
       tableLayoutPanel5.Controls.Add(picActive, 1, 6);
       tableLayoutPanel5.Controls.Add(label4, 0, 6);
@@ -116,7 +120,6 @@
       tableLayoutPanel5.Controls.Add(txtUsername, 1, 0);
       tableLayoutPanel5.Controls.Add(txtDisplayName, 1, 1);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel8, 0, 4);
-      tableLayoutPanel5.Controls.Add(label12, 0, 5);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel9, 1, 2);
       tableLayoutPanel5.Location = new Point(8, 68);
       tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -530,20 +533,6 @@
       label10.Text = "Họ và tên";
       label10.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // label12
-      // 
-      label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label12.AutoSize = true;
-      label12.BackColor = Color.Transparent;
-      label12.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label12.Location = new Point(0, 335);
-      label12.Margin = new Padding(0);
-      label12.Name = "label12";
-      label12.Size = new Size(202, 67);
-      label12.TabIndex = 3;
-      label12.Text = "Mã nhân viên";
-      label12.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // tableLayoutPanel9
       // 
       tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -678,6 +667,51 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
+      // tableLayoutPanel11
+      // 
+      tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel11.ColumnCount = 2;
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel11.Controls.Add(label11, 1, 0);
+      tableLayoutPanel11.Controls.Add(label13, 0, 0);
+      tableLayoutPanel11.Location = new Point(0, 335);
+      tableLayoutPanel11.Margin = new Padding(0);
+      tableLayoutPanel11.Name = "tableLayoutPanel11";
+      tableLayoutPanel11.RowCount = 1;
+      tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel11.Size = new Size(202, 67);
+      tableLayoutPanel11.TabIndex = 51;
+      // 
+      // label11
+      // 
+      label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label11.AutoSize = true;
+      label11.BackColor = Color.Transparent;
+      label11.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label11.ForeColor = Color.Red;
+      label11.Location = new Point(124, 0);
+      label11.Margin = new Padding(0);
+      label11.Name = "label11";
+      label11.Size = new Size(78, 67);
+      label11.TabIndex = 4;
+      label11.Text = "*";
+      label11.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label13
+      // 
+      label13.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label13.AutoSize = true;
+      label13.BackColor = Color.Transparent;
+      label13.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label13.Location = new Point(0, 0);
+      label13.Margin = new Padding(0);
+      label13.Name = "label13";
+      label13.Size = new Size(124, 67);
+      label13.TabIndex = 3;
+      label13.Text = "Mã nhân viên";
+      label13.TextAlign = ContentAlignment.MiddleLeft;
+      // 
       // PopupUser
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -705,6 +739,8 @@
       tableLayoutPanel8.PerformLayout();
       tableLayoutPanel9.ResumeLayout(false);
       tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanel11.ResumeLayout(false);
+      tableLayoutPanel11.PerformLayout();
       ResumeLayout(false);
     }
 
@@ -734,7 +770,6 @@
     private TableLayoutPanel tableLayoutPanel8;
     private Label label9;
     private Label label10;
-    private Label label12;
     private Common.Custom.RJTextBox txtEmployeeCode;
     private Common.Custom.RJTextBox txtFullName;
     private Common.Custom.RJTextBox txtRePassword;
@@ -744,5 +779,8 @@
     private TableLayoutPanel tableLayoutPanel10;
     private Common.Custom.RJButton btnHideRePassword;
     private Common.Custom.RJButton btnHidePassword;
+    private TableLayoutPanel tableLayoutPanel11;
+    private Label label11;
+    private Label label13;
   }
 }

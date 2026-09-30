@@ -195,12 +195,12 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        //if (string.IsNullOrWhiteSpace(employeeCode))
-        //{
-        //  ShowWarning("Vui lòng nhập mã nhân viên !");
-        //  txtEmployeeCode.Focus();
-        //  return;
-        //}
+        if (string.IsNullOrWhiteSpace(employeeCode))
+        {
+          ShowWarning("Vui lòng nhập mã nhân viên !");
+          txtEmployeeCode.Focus();
+          return;
+        }
 
         if (employeeCode.Length > 255)
         {
@@ -241,7 +241,7 @@ namespace LTP.Truck.MasterData
         if (hasPasswordInput)
         {
           userToSave.Password = SecurityHelper.Encrypt(password);
-          userToSave.Password = SecurityHelper.EncodePassword(username, password);
+          //userToSave.Password = SecurityHelper.EncodePassword(username, password);
         }  
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
