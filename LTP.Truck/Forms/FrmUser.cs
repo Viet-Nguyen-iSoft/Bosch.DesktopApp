@@ -342,6 +342,16 @@ namespace LTP.Truck.Forms
         }
       }
 
+      if (AppCore.Ins._userCurrent?.Id == user.Id)
+      {
+        using var warningPopup = new PopupConfirm(
+          "Không thể xóa tài khoản đang đăng nhập !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        warningPopup.ShowDialog(this);
+        return;
+      }
+
       bool isConfirmed = false;
       using (var confirmPopup = new PopupConfirm(
         $"Bạn có chắc chắn muốn xóa tài khoản {user.Username} không?",
