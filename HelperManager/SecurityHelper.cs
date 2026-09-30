@@ -10,10 +10,10 @@ namespace HelperManager
 {
   public static class SecurityHelper
   {
-    //private const string PasswordHashKey =
-    //    "3e7da5e8-9540-40ba-bd75-21fe19686e16";
     private const string PasswordHashKey =
-        "7cf098ec94a84ea49b8fcc59337b9c28";
+        "3e7da5e8-9540-40ba-bd75-21fe19686e16";
+    //private const string PasswordHashKey =
+    //    "7cf098ec94a84ea49b8fcc59337b9c28";
 
     /// <summary>
     /// Mã hóa giống EncodeUtil.EncodePassword của iSoft.Auth.
@@ -54,7 +54,7 @@ namespace HelperManager
       //{
       //  throw new ArgumentException("Secret key must be at least 256 bits (32 characters)");
       //}
-
+      text = "7cf098ec94a84ea49b8fcc59337b9c28";
       byte[] key = Encoding.UTF8.GetBytes(text).Take(32).ToArray();
       using Aes aes = Aes.Create();
       aes.Key = key;

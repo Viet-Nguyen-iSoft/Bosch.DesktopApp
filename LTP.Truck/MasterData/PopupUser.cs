@@ -240,10 +240,9 @@ namespace LTP.Truck.MasterData
         userToSave.EnableFlag = _isActive;
         if (hasPasswordInput)
         {
-          //userToSave.Password = SecurityHelper.Encrypt(password);
+          userToSave.Password = SecurityHelper.Encrypt(password);
           userToSave.Password = SecurityHelper.EncodePassword(username, password);
         }  
-          
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
 
