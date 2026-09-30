@@ -686,6 +686,31 @@ namespace LTP.Truck.Forms
 
     private async void BtnUser_Click(object? sender, EventArgs e)
     {
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      {
+        if (!AppCore.Ins.CheckPermission("0100"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0110"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.User);
     }

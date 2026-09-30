@@ -16,6 +16,7 @@ namespace LTP.Truck.MasterData
     private readonly User? _userUpdate;
     private readonly EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     private readonly bool _isChangePassword;
+    private readonly bool _canChangePassword = true;
     private bool _isActive = true;
     private bool _isPasswordHidden = true;
     private bool _isRePasswordHidden = true;
@@ -39,6 +40,7 @@ namespace LTP.Truck.MasterData
       _userUpdate = user ?? throw new ArgumentNullException(nameof(user));
       _enumTypePopup = EnumTypePopup.Update;
       _isChangePassword = isChangePassword;
+      _canChangePassword = AppCore.Ins._userCurrent?.Id == user.Id;
 
       lbTitle.Text = isChangePassword
         ? "Đổi mật khẩu tài khoản"
@@ -54,7 +56,22 @@ namespace LTP.Truck.MasterData
         txtRePassword.PlaceholderText = "Để trống nếu không đổi mật khẩu";
       }
 
+      ConfigurePasswordAccess();
+
       LoadDataUpdate(user);
+    }
+
+    private void ConfigurePasswordAccess()
+    {
+      if (_canChangePassword)
+        return;
+
+      txtPassword.Enabled = false;
+      txtRePassword.Enabled = false;
+      btnHidePassword.Enabled = false;
+      btnHideRePassword.Enabled = false;
+      txtPassword.PlaceholderText = "Chỉ được đổi mật khẩu tài khoản đang đăng nhập";
+      txtRePassword.PlaceholderText = "Chỉ được đổi mật khẩu tài khoản đang đăng nhập";
     }
 
     private void LoadDataUpdate(User user)
@@ -134,11 +151,11 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        bool isPasswordRequired =
-          _enumTypePopup == EnumTypePopup.Add || _isChangePassword;
-        bool hasPasswordInput =
-          !string.IsNullOrWhiteSpace(password) ||
-          !string.IsNullOrWhiteSpace(rePassword);
+        bool isPasswordRequired = _canChangePassword &&
+          (_enumTypePopup == EnumTypePopup.Add || _isChangePassword);
+        bool hasPasswordInput = _canChangePassword &&
+          (!string.IsNullOrWhiteSpace(password) ||
+           !string.IsNullOrWhiteSpace(rePassword));
 
         if (isPasswordRequired && string.IsNullOrWhiteSpace(password))
         {

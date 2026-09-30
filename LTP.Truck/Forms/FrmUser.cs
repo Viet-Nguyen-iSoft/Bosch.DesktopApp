@@ -270,6 +270,31 @@ namespace LTP.Truck.Forms
 
     private async Task EditUserAsync(iSoft.Database.Models.User user)
     {
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      {
+        if (!AppCore.Ins.CheckPermission("0102"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0112"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+
       bool isUpdated = false;
       iSoft.Database.Models.User? updatedUser = null;
       using var popup = new PopupUser(user);
@@ -292,6 +317,31 @@ namespace LTP.Truck.Forms
 
     private async Task DeleteUserAsync(iSoft.Database.Models.User user)
     {
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      {
+        if (!AppCore.Ins.CheckPermission("0102"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0112"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+
       bool isConfirmed = false;
       using (var confirmPopup = new PopupConfirm(
         $"Bạn có chắc chắn muốn xóa tài khoản {user.Username} không?",
@@ -326,6 +376,31 @@ namespace LTP.Truck.Forms
 
     private async Task EditRolesAsync(iSoft.Database.Models.User user)
     {
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      {
+        if (!AppCore.Ins.CheckPermission("0102"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0112"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+
       bool isUpdated = false;
       iSoft.Database.Models.User? updatedUser = null;
       using var popup = new PopupRoles(user);
@@ -396,6 +471,31 @@ namespace LTP.Truck.Forms
 
     private async void btnAddnew_Click(object? sender, EventArgs e)
     {
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      {
+        if (!AppCore.Ins.CheckPermission("0101"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0111"))
+        {
+          using var openErrorPopup = new PopupConfirm(
+                "Tài khoản không có phân quyền thực hiện !",
+                EnumTypeMsg.MessageManualClose,
+                EnumImageMsg.Warning);
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
