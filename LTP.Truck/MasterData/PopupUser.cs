@@ -17,6 +17,8 @@ namespace LTP.Truck.MasterData
     private readonly EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     private readonly bool _isChangePassword;
     private bool _isActive = true;
+    private bool _isPasswordHidden = true;
+    private bool _isRePasswordHidden = true;
 
     public PopupUser()
     {
@@ -24,6 +26,8 @@ namespace LTP.Truck.MasterData
 
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += BtnClose_Click;
+      btnHidePassword.Click += BtnHidePassword_Click;
+      btnHideRePassword.Click += BtnHideRePassword_Click;
       picActive.Click += PicActive_Click;
       picActive.Cursor = Cursors.Hand;
       txtPassword.PasswordChar = true;
@@ -69,6 +73,24 @@ namespace LTP.Truck.MasterData
     private void BtnClose_Click(object? sender, EventArgs e)
     {
       Close();
+    }
+
+    private void BtnHidePassword_Click(object? sender, EventArgs e)
+    {
+      _isPasswordHidden = !_isPasswordHidden;
+      txtPassword.PasswordChar = _isPasswordHidden;
+      btnHidePassword.Image = _isPasswordHidden
+        ? Properties.Resources.icon_hide
+        : Properties.Resources.icon_unhide;
+    }
+
+    private void BtnHideRePassword_Click(object? sender, EventArgs e)
+    {
+      _isRePasswordHidden = !_isRePasswordHidden;
+      txtRePassword.PasswordChar = _isRePasswordHidden;
+      btnHideRePassword.Image = _isRePasswordHidden
+        ? Properties.Resources.icon_hide
+        : Properties.Resources.icon_unhide;
     }
 
     private async void BtnConfirm_Click(object? sender, EventArgs e)
@@ -156,12 +178,12 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        if (string.IsNullOrWhiteSpace(employeeCode))
-        {
-          ShowWarning("Vui lòng nhập mã nhân viên !");
-          txtEmployeeCode.Focus();
-          return;
-        }
+        //if (string.IsNullOrWhiteSpace(employeeCode))
+        //{
+        //  ShowWarning("Vui lòng nhập mã nhân viên !");
+        //  txtEmployeeCode.Focus();
+        //  return;
+        //}
 
         if (employeeCode.Length > 255)
         {
@@ -200,7 +222,11 @@ namespace LTP.Truck.MasterData
         userToSave.EmployeeCode = employeeCode;
         userToSave.EnableFlag = _isActive;
         if (hasPasswordInput)
+        {
+          //userToSave.Password = SecurityHelper.Encrypt(password);
           userToSave.Password = SecurityHelper.EncodePassword(username, password);
+        }  
+          
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
 

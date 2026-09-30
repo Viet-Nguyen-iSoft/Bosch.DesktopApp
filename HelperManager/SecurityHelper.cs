@@ -33,6 +33,44 @@ namespace HelperManager
       return Convert.ToBase64String(hashBytes);
     }
 
+    public static string Encrypt(string source)
+    {
+      if (string.IsNullOrEmpty(source))
+      {
+        return source;
+      }
+
+      string text = PasswordHashKey;
+
+
+      //if (MemCached.Instance.IsTimeToRun("_5m_ check_secretKey", 300000L))
+      //{
+      //  Log.Information("Encrypt, secretKey: " + text.SubstringSafe(0, 4) + "***");
+      //}
+
+      //if (Encoding.UTF8.GetBytes(text).Length < 32)
+      //{
+      //  throw new ArgumentException("Secret key must be at least 256 bits (32 characters)");
+      //}
+
+      byte[] key = Encoding.UTF8.GetBytes(text).Take(32).ToArray();
+      using Aes aes = Aes.Create();
+      aes.Key = key;
+      aes.GenerateIV();
+      byte[] iV = aes.IV;
+      using MemoryStream memoryStream = new MemoryStream();
+      memoryStream.Write(iV, 0, iV.Length);
+      using (ICryptoTransform transform = aes.CreateEncryptor(aes.Key, aes.IV))
+      {
+        using CryptoStream stream = new CryptoStream(memoryStream, transform, CryptoStreamMode.Write);
+        using StreamWriter streamWriter = new StreamWriter(stream);
+        streamWriter.Write(source);
+      }
+
+      return Convert.ToBase64String(memoryStream.ToArray()).Replace("+", "-").Replace("/", "_")
+          .Replace("=", "");
+    }
+
     /// <summary>
     /// So sánh password nhập vào với password hash trả về từ API.
     /// </summary>
