@@ -2,6 +2,7 @@ using Common;
 using HelperManager;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
+using LTP.Truck.Popup;
 using LTP.Truck.UserControls;
 using static Common.EnumData;
 using static HelperManager.EnumData;
@@ -390,10 +391,7 @@ namespace LTP.Truck.Forms
       {
         if (!AppCore.Ins.CheckPermission("0048"))
         {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
+          using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
           return;
         }
@@ -402,10 +400,7 @@ namespace LTP.Truck.Forms
       {
         if (!AppCore.Ins.CheckPermission("0054"))
         {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
+          using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
           return;
         }
@@ -441,10 +436,7 @@ namespace LTP.Truck.Forms
       {
         if (!AppCore.Ins.CheckPermission("0046"))
         {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
+          using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
           return;
         }
@@ -453,10 +445,7 @@ namespace LTP.Truck.Forms
       {
         if (!AppCore.Ins.CheckPermission("0052"))
         {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
+          using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
           return;
         }
@@ -656,10 +645,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0049"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -672,10 +658,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0055"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -690,10 +673,7 @@ namespace LTP.Truck.Forms
       {
         if (!AppCore.Ins.CheckPermission("0100"))
         {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
+          using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
           return;
         }
@@ -702,10 +682,7 @@ namespace LTP.Truck.Forms
       {
         if (!AppCore.Ins.CheckPermission("0110"))
         {
-          using var openErrorPopup = new PopupConfirm(
-                "Tài khoản không có phân quyền thực hiện !",
-                EnumTypeMsg.MessageManualClose,
-                EnumImageMsg.Warning);
+          using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
           return;
         }
