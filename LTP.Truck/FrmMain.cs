@@ -255,6 +255,7 @@ namespace LTP.Truck
       try
       {
         AppCore.Ins._autoLogoutService.Stop();
+        CloseOpenPopups();
         AppCore.Ins._userCurrent = null;
         FrmOperation.Instance.LoadAccount(null);
         ChangePage(EnumScreen.Waiting);
@@ -264,6 +265,21 @@ namespace LTP.Truck
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
+    }
+
+    private void CloseOpenPopups()
+    {
+      var openPopups = Application.OpenForms
+        .Cast<Form>()
+        .Where(form =>
+          !ReferenceEquals(form, this) &&
+          form.TopLevel &&
+          !form.IsDisposed)
+        .Reverse()
+        .ToList();
+
+      foreach (Form popup in openPopups)
+        popup.Close();
     }
 
     private void AutoLogoutService_Elapsed(object? sender, EventArgs e)
