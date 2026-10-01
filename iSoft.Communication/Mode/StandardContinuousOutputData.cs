@@ -42,6 +42,19 @@ namespace iSoft.Communication.Mode
       return output;
     }
 
+    public static StandardContinuousOutputData DecodeSCOD(
+      byte[] dataBytes,
+      bool validateChecksum = true)
+    {
+      if (!TryDecodeSCOD(dataBytes, out var output, validateChecksum) || output == null)
+      {
+        throw new FormatException(
+          "Dữ liệu Standard Continuous phải là frame IND570 hợp lệ gồm 17 hoặc 18 byte.");
+      }
+
+      return output;
+    }
+
     /// <summary>
     /// Giải mã dữ liệu Standard Continuous Output của IND570.
     /// Frame hợp lệ gồm 17 byte, hoặc 18 byte khi có checksum.
@@ -110,6 +123,58 @@ namespace iSoft.Communication.Mode
       return true;
     }
 
+    public static bool TryDecodeSCOD(
+      byte[]? dataBytes,
+      out StandardContinuousOutputData? output,
+      bool validateChecksum = true)
+    {
+      output = null;
+      if (dataBytes == null ||
+          (dataBytes.Length != FrameLength &&
+           dataBytes.Length != FrameLengthWithChecksum) ||
+          dataBytes[0] != 0x02 ||
+          dataBytes[16] != 0x0D)
+      {
+        return false;
+      }
+
+      bool hasChecksum = dataBytes.Length == FrameLengthWithChecksum;
+      if (hasChecksum && validateChecksum && !HasValidChecksum(dataBytes))
+        return false;
+
+      var statusA = StatusA.Decode(dataBytes[1]);
+      var statusB = StatusB.Decode(dataBytes[2]);
+      var statusC = StatusC.Decode(dataBytes[3]);
+
+      if (!TryDecodeWeightSCOD(dataBytes, 4, statusA, statusB.Sign,
+            out double indicatedWeight) ||
+          !TryDecodeWeightSCOD(dataBytes, 10, statusA, Sign.Positive,
+            out double tareWeight))
+      {
+        return false;
+      }
+
+      if (statusC.ExpandDataOrNormal == ExpandData.x10)
+      {
+        indicatedWeight *= 10;
+        tareWeight *= 10;
+      }
+
+      output = new StandardContinuousOutputData
+      {
+        DataBytes = dataBytes.ToArray(),
+        StatusA = statusA,
+        StatusB = statusB,
+        StatusC = statusC,
+        IndicatedWeight = indicatedWeight,
+        TareWeight = tareWeight,
+        Unit = DecodeUnit(statusB, statusC),
+        CheckSumEnabled = hasChecksum,
+      };
+
+      return true;
+    }
+
     public bool CheckSumOK()
     {
       return DataBytes.Length == FrameLengthWithChecksum &&
@@ -148,6 +213,45 @@ namespace iSoft.Communication.Mode
         DecimalPointLocation.X_XXXXX => 0.00001d,
         _ => 1d,
       };
+
+      if (sign == Sign.Negative)
+        weight = -weight;
+
+      return true;
+    }
+
+    private static bool TryDecodeWeightSCOD(
+      byte[] dataBytes,
+      int startIndex,
+      StatusA statusA,
+      Sign sign,
+      out double weight)
+    {
+      weight = 0;
+      string rawValue = Encoding.ASCII
+        .GetString(dataBytes, startIndex, 6)
+        .Trim();
+
+      if (rawValue.Length == 0 ||
+          !rawValue.All(char.IsDigit) ||
+          !double.TryParse(rawValue, NumberStyles.None,
+            CultureInfo.InvariantCulture, out weight))
+      {
+        return false;
+      }
+
+      //weight *= statusA.DecimalPointLocation switch
+      //{
+      //  DecimalPointLocation.XXXXX00 => 100d,
+      //  DecimalPointLocation.XXXXX0 => 10d,
+      //  DecimalPointLocation.XXXXXX => 1d,
+      //  DecimalPointLocation.XXXXX_X => 0.1d,
+      //  DecimalPointLocation.XXXX_XX => 0.01d,
+      //  DecimalPointLocation.XXX_XXX => 0.001d,
+      //  DecimalPointLocation.XX_XXXX => 0.0001d,
+      //  DecimalPointLocation.X_XXXXX => 0.00001d,
+      //  _ => 1d,
+      //};
 
       if (sign == Sign.Negative)
         weight = -weight;

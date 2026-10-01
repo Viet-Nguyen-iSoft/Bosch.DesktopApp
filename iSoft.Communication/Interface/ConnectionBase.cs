@@ -184,15 +184,33 @@ namespace iSoft.Communication.Interface
         }
         else if (eModeCommunication == EnumModeCommunication.SCOD)
         {
-          var data = StandardContinuousOutputData.DecodeCTN(
-            messageDataInput?.DataAsBytes);
-          if (data != null)
+          //var data = StandardContinuousOutputData.DecodeCTN(
+          //  messageDataInput?.DataAsBytes);
+          //if (data != null)
+          //{
+          //  PublishContinuousData(
+          //    data.IndicatedWeight ?? 0,
+          //    data.TareWeight ?? 0,
+          //    data.Unit,
+          //    data.ActiveWeighingStatus);
+          //}
+
+          byte[]? bytes = messageDataInput?.DataAsBytes;
+          if (bytes?.Count() == 17)
           {
-            PublishContinuousData(
-              data.IndicatedWeight ?? 0,
-              data.TareWeight ?? 0,
-              data.Unit,
-              data.ActiveWeighingStatus);
+            var rs = StandardContinuousOutputData.DecodeSCOD(bytes, false);
+            DataWeightInterface.IndicatedWeight = rs.IndicatedWeight ?? 0.0;
+            DataWeightInterface.Unit = UnitOfWeight.Kilograms;
+            DataWeightInterface.ActiveWeighingStatus = ActiveWeighingStatus.Default;
+            DataWeightReceived?.Invoke(this, DataWeightInterface);
+          }
+          else if (bytes?.Count() == 18)
+          {
+            var rs = StandardContinuousOutputData.DecodeSCOD(bytes, false);
+            DataWeightInterface.IndicatedWeight = rs.IndicatedWeight ?? 0.0;
+            DataWeightInterface.Unit = UnitOfWeight.Kilograms;
+            DataWeightInterface.ActiveWeighingStatus = ActiveWeighingStatus.Default;
+            DataWeightReceived?.Invoke(this, DataWeightInterface);
           }
         }
         else if (eModeCommunication == EnumModeCommunication.Continuous)
