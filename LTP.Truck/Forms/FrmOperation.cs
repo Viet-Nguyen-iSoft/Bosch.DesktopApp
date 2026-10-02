@@ -219,16 +219,19 @@ namespace LTP.Truck.Forms
 
     }
 
-    private void LoadConfig()
+    public void ResetToDefaultHome()
     {
       if (this.InvokeRequired)
       {
         this.Invoke(new Action(() =>
         {
-          LoadConfig();
+          ResetToDefaultHome();
         }));
         return;
       }
+
+      SetMasterDataExpanded(false);
+      SetMenuCollapsed(true);
 
       var station = Environment.GetEnvironmentVariable("STATION");
       if (station == "1")
@@ -238,7 +241,9 @@ namespace LTP.Truck.Forms
         btnHomeTruck.Visible = true;
         btnReportTruck.Visible = true;
 
-        this.btnHomeTruck.PerformClick();
+        CheckMenuButton(btnHomeTruck);
+        OpenChildForm(EnumScreen.HomeTruck, FrmHomeTruck.Instance);
+        ShowPagePath(EnumScreen.HomeTruck);
       }
       else
       {
@@ -247,7 +252,9 @@ namespace LTP.Truck.Forms
         btnHomeTruck.Visible = false;
         btnReportTruck.Visible = false;
 
-        this.btnHomeGoods.PerformClick();
+        CheckMenuButton(btnHomeGoods);
+        OpenChildForm(EnumScreen.HomeGoods, FrmHomeGoods.Instance);
+        ShowPagePath(EnumScreen.HomeGoods);
       }
 
       ApplyMasterDataVisibility();
@@ -273,7 +280,7 @@ namespace LTP.Truck.Forms
         // Show the application shell first. Creating and theming the large home
         // form during Load made the whole first window visibly stutter.
         await Task.Yield();
-        LoadConfig();
+        ResetToDefaultHome();
       }
       catch (Exception ex)
       {

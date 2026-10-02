@@ -234,6 +234,7 @@ namespace LTP.Truck
 
       try
       {
+        FrmOperation.Instance.ResetToDefaultHome();
         AppCore.Ins._autoLogoutService.Start(
           AppCore.Ins._appConfig?.TimeAutoLogOut);
         ChangePage(EnumScreen.Operation);

@@ -20,7 +20,7 @@ namespace iSoft.Database.Repositorys
 
       return query
         .OrderBy(user => user.DisplayName ?? user.FullName)
-        .ThenBy(user => user.Username).Where(x=>x.Username!="ISOFT")
+        .ThenBy(user => user.Username).Where(x=>x.Username!="ISOFT" && x.Username != "root")
         .ToListAsync();
     }
 
