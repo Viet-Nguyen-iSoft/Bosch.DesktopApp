@@ -111,6 +111,7 @@ namespace LTP.Truck.Forms
       dgv.RowHeadersDefaultCellStyle.SelectionBackColor = dgv.RowHeadersDefaultCellStyle.BackColor;
       dgv.RowHeadersDefaultCellStyle.SelectionForeColor = dgv.RowHeadersDefaultCellStyle.ForeColor;
       dgv.CellPainting += dgv_CellPainting;
+      dgv.CellFormatting += dgv_CellFormatting;
       dgv.CellContentClick += dgv_CellContentClick;
       dgv.CellMouseEnter += dgv_CellMouseEnter;
       dgv.CellMouseLeave += (_, _) => _deleteReasonToolTip.Hide(dgv);
@@ -1194,15 +1195,6 @@ namespace LTP.Truck.Forms
         if (row.DataBoundItem is RecordTruckDTO item && item.RecordTruck != null)
         {
           var isDeleted = item.RecordTruck.DeletedFlag;
-          var canModify = CanModifyRecord(item.RecordTruck);
-          row.Cells["btnDelete"].Value = !canModify
-            ? "Chỉ xem"
-            : isDeleted
-              ? "Phục hồi"
-              : "Xóa";
-          row.Cells["btnDelete"].Style.ForeColor = canModify
-            ? dgv.DefaultCellStyle.ForeColor
-            : Color.Gray;
           if (isDeleted)
           {
             row.DefaultCellStyle.BackColor = Color.Tomato;
@@ -1281,6 +1273,31 @@ namespace LTP.Truck.Forms
         if (dgv.Columns.Contains(columnName))
           dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
+    }
+
+    private void dgv_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+    {
+      if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordTruckDTO item ||
+          item.RecordTruck is not RecordTruck recordTruck)
+      {
+        return;
+      }
+
+      var canModify = CanModifyRecord(recordTruck);
+      e.Value = !canModify
+        ? "Chỉ xem"
+        : recordTruck.DeletedFlag
+          ? "Phục hồi"
+          : "Xóa";
+      if (e.CellStyle != null)
+      {
+        e.CellStyle.ForeColor = canModify
+          ? dgv.DefaultCellStyle.ForeColor
+          : Color.Gray;
+      }
+      e.FormattingApplied = true;
     }
 
     private void dgv_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
