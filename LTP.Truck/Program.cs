@@ -129,7 +129,7 @@ namespace LTP.Truck
               });
             }
 
-            if (needStation)
+            if (needStation && 1==2)
             {
               List<Station> stations = new List<Station>();
               stations.Add(new Station

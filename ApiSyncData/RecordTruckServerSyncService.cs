@@ -127,6 +127,10 @@ namespace ApiSyncData
       target.EnableFlag = source.IsDelete != true;
       target.SyncFlag = true;
       target.IdSrc = source.Id;
+      target.Note = source.Document;
+      target.NameDriver = source.NameDriver;
+      target.IdCard = source.IdCard;
+      target.ReasonDelete = source.ReasonDelete;
     }
 
     private static EnumTypeDataTruck GetLocalStatus(ListDatumRecordTruck source)

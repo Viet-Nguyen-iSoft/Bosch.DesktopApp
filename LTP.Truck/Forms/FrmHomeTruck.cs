@@ -1219,8 +1219,8 @@ namespace LTP.Truck.Forms
         nameof(RecordTruckDTO.Warehouse),
         nameof(RecordTruckDTO.NameDriver),
         nameof(RecordTruckDTO.IdCard),
-        nameof(RecordTruckDTO.NoLabelAuto),
-        nameof(RecordTruckDTO.Document)
+        nameof(RecordTruckDTO.NoLabelManual),
+        nameof(RecordTruckDTO.Document),
       };
       foreach (var columnName in hiddenColumns)
       {
@@ -1238,6 +1238,8 @@ namespace LTP.Truck.Forms
         nameof(RecordTruckDTO.NetTime02),
         nameof(RecordTruckDTO.Time01),
         nameof(RecordTruckDTO.Time02),
+        nameof(RecordTruckDTO.Operator),
+        nameof(RecordTruckDTO.NoLabelAuto),
       };
       foreach (var columnName in autoSizeColumns)
       {
