@@ -559,75 +559,88 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      using var buttonLock = ButtonExecutionScope.Enter(sender);
-      try
+      RecordTruck? savedRecord = null;
+      using (ButtonExecutionScope.Enter(sender))
       {
-        if (_recordTruck.NetTimeTemp <= 0)
+        try
         {
-          PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupConfirm.ShowDialog();
-          return;
-        }
+          if (_recordTruck.NetTimeTemp <= 0)
+          {
+            PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupConfirm.ShowDialog();
+            return;
+          }
 
-        var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
-        if (!validLicense.IsValid)
+          var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
+          if (!validLicense.IsValid)
+          {
+            PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupConfirm.ShowDialog();
+            return;
+          }
+
+          if (!ValidateClientSelected())
+            return;
+
+          if (!ValidateWarehouseSelected())
+            return;
+
+          _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
+          _recordTruck.NetTimeTemp = 0.0;
+          _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
+
+          //Save DB
+          _recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
+            .CreateNextLabelAsync(AppCore.Ins._appConfig ??
+              throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
+          _recordTruck.NoLabelManual = txtNoLabel.Texts;
+          _recordTruck.NameDriver = txtNameDriver.Texts;
+          _recordTruck.LicensePlate = validLicense.Plate;
+          _recordTruck.IdCard = txtIdCard.Texts;
+          _recordTruck.Note = txtDocument.Text;
+          _recordTruck.StationId = AppCore.Ins._station?.Id;
+          _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
+          _recordTruck.CreatedAt = DateTime.UtcNow;
+          _recordTruck.UpdatedAt = DateTime.UtcNow;
+          _recordTruck.WeighInAt = DateTime.UtcNow;
+          CheckShowStatusButton(_recordTruck);
+
+          var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
+          savedRecord = rs.Record;
+          savedRecord = await AppCore.Ins._recordTruckService
+            .GetDetailByIdAsync(rs.Record.Id) ?? savedRecord;
+
+          //Push API biển số xe
+          if (rs.Exist == false)
+          {
+            LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
+            licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
+            licensePlate.Id = rs.LicensePlate?.Id;
+            licensePlate.Description = rs.LicensePlate?.Description;
+
+            ApiJobs apiJobs = new ApiJobs();
+            apiJobs.Json = JsonHelper.ToJson(licensePlate);
+            apiJobs.EnumTypeAPI = EnumTypeAPI.Plate;
+            apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+            apiJobs.CreatedAt = DateTime.UtcNow;
+            await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
+          }
+
+          await LoadLicensePlateSuggestionsAsync();
+          await LoadHistorical();
+        }
+        catch (Exception ex)
         {
-          PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupConfirm.ShowDialog();
-          return;
+          HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+          MessageBox.Show(ex.StackTrace);
         }
-
-        if (!ValidateClientSelected())
-          return;
-
-        if (!ValidateWarehouseSelected())
-          return;
-
-        _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
-        _recordTruck.NetTimeTemp = 0.0;
-        _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
-
-        //Save DB
-        _recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
-          .CreateNextLabelAsync(AppCore.Ins._appConfig ??
-            throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
-        _recordTruck.NoLabelManual = txtNoLabel.Texts;
-        _recordTruck.NameDriver = txtNameDriver.Texts;
-        _recordTruck.LicensePlate = validLicense.Plate;
-        _recordTruck.IdCard = txtIdCard.Texts;
-        _recordTruck.Note = txtDocument.Text;
-        _recordTruck.StationId = AppCore.Ins._station?.Id;
-        _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
-        _recordTruck.CreatedAt = DateTime.UtcNow;
-        _recordTruck.UpdatedAt = DateTime.UtcNow;
-        _recordTruck.WeighInAt = DateTime.UtcNow;
-        CheckShowStatusButton(_recordTruck);
-
-        var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
-        //Push API biển số xe
-        if (rs.Exist == false)
-        {
-          LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
-          licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
-          licensePlate.Id = rs.LicensePlate?.Id;
-          licensePlate.Description = rs.LicensePlate?.Description;
-
-          ApiJobs apiJobs = new ApiJobs();
-          apiJobs.Json = JsonHelper.ToJson(licensePlate);
-          apiJobs.EnumTypeAPI = EnumTypeAPI.Plate;
-          apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
-          apiJobs.CreatedAt = DateTime.UtcNow;
-          await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
-        }
-
-        await LoadLicensePlateSuggestionsAsync();
-        await LoadHistorical();
       }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        MessageBox.Show(ex.StackTrace);
-      }
+
+      // Apply the persisted state after ButtonExecutionScope has restored the
+      // button. This matches selecting "Chi tiết" in the history grid and keeps
+      // the first-weigh button disabled for a record that is already DoneTime01.
+      if (savedRecord != null)
+        ShowRecordDetail(savedRecord);
     }
 
     private async void btnWeightTime02_Click(object sender, EventArgs e)
@@ -1325,6 +1338,11 @@ namespace LTP.Truck.Forms
       if (recordTruckDto.RecordTruck is not RecordTruck recordTruck)
         return;
 
+      ShowRecordDetail(recordTruck);
+    }
+
+    private void ShowRecordDetail(RecordTruck recordTruck)
+    {
       _isViewingHistoricalDetail = true;
       _recordTruck = recordTruck;
       ShowDataHistorical(_recordTruck);
