@@ -64,52 +64,50 @@ namespace ApiSyncData
     private static async Task RunDefaultFunctionsAsync(
       ApiService api, CancellationToken cancellationToken)
     {
+      cancellationToken.ThrowIfCancellationRequested();
+
+      var stations = LoadAndSyncAsync(api.Station(), MasterDataSyncService.SyncStationsAsync,
+        value => Stations = value, cancellationToken);
+      var warehouses = LoadAndSyncAsync(api.Warehouse(), MasterDataSyncService.SyncWarehousesAsync,
+        value => Warehouses = value, cancellationToken);
+      var typeGoods = LoadAndSyncAsync(api.TypeGoods(), MasterDataSyncService.SyncTypeGoodsAsync,
+        value => TypeGoods = value, cancellationToken);
+      var productGroups = LoadAndSyncAsync(api.ProductGroup(), MasterDataSyncService.SyncProductGroupsAsync,
+        value => ProductGroups = value, cancellationToken);
+      var products = SyncProductsAfterGroupsAsync(api.Product(), productGroups, cancellationToken);
+      var categoryTares = LoadAndSyncAsync(api.CategoryTare(), MasterDataSyncService.SyncCategoryTaresAsync,
+        value => CategoryTares = value, cancellationToken);
+
+      var clients = LoadAndSyncAsync(api.Client(), MasterDataSyncService.SyncClientsAsync,
+        value => Clients = value, cancellationToken);
+
+      var deliveries = LoadAndSyncAsync(api.Delivery(), MasterDataSyncService.SyncDeliveriesAsync,
+        value => Deliveries = value, cancellationToken);
+
+      var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
+        value => Users = value, cancellationToken);
+
+      await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
+        products, categoryTares, clients, deliveries, users).ConfigureAwait(false);
+
+      //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
+      //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");
       try
       {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var stations = LoadAndSyncAsync(api.Station(), MasterDataSyncService.SyncStationsAsync,
-          value => Stations = value, cancellationToken);
-        var warehouses = LoadAndSyncAsync(api.Warehouse(), MasterDataSyncService.SyncWarehousesAsync,
-          value => Warehouses = value, cancellationToken);
-        var typeGoods = LoadAndSyncAsync(api.TypeGoods(), MasterDataSyncService.SyncTypeGoodsAsync,
-          value => TypeGoods = value, cancellationToken);
-        var productGroups = LoadAndSyncAsync(api.ProductGroup(), MasterDataSyncService.SyncProductGroupsAsync,
-          value => ProductGroups = value, cancellationToken);
-        var products = SyncProductsAfterGroupsAsync(api.Product(), productGroups, cancellationToken);
-        var categoryTares = LoadAndSyncAsync(api.CategoryTare(), MasterDataSyncService.SyncCategoryTaresAsync,
-          value => CategoryTares = value, cancellationToken);
-
-        var clients = LoadAndSyncAsync(api.Client(), MasterDataSyncService.SyncClientsAsync,
-          value => Clients = value, cancellationToken);
-
-        var deliveries = LoadAndSyncAsync(api.Delivery(), MasterDataSyncService.SyncDeliveriesAsync,
-          value => Deliveries = value, cancellationToken);
-
-        var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
-          value => Users = value, cancellationToken);
-
-
-
-        await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
-          products, categoryTares, clients, deliveries, users).ConfigureAwait(false);
-
-        //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
-        //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");
-        if (StationId!=null)
+        if (StationId != null)
         {
           var recordTrucks = await api.RecordTruckFromServer(StationId, NumberLastDay)
-          .ConfigureAwait(false);
+            .ConfigureAwait(false);
           var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
             recordTrucks,
             cancellationToken).ConfigureAwait(false);
           if (recordTruckChanges != null)
             NotifyEntityChanged(recordTruckChanges);
-        } 
+        }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        
+
       }
     }
 

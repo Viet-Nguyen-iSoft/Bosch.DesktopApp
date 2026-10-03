@@ -12,6 +12,8 @@ namespace HelperManager
   {
     private const string PasswordHashKey =
         "3e7da5e8-9540-40ba-bd75-21fe19686e16";
+    //private const string PasswordHashKey =
+    //    "7cf098ec94a84ea49b8fcc59337b9c28";
 
     /// <summary>
     /// Mã hóa giống EncodeUtil.EncodePassword của iSoft.Auth.
@@ -31,6 +33,44 @@ namespace HelperManager
       byte[] hashBytes = hmac.ComputeHash(inputBytes);
 
       return Convert.ToBase64String(hashBytes);
+    }
+
+    public static string Encrypt(string source)
+    {
+      if (string.IsNullOrEmpty(source))
+      {
+        return source;
+      }
+
+      string text = PasswordHashKey;
+
+
+      //if (MemCached.Instance.IsTimeToRun("_5m_ check_secretKey", 300000L))
+      //{
+      //  Log.Information("Encrypt, secretKey: " + text.SubstringSafe(0, 4) + "***");
+      //}
+
+      //if (Encoding.UTF8.GetBytes(text).Length < 32)
+      //{
+      //  throw new ArgumentException("Secret key must be at least 256 bits (32 characters)");
+      //}
+      text = "7cf098ec94a84ea49b8fcc59337b9c28";
+      byte[] key = Encoding.UTF8.GetBytes(text).Take(32).ToArray();
+      using Aes aes = Aes.Create();
+      aes.Key = key;
+      aes.GenerateIV();
+      byte[] iV = aes.IV;
+      using MemoryStream memoryStream = new MemoryStream();
+      memoryStream.Write(iV, 0, iV.Length);
+      using (ICryptoTransform transform = aes.CreateEncryptor(aes.Key, aes.IV))
+      {
+        using CryptoStream stream = new CryptoStream(memoryStream, transform, CryptoStreamMode.Write);
+        using StreamWriter streamWriter = new StreamWriter(stream);
+        streamWriter.Write(source);
+      }
+
+      return Convert.ToBase64String(memoryStream.ToArray()).Replace("+", "-").Replace("/", "_")
+          .Replace("=", "");
     }
 
     /// <summary>

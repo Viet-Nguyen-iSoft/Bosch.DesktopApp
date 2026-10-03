@@ -111,6 +111,7 @@ namespace LTP.Truck.Forms
       dgv.RowHeadersDefaultCellStyle.SelectionBackColor = dgv.RowHeadersDefaultCellStyle.BackColor;
       dgv.RowHeadersDefaultCellStyle.SelectionForeColor = dgv.RowHeadersDefaultCellStyle.ForeColor;
       dgv.CellPainting += dgv_CellPainting;
+      dgv.CellFormatting += dgv_CellFormatting;
       dgv.CellContentClick += dgv_CellContentClick;
       dgv.CellMouseEnter += dgv_CellMouseEnter;
       dgv.CellMouseLeave += (_, _) => _deleteReasonToolTip.Hide(dgv);
@@ -149,10 +150,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -420,10 +418,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -443,9 +438,6 @@ namespace LTP.Truck.Forms
         await LoadPendingRecordByLicensePlateAsync(rs.Plate);
 
         if (!ValidateClientSelected())
-          return;
-
-        if (!ValidateWarehouseSelected())
           return;
 
         if (_recordTruck.TypeGoodsId == null)
@@ -560,93 +552,97 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
 
-      using var buttonLock = ButtonExecutionScope.Enter(sender);
-      try
+      RecordTruck? savedRecord = null;
+      using (ButtonExecutionScope.Enter(sender))
       {
-        if (_recordTruck.NetTimeTemp <= 0)
+        try
         {
-          PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupConfirm.ShowDialog();
-          return;
-        }
+          if (_recordTruck.NetTimeTemp <= 0)
+          {
+            PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupConfirm.ShowDialog();
+            return;
+          }
 
-        var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
-        if (!validLicense.IsValid)
+          var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
+          if (!validLicense.IsValid)
+          {
+            PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupConfirm.ShowDialog();
+            return;
+          }
+
+          if (!ValidateClientSelected())
+            return;
+
+          _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
+          _recordTruck.NetTimeTemp = 0.0;
+          _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
+
+          //Save DB
+          _recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
+            .CreateNextLabelAsync(AppCore.Ins._appConfig ??
+              throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
+          _recordTruck.NoLabelManual = txtNoLabel.Texts;
+          _recordTruck.NameDriver = txtNameDriver.Texts;
+          _recordTruck.LicensePlate = validLicense.Plate;
+          _recordTruck.IdCard = txtIdCard.Texts;
+          _recordTruck.Note = txtDocument.Text;
+          _recordTruck.StationId = AppCore.Ins._station?.Id;
+          _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
+          _recordTruck.CreatedAt = DateTime.UtcNow;
+          _recordTruck.UpdatedAt = DateTime.UtcNow;
+          _recordTruck.WeighInAt = DateTime.UtcNow;
+          CheckShowStatusButton(_recordTruck);
+
+          var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
+          savedRecord = rs.Record;
+          savedRecord = await AppCore.Ins._recordTruckService
+            .GetDetailByIdAsync(rs.Record.Id) ?? savedRecord;
+
+          //Push API biển số xe
+          if (rs.Exist == false)
+          {
+            LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
+            licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
+            licensePlate.Id = rs.LicensePlate?.Id;
+            licensePlate.Description = rs.LicensePlate?.Description;
+
+            ApiJobs apiJobs = new ApiJobs();
+            apiJobs.Json = JsonHelper.ToJson(licensePlate);
+            apiJobs.EnumTypeAPI = EnumTypeAPI.Plate;
+            apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
+            apiJobs.CreatedAt = DateTime.UtcNow;
+            await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
+          }
+
+          await LoadLicensePlateSuggestionsAsync();
+          await LoadHistorical();
+        }
+        catch (Exception ex)
         {
-          PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupConfirm.ShowDialog();
-          return;
+          HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+          MessageBox.Show(ex.StackTrace);
         }
-
-        if (!ValidateClientSelected())
-          return;
-
-        if (!ValidateWarehouseSelected())
-          return;
-
-        _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
-        _recordTruck.NetTimeTemp = 0.0;
-        _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
-
-        //Save DB
-        _recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
-          .CreateNextLabelAsync(AppCore.Ins._appConfig ??
-            throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
-        _recordTruck.NoLabelManual = txtNoLabel.Texts;
-        _recordTruck.NameDriver = txtNameDriver.Texts;
-        _recordTruck.LicensePlate = validLicense.Plate;
-        _recordTruck.IdCard = txtIdCard.Texts;
-        _recordTruck.Note = txtDocument.Text;
-        _recordTruck.StationId = AppCore.Ins._station?.Id;
-        _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
-        _recordTruck.CreatedAt = DateTime.UtcNow;
-        _recordTruck.UpdatedAt = DateTime.UtcNow;
-        _recordTruck.WeighInAt = DateTime.UtcNow;
-        CheckShowStatusButton(_recordTruck);
-
-        var rs = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
-        //Push API biển số xe
-        if (rs.Exist == false)
-        {
-          LicensePlateUpsertRequest licensePlate = new LicensePlateUpsertRequest();
-          licensePlate.LicensePlateCode = rs.LicensePlate?.Plate ?? string.Empty;
-          licensePlate.Id = rs.LicensePlate?.Id;
-          licensePlate.Description = rs.LicensePlate?.Description;
-
-          ApiJobs apiJobs = new ApiJobs();
-          apiJobs.Json = JsonHelper.ToJson(licensePlate);
-          apiJobs.EnumTypeAPI = EnumTypeAPI.Plate;
-          apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
-          apiJobs.CreatedAt = DateTime.UtcNow;
-          await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJobs);
-        }
-
-        await LoadLicensePlateSuggestionsAsync();
-        await LoadHistorical();
       }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        MessageBox.Show(ex.StackTrace);
-      }
+
+      // Apply the persisted state after ButtonExecutionScope has restored the
+      // button. This matches selecting "Chi tiết" in the history grid and keeps
+      // the first-weigh button disabled for a record that is already DoneTime01.
+      if (savedRecord != null)
+        ShowRecordDetail(savedRecord);
     }
 
     private async void btnWeightTime02_Click(object sender, EventArgs e)
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -670,9 +666,6 @@ namespace LTP.Truck.Forms
         }
 
         if (!ValidateClientSelected())
-          return;
-
-        if (!ValidateWarehouseSelected())
           return;
 
         _recordTruck.NetTime02 = _recordTruck.NetTimeTemp;
@@ -741,10 +734,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -780,22 +770,6 @@ namespace LTP.Truck.Forms
         EnumImageMsg.Warning);
       popupMsg.ShowDialog(this);
       btnLoadClient.Focus();
-      return false;
-    }
-
-    private bool ValidateWarehouseSelected()
-    {
-      if (!string.IsNullOrWhiteSpace(txtWareHouse.Texts) &&
-          _recordTruck.WarehouseId.HasValue)
-      {
-        return true;
-      }
-
-      using var popupMsg = new PopupConfirm(
-        "Vui lòng chọn Kho hàng trước khi cân !",
-        EnumTypeMsg.MessageManualClose,
-        EnumImageMsg.Warning);
-      popupMsg.ShowDialog(this);
       return false;
     }
 
@@ -1196,15 +1170,6 @@ namespace LTP.Truck.Forms
         if (row.DataBoundItem is RecordTruckDTO item && item.RecordTruck != null)
         {
           var isDeleted = item.RecordTruck.DeletedFlag;
-          var canModify = CanModifyRecord(item.RecordTruck);
-          row.Cells["btnDelete"].Value = !canModify
-            ? "Chỉ xem"
-            : isDeleted
-              ? "Phục hồi"
-              : "Xóa";
-          row.Cells["btnDelete"].Style.ForeColor = canModify
-            ? dgv.DefaultCellStyle.ForeColor
-            : Color.Gray;
           if (isDeleted)
           {
             row.DefaultCellStyle.BackColor = Color.Tomato;
@@ -1229,8 +1194,8 @@ namespace LTP.Truck.Forms
         nameof(RecordTruckDTO.Warehouse),
         nameof(RecordTruckDTO.NameDriver),
         nameof(RecordTruckDTO.IdCard),
-        nameof(RecordTruckDTO.NoLabelAuto),
-        nameof(RecordTruckDTO.Document)
+        nameof(RecordTruckDTO.NoLabelManual),
+        nameof(RecordTruckDTO.Document),
       };
       foreach (var columnName in hiddenColumns)
       {
@@ -1248,6 +1213,8 @@ namespace LTP.Truck.Forms
         nameof(RecordTruckDTO.NetTime02),
         nameof(RecordTruckDTO.Time01),
         nameof(RecordTruckDTO.Time02),
+        nameof(RecordTruckDTO.Operator),
+        nameof(RecordTruckDTO.NoLabelAuto),
       };
       foreach (var columnName in autoSizeColumns)
       {
@@ -1283,6 +1250,31 @@ namespace LTP.Truck.Forms
         if (dgv.Columns.Contains(columnName))
           dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
+    }
+
+    private void dgv_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+    {
+      if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordTruckDTO item ||
+          item.RecordTruck is not RecordTruck recordTruck)
+      {
+        return;
+      }
+
+      var canModify = CanModifyRecord(recordTruck);
+      e.Value = !canModify
+        ? "Chỉ xem"
+        : recordTruck.DeletedFlag
+          ? "Phục hồi"
+          : "Xóa";
+      if (e.CellStyle != null)
+      {
+        e.CellStyle.ForeColor = canModify
+          ? dgv.DefaultCellStyle.ForeColor
+          : Color.Gray;
+      }
+      e.FormattingApplied = true;
     }
 
     private void dgv_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
@@ -1340,6 +1332,11 @@ namespace LTP.Truck.Forms
       if (recordTruckDto.RecordTruck is not RecordTruck recordTruck)
         return;
 
+      ShowRecordDetail(recordTruck);
+    }
+
+    private void ShowRecordDetail(RecordTruck recordTruck)
+    {
       _isViewingHistoricalDetail = true;
       _recordTruck = recordTruck;
       ShowDataHistorical(_recordTruck);
@@ -1349,10 +1346,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -1467,20 +1461,14 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
 
       if (!AppCore.Ins.CheckPermission("0050"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -1518,10 +1506,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0043"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }

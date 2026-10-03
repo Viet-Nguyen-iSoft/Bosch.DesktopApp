@@ -58,6 +58,9 @@ namespace iSoft.Database.DTO
     [DisplayName("Ghi chú")]
     public string? Document { get; set; }
 
+    [DisplayName("Người cân")]
+    public string? Operator { get; set; }
+
     [DisplayName("Trạm cân")]
     public string? Station { get; set; }
   }

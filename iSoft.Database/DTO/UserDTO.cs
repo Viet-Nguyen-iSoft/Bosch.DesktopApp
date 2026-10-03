@@ -10,6 +10,8 @@ namespace iSoft.Database.DTO
 
     [DisplayName("Stt")]
     public int No { get; set; }
+    [DisplayName("Mã nhân viên")]
+    public string? EmployeeCode { get; set; }
 
     [DisplayName("Họ và tên")]
     public string? FullName { get; set; }
@@ -19,9 +21,6 @@ namespace iSoft.Database.DTO
 
     [DisplayName("Tên đăng nhập")]
     public string? Username { get; set; }
-
-    [DisplayName("Mã nhân viên")]
-    public string? EmployeeCode { get; set; }
 
     [DisplayName("Cập nhật")]
     public string? UpdatedAt { get; set; }

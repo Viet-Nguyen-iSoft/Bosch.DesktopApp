@@ -2,6 +2,7 @@ using Common;
 using HelperManager;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
+using LTP.Truck.Popup;
 using LTP.Truck.UserControls;
 using static Common.EnumData;
 using static HelperManager.EnumData;
@@ -218,16 +219,19 @@ namespace LTP.Truck.Forms
 
     }
 
-    private void LoadConfig()
+    public void ResetToDefaultHome()
     {
       if (this.InvokeRequired)
       {
         this.Invoke(new Action(() =>
         {
-          LoadConfig();
+          ResetToDefaultHome();
         }));
         return;
       }
+
+      SetMasterDataExpanded(false);
+      SetMenuCollapsed(true);
 
       var station = Environment.GetEnvironmentVariable("STATION");
       if (station == "1")
@@ -237,7 +241,9 @@ namespace LTP.Truck.Forms
         btnHomeTruck.Visible = true;
         btnReportTruck.Visible = true;
 
-        this.btnHomeTruck.PerformClick();
+        CheckMenuButton(btnHomeTruck);
+        OpenChildForm(EnumScreen.HomeTruck, FrmHomeTruck.Instance);
+        ShowPagePath(EnumScreen.HomeTruck);
       }
       else
       {
@@ -246,7 +252,9 @@ namespace LTP.Truck.Forms
         btnHomeTruck.Visible = false;
         btnReportTruck.Visible = false;
 
-        this.btnHomeGoods.PerformClick();
+        CheckMenuButton(btnHomeGoods);
+        OpenChildForm(EnumScreen.HomeGoods, FrmHomeGoods.Instance);
+        ShowPagePath(EnumScreen.HomeGoods);
       }
 
       ApplyMasterDataVisibility();
@@ -272,7 +280,7 @@ namespace LTP.Truck.Forms
         // Show the application shell first. Creating and theming the large home
         // form during Load made the whole first window visibly stutter.
         await Task.Yield();
-        LoadConfig();
+        ResetToDefaultHome();
       }
       catch (Exception ex)
       {
@@ -386,14 +394,23 @@ namespace LTP.Truck.Forms
     }
     private async void btnMasterData_Click(object sender, EventArgs e)
     {
-      if ((!AppCore.Ins.CheckPermission("0048")) || (!AppCore.Ins.CheckPermission("0054")))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
+        if (!AppCore.Ins.CheckPermission("0048"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0054"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -422,15 +439,24 @@ namespace LTP.Truck.Forms
     }
     private async void btnSetting_Click(object sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0046") || !AppCore.Ins.CheckPermission("0052"))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
-      }
+        if (!AppCore.Ins.CheckPermission("0046"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }  
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0052"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }  
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.Setting);
@@ -626,10 +652,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0049"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -642,10 +665,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0055"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -656,6 +676,25 @@ namespace LTP.Truck.Forms
 
     private async void BtnUser_Click(object? sender, EventArgs e)
     {
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      {
+        if (!AppCore.Ins.CheckPermission("0100"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0110"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.User);
     }

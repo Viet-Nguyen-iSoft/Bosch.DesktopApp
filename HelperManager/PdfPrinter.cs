@@ -2,7 +2,6 @@
 using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Management;
@@ -18,25 +17,29 @@ namespace HelperManager
     /// </summary>
     /// <param name="pdfPath">Đường dẫn file PDF</param>
     /// <param name="printerName">Tên máy in</param>
-    /// <param name="copies">Số bản in</param>
-    /// <returns>true nếu gửi lệnh in thành công</returns>
     public static void PrintPdf(string pdfPath, string printerName)
     {
-      try
+      if (string.IsNullOrWhiteSpace(pdfPath))
+        throw new ArgumentException("Đường dẫn file PDF không hợp lệ.", nameof(pdfPath));
+
+      if (!File.Exists(pdfPath))
+        throw new FileNotFoundException("Không tìm thấy file PDF cần in.", pdfPath);
+
+      if (string.IsNullOrWhiteSpace(printerName))
+        throw new ArgumentException("Tên máy in không hợp lệ.", nameof(printerName));
+
+      var printerSettings = new PrinterSettings
       {
-        Process.Start(new ProcessStartInfo
-        {
-          FileName = pdfPath,
-          Verb = "printto",
-          Arguments = $"\"{printerName}\"",
-          UseShellExecute = true,
-          CreateNoWindow = true
-        });
-      }
-      catch (Exception)
-      {
-        throw;
-      }
+        PrinterName = printerName
+      };
+
+      if (!printerSettings.IsValid)
+        throw new InvalidPrinterException(printerSettings);
+
+      // Render và gửi PDF trực tiếp tới Windows print queue. Không dùng shell verb
+      // "printto", vì verb này chỉ tồn tại khi máy đã cài và đăng ký PDF viewer.
+      var printer = new global::PdfiumPrinter.PdfPrinter(printerName);
+      printer.Print(pdfPath, documentName: Path.GetFileName(pdfPath));
     }
 
     public static void MergePdf(List<string> pathsPdf, string pathFilePdfOut)

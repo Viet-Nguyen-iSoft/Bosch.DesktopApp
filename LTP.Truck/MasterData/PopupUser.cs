@@ -16,7 +16,10 @@ namespace LTP.Truck.MasterData
     private readonly User? _userUpdate;
     private readonly EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     private readonly bool _isChangePassword;
+    private readonly bool _canChangePassword = true;
     private bool _isActive = true;
+    private bool _isPasswordHidden = true;
+    private bool _isRePasswordHidden = true;
 
     public PopupUser()
     {
@@ -24,6 +27,8 @@ namespace LTP.Truck.MasterData
 
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += BtnClose_Click;
+      btnHidePassword.Click += BtnHidePassword_Click;
+      btnHideRePassword.Click += BtnHideRePassword_Click;
       picActive.Click += PicActive_Click;
       picActive.Cursor = Cursors.Hand;
       txtPassword.PasswordChar = true;
@@ -35,6 +40,7 @@ namespace LTP.Truck.MasterData
       _userUpdate = user ?? throw new ArgumentNullException(nameof(user));
       _enumTypePopup = EnumTypePopup.Update;
       _isChangePassword = isChangePassword;
+      _canChangePassword = AppCore.Ins._userCurrent?.Id == user.Id;
 
       lbTitle.Text = isChangePassword
         ? "Đổi mật khẩu tài khoản"
@@ -50,7 +56,22 @@ namespace LTP.Truck.MasterData
         txtRePassword.PlaceholderText = "Để trống nếu không đổi mật khẩu";
       }
 
+      ConfigurePasswordAccess();
+
       LoadDataUpdate(user);
+    }
+
+    private void ConfigurePasswordAccess()
+    {
+      if (_canChangePassword)
+        return;
+
+      txtPassword.Enabled = false;
+      txtRePassword.Enabled = false;
+      btnHidePassword.Enabled = false;
+      btnHideRePassword.Enabled = false;
+      txtPassword.PlaceholderText = "Chỉ được đổi mật khẩu tài khoản đang đăng nhập";
+      txtRePassword.PlaceholderText = "Chỉ được đổi mật khẩu tài khoản đang đăng nhập";
     }
 
     private void LoadDataUpdate(User user)
@@ -69,6 +90,24 @@ namespace LTP.Truck.MasterData
     private void BtnClose_Click(object? sender, EventArgs e)
     {
       Close();
+    }
+
+    private void BtnHidePassword_Click(object? sender, EventArgs e)
+    {
+      _isPasswordHidden = !_isPasswordHidden;
+      txtPassword.PasswordChar = _isPasswordHidden;
+      btnHidePassword.Image = _isPasswordHidden
+        ? Properties.Resources.icon_hide
+        : Properties.Resources.icon_unhide;
+    }
+
+    private void BtnHideRePassword_Click(object? sender, EventArgs e)
+    {
+      _isRePasswordHidden = !_isRePasswordHidden;
+      txtRePassword.PasswordChar = _isRePasswordHidden;
+      btnHideRePassword.Image = _isRePasswordHidden
+        ? Properties.Resources.icon_hide
+        : Properties.Resources.icon_unhide;
     }
 
     private async void BtnConfirm_Click(object? sender, EventArgs e)
@@ -112,11 +151,11 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        bool isPasswordRequired =
-          _enumTypePopup == EnumTypePopup.Add || _isChangePassword;
-        bool hasPasswordInput =
-          !string.IsNullOrWhiteSpace(password) ||
-          !string.IsNullOrWhiteSpace(rePassword);
+        bool isPasswordRequired = _canChangePassword &&
+          (_enumTypePopup == EnumTypePopup.Add || _isChangePassword);
+        bool hasPasswordInput = _canChangePassword &&
+          (!string.IsNullOrWhiteSpace(password) ||
+           !string.IsNullOrWhiteSpace(rePassword));
 
         if (isPasswordRequired && string.IsNullOrWhiteSpace(password))
         {
@@ -200,7 +239,10 @@ namespace LTP.Truck.MasterData
         userToSave.EmployeeCode = employeeCode;
         userToSave.EnableFlag = _isActive;
         if (hasPasswordInput)
-          userToSave.Password = SecurityHelper.EncodePassword(username, password);
+        {
+          userToSave.Password = SecurityHelper.Encrypt(password);
+          //userToSave.Password = SecurityHelper.EncodePassword(username, password);
+        }  
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
 

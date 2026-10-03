@@ -37,7 +37,7 @@ namespace LTP.Truck.UserControls
       // 
       // tableLayoutPanel1
       // 
-      tableLayoutPanel1.BackColor = Color.PeachPuff;
+      tableLayoutPanel1.BackColor = SystemColors.GradientInactiveCaption;
       tableLayoutPanel1.ColumnCount = 1;
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel1.Controls.Add(lbTime, 0, 2);
@@ -71,7 +71,7 @@ namespace LTP.Truck.UserControls
       // 
       lbValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbValue.AutoSize = true;
-      lbValue.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbValue.Font = new Font("Roboto", 30F, FontStyle.Bold);
       lbValue.Location = new Point(8, 28);
       lbValue.Name = "lbValue";
       lbValue.Size = new Size(241, 76);
@@ -83,7 +83,7 @@ namespace LTP.Truck.UserControls
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lbTitle.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
       lbTitle.Location = new Point(8, 5);
       lbTitle.Name = "lbTitle";
       lbTitle.Size = new Size(241, 23);

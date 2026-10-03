@@ -149,13 +149,36 @@ namespace LTP.Truck.Forms
     private void FrmWaiting_Load(object? sender, EventArgs e)
     {
       lbVersion.Text = $"Version {AppCore.Ins._appConfig?.Version ?? string.Empty}";
-      ucPanelLogin1.Account = "Bosch";
-      ucPanelLogin1.Password = "Hsf@2026";
-      ucPanelLogin1.Account = "admin";
-      ucPanelLogin1.Password = "admin";
+      //ucPanelLogin1.Account = "Bosch";
+      //ucPanelLogin1.Password = "Hsf@2026";
+      //ucPanelLogin1.Account = "admin";
+      //ucPanelLogin1.Password = "admin";
+      //ucPanelLogin1.Account = "ISOFT";
+      //ucPanelLogin1.Password = "i-Soft@123";
+      ucPanelLogin1.Account = "";
+      ucPanelLogin1.Password = "";
+      ucPanelLogin1.Account = "ISOFT";
+      ucPanelLogin1.Password = "i-Soft@123";
+
       ucPanelLogin1.Account = "HaiThanh";
       ucPanelLogin1.Password = "HaiThanh@123";
       ucPanelLogin1.OnSendLogin += UcPanelLogin1_OnSendLogin;
+
+      this.Focus();
+    }
+    public void ClearAccount()
+    {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(() =>
+        {
+          ClearAccount();
+        }));
+        return;
+      }
+
+      ucPanelLogin1.Account = "";
+      ucPanelLogin1.Password = "";
     }
 
     private void LoadConfig()
@@ -183,25 +206,39 @@ namespace LTP.Truck.Forms
     private bool isLogin = false;
     private async void UcPanelLogin1_OnSendLogin(object? sender, EventArgs e)
     {
-      if (isLogin)
+      AppCore.Ins._userCurrent = await AppCore.Ins._userService.CheckLogin(ucPanelLogin1.Account, ucPanelLogin1.Password);
+      if (AppCore.Ins._userCurrent != null)
       {
+        FrmOperation.Instance.LoadAccount(AppCore.Ins._userCurrent);
         FrmMain.Instance.StartUserSession();
-      }  
+      }
       else
       {
-        AppCore.Ins._userCurrent = await AppCore.Ins._userService.CheckLogin(ucPanelLogin1.Account, ucPanelLogin1.Password);
-        if (AppCore.Ins._userCurrent != null)
-        {
-          FrmOperation.Instance.LoadAccount(AppCore.Ins._userCurrent);
-          FrmMain.Instance.StartUserSession();
-        }
-        else
-        {
-          using var popupMsg = new PopupConfirm("Tài khoản hoặc mật khẩu sai. Vui lòng thử lại !",
-            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupMsg.ShowDialog(this);
-        }
+        using var popupMsg = new PopupConfirm("Tài khoản hoặc mật khẩu sai. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
       }
+
+
+      //if (isLogin)
+      //{
+      //  FrmMain.Instance.StartUserSession();
+      //}  
+      //else
+      //{
+      //  AppCore.Ins._userCurrent = await AppCore.Ins._userService.CheckLogin(ucPanelLogin1.Account, ucPanelLogin1.Password);
+      //  if (AppCore.Ins._userCurrent != null)
+      //  {
+      //    FrmOperation.Instance.LoadAccount(AppCore.Ins._userCurrent);
+      //    FrmMain.Instance.StartUserSession();
+      //  }
+      //  else
+      //  {
+      //    using var popupMsg = new PopupConfirm("Tài khoản hoặc mật khẩu sai. Vui lòng thử lại !",
+      //      EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      //    popupMsg.ShowDialog(this);
+      //  }
+      //}
 
 
       //if (ucPanelLogin1.Account == "admin" && ucPanelLogin1.Password == "admin")

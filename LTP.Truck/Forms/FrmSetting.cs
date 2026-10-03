@@ -5,6 +5,7 @@ using iSoft.Communication.JsonPayload;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
+using LTP.Truck.Popup;
 using Newtonsoft.Json;
 using System.Data;
 using System.Drawing.Printing;
@@ -297,14 +298,23 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveStation_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
+        if (!AppCore.Ins.CheckPermission("0047"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0053"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -429,14 +439,23 @@ namespace LTP.Truck.Forms
 
     private async void btnSavePrint_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
+        if (!AppCore.Ins.CheckPermission("0047"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0053"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -628,14 +647,23 @@ namespace LTP.Truck.Forms
 
     private async void btnAddCommWeight_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
+        if (!AppCore.Ins.CheckPermission("0047"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0053"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -712,14 +740,23 @@ namespace LTP.Truck.Forms
 
     private async void btnConfirm_Click(object sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
+        if (!AppCore.Ins.CheckPermission("0047"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0053"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -771,10 +808,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0045"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -836,14 +870,23 @@ namespace LTP.Truck.Forms
 
     private async void btnInforReport_Click(object sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
+        if (!AppCore.Ins.CheckPermission("0047"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0053"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
@@ -889,14 +932,23 @@ namespace LTP.Truck.Forms
 
     private async void btnSaveValueWeightGoodsCheckPermitConfirm_Click(object? sender, EventArgs e)
     {
-      if (!AppCore.Ins.CheckPermission("0047") || !AppCore.Ins.CheckPermission("0053"))
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-        openErrorPopup.ShowDialog(this);
-        return;
+        if (!AppCore.Ins.CheckPermission("0047"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else
+      {
+        if (!AppCore.Ins.CheckPermission("0053"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
       }
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);

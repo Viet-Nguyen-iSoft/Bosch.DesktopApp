@@ -35,5 +35,10 @@ namespace ApiSyncData.Resp
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool? IsDelete { get; set; }
+    public string? Document { get; set; }
+    public string? IdCard { get; set; }
+    public string? NameDriver { get; set; }
+    public string? ReasonDelete { get; set; }
+    
   }
 }

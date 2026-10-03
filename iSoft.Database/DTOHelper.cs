@@ -50,6 +50,7 @@ namespace iSoft.Database
         LicensePlate = recordTruck.LicensePlate,
         Document = recordTruck.Note,
         Station = recordTruck.Station?.Name,
+        Operator = recordTruck.User?.FullName,
       };
     }
 

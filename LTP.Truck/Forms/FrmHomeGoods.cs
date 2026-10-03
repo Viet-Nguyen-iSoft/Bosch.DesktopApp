@@ -9,6 +9,7 @@ using iSoft.Database.Models;
 using iSoft.Database.Repositorys;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
+using LTP.Truck.Popup;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -642,10 +643,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0050"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -924,10 +922,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0050"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -961,10 +956,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0050"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }
@@ -1107,10 +1099,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0050"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       } 
@@ -1126,10 +1115,7 @@ namespace LTP.Truck.Forms
     {
       if (!AppCore.Ins.CheckPermission("0050"))
       {
-        using var openErrorPopup = new PopupConfirm(
-              "Tài khoản không có phân quyền thực hiện !",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
+        using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
       }

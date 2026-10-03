@@ -180,7 +180,7 @@ namespace LTP.Truck
         // Cho message loop thực hiện lần paint đầu tiên trước.
         await Task.Yield();
 
-        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 2, _syncCts.Token);
+        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 7, _syncCts.Token);
         _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
 
         AppCore.Ins.CheckConnectServer();
@@ -234,6 +234,7 @@ namespace LTP.Truck
 
       try
       {
+        FrmOperation.Instance.ResetToDefaultHome();
         AppCore.Ins._autoLogoutService.Start(
           AppCore.Ins._appConfig?.TimeAutoLogOut);
         ChangePage(EnumScreen.Operation);
@@ -255,14 +256,31 @@ namespace LTP.Truck
       try
       {
         AppCore.Ins._autoLogoutService.Stop();
+        CloseOpenPopups();
         AppCore.Ins._userCurrent = null;
         FrmOperation.Instance.LoadAccount(null);
         ChangePage(EnumScreen.Waiting);
+        FrmWaiting.Instance.ClearAccount();
       }
       catch (Exception ex)
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
+    }
+
+    private void CloseOpenPopups()
+    {
+      var openPopups = Application.OpenForms
+        .Cast<Form>()
+        .Where(form =>
+          !ReferenceEquals(form, this) &&
+          form.TopLevel &&
+          !form.IsDisposed)
+        .Reverse()
+        .ToList();
+
+      foreach (Form popup in openPopups)
+        popup.Close();
     }
 
     private void AutoLogoutService_Elapsed(object? sender, EventArgs e)

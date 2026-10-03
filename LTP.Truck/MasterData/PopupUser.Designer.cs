@@ -31,9 +31,13 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupUser));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
+      tableLayoutPanel10 = new TableLayoutPanel();
+      btnHideRePassword = new Common.Custom.RJButton();
+      txtRePassword = new Common.Custom.RJTextBox();
+      picActive = new PictureBox();
+      label4 = new Label();
       txtEmployeeCode = new Common.Custom.RJTextBox();
       txtFullName = new Common.Custom.RJTextBox();
-      txtRePassword = new Common.Custom.RJTextBox();
       tableLayoutPanel7 = new TableLayoutPanel();
       label2 = new Label();
       label7 = new Label();
@@ -46,28 +50,33 @@
       tableLayoutPanel4 = new TableLayoutPanel();
       label3 = new Label();
       label5 = new Label();
-      txtPassword = new Common.Custom.RJTextBox();
       txtUsername = new Common.Custom.RJTextBox();
       txtDisplayName = new Common.Custom.RJTextBox();
       tableLayoutPanel8 = new TableLayoutPanel();
       label9 = new Label();
       label10 = new Label();
-      label12 = new Label();
+      tableLayoutPanel9 = new TableLayoutPanel();
+      btnHidePassword = new Common.Custom.RJButton();
+      txtPassword = new Common.Custom.RJTextBox();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      label4 = new Label();
-      picActive = new PictureBox();
+      tableLayoutPanel11 = new TableLayoutPanel();
+      label11 = new Label();
+      label13 = new Label();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
+      tableLayoutPanel10.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)picActive).BeginInit();
       tableLayoutPanel7.SuspendLayout();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel8.SuspendLayout();
+      tableLayoutPanel9.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)picActive).BeginInit();
+      tableLayoutPanel11.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -98,20 +107,20 @@
       tableLayoutPanel5.ColumnCount = 2;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel5.Controls.Add(tableLayoutPanel11, 0, 5);
+      tableLayoutPanel5.Controls.Add(tableLayoutPanel10, 1, 3);
       tableLayoutPanel5.Controls.Add(picActive, 1, 6);
       tableLayoutPanel5.Controls.Add(label4, 0, 6);
       tableLayoutPanel5.Controls.Add(txtEmployeeCode, 1, 5);
       tableLayoutPanel5.Controls.Add(txtFullName, 1, 4);
-      tableLayoutPanel5.Controls.Add(txtRePassword, 1, 3);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel7, 0, 3);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel1, 0, 2);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel6, 0, 0);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel4, 0, 1);
-      tableLayoutPanel5.Controls.Add(txtPassword, 1, 2);
       tableLayoutPanel5.Controls.Add(txtUsername, 1, 0);
       tableLayoutPanel5.Controls.Add(txtDisplayName, 1, 1);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel8, 0, 4);
-      tableLayoutPanel5.Controls.Add(label12, 0, 5);
+      tableLayoutPanel5.Controls.Add(tableLayoutPanel9, 1, 2);
       tableLayoutPanel5.Location = new Point(8, 68);
       tableLayoutPanel5.Name = "tableLayoutPanel5";
       tableLayoutPanel5.RowCount = 7;
@@ -124,6 +133,88 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
       tableLayoutPanel5.Size = new Size(784, 475);
       tableLayoutPanel5.TabIndex = 8;
+      // 
+      // tableLayoutPanel10
+      // 
+      tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel10.ColumnCount = 2;
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 88.71528F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 11.2847223F));
+      tableLayoutPanel10.Controls.Add(btnHideRePassword, 1, 0);
+      tableLayoutPanel10.Controls.Add(txtRePassword, 0, 0);
+      tableLayoutPanel10.Location = new Point(205, 204);
+      tableLayoutPanel10.Name = "tableLayoutPanel10";
+      tableLayoutPanel10.RowCount = 1;
+      tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+      tableLayoutPanel10.Size = new Size(576, 61);
+      tableLayoutPanel10.TabIndex = 50;
+      // 
+      // btnHideRePassword
+      // 
+      btnHideRePassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHideRePassword.BackColor = Color.DarkGray;
+      btnHideRePassword.BackgroundColor = Color.DarkGray;
+      btnHideRePassword.BorderColor = Color.PaleVioletRed;
+      btnHideRePassword.BorderRadius = 5;
+      btnHideRePassword.BorderSize = 0;
+      btnHideRePassword.FlatAppearance.BorderSize = 0;
+      btnHideRePassword.FlatStyle = FlatStyle.Flat;
+      btnHideRePassword.ForeColor = Color.White;
+      btnHideRePassword.Image = Properties.Resources.icon_hide;
+      btnHideRePassword.Location = new Point(514, 10);
+      btnHideRePassword.Name = "btnHideRePassword";
+      btnHideRePassword.Size = new Size(59, 40);
+      btnHideRePassword.TabIndex = 9;
+      btnHideRePassword.TextColor = Color.White;
+      btnHideRePassword.UseVisualStyleBackColor = false;
+      // 
+      // txtRePassword
+      // 
+      txtRePassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtRePassword.BackColor = SystemColors.Window;
+      txtRePassword.BorderColor = Color.Black;
+      txtRePassword.BorderFocusColor = Color.HotPink;
+      txtRePassword.BorderRadius = 5;
+      txtRePassword.BorderSize = 2;
+      txtRePassword.Font = new Font("Roboto", 14F);
+      txtRePassword.ForeColor = Color.FromArgb(64, 64, 64);
+      txtRePassword.Location = new Point(4, 11);
+      txtRePassword.Margin = new Padding(4);
+      txtRePassword.Multiline = false;
+      txtRePassword.Name = "txtRePassword";
+      txtRePassword.Padding = new Padding(10, 7, 10, 7);
+      txtRePassword.PasswordChar = false;
+      txtRePassword.PlaceholderColor = Color.DarkGray;
+      txtRePassword.PlaceholderText = "";
+      txtRePassword.Size = new Size(503, 38);
+      txtRePassword.TabIndex = 44;
+      txtRePassword.Texts = "";
+      txtRePassword.UnderlinedStyle = false;
+      // 
+      // picActive
+      // 
+      picActive.Anchor = AnchorStyles.Left;
+      picActive.Image = Properties.Resources.icon_toggle_off;
+      picActive.Location = new Point(205, 409);
+      picActive.Name = "picActive";
+      picActive.Size = new Size(94, 58);
+      picActive.SizeMode = PictureBoxSizeMode.StretchImage;
+      picActive.TabIndex = 48;
+      picActive.TabStop = false;
+      // 
+      // label4
+      // 
+      label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label4.AutoSize = true;
+      label4.BackColor = Color.Transparent;
+      label4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label4.Location = new Point(0, 402);
+      label4.Margin = new Padding(0);
+      label4.Name = "label4";
+      label4.Size = new Size(202, 73);
+      label4.TabIndex = 47;
+      label4.Text = "Kích hoạt";
+      label4.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtEmployeeCode
       // 
@@ -170,29 +261,6 @@
       txtFullName.TabIndex = 45;
       txtFullName.Texts = "";
       txtFullName.UnderlinedStyle = false;
-      // 
-      // txtRePassword
-      // 
-      txtRePassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtRePassword.BackColor = SystemColors.Window;
-      txtRePassword.BorderColor = Color.Black;
-      txtRePassword.BorderFocusColor = Color.HotPink;
-      txtRePassword.BorderRadius = 5;
-      txtRePassword.BorderSize = 2;
-      txtRePassword.Font = new Font("Roboto", 14F);
-      txtRePassword.ForeColor = Color.FromArgb(64, 64, 64);
-      txtRePassword.Location = new Point(206, 215);
-      txtRePassword.Margin = new Padding(4);
-      txtRePassword.Multiline = false;
-      txtRePassword.Name = "txtRePassword";
-      txtRePassword.Padding = new Padding(10, 7, 10, 7);
-      txtRePassword.PasswordChar = false;
-      txtRePassword.PlaceholderColor = Color.DarkGray;
-      txtRePassword.PlaceholderText = "";
-      txtRePassword.Size = new Size(574, 38);
-      txtRePassword.TabIndex = 44;
-      txtRePassword.Texts = "";
-      txtRePassword.UnderlinedStyle = false;
       // 
       // tableLayoutPanel7
       // 
@@ -374,29 +442,6 @@
       label5.Text = "Tên hiển thị";
       label5.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // txtPassword
-      // 
-      txtPassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtPassword.BackColor = SystemColors.Window;
-      txtPassword.BorderColor = Color.Black;
-      txtPassword.BorderFocusColor = Color.HotPink;
-      txtPassword.BorderRadius = 5;
-      txtPassword.BorderSize = 2;
-      txtPassword.Font = new Font("Roboto", 14F);
-      txtPassword.ForeColor = Color.FromArgb(64, 64, 64);
-      txtPassword.Location = new Point(206, 148);
-      txtPassword.Margin = new Padding(4);
-      txtPassword.Multiline = false;
-      txtPassword.Name = "txtPassword";
-      txtPassword.Padding = new Padding(10, 7, 10, 7);
-      txtPassword.PasswordChar = false;
-      txtPassword.PlaceholderColor = Color.DarkGray;
-      txtPassword.PlaceholderText = "";
-      txtPassword.Size = new Size(574, 38);
-      txtPassword.TabIndex = 8;
-      txtPassword.Texts = "";
-      txtPassword.UnderlinedStyle = false;
-      // 
       // txtUsername
       // 
       txtUsername.Anchor = AnchorStyles.Left | AnchorStyles.Right;
@@ -488,19 +533,62 @@
       label10.Text = "Họ và tên";
       label10.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // label12
+      // tableLayoutPanel9
       // 
-      label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label12.AutoSize = true;
-      label12.BackColor = Color.Transparent;
-      label12.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label12.Location = new Point(0, 335);
-      label12.Margin = new Padding(0);
-      label12.Name = "label12";
-      label12.Size = new Size(202, 67);
-      label12.TabIndex = 3;
-      label12.Text = "Mã nhân viên";
-      label12.TextAlign = ContentAlignment.MiddleLeft;
+      tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel9.ColumnCount = 2;
+      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 88.71528F));
+      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 11.2847223F));
+      tableLayoutPanel9.Controls.Add(btnHidePassword, 1, 0);
+      tableLayoutPanel9.Controls.Add(txtPassword, 0, 0);
+      tableLayoutPanel9.Location = new Point(205, 137);
+      tableLayoutPanel9.Name = "tableLayoutPanel9";
+      tableLayoutPanel9.RowCount = 1;
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+      tableLayoutPanel9.Size = new Size(576, 61);
+      tableLayoutPanel9.TabIndex = 49;
+      // 
+      // btnHidePassword
+      // 
+      btnHidePassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHidePassword.BackColor = Color.DarkGray;
+      btnHidePassword.BackgroundColor = Color.DarkGray;
+      btnHidePassword.BorderColor = Color.PaleVioletRed;
+      btnHidePassword.BorderRadius = 5;
+      btnHidePassword.BorderSize = 0;
+      btnHidePassword.FlatAppearance.BorderSize = 0;
+      btnHidePassword.FlatStyle = FlatStyle.Flat;
+      btnHidePassword.ForeColor = Color.White;
+      btnHidePassword.Image = Properties.Resources.icon_hide;
+      btnHidePassword.Location = new Point(514, 10);
+      btnHidePassword.Name = "btnHidePassword";
+      btnHidePassword.Size = new Size(59, 40);
+      btnHidePassword.TabIndex = 9;
+      btnHidePassword.TextColor = Color.White;
+      btnHidePassword.UseVisualStyleBackColor = false;
+      // 
+      // txtPassword
+      // 
+      txtPassword.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtPassword.BackColor = SystemColors.Window;
+      txtPassword.BorderColor = Color.Black;
+      txtPassword.BorderFocusColor = Color.HotPink;
+      txtPassword.BorderRadius = 5;
+      txtPassword.BorderSize = 2;
+      txtPassword.Font = new Font("Roboto", 14F);
+      txtPassword.ForeColor = Color.FromArgb(64, 64, 64);
+      txtPassword.Location = new Point(4, 11);
+      txtPassword.Margin = new Padding(4);
+      txtPassword.Multiline = false;
+      txtPassword.Name = "txtPassword";
+      txtPassword.Padding = new Padding(10, 7, 10, 7);
+      txtPassword.PasswordChar = false;
+      txtPassword.PlaceholderColor = Color.DarkGray;
+      txtPassword.PlaceholderText = "";
+      txtPassword.Size = new Size(503, 38);
+      txtPassword.TabIndex = 8;
+      txtPassword.Texts = "";
+      txtPassword.UnderlinedStyle = false;
       // 
       // lbTitle
       // 
@@ -579,30 +667,50 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // label4
+      // tableLayoutPanel11
       // 
-      label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label4.AutoSize = true;
-      label4.BackColor = Color.Transparent;
-      label4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label4.Location = new Point(0, 402);
-      label4.Margin = new Padding(0);
-      label4.Name = "label4";
-      label4.Size = new Size(202, 73);
-      label4.TabIndex = 47;
-      label4.Text = "Kích hoạt";
-      label4.TextAlign = ContentAlignment.MiddleLeft;
+      tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel11.ColumnCount = 2;
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel11.Controls.Add(label11, 1, 0);
+      tableLayoutPanel11.Controls.Add(label13, 0, 0);
+      tableLayoutPanel11.Location = new Point(0, 335);
+      tableLayoutPanel11.Margin = new Padding(0);
+      tableLayoutPanel11.Name = "tableLayoutPanel11";
+      tableLayoutPanel11.RowCount = 1;
+      tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel11.Size = new Size(202, 67);
+      tableLayoutPanel11.TabIndex = 51;
       // 
-      // picActive
+      // label11
       // 
-      picActive.Anchor = AnchorStyles.Left;
-      picActive.Image = Properties.Resources.icon_toggle_off;
-      picActive.Location = new Point(205, 409);
-      picActive.Name = "picActive";
-      picActive.Size = new Size(94, 58);
-      picActive.SizeMode = PictureBoxSizeMode.StretchImage;
-      picActive.TabIndex = 48;
-      picActive.TabStop = false;
+      label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label11.AutoSize = true;
+      label11.BackColor = Color.Transparent;
+      label11.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label11.ForeColor = Color.Red;
+      label11.Location = new Point(124, 0);
+      label11.Margin = new Padding(0);
+      label11.Name = "label11";
+      label11.Size = new Size(78, 67);
+      label11.TabIndex = 4;
+      label11.Text = "*";
+      label11.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label13
+      // 
+      label13.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label13.AutoSize = true;
+      label13.BackColor = Color.Transparent;
+      label13.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label13.Location = new Point(0, 0);
+      label13.Margin = new Padding(0);
+      label13.Name = "label13";
+      label13.Size = new Size(124, 67);
+      label13.TabIndex = 3;
+      label13.Text = "Mã nhân viên";
+      label13.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // PopupUser
       // 
@@ -617,6 +725,8 @@
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel5.ResumeLayout(false);
       tableLayoutPanel5.PerformLayout();
+      tableLayoutPanel10.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)picActive).EndInit();
       tableLayoutPanel7.ResumeLayout(false);
       tableLayoutPanel7.PerformLayout();
       tableLayoutPanel1.ResumeLayout(false);
@@ -627,8 +737,10 @@
       tableLayoutPanel4.PerformLayout();
       tableLayoutPanel8.ResumeLayout(false);
       tableLayoutPanel8.PerformLayout();
+      tableLayoutPanel9.ResumeLayout(false);
       tableLayoutPanel2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)picActive).EndInit();
+      tableLayoutPanel11.ResumeLayout(false);
+      tableLayoutPanel11.PerformLayout();
       ResumeLayout(false);
     }
 
@@ -658,11 +770,17 @@
     private TableLayoutPanel tableLayoutPanel8;
     private Label label9;
     private Label label10;
-    private Label label12;
     private Common.Custom.RJTextBox txtEmployeeCode;
     private Common.Custom.RJTextBox txtFullName;
     private Common.Custom.RJTextBox txtRePassword;
     private Label label4;
     private PictureBox picActive;
+    private TableLayoutPanel tableLayoutPanel9;
+    private TableLayoutPanel tableLayoutPanel10;
+    private Common.Custom.RJButton btnHideRePassword;
+    private Common.Custom.RJButton btnHidePassword;
+    private TableLayoutPanel tableLayoutPanel11;
+    private Label label11;
+    private Label label13;
   }
 }

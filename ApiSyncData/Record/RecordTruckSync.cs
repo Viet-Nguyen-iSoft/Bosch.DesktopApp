@@ -19,6 +19,7 @@ namespace ApiSyncData.Record
     public Guid? ClientId { get; set; }
     public Guid? TypeGoodsId { get; set; }
     public Guid? WarehouseId { get; set; }
+    public Guid? UserId { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool? DeletedFlag { get; set; }
