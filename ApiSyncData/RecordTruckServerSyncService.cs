@@ -38,10 +38,24 @@ namespace ApiSyncData
       try
       {
         await using var db = new MySqlDbContext();
-        var locals = await db.Set<RecordTruck>()
-          .Where(record => sourceIds.Contains(record.Id))
-          .ToDictionaryAsync(record => record.Id, token)
+        var references = await LoadReferencesAsync(db, rows, token)
           .ConfigureAwait(false);
+        var localRows = await db.Set<RecordTruck>()
+          .Where(record =>
+            sourceIds.Contains(record.Id) ||
+            (record.IdSrc.HasValue && sourceIds.Contains(record.IdSrc.Value)))
+          .ToListAsync(token)
+          .ConfigureAwait(false);
+        var locals = new Dictionary<Guid, RecordTruck>();
+        foreach (var localRow in localRows)
+        {
+          var sourceId = NormalizeId(localRow.IdSrc) ?? localRow.Id;
+          if (!locals.TryAdd(sourceId, localRow))
+          {
+            throw new InvalidOperationException(
+              $"RecordTruckFromServer: nhiều bản ghi local cùng liên kết server Id {sourceId}.");
+          }
+        }
 
         foreach (var source in rows)
         {
@@ -59,7 +73,7 @@ namespace ApiSyncData
             locals.Add(sourceId, local);
           }
 
-          Map(source, local);
+          Map(source, local, references);
         }
 
         db.ChangeTracker.DetectChanges();
@@ -103,7 +117,8 @@ namespace ApiSyncData
 
     private static void Map(
       ListDatumRecordTruck source,
-      RecordTruck target)
+      RecordTruck target,
+      ReferenceIds references)
     {
       target.NoLabelAuto = source.NoLabelAuto;
       target.NoLabelManual = source.NoLabelManual;
@@ -117,16 +132,16 @@ namespace ApiSyncData
       target.WeighInAt = NormalizeTimestamp(source.WeighInAt);
       target.WeighOutAt = NormalizeTimestamp(source.WeighOutAt);
 
-      if (source.ClientId!=null)
-        target.ClientId = NormalizeId(source.ClientId);
-      if (source.TypeGoodsId != null)
-        target.TypeGoodsId = NormalizeId(source.TypeGoodsId);
-      if (source.WarehouseId != null)
-        target.WarehouseId = NormalizeId(source.WarehouseId);
-      if (source.UserId != null)
-        target.UserId = NormalizeId(source.UserId);
-      if (source.StationId != null)
-        target.StationId = NormalizeId(source.StationId);
+      target.ClientId = ResolveLocalId(
+        source.Id, source.ClientId, references.Clients, nameof(source.ClientId));
+      target.TypeGoodsId = ResolveLocalId(
+        source.Id, source.TypeGoodsId, references.TypeGoods, nameof(source.TypeGoodsId));
+      target.WarehouseId = ResolveLocalId(
+        source.Id, source.WarehouseId, references.Warehouses, nameof(source.WarehouseId));
+      target.UserId = ResolveLocalId(
+        source.Id, source.UserId, references.Users, nameof(source.UserId));
+      target.StationId = ResolveLocalId(
+        source.Id, source.StationId, references.Stations, nameof(source.StationId));
       target.CreatedAt = NormalizeTimestamp(source.CreatedAt);
       target.UpdatedAt = NormalizeTimestamp(source.UpdatedAt);
       target.DeletedFlag = source.IsDelete == true;
@@ -152,6 +167,83 @@ namespace ApiSyncData
 
     private static Guid? NormalizeId(Guid? id) =>
       id.HasValue && id != Guid.Empty ? id : null;
+
+    private static Guid? ResolveLocalId(
+      Guid? recordTruckId,
+      Guid? sourceId,
+      IReadOnlyDictionary<Guid, Guid> localIds,
+      string relationName)
+    {
+      var normalizedId = NormalizeId(sourceId);
+      if (!normalizedId.HasValue)
+        return null;
+
+      if (localIds.TryGetValue(normalizedId.Value, out var localId))
+        return localId;
+
+      System.Diagnostics.Trace.TraceWarning(
+        $"RecordTruck {recordTruckId}: {relationName} {normalizedId} " +
+        "không tồn tại trong master data local; khóa ngoại được để trống.");
+      return null;
+    }
+
+    private static async Task<ReferenceIds> LoadReferencesAsync(
+      MySqlDbContext db,
+      IReadOnlyCollection<ListDatumRecordTruck> rows,
+      CancellationToken token)
+    {
+      return new ReferenceIds(
+        await LoadLocalIdsAsync<Client>(db, rows.Select(row => row.ClientId), token)
+          .ConfigureAwait(false),
+        await LoadLocalIdsAsync<TypeGoods>(db, rows.Select(row => row.TypeGoodsId), token)
+          .ConfigureAwait(false),
+        await LoadLocalIdsAsync<Warehouse>(db, rows.Select(row => row.WarehouseId), token)
+          .ConfigureAwait(false),
+        await LoadLocalIdsAsync<User>(db, rows.Select(row => row.UserId), token)
+          .ConfigureAwait(false),
+        await LoadLocalIdsAsync<Station>(db, rows.Select(row => row.StationId), token)
+          .ConfigureAwait(false));
+    }
+
+    private static async Task<Dictionary<Guid, Guid>> LoadLocalIdsAsync<TEntity>(
+      MySqlDbContext db,
+      IEnumerable<Guid?> sourceIds,
+      CancellationToken token)
+      where TEntity : BaseModel
+    {
+      var ids = sourceIds
+        .Where(id => id.HasValue && id != Guid.Empty)
+        .Select(id => id!.Value)
+        .Distinct()
+        .ToList();
+      if (ids.Count == 0)
+        return new Dictionary<Guid, Guid>();
+
+      var entities = await db.Set<TEntity>()
+        .AsNoTracking()
+        .Where(entity =>
+          (entity.IdSrc.HasValue && ids.Contains(entity.IdSrc.Value)) ||
+          ids.Contains(entity.Id))
+        .Select(entity => new { entity.Id, entity.IdSrc })
+        .ToListAsync(token)
+        .ConfigureAwait(false);
+
+      var result = new Dictionary<Guid, Guid>();
+      foreach (var entity in entities)
+      {
+        var sourceId = NormalizeId(entity.IdSrc) ?? entity.Id;
+        result.TryAdd(sourceId, entity.Id);
+      }
+
+      return result;
+    }
+
+    private sealed record ReferenceIds(
+      IReadOnlyDictionary<Guid, Guid> Clients,
+      IReadOnlyDictionary<Guid, Guid> TypeGoods,
+      IReadOnlyDictionary<Guid, Guid> Warehouses,
+      IReadOnlyDictionary<Guid, Guid> Users,
+      IReadOnlyDictionary<Guid, Guid> Stations);
 
     private static DateTime? NormalizeTimestamp(DateTime? value)
     {

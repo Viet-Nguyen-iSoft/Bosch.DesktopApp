@@ -230,7 +230,7 @@ namespace ApiSyncData
         LicensePlate = record.LicensePlate,
         Document = record.Note,
         ReasonDelete = record.ReasonDelete,
-        EmployeeId = record.UserId,
+        UserId = record.UserId,
         ClientId = record.ClientId,
         TypeGoodsId = record.TypeGoodsId,
         WarehouseId = record.WarehouseId,

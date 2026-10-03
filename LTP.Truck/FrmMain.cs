@@ -180,7 +180,7 @@ namespace LTP.Truck
         // Cho message loop thực hiện lần paint đầu tiên trước.
         await Task.Yield();
 
-        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 2, _syncCts.Token);
+        _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 7, _syncCts.Token);
         _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
 
         AppCore.Ins.CheckConnectServer();
