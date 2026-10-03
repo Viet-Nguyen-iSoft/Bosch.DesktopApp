@@ -440,9 +440,6 @@ namespace LTP.Truck.Forms
         if (!ValidateClientSelected())
           return;
 
-        if (!ValidateWarehouseSelected())
-          return;
-
         if (_recordTruck.TypeGoodsId == null)
         {
           using var popupMsg = new PopupConfirm("Vui lòng chọn Loại hàng trước khi cân !",
@@ -583,9 +580,6 @@ namespace LTP.Truck.Forms
           if (!ValidateClientSelected())
             return;
 
-          if (!ValidateWarehouseSelected())
-            return;
-
           _recordTruck.NetTime01 = _recordTruck.NetTimeTemp;
           _recordTruck.NetTimeTemp = 0.0;
           _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime01;
@@ -672,9 +666,6 @@ namespace LTP.Truck.Forms
         }
 
         if (!ValidateClientSelected())
-          return;
-
-        if (!ValidateWarehouseSelected())
           return;
 
         _recordTruck.NetTime02 = _recordTruck.NetTimeTemp;
@@ -779,22 +770,6 @@ namespace LTP.Truck.Forms
         EnumImageMsg.Warning);
       popupMsg.ShowDialog(this);
       btnLoadClient.Focus();
-      return false;
-    }
-
-    private bool ValidateWarehouseSelected()
-    {
-      if (!string.IsNullOrWhiteSpace(txtWareHouse.Texts) &&
-          _recordTruck.WarehouseId.HasValue)
-      {
-        return true;
-      }
-
-      using var popupMsg = new PopupConfirm(
-        "Vui lòng chọn Kho hàng trước khi cân !",
-        EnumTypeMsg.MessageManualClose,
-        EnumImageMsg.Warning);
-      popupMsg.ShowDialog(this);
       return false;
     }
 

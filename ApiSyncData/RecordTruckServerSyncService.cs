@@ -116,11 +116,17 @@ namespace ApiSyncData
       target.EnumTypeDataTruck = GetLocalStatus(source);
       target.WeighInAt = NormalizeTimestamp(source.WeighInAt);
       target.WeighOutAt = NormalizeTimestamp(source.WeighOutAt);
-      target.ClientId = NormalizeId(source.ClientId);
-      target.TypeGoodsId = NormalizeId(source.TypeGoodsId);
-      target.WarehouseId = NormalizeId(source.WarehouseId);
-      target.UserId = NormalizeId(source.UserId);
-      target.StationId = NormalizeId(source.StationId);
+
+      if (source.ClientId!=null)
+        target.ClientId = NormalizeId(source.ClientId);
+      if (source.TypeGoodsId != null)
+        target.TypeGoodsId = NormalizeId(source.TypeGoodsId);
+      if (source.WarehouseId != null)
+        target.WarehouseId = NormalizeId(source.WarehouseId);
+      if (source.UserId != null)
+        target.UserId = NormalizeId(source.UserId);
+      if (source.StationId != null)
+        target.StationId = NormalizeId(source.StationId);
       target.CreatedAt = NormalizeTimestamp(source.CreatedAt);
       target.UpdatedAt = NormalizeTimestamp(source.UpdatedAt);
       target.DeletedFlag = source.IsDelete == true;
