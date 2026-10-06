@@ -1479,6 +1479,7 @@ namespace LTP.Truck.Forms
       ShowDataHistorical(_recordTruck);
       if (cbbTareForTruck.Items.Count > 0)
         cbbTareForTruck.SelectedIndex = 0;
+      cbbType.SelectedIndex = -1;
     }
 
 
