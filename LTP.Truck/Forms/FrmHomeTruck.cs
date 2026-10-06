@@ -82,8 +82,8 @@ namespace LTP.Truck.Forms
       ucItemWeight01.Title = "KL cân lần 1 (Kg)";
       ucItemWeight02.Title = "KL cân lần 2 (Kg)";
       ucItemOffsetWeight.Title = "KL chênh lệch xe (Kg)";
-      ucItemTareForTruck.Title = "KL tare (Kg)";
-      ucItemOffsetWeightAndTare.Title = "KL trừ tare (Kg)";
+      ucItemTareForTruck.Title = "KL bì (Kg)";
+      ucItemOffsetWeightAndTare.Title = "KL sau trừ bì (Kg)";
 
       ucItemOffsetWeight.VisibleTime = false;
       ucItemTareForTruck.VisibleTime = false;
