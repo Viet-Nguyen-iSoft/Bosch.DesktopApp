@@ -47,22 +47,22 @@ namespace LTP.Truck.UserControls
       tableLayoutPanel1.Location = new Point(0, 0);
       tableLayoutPanel1.Name = "tableLayoutPanel1";
       tableLayoutPanel1.Padding = new Padding(5);
-      tableLayoutPanel1.RowCount = 4;
+      tableLayoutPanel1.RowCount = 3;
       tableLayoutPanel1.RowStyles.Add(new RowStyle());
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle());
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 10F));
-      tableLayoutPanel1.Size = new Size(257, 144);
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel1.Size = new Size(257, 105);
       tableLayoutPanel1.TabIndex = 0;
       // 
       // lbTime
       // 
       lbTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTime.AutoSize = true;
-      lbTime.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      lbTime.Location = new Point(8, 104);
+      lbTime.Font = new Font("Roboto", 12F);
+      lbTime.Location = new Point(8, 81);
       lbTime.Name = "lbTime";
-      lbTime.Size = new Size(241, 25);
+      lbTime.Size = new Size(241, 19);
       lbTime.TabIndex = 5;
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
@@ -71,10 +71,10 @@ namespace LTP.Truck.UserControls
       // 
       lbValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbValue.AutoSize = true;
-      lbValue.Font = new Font("Roboto", 30F, FontStyle.Bold);
+      lbValue.Font = new Font("Roboto", 18F, FontStyle.Bold);
       lbValue.Location = new Point(8, 28);
       lbValue.Name = "lbValue";
-      lbValue.Size = new Size(241, 76);
+      lbValue.Size = new Size(241, 53);
       lbValue.TabIndex = 4;
       lbValue.Text = "0.000";
       lbValue.TextAlign = ContentAlignment.MiddleCenter;
@@ -98,7 +98,7 @@ namespace LTP.Truck.UserControls
       BackColor = Color.FromArgb(223, 239, 255);
       Controls.Add(tableLayoutPanel1);
       Name = "UcItem";
-      Size = new Size(257, 144);
+      Size = new Size(257, 105);
       tableLayoutPanel1.ResumeLayout(false);
       tableLayoutPanel1.PerformLayout();
       ResumeLayout(false);

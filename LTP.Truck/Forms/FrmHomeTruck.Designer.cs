@@ -114,6 +114,7 @@ namespace LTP.Truck.Forms
       btnPrint = new RJButton();
       btnSearchHistorical = new RJButton();
       label27 = new Label();
+      ucItemTareForTruck = new LTP.Truck.UserControls.UcItem();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -1278,6 +1279,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel9.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel9.ColumnCount = 1;
       tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel9.Controls.Add(ucItemTareForTruck, 0, 4);
       tableLayoutPanel9.Controls.Add(ucItemOffsetWeight, 0, 3);
       tableLayoutPanel9.Controls.Add(label14, 0, 0);
       tableLayoutPanel9.Controls.Add(ucItemWeight01, 0, 1);
@@ -1285,12 +1287,13 @@ namespace LTP.Truck.Forms
       tableLayoutPanel9.Location = new Point(1274, 0);
       tableLayoutPanel9.Margin = new Padding(0);
       tableLayoutPanel9.Name = "tableLayoutPanel9";
-      tableLayoutPanel9.RowCount = 4;
+      tableLayoutPanel9.RowCount = 6;
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
       tableLayoutPanel9.Size = new Size(251, 590);
       tableLayoutPanel9.TabIndex = 2;
       // 
@@ -1298,9 +1301,9 @@ namespace LTP.Truck.Forms
       // 
       ucItemOffsetWeight.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       ucItemOffsetWeight.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemOffsetWeight.Location = new Point(3, 413);
+      ucItemOffsetWeight.Location = new Point(3, 269);
       ucItemOffsetWeight.Name = "ucItemOffsetWeight";
-      ucItemOffsetWeight.Size = new Size(245, 174);
+      ucItemOffsetWeight.Size = new Size(245, 102);
       ucItemOffsetWeight.TabIndex = 5;
       // 
       // label14
@@ -1323,16 +1326,16 @@ namespace LTP.Truck.Forms
       ucItemWeight01.BackColor = Color.FromArgb(223, 239, 255);
       ucItemWeight01.Location = new Point(3, 53);
       ucItemWeight01.Name = "ucItemWeight01";
-      ucItemWeight01.Size = new Size(245, 174);
+      ucItemWeight01.Size = new Size(245, 102);
       ucItemWeight01.TabIndex = 2;
       // 
       // ucItemWeight02
       // 
       ucItemWeight02.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       ucItemWeight02.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemWeight02.Location = new Point(3, 233);
+      ucItemWeight02.Location = new Point(3, 161);
       ucItemWeight02.Name = "ucItemWeight02";
-      ucItemWeight02.Size = new Size(245, 174);
+      ucItemWeight02.Size = new Size(245, 102);
       ucItemWeight02.TabIndex = 3;
       // 
       // tableLayoutPanel7
@@ -1594,6 +1597,15 @@ namespace LTP.Truck.Forms
       label27.Text = "Lịch sử cân";
       label27.TextAlign = ContentAlignment.MiddleLeft;
       // 
+      // ucItemTareForTruck
+      // 
+      ucItemTareForTruck.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucItemTareForTruck.BackColor = Color.FromArgb(223, 239, 255);
+      ucItemTareForTruck.Location = new Point(3, 377);
+      ucItemTareForTruck.Name = "ucItemTareForTruck";
+      ucItemTareForTruck.Size = new Size(245, 102);
+      ucItemTareForTruck.TabIndex = 6;
+      // 
       // FrmHomeTruck
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1722,5 +1734,6 @@ namespace LTP.Truck.Forms
     private RJTextBox txtValueTareForTruck;
     private Label label7;
     private ComboBox cbbTareForTruck;
+    private UserControls.UcItem ucItemTareForTruck;
   }
 }

@@ -103,8 +103,8 @@ namespace LTP.Truck
             var needStation = !await db.Stations!.AnyAsync();
 
             // Bỏ transaction/SaveChanges trong các lần mở app thông thường.
-            if (!needsAppConfig && !needsRoles)
-              return true;
+            //if (!needsAppConfig && !needsRoles)
+            //  return true;
 
             await db.Database.BeginTransactionAsync();
 
@@ -129,7 +129,7 @@ namespace LTP.Truck
               });
             }
 
-            if (needStation && 1==2)
+            if (needStation)
             {
               List<Station> stations = new List<Station>();
               stations.Add(new Station

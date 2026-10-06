@@ -82,6 +82,7 @@ namespace LTP.Truck.Forms
       ucItemWeight01.Title = "KL cân lần 1";
       ucItemWeight02.Title = "KL cân lần 2";
       ucItemOffsetWeight.Title = "KL chênh lệch xe";
+      ucItemTareForTruck.Title = "KL Tare";
       ucItemOffsetWeight.VisibleTime = false;
 
       ElipseControl elipseControl = new ElipseControl();
@@ -227,6 +228,17 @@ namespace LTP.Truck.Forms
       txtValueTareForTruck.Texts = selectedTare?.Id == Guid.Empty
         ? "0"
         : WeightFormatHelper.Format(selectedTare?.Value ?? 0);
+    }
+
+    private double GetTareForTruckValue()
+    {
+      return double.TryParse(
+        txtValueTareForTruck.Texts.Trim(),
+        NumberStyles.Number,
+        CultureInfo.InvariantCulture,
+        out double tareValue)
+        ? Math.Round(tareValue, MidpointRounding.AwayFromZero)
+        : 0;
     }
 
     private async void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
@@ -652,6 +664,7 @@ namespace LTP.Truck.Forms
           _recordTruck.LicensePlate = validLicense.Plate;
           _recordTruck.IdCard = txtIdCard.Texts;
           _recordTruck.Note = txtDocument.Text;
+          _recordTruck.Tare = GetTareForTruckValue();
           _recordTruck.StationId = AppCore.Ins._station?.Id;
           _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
           _recordTruck.CreatedAt = DateTime.UtcNow;
@@ -740,6 +753,7 @@ namespace LTP.Truck.Forms
         _recordTruck.LicensePlate = validLicense.Plate;
         _recordTruck.IdCard = txtIdCard.Texts;
         _recordTruck.Note = txtDocument.Text;
+        _recordTruck.Tare = GetTareForTruckValue();
         _recordTruck.StationId = AppCore.Ins._station?.Id;
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
         _recordTruck.UpdatedAt = DateTime.UtcNow;
