@@ -1067,11 +1067,13 @@ namespace LTP.Truck.Forms
       if (recordTruck.NetTime01 <= 0 || recordTruck.NetTime02 <= 0)
       {
         ucItemOffsetWeight.Value = "...";
+        ucItemOffsetWeightAndTare.Value = "...";
         return;
       }
 
       var offsetWeight = Math.Abs(recordTruck.NetTime02 - recordTruck.NetTime01);
       ucItemOffsetWeight.Value = FormatWeight(offsetWeight);
+      ucItemOffsetWeightAndTare.Value = FormatWeight(offsetWeight - recordTruck.Tare);
     }
 
     private void UpdateTareForTruck(RecordTruck recordTruck)
