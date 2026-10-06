@@ -203,7 +203,6 @@ namespace iSoft.Database
           {
             TareTruck = e,
             No = index + 1,
-            Code = e.Code,
             Name = e.Name,
             Description = e.Description,
             Value = WeightFormatHelper.Format(e.Value ?? 0.0, 2),

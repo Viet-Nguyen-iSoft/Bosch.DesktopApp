@@ -350,8 +350,8 @@ namespace LTP.Truck.Forms
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TareForTruck)
       {
-        var popupTareTruck = new PopupTypeTare(isTareForTruck: true);
-        popupTareTruck.OnSendTareTruckSuccess += PopupTareTruck_OnSendSuccess;
+        var popupTareTruck = new PopupTareForTruck();
+        popupTareTruck.OnSendSuccess += PopupTareTruck_OnSendSuccess;
         popupTareTruck.ShowDialog();
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
@@ -764,7 +764,6 @@ namespace LTP.Truck.Forms
         var autoSizeColumns = new[]
         {
           nameof(TareTruckDTO.No),
-          nameof(TareTruckDTO.Code),
           nameof(TareTruckDTO.UpdatedAt),
           nameof(TareTruckDTO.Value),
         };
@@ -1029,8 +1028,8 @@ namespace LTP.Truck.Forms
         var data = rowData as TareTruckDTO;
         if (data?.TareTruck != null)
         {
-          var popupTareTruck = new PopupTypeTare(data.TareTruck);
-          popupTareTruck.OnSendTareTruckSuccess += PopupTareTruck_OnSendSuccess;
+          var popupTareTruck = new PopupTareForTruck(data.TareTruck);
+          popupTareTruck.OnSendSuccess += PopupTareTruck_OnSendSuccess;
           popupTareTruck.ShowDialog();
         }
         else

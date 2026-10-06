@@ -18,6 +18,7 @@ namespace iSoft.Database.Models
     public double TareTime01 { get; set; } = 0.0;
     public double NetTime02 { get; set; } = 0.0;
     public double TareTime02 { get; set; } = 0.0;
+    public double Tare { get; set; } = 0.0;
     public EnumTypeDataTruck EnumTypeDataTruck { get; set; } = EnumTypeDataTruck.None;
 
     public string? NameDriver { get; set; }

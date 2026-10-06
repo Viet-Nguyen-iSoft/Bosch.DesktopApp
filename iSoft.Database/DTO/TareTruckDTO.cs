@@ -11,9 +11,6 @@ namespace iSoft.Database.DTO
     [DisplayName("Stt")]
     public int? No { get; set; }
 
-    [DisplayName("Mã")]
-    public string? Code { get; set; }
-
     [DisplayName("Tên")]
     public string? Name { get; set; }
 
