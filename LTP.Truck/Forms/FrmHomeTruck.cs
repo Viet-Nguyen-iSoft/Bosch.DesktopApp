@@ -234,6 +234,29 @@ namespace LTP.Truck.Forms
         : WeightFormatHelper.Format(selectedTare?.Value ?? 0);
     }
 
+    private void ShowTareForTruck(RecordTruck recordTruck)
+    {
+      int selectedIndex = 0;
+      if (!string.IsNullOrWhiteSpace(recordTruck.NameTareForTruck))
+      {
+        for (int index = 0; index < cbbTareForTruck.Items.Count; index++)
+        {
+          if (cbbTareForTruck.Items[index] is TareTruck tareTruck &&
+              string.Equals(tareTruck.Name, recordTruck.NameTareForTruck,
+                StringComparison.CurrentCultureIgnoreCase))
+          {
+            selectedIndex = index;
+            break;
+          }
+        }
+      }
+
+      if (cbbTareForTruck.Items.Count > 0)
+        cbbTareForTruck.SelectedIndex = selectedIndex;
+
+      txtValueTareForTruck.Texts = FormatWeight(recordTruck.Tare);
+    }
+
     private double GetTareForTruckValue()
     {
       return double.TryParse(
@@ -1426,6 +1449,7 @@ namespace LTP.Truck.Forms
         return;
 
       ShowRecordDetail(recordTruck);
+      ShowTareForTruck(recordTruck);
     }
 
     private void ShowRecordDetail(RecordTruck recordTruck)
