@@ -205,7 +205,8 @@ namespace iSoft.Database
             No = index + 1,
             Name = e.Name,
             Description = e.Description,
-            Value = WeightFormatHelper.Format(e.Value ?? 0.0, 2),
+            Value = WeightFormatHelper.Format(
+              Math.Round(e.Value ?? 0.0, MidpointRounding.AwayFromZero)),
             UpdatedAt = e.UpdatedAt != null
               ? e.UpdatedAt.Value.AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss")
               : e.CreatedAt?.AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
