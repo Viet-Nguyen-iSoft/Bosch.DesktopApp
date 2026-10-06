@@ -79,11 +79,15 @@ namespace LTP.Truck.Forms
       ucTimeSearchFrom.Value = DateTime.Today;
       ucTimeSearchTo.Value = DateTime.Today.AddDays(1).AddMinutes(-1);
 
-      ucItemWeight01.Title = "KL cân lần 1";
-      ucItemWeight02.Title = "KL cân lần 2";
-      ucItemOffsetWeight.Title = "KL chênh lệch xe";
-      ucItemTareForTruck.Title = "KL Tare";
+      ucItemWeight01.Title = "KL cân lần 1 (Kg)";
+      ucItemWeight02.Title = "KL cân lần 2 (Kg)";
+      ucItemOffsetWeight.Title = "KL chênh lệch xe (Kg)";
+      ucItemTareForTruck.Title = "KL tare (Kg)";
+      ucItemOffsetWeightAndTare.Title = "KL trừ tare (Kg)";
+
       ucItemOffsetWeight.VisibleTime = false;
+      ucItemTareForTruck.VisibleTime = false;
+      ucItemOffsetWeightAndTare.VisibleTime = false;
 
       ElipseControl elipseControl = new ElipseControl();
       elipseControl.TargetControl = tableLayoutPanel3;
@@ -905,6 +909,7 @@ namespace LTP.Truck.Forms
 
       ShowWeightTimes(recordTruck);
       UpdateOffsetWeight(recordTruck);
+      UpdateTareForTruck(recordTruck);
       lbWeightTrigger.Text = FormatWeight(recordTruck.NetTimeTemp);
       ApplyRecordAccess(recordTruck);
     }
@@ -969,6 +974,7 @@ namespace LTP.Truck.Forms
       ShowWeightTimes(recordTruck);
       double valueGoods = (recordTruck.NetTime02 - recordTruck.NetTime01);
       UpdateOffsetWeight(recordTruck);
+      UpdateTareForTruck(recordTruck);
       lbWeightTrigger.Text = FormatWeight(recordTruck.NetTimeTemp);
 
       if (valueGoods > 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
@@ -1066,6 +1072,11 @@ namespace LTP.Truck.Forms
 
       var offsetWeight = Math.Abs(recordTruck.NetTime02 - recordTruck.NetTime01);
       ucItemOffsetWeight.Value = FormatWeight(offsetWeight);
+    }
+
+    private void UpdateTareForTruck(RecordTruck recordTruck)
+    {
+      ucItemTareForTruck.Value = FormatWeight(recordTruck.Tare);
     }
 
     private async void btnSearchHistorical_Click(object sender, EventArgs e)

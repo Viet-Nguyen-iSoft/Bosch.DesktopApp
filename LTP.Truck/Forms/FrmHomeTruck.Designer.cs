@@ -32,9 +32,9 @@ namespace LTP.Truck.Forms
     /// </summary>
     private void InitializeComponent()
     {
-      DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
       tableLayoutPanel1 = new TableLayoutPanel();
       tableLayoutPanel2 = new TableLayoutPanel();
       tableLayoutPanel3 = new TableLayoutPanel();
@@ -97,6 +97,7 @@ namespace LTP.Truck.Forms
       txtDocument = new TextBox();
       label10 = new Label();
       tableLayoutPanel9 = new TableLayoutPanel();
+      ucItemTareForTruck = new LTP.Truck.UserControls.UcItem();
       ucItemOffsetWeight = new LTP.Truck.UserControls.UcItem();
       label14 = new Label();
       ucItemWeight01 = new LTP.Truck.UserControls.UcItem();
@@ -114,7 +115,7 @@ namespace LTP.Truck.Forms
       btnPrint = new RJButton();
       btnSearchHistorical = new RJButton();
       label27 = new Label();
-      ucItemTareForTruck = new LTP.Truck.UserControls.UcItem();
+      ucItemOffsetWeightAndTare = new LTP.Truck.UserControls.UcItem();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -1279,6 +1280,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel9.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel9.ColumnCount = 1;
       tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel9.Controls.Add(ucItemOffsetWeightAndTare, 0, 5);
       tableLayoutPanel9.Controls.Add(ucItemTareForTruck, 0, 4);
       tableLayoutPanel9.Controls.Add(ucItemOffsetWeight, 0, 3);
       tableLayoutPanel9.Controls.Add(label14, 0, 0);
@@ -1289,21 +1291,30 @@ namespace LTP.Truck.Forms
       tableLayoutPanel9.Name = "tableLayoutPanel9";
       tableLayoutPanel9.RowCount = 6;
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 18.5185184F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 18.5185184F));
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 18.5185184F));
       tableLayoutPanel9.Size = new Size(251, 590);
       tableLayoutPanel9.TabIndex = 2;
+      // 
+      // ucItemTareForTruck
+      // 
+      ucItemTareForTruck.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucItemTareForTruck.BackColor = Color.FromArgb(223, 239, 255);
+      ucItemTareForTruck.Location = new Point(3, 393);
+      ucItemTareForTruck.Name = "ucItemTareForTruck";
+      ucItemTareForTruck.Size = new Size(245, 94);
+      ucItemTareForTruck.TabIndex = 6;
       // 
       // ucItemOffsetWeight
       // 
       ucItemOffsetWeight.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       ucItemOffsetWeight.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemOffsetWeight.Location = new Point(3, 269);
+      ucItemOffsetWeight.Location = new Point(3, 293);
       ucItemOffsetWeight.Name = "ucItemOffsetWeight";
-      ucItemOffsetWeight.Size = new Size(245, 102);
+      ucItemOffsetWeight.Size = new Size(245, 94);
       ucItemOffsetWeight.TabIndex = 5;
       // 
       // label14
@@ -1317,7 +1328,7 @@ namespace LTP.Truck.Forms
       label14.Name = "label14";
       label14.Size = new Size(251, 50);
       label14.TabIndex = 1;
-      label14.Text = "Dữ liệu cân (Kg)";
+      label14.Text = "Dữ liệu cân";
       label14.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // ucItemWeight01
@@ -1326,16 +1337,16 @@ namespace LTP.Truck.Forms
       ucItemWeight01.BackColor = Color.FromArgb(223, 239, 255);
       ucItemWeight01.Location = new Point(3, 53);
       ucItemWeight01.Name = "ucItemWeight01";
-      ucItemWeight01.Size = new Size(245, 102);
+      ucItemWeight01.Size = new Size(245, 114);
       ucItemWeight01.TabIndex = 2;
       // 
       // ucItemWeight02
       // 
       ucItemWeight02.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       ucItemWeight02.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemWeight02.Location = new Point(3, 161);
+      ucItemWeight02.Location = new Point(3, 173);
       ucItemWeight02.Name = "ucItemWeight02";
-      ucItemWeight02.Size = new Size(245, 102);
+      ucItemWeight02.Size = new Size(245, 114);
       ucItemWeight02.TabIndex = 3;
       // 
       // tableLayoutPanel7
@@ -1365,35 +1376,35 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
       dgv.BackgroundColor = Color.FromArgb(236, 236, 236);
       dgv.BorderStyle = BorderStyle.None;
-      dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle1.BackColor = SystemColors.Control;
-      dataGridViewCellStyle1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle4.BackColor = SystemColors.Control;
+      dataGridViewCellStyle4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle2.BackColor = SystemColors.Window;
-      dataGridViewCellStyle2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-      dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-      dgv.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle5.BackColor = SystemColors.Window;
+      dataGridViewCellStyle5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle5.ForeColor = SystemColors.ControlText;
+      dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+      dgv.DefaultCellStyle = dataGridViewCellStyle5;
       dgv.EnableHeadersVisualStyles = false;
       dgv.Location = new Point(3, 115);
       dgv.Name = "dgv";
       dgv.ReadOnly = true;
-      dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle3.BackColor = SystemColors.Control;
-      dataGridViewCellStyle3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle6.BackColor = SystemColors.Control;
+      dataGridViewCellStyle6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
+      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.Size = new Size(1519, 365);
@@ -1597,14 +1608,14 @@ namespace LTP.Truck.Forms
       label27.Text = "Lịch sử cân";
       label27.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // ucItemTareForTruck
+      // ucItemOffsetWeightAndTare
       // 
-      ucItemTareForTruck.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucItemTareForTruck.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemTareForTruck.Location = new Point(3, 377);
-      ucItemTareForTruck.Name = "ucItemTareForTruck";
-      ucItemTareForTruck.Size = new Size(245, 102);
-      ucItemTareForTruck.TabIndex = 6;
+      ucItemOffsetWeightAndTare.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucItemOffsetWeightAndTare.BackColor = Color.FromArgb(223, 239, 255);
+      ucItemOffsetWeightAndTare.Location = new Point(3, 493);
+      ucItemOffsetWeightAndTare.Name = "ucItemOffsetWeightAndTare";
+      ucItemOffsetWeightAndTare.Size = new Size(245, 94);
+      ucItemOffsetWeightAndTare.TabIndex = 7;
       // 
       // FrmHomeTruck
       // 
@@ -1735,5 +1746,6 @@ namespace LTP.Truck.Forms
     private Label label7;
     private ComboBox cbbTareForTruck;
     private UserControls.UcItem ucItemTareForTruck;
+    private UserControls.UcItem ucItemOffsetWeightAndTare;
   }
 }
