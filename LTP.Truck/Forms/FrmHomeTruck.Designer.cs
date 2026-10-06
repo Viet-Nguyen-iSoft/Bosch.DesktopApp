@@ -32,9 +32,9 @@ namespace LTP.Truck.Forms
     /// </summary>
     private void InitializeComponent()
     {
-      DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
       tableLayoutPanel1 = new TableLayoutPanel();
       tableLayoutPanel2 = new TableLayoutPanel();
       tableLayoutPanel3 = new TableLayoutPanel();
@@ -115,8 +115,8 @@ namespace LTP.Truck.Forms
       btnFilter = new Common.Custom.RJButton();
       btnPrint = new RJButton();
       btnSearchHistorical = new RJButton();
+      btnAddManual = new RJButton();
       label27 = new Label();
-      rjButton1 = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -1374,35 +1374,35 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
       dgv.BackgroundColor = Color.FromArgb(236, 236, 236);
       dgv.BorderStyle = BorderStyle.None;
-      dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle4.BackColor = SystemColors.Control;
-      dataGridViewCellStyle4.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = SystemColors.Control;
+      dataGridViewCellStyle1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle5.BackColor = SystemColors.Window;
-      dataGridViewCellStyle5.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle5.ForeColor = SystemColors.ControlText;
-      dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
-      dgv.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle2.BackColor = SystemColors.Window;
+      dataGridViewCellStyle2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+      dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+      dgv.DefaultCellStyle = dataGridViewCellStyle2;
       dgv.EnableHeadersVisualStyles = false;
       dgv.Location = new Point(3, 115);
       dgv.Name = "dgv";
       dgv.ReadOnly = true;
-      dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = SystemColors.Control;
-      dataGridViewCellStyle6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = SystemColors.Control;
+      dataGridViewCellStyle3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.Size = new Size(1519, 365);
@@ -1433,7 +1433,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.Controls.Add(btnFilter, 7, 0);
       tableLayoutPanel10.Controls.Add(btnPrint, 10, 0);
       tableLayoutPanel10.Controls.Add(btnSearchHistorical, 9, 0);
-      tableLayoutPanel10.Controls.Add(rjButton1, 11, 0);
+      tableLayoutPanel10.Controls.Add(btnAddManual, 11, 0);
       tableLayoutPanel10.Location = new Point(0, 50);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -1594,6 +1594,31 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.UseVisualStyleBackColor = false;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       // 
+      // btnAddManual
+      // 
+      btnAddManual.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnAddManual.BackColor = Color.FromArgb(64, 107, 177);
+      btnAddManual.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnAddManual.BorderColor = Color.White;
+      btnAddManual.BorderRadius = 5;
+      btnAddManual.BorderSize = 0;
+      btnAddManual.FlatAppearance.BorderColor = Color.White;
+      btnAddManual.FlatAppearance.BorderSize = 0;
+      btnAddManual.FlatStyle = FlatStyle.Flat;
+      btnAddManual.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnAddManual.ForeColor = Color.White;
+      btnAddManual.Image = Properties.Resources.icon_create_manual;
+      btnAddManual.ImageAlign = ContentAlignment.MiddleLeft;
+      btnAddManual.Location = new Point(1338, 3);
+      btnAddManual.Name = "btnAddManual";
+      btnAddManual.Padding = new Padding(10, 0, 0, 0);
+      btnAddManual.Size = new Size(184, 56);
+      btnAddManual.TabIndex = 33;
+      btnAddManual.Text = "       Tạo thủ công";
+      btnAddManual.TextAlign = ContentAlignment.MiddleLeft;
+      btnAddManual.TextColor = Color.White;
+      btnAddManual.UseVisualStyleBackColor = false;
+      // 
       // label27
       // 
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -1607,31 +1632,6 @@ namespace LTP.Truck.Forms
       label27.TabIndex = 0;
       label27.Text = "Lịch sử cân";
       label27.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // rjButton1
-      // 
-      rjButton1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      rjButton1.BackColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BackgroundColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BorderColor = Color.White;
-      rjButton1.BorderRadius = 5;
-      rjButton1.BorderSize = 0;
-      rjButton1.FlatAppearance.BorderColor = Color.White;
-      rjButton1.FlatAppearance.BorderSize = 0;
-      rjButton1.FlatStyle = FlatStyle.Flat;
-      rjButton1.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      rjButton1.ForeColor = Color.White;
-      rjButton1.Image = Properties.Resources.icon_create_manual;
-      rjButton1.ImageAlign = ContentAlignment.MiddleLeft;
-      rjButton1.Location = new Point(1338, 3);
-      rjButton1.Name = "rjButton1";
-      rjButton1.Padding = new Padding(10, 0, 0, 0);
-      rjButton1.Size = new Size(184, 56);
-      rjButton1.TabIndex = 33;
-      rjButton1.Text = "       Tạo thủ công";
-      rjButton1.TextAlign = ContentAlignment.MiddleLeft;
-      rjButton1.TextColor = Color.White;
-      rjButton1.UseVisualStyleBackColor = false;
       // 
       // FrmHomeTruck
       // 
@@ -1763,6 +1763,6 @@ namespace LTP.Truck.Forms
     private UserControls.UcItem ucItemTareForTruck;
     private UserControls.UcItem ucItemOffsetWeightAndTare;
     private ComboBox cbbType;
-    private RJButton rjButton1;
+    private RJButton btnAddManual;
   }
 }

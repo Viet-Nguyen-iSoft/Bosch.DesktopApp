@@ -71,6 +71,8 @@ namespace LTP.Truck
       ["0100"] = "Cho phép xem danh sách tài khoản",
       ["0101"] = "Cho phép thêm tài khoản",
       ["0102"] = "Cho phép chỉnh sửa/xóa tài khoản",
+
+      ["0200"] = "Cho phép thêm dữ liệu Manual cân lần 1",
     };
     private static Dictionary<string, string> PermissionsGoods = new Dictionary<string, string>
     {

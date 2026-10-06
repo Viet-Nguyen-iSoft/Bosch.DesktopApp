@@ -132,6 +132,7 @@ namespace LTP.Truck.Forms
     private void FrmHome_Load(object? sender, EventArgs e)
     {
       btnFilter.Click += BtnFilter_Click;
+      this.btnAddManual.Click += btnAddManual_Click;
       AppCore.Ins.OnSendDataWeight += Ins_OnSendDataWeight;
       AppCore.Ins.OnSendStatusWeight += Ins_OnSendStatusWeight;
       ResetWeightDisplay();
@@ -649,6 +650,68 @@ namespace LTP.Truck.Forms
       finally
       {
         _isLoadingRecordFromLicensePlate = false;
+      }
+    }
+
+    private void btnAddManual_Click(object? sender, EventArgs e)
+    {
+      if (!AppCore.Ins.CheckPermission("0200"))
+      {
+        using var openErrorPopup = new PopupNoPermitRole();
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
+      using var popup = new PopupAddManual();
+      popup.OnSendSuccess += SaveManualFirstWeightAsync;
+      popup.ShowDialog(this);
+    }
+
+    private async void SaveManualFirstWeightAsync(RecordTruck recordTruck)
+    {
+      try
+      {
+        recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
+          .CreateNextLabelAsync(AppCore.Ins._appConfig ??
+            throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
+
+        var result = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
+        var savedRecord = await AppCore.Ins._recordTruckService
+          .GetDetailByIdAsync(result.Record.Id) ?? result.Record;
+
+        if (!result.Exist)
+        {
+          var licensePlate = new LicensePlateUpsertRequest
+          {
+            LicensePlateCode = result.LicensePlate?.Plate ?? string.Empty,
+            Id = result.LicensePlate?.Id,
+            Description = result.LicensePlate?.Description,
+          };
+
+          var apiJob = new ApiJobs
+          {
+            Json = JsonHelper.ToJson(licensePlate),
+            EnumTypeAPI = EnumTypeAPI.Plate,
+            EnumStatusAPI = EnumStatusAPI.Created,
+            CreatedAt = DateTime.UtcNow,
+          };
+          await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
+        }
+
+        await LoadLicensePlateSuggestionsAsync();
+        await LoadHistorical();
+        ShowRecordDetail(savedRecord);
+
+        using var successPopup = new PopupConfirm("Tạo phiếu cân lần 1 thủ công thành công !",
+          EnumTypeMsg.MessageAutoClose, EnumImageMsg.Information);
+        successPopup.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var errorPopup = new PopupConfirm("Tạo phiếu cân thủ công thất bại !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        errorPopup.ShowDialog(this);
       }
     }
 
