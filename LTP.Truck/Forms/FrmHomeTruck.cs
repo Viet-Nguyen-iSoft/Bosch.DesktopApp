@@ -245,6 +245,11 @@ namespace LTP.Truck.Forms
         : 0;
     }
 
+    private string? GetTareForTruckName()
+    {
+      return (cbbTareForTruck.SelectedItem as TareTruck)?.Name;
+    }
+
     private async void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
     {
       if (entityType != typeof(TareTruck) || IsDisposed || Disposing)
@@ -669,6 +674,7 @@ namespace LTP.Truck.Forms
           _recordTruck.IdCard = txtIdCard.Texts;
           _recordTruck.Note = txtDocument.Text;
           _recordTruck.Tare = GetTareForTruckValue();
+          _recordTruck.NameTareForTruck = GetTareForTruckName();
           _recordTruck.StationId = AppCore.Ins._station?.Id;
           _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
           _recordTruck.CreatedAt = DateTime.UtcNow;
@@ -758,6 +764,7 @@ namespace LTP.Truck.Forms
         _recordTruck.IdCard = txtIdCard.Texts;
         _recordTruck.Note = txtDocument.Text;
         _recordTruck.Tare = GetTareForTruckValue();
+        _recordTruck.NameTareForTruck = GetTareForTruckName();
         _recordTruck.StationId = AppCore.Ins._station?.Id;
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
         _recordTruck.UpdatedAt = DateTime.UtcNow;
