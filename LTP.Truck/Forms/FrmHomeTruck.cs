@@ -1867,6 +1867,8 @@ namespace LTP.Truck.Forms
         string gross = "...";
         string tare = hasFirstWeight ? FormatWeight(firstWeight) : "...";
         string net = "...";
+        string deduction = FormatWeight(recordTruck.Tare);
+        string actual = "...";
         string importExport = "Chưa xác định";
         string timeTare = recordTruck.WeighInAt != null ? ((DateTime)(recordTruck.WeighInAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
         string timeGross = "...";
@@ -1881,6 +1883,7 @@ namespace LTP.Truck.Forms
           gross = FormatWeight(grossWeight);
           tare = FormatWeight(tareWeight);
           net = FormatWeight(netWeight);
+          actual = FormatWeight(netWeight - recordTruck.Tare);
           importExport = secondWeight > firstWeight
             ? "Xuất hàng"
             : secondWeight < firstWeight
@@ -1900,9 +1903,11 @@ namespace LTP.Truck.Forms
                                 .Replace("{import_export}", importExport)
                                 .Replace("{client}", recordTruck.Client?.Name)
                                 .Replace("{goods}", recordTruck.TypeGoods?.Name)
-                                .Replace("{gross}", gross)
-                                .Replace("{tare}", tare)
-                                .Replace("{net}", net)
+                                .Replace("{gross}", gross + " Kg")
+                                .Replace("{tare}", tare + " Kg")
+                                .Replace("{net}", net + " Kg")
+                                .Replace("{deduction}", deduction + " Kg")
+                                .Replace("{actual}", actual + " Kg")
                                 .Replace("{time_tare}", timeTare)
                                 .Replace("{time_gross}", timeGross)
                                 .Replace("{note}", recordTruck.Note)
