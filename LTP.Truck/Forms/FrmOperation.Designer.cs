@@ -43,14 +43,6 @@ namespace LTP.Truck.Forms
       btnWarehouse = new RJButton();
       btnClient = new RJButton();
       btnTypeGoods = new RJButton();
-      btnTare = new RJButton();
-      btnGroupProduct = new RJButton();
-      btnProduct = new RJButton();
-      btnDelivery = new RJButton();
-      btnReportTruck = new RJButton();
-      btnReportGoods = new RJButton();
-      btnUser = new RJButton();
-      btnSetting = new RJButton();
       tableLayoutPanel7 = new TableLayoutPanel();
       lbVersion = new Label();
       pictureBox1 = new PictureBox();
@@ -66,6 +58,15 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
+      btnTareForTruck = new RJButton();
+      btnTare = new RJButton();
+      btnGroupProduct = new RJButton();
+      btnProduct = new RJButton();
+      btnDelivery = new RJButton();
+      btnReportTruck = new RJButton();
+      btnReportGoods = new RJButton();
+      btnUser = new RJButton();
+      btnSetting = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -94,7 +95,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel1.Name = "tableLayoutPanel1";
       tableLayoutPanel1.RowCount = 1;
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel1.Size = new Size(1268, 1074);
+      tableLayoutPanel1.Size = new Size(1268, 1181);
       tableLayoutPanel1.TabIndex = 3;
       // 
       // panelMenu
@@ -112,7 +113,7 @@ namespace LTP.Truck.Forms
       panelMenu.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
       panelMenu.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       panelMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      panelMenu.Size = new Size(250, 1074);
+      panelMenu.Size = new Size(250, 1181);
       panelMenu.TabIndex = 1;
       // 
       // tableLayoutPanel5
@@ -158,7 +159,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel6.RowCount = 2;
       tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel6.RowStyles.Add(new RowStyle());
-      tableLayoutPanel6.Size = new Size(250, 989);
+      tableLayoutPanel6.Size = new Size(250, 1096);
       tableLayoutPanel6.TabIndex = 2;
       // 
       // flowLayoutPanel1
@@ -171,6 +172,7 @@ namespace LTP.Truck.Forms
       flowLayoutPanel1.Controls.Add(btnWarehouse);
       flowLayoutPanel1.Controls.Add(btnClient);
       flowLayoutPanel1.Controls.Add(btnTypeGoods);
+      flowLayoutPanel1.Controls.Add(btnTareForTruck);
       flowLayoutPanel1.Controls.Add(btnTare);
       flowLayoutPanel1.Controls.Add(btnGroupProduct);
       flowLayoutPanel1.Controls.Add(btnProduct);
@@ -182,7 +184,7 @@ namespace LTP.Truck.Forms
       flowLayoutPanel1.Location = new Point(0, 0);
       flowLayoutPanel1.Margin = new Padding(0);
       flowLayoutPanel1.Name = "flowLayoutPanel1";
-      flowLayoutPanel1.Size = new Size(250, 898);
+      flowLayoutPanel1.Size = new Size(250, 1005);
       flowLayoutPanel1.TabIndex = 0;
       // 
       // btnHomeTruck
@@ -328,194 +330,6 @@ namespace LTP.Truck.Forms
       btnTypeGoods.TextColor = Color.Black;
       btnTypeGoods.UseVisualStyleBackColor = false;
       // 
-      // btnTare
-      // 
-      btnTare.BackColor = Color.Transparent;
-      btnTare.BackgroundColor = Color.Transparent;
-      btnTare.BorderColor = Color.PaleVioletRed;
-      btnTare.BorderRadius = 5;
-      btnTare.BorderSize = 0;
-      btnTare.Dock = DockStyle.Top;
-      btnTare.FlatAppearance.BorderSize = 0;
-      btnTare.FlatStyle = FlatStyle.Flat;
-      btnTare.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnTare.ForeColor = Color.Black;
-      btnTare.ImageAlign = ContentAlignment.MiddleLeft;
-      btnTare.Location = new Point(3, 369);
-      btnTare.Name = "btnTare";
-      btnTare.Padding = new Padding(60, 0, 0, 0);
-      btnTare.Size = new Size(242, 40);
-      btnTare.TabIndex = 27;
-      btnTare.Text = "Nhóm Tare";
-      btnTare.TextAlign = ContentAlignment.MiddleLeft;
-      btnTare.TextColor = Color.Black;
-      btnTare.UseVisualStyleBackColor = false;
-      // 
-      // btnGroupProduct
-      // 
-      btnGroupProduct.BackColor = Color.Transparent;
-      btnGroupProduct.BackgroundColor = Color.Transparent;
-      btnGroupProduct.BorderColor = Color.PaleVioletRed;
-      btnGroupProduct.BorderRadius = 5;
-      btnGroupProduct.BorderSize = 0;
-      btnGroupProduct.Dock = DockStyle.Top;
-      btnGroupProduct.FlatAppearance.BorderSize = 0;
-      btnGroupProduct.FlatStyle = FlatStyle.Flat;
-      btnGroupProduct.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnGroupProduct.ForeColor = Color.Black;
-      btnGroupProduct.ImageAlign = ContentAlignment.MiddleLeft;
-      btnGroupProduct.Location = new Point(3, 415);
-      btnGroupProduct.Name = "btnGroupProduct";
-      btnGroupProduct.Padding = new Padding(60, 0, 0, 0);
-      btnGroupProduct.Size = new Size(242, 40);
-      btnGroupProduct.TabIndex = 28;
-      btnGroupProduct.Text = "Nhóm chất thải";
-      btnGroupProduct.TextAlign = ContentAlignment.MiddleLeft;
-      btnGroupProduct.TextColor = Color.Black;
-      btnGroupProduct.UseVisualStyleBackColor = false;
-      // 
-      // btnProduct
-      // 
-      btnProduct.BackColor = Color.Transparent;
-      btnProduct.BackgroundColor = Color.Transparent;
-      btnProduct.BorderColor = Color.PaleVioletRed;
-      btnProduct.BorderRadius = 5;
-      btnProduct.BorderSize = 0;
-      btnProduct.Dock = DockStyle.Top;
-      btnProduct.FlatAppearance.BorderSize = 0;
-      btnProduct.FlatStyle = FlatStyle.Flat;
-      btnProduct.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnProduct.ForeColor = Color.Black;
-      btnProduct.ImageAlign = ContentAlignment.MiddleLeft;
-      btnProduct.Location = new Point(3, 461);
-      btnProduct.Name = "btnProduct";
-      btnProduct.Padding = new Padding(60, 0, 0, 0);
-      btnProduct.Size = new Size(242, 40);
-      btnProduct.TabIndex = 29;
-      btnProduct.Text = "Chất thải";
-      btnProduct.TextAlign = ContentAlignment.MiddleLeft;
-      btnProduct.TextColor = Color.Black;
-      btnProduct.UseVisualStyleBackColor = false;
-      // 
-      // btnDelivery
-      // 
-      btnDelivery.BackColor = Color.Transparent;
-      btnDelivery.BackgroundColor = Color.Transparent;
-      btnDelivery.BorderColor = Color.PaleVioletRed;
-      btnDelivery.BorderRadius = 5;
-      btnDelivery.BorderSize = 0;
-      btnDelivery.Dock = DockStyle.Top;
-      btnDelivery.FlatAppearance.BorderSize = 0;
-      btnDelivery.FlatStyle = FlatStyle.Flat;
-      btnDelivery.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnDelivery.ForeColor = Color.Black;
-      btnDelivery.ImageAlign = ContentAlignment.MiddleLeft;
-      btnDelivery.Location = new Point(3, 507);
-      btnDelivery.Name = "btnDelivery";
-      btnDelivery.Padding = new Padding(60, 0, 0, 0);
-      btnDelivery.Size = new Size(242, 40);
-      btnDelivery.TabIndex = 33;
-      btnDelivery.Text = "Khách hàng giao";
-      btnDelivery.TextAlign = ContentAlignment.MiddleLeft;
-      btnDelivery.TextColor = Color.Black;
-      btnDelivery.UseVisualStyleBackColor = false;
-      // 
-      // btnReportTruck
-      // 
-      btnReportTruck.BackColor = Color.Silver;
-      btnReportTruck.BackgroundColor = Color.Silver;
-      btnReportTruck.BorderColor = Color.PaleVioletRed;
-      btnReportTruck.BorderRadius = 5;
-      btnReportTruck.BorderSize = 0;
-      btnReportTruck.Dock = DockStyle.Top;
-      btnReportTruck.FlatAppearance.BorderSize = 0;
-      btnReportTruck.FlatStyle = FlatStyle.Flat;
-      btnReportTruck.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnReportTruck.ForeColor = Color.Black;
-      btnReportTruck.Image = Properties.Resources.icon_btn_report;
-      btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
-      btnReportTruck.Location = new Point(3, 553);
-      btnReportTruck.Name = "btnReportTruck";
-      btnReportTruck.Padding = new Padding(15, 0, 0, 0);
-      btnReportTruck.Size = new Size(242, 70);
-      btnReportTruck.TabIndex = 34;
-      btnReportTruck.Text = "        BÁO CÁO";
-      btnReportTruck.TextAlign = ContentAlignment.MiddleLeft;
-      btnReportTruck.TextColor = Color.Black;
-      btnReportTruck.UseVisualStyleBackColor = false;
-      // 
-      // btnReportGoods
-      // 
-      btnReportGoods.BackColor = Color.Silver;
-      btnReportGoods.BackgroundColor = Color.Silver;
-      btnReportGoods.BorderColor = Color.PaleVioletRed;
-      btnReportGoods.BorderRadius = 5;
-      btnReportGoods.BorderSize = 0;
-      btnReportGoods.Dock = DockStyle.Top;
-      btnReportGoods.FlatAppearance.BorderSize = 0;
-      btnReportGoods.FlatStyle = FlatStyle.Flat;
-      btnReportGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnReportGoods.ForeColor = Color.Black;
-      btnReportGoods.Image = Properties.Resources.icon_btn_report;
-      btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
-      btnReportGoods.Location = new Point(3, 629);
-      btnReportGoods.Name = "btnReportGoods";
-      btnReportGoods.Padding = new Padding(15, 0, 0, 0);
-      btnReportGoods.Size = new Size(242, 70);
-      btnReportGoods.TabIndex = 35;
-      btnReportGoods.Text = "        BÁO CÁO";
-      btnReportGoods.TextAlign = ContentAlignment.MiddleLeft;
-      btnReportGoods.TextColor = Color.Black;
-      btnReportGoods.UseVisualStyleBackColor = false;
-      // 
-      // btnUser
-      // 
-      btnUser.BackColor = Color.Silver;
-      btnUser.BackgroundColor = Color.Silver;
-      btnUser.BorderColor = Color.PaleVioletRed;
-      btnUser.BorderRadius = 5;
-      btnUser.BorderSize = 0;
-      btnUser.Dock = DockStyle.Top;
-      btnUser.FlatAppearance.BorderSize = 0;
-      btnUser.FlatStyle = FlatStyle.Flat;
-      btnUser.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnUser.ForeColor = Color.Black;
-      btnUser.Image = Properties.Resources.icon_btn_user;
-      btnUser.ImageAlign = ContentAlignment.MiddleLeft;
-      btnUser.Location = new Point(3, 705);
-      btnUser.Name = "btnUser";
-      btnUser.Padding = new Padding(15, 0, 0, 0);
-      btnUser.Size = new Size(242, 70);
-      btnUser.TabIndex = 36;
-      btnUser.Text = "        TÀI KHOẢN";
-      btnUser.TextAlign = ContentAlignment.MiddleLeft;
-      btnUser.TextColor = Color.Black;
-      btnUser.UseVisualStyleBackColor = false;
-      // 
-      // btnSetting
-      // 
-      btnSetting.BackColor = Color.Silver;
-      btnSetting.BackgroundColor = Color.Silver;
-      btnSetting.BorderColor = Color.PaleVioletRed;
-      btnSetting.BorderRadius = 5;
-      btnSetting.BorderSize = 0;
-      btnSetting.Dock = DockStyle.Top;
-      btnSetting.FlatAppearance.BorderSize = 0;
-      btnSetting.FlatStyle = FlatStyle.Flat;
-      btnSetting.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      btnSetting.ForeColor = Color.Black;
-      btnSetting.Image = (Image)resources.GetObject("btnSetting.Image");
-      btnSetting.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSetting.Location = new Point(3, 781);
-      btnSetting.Name = "btnSetting";
-      btnSetting.Padding = new Padding(15, 0, 0, 0);
-      btnSetting.Size = new Size(242, 70);
-      btnSetting.TabIndex = 37;
-      btnSetting.Text = "        CÀI ĐẶT";
-      btnSetting.TextAlign = ContentAlignment.MiddleLeft;
-      btnSetting.TextColor = Color.Black;
-      btnSetting.UseVisualStyleBackColor = false;
-      // 
       // tableLayoutPanel7
       // 
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -523,7 +337,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel7.Controls.Add(lbVersion, 0, 1);
       tableLayoutPanel7.Controls.Add(pictureBox1, 0, 0);
-      tableLayoutPanel7.Location = new Point(3, 901);
+      tableLayoutPanel7.Location = new Point(3, 1008);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
       tableLayoutPanel7.RowCount = 3;
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -574,7 +388,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-      tableLayoutPanel2.Size = new Size(1013, 1074);
+      tableLayoutPanel2.Size = new Size(1013, 1181);
       tableLayoutPanel2.TabIndex = 0;
       // 
       // tableLayoutPanel4
@@ -679,7 +493,7 @@ namespace LTP.Truck.Forms
       panelMain.Location = new Point(0, 85);
       panelMain.Margin = new Padding(0);
       panelMain.Name = "panelMain";
-      panelMain.Size = new Size(1013, 939);
+      panelMain.Size = new Size(1013, 1046);
       panelMain.TabIndex = 3;
       // 
       // tableLayoutPanel8
@@ -695,7 +509,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.Controls.Add(ucStatusConnectServer, 1, 0);
       tableLayoutPanel8.Controls.Add(ucStatusConnectWeight, 3, 0);
       tableLayoutPanel8.Controls.Add(lbTime, 4, 0);
-      tableLayoutPanel8.Location = new Point(0, 1024);
+      tableLayoutPanel8.Location = new Point(0, 1131);
       tableLayoutPanel8.Margin = new Padding(0);
       tableLayoutPanel8.Name = "tableLayoutPanel8";
       tableLayoutPanel8.RowCount = 1;
@@ -731,11 +545,222 @@ namespace LTP.Truck.Forms
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
       // 
+      // btnTareForTruck
+      // 
+      btnTareForTruck.BackColor = Color.Transparent;
+      btnTareForTruck.BackgroundColor = Color.Transparent;
+      btnTareForTruck.BorderColor = Color.PaleVioletRed;
+      btnTareForTruck.BorderRadius = 5;
+      btnTareForTruck.BorderSize = 0;
+      btnTareForTruck.Dock = DockStyle.Top;
+      btnTareForTruck.FlatAppearance.BorderSize = 0;
+      btnTareForTruck.FlatStyle = FlatStyle.Flat;
+      btnTareForTruck.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnTareForTruck.ForeColor = Color.Black;
+      btnTareForTruck.ImageAlign = ContentAlignment.MiddleLeft;
+      btnTareForTruck.Location = new Point(3, 369);
+      btnTareForTruck.Name = "btnTareForTruck";
+      btnTareForTruck.Padding = new Padding(60, 0, 0, 0);
+      btnTareForTruck.Size = new Size(242, 40);
+      btnTareForTruck.TabIndex = 38;
+      btnTareForTruck.Text = "Tare thùng xe tải";
+      btnTareForTruck.TextAlign = ContentAlignment.MiddleLeft;
+      btnTareForTruck.TextColor = Color.Black;
+      btnTareForTruck.UseVisualStyleBackColor = false;
+      // 
+      // btnTare
+      // 
+      btnTare.BackColor = Color.Transparent;
+      btnTare.BackgroundColor = Color.Transparent;
+      btnTare.BorderColor = Color.PaleVioletRed;
+      btnTare.BorderRadius = 5;
+      btnTare.BorderSize = 0;
+      btnTare.Dock = DockStyle.Top;
+      btnTare.FlatAppearance.BorderSize = 0;
+      btnTare.FlatStyle = FlatStyle.Flat;
+      btnTare.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnTare.ForeColor = Color.Black;
+      btnTare.ImageAlign = ContentAlignment.MiddleLeft;
+      btnTare.Location = new Point(3, 415);
+      btnTare.Name = "btnTare";
+      btnTare.Padding = new Padding(60, 0, 0, 0);
+      btnTare.Size = new Size(242, 40);
+      btnTare.TabIndex = 39;
+      btnTare.Text = "Nhóm Tare";
+      btnTare.TextAlign = ContentAlignment.MiddleLeft;
+      btnTare.TextColor = Color.Black;
+      btnTare.UseVisualStyleBackColor = false;
+      // 
+      // btnGroupProduct
+      // 
+      btnGroupProduct.BackColor = Color.Transparent;
+      btnGroupProduct.BackgroundColor = Color.Transparent;
+      btnGroupProduct.BorderColor = Color.PaleVioletRed;
+      btnGroupProduct.BorderRadius = 5;
+      btnGroupProduct.BorderSize = 0;
+      btnGroupProduct.Dock = DockStyle.Top;
+      btnGroupProduct.FlatAppearance.BorderSize = 0;
+      btnGroupProduct.FlatStyle = FlatStyle.Flat;
+      btnGroupProduct.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnGroupProduct.ForeColor = Color.Black;
+      btnGroupProduct.ImageAlign = ContentAlignment.MiddleLeft;
+      btnGroupProduct.Location = new Point(3, 461);
+      btnGroupProduct.Name = "btnGroupProduct";
+      btnGroupProduct.Padding = new Padding(60, 0, 0, 0);
+      btnGroupProduct.Size = new Size(242, 40);
+      btnGroupProduct.TabIndex = 40;
+      btnGroupProduct.Text = "Nhóm chất thải";
+      btnGroupProduct.TextAlign = ContentAlignment.MiddleLeft;
+      btnGroupProduct.TextColor = Color.Black;
+      btnGroupProduct.UseVisualStyleBackColor = false;
+      // 
+      // btnProduct
+      // 
+      btnProduct.BackColor = Color.Transparent;
+      btnProduct.BackgroundColor = Color.Transparent;
+      btnProduct.BorderColor = Color.PaleVioletRed;
+      btnProduct.BorderRadius = 5;
+      btnProduct.BorderSize = 0;
+      btnProduct.Dock = DockStyle.Top;
+      btnProduct.FlatAppearance.BorderSize = 0;
+      btnProduct.FlatStyle = FlatStyle.Flat;
+      btnProduct.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnProduct.ForeColor = Color.Black;
+      btnProduct.ImageAlign = ContentAlignment.MiddleLeft;
+      btnProduct.Location = new Point(3, 507);
+      btnProduct.Name = "btnProduct";
+      btnProduct.Padding = new Padding(60, 0, 0, 0);
+      btnProduct.Size = new Size(242, 40);
+      btnProduct.TabIndex = 41;
+      btnProduct.Text = "Chất thải";
+      btnProduct.TextAlign = ContentAlignment.MiddleLeft;
+      btnProduct.TextColor = Color.Black;
+      btnProduct.UseVisualStyleBackColor = false;
+      // 
+      // btnDelivery
+      // 
+      btnDelivery.BackColor = Color.Transparent;
+      btnDelivery.BackgroundColor = Color.Transparent;
+      btnDelivery.BorderColor = Color.PaleVioletRed;
+      btnDelivery.BorderRadius = 5;
+      btnDelivery.BorderSize = 0;
+      btnDelivery.Dock = DockStyle.Top;
+      btnDelivery.FlatAppearance.BorderSize = 0;
+      btnDelivery.FlatStyle = FlatStyle.Flat;
+      btnDelivery.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnDelivery.ForeColor = Color.Black;
+      btnDelivery.ImageAlign = ContentAlignment.MiddleLeft;
+      btnDelivery.Location = new Point(3, 553);
+      btnDelivery.Name = "btnDelivery";
+      btnDelivery.Padding = new Padding(60, 0, 0, 0);
+      btnDelivery.Size = new Size(242, 40);
+      btnDelivery.TabIndex = 42;
+      btnDelivery.Text = "Khách hàng giao";
+      btnDelivery.TextAlign = ContentAlignment.MiddleLeft;
+      btnDelivery.TextColor = Color.Black;
+      btnDelivery.UseVisualStyleBackColor = false;
+      // 
+      // btnReportTruck
+      // 
+      btnReportTruck.BackColor = Color.Silver;
+      btnReportTruck.BackgroundColor = Color.Silver;
+      btnReportTruck.BorderColor = Color.PaleVioletRed;
+      btnReportTruck.BorderRadius = 5;
+      btnReportTruck.BorderSize = 0;
+      btnReportTruck.Dock = DockStyle.Top;
+      btnReportTruck.FlatAppearance.BorderSize = 0;
+      btnReportTruck.FlatStyle = FlatStyle.Flat;
+      btnReportTruck.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportTruck.ForeColor = Color.Black;
+      btnReportTruck.Image = Properties.Resources.icon_btn_report;
+      btnReportTruck.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.Location = new Point(3, 599);
+      btnReportTruck.Name = "btnReportTruck";
+      btnReportTruck.Padding = new Padding(15, 0, 0, 0);
+      btnReportTruck.Size = new Size(242, 70);
+      btnReportTruck.TabIndex = 43;
+      btnReportTruck.Text = "        BÁO CÁO";
+      btnReportTruck.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportTruck.TextColor = Color.Black;
+      btnReportTruck.UseVisualStyleBackColor = false;
+      // 
+      // btnReportGoods
+      // 
+      btnReportGoods.BackColor = Color.Silver;
+      btnReportGoods.BackgroundColor = Color.Silver;
+      btnReportGoods.BorderColor = Color.PaleVioletRed;
+      btnReportGoods.BorderRadius = 5;
+      btnReportGoods.BorderSize = 0;
+      btnReportGoods.Dock = DockStyle.Top;
+      btnReportGoods.FlatAppearance.BorderSize = 0;
+      btnReportGoods.FlatStyle = FlatStyle.Flat;
+      btnReportGoods.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnReportGoods.ForeColor = Color.Black;
+      btnReportGoods.Image = Properties.Resources.icon_btn_report;
+      btnReportGoods.ImageAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.Location = new Point(3, 675);
+      btnReportGoods.Name = "btnReportGoods";
+      btnReportGoods.Padding = new Padding(15, 0, 0, 0);
+      btnReportGoods.Size = new Size(242, 70);
+      btnReportGoods.TabIndex = 44;
+      btnReportGoods.Text = "        BÁO CÁO";
+      btnReportGoods.TextAlign = ContentAlignment.MiddleLeft;
+      btnReportGoods.TextColor = Color.Black;
+      btnReportGoods.UseVisualStyleBackColor = false;
+      // 
+      // btnUser
+      // 
+      btnUser.BackColor = Color.Silver;
+      btnUser.BackgroundColor = Color.Silver;
+      btnUser.BorderColor = Color.PaleVioletRed;
+      btnUser.BorderRadius = 5;
+      btnUser.BorderSize = 0;
+      btnUser.Dock = DockStyle.Top;
+      btnUser.FlatAppearance.BorderSize = 0;
+      btnUser.FlatStyle = FlatStyle.Flat;
+      btnUser.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnUser.ForeColor = Color.Black;
+      btnUser.Image = Properties.Resources.icon_btn_user;
+      btnUser.ImageAlign = ContentAlignment.MiddleLeft;
+      btnUser.Location = new Point(3, 751);
+      btnUser.Name = "btnUser";
+      btnUser.Padding = new Padding(15, 0, 0, 0);
+      btnUser.Size = new Size(242, 70);
+      btnUser.TabIndex = 45;
+      btnUser.Text = "        TÀI KHOẢN";
+      btnUser.TextAlign = ContentAlignment.MiddleLeft;
+      btnUser.TextColor = Color.Black;
+      btnUser.UseVisualStyleBackColor = false;
+      // 
+      // btnSetting
+      // 
+      btnSetting.BackColor = Color.Silver;
+      btnSetting.BackgroundColor = Color.Silver;
+      btnSetting.BorderColor = Color.PaleVioletRed;
+      btnSetting.BorderRadius = 5;
+      btnSetting.BorderSize = 0;
+      btnSetting.Dock = DockStyle.Top;
+      btnSetting.FlatAppearance.BorderSize = 0;
+      btnSetting.FlatStyle = FlatStyle.Flat;
+      btnSetting.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnSetting.ForeColor = Color.Black;
+      btnSetting.Image = (Image)resources.GetObject("btnSetting.Image");
+      btnSetting.ImageAlign = ContentAlignment.MiddleLeft;
+      btnSetting.Location = new Point(3, 827);
+      btnSetting.Name = "btnSetting";
+      btnSetting.Padding = new Padding(15, 0, 0, 0);
+      btnSetting.Size = new Size(242, 70);
+      btnSetting.TabIndex = 46;
+      btnSetting.Text = "        CÀI ĐẶT";
+      btnSetting.TextAlign = ContentAlignment.MiddleLeft;
+      btnSetting.TextColor = Color.Black;
+      btnSetting.UseVisualStyleBackColor = false;
+      // 
       // FrmOperation
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(1268, 1074);
+      ClientSize = new Size(1268, 1181);
       Controls.Add(tableLayoutPanel1);
       Name = "FrmOperation";
       Text = "FrmOperation";
@@ -786,6 +811,7 @@ namespace LTP.Truck.Forms
     private RJButton btnWarehouse;
     private RJButton btnClient;
     private RJButton btnTypeGoods;
+    private RJButton btnTareForTruck;
     private RJButton btnTare;
     private RJButton btnGroupProduct;
     private RJButton btnProduct;

@@ -217,6 +217,7 @@ namespace LTP.Truck.Forms
       this.btnGroupProduct.Click += BtnGroupProduct_Click;
       this.btnProduct.Click += BtnProduct_Click;
       this.btnDelivery.Click += BtnDelivery_Click;
+      this.btnTareForTruck.Click += BtnTareForTruck_Click;
 
     }
 
@@ -351,6 +352,13 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_Product);
+    }
+
+    private async void BtnTareForTruck_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      EnsureMenuExpanded();
+      await ChangePage(EnumScreen.MD_TareForTruck);
     }
 
     private async void BtnDelivery_Click(object? sender, EventArgs e)
@@ -513,6 +521,10 @@ namespace LTP.Truck.Forms
           case EnumScreen.MD_Delivery:
             OpenChildForm(appModulSupport, FrmMasterData.Instance);
             await FrmMasterData.Instance.LoadData(EnumTypeMasterData.Delivery);
+            break;
+          case EnumScreen.MD_TareForTruck:
+            OpenChildForm(appModulSupport, FrmMasterData.Instance);
+            await FrmMasterData.Instance.LoadData(EnumTypeMasterData.TareForTruck);
             break;
           case EnumScreen.User:
             OpenChildForm(appModulSupport, FrmUser.Instance);
