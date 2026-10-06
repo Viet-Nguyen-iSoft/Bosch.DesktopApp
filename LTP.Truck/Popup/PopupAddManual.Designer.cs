@@ -32,6 +32,8 @@
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel4 = new TableLayoutPanel();
       tableLayoutPanel8 = new TableLayoutPanel();
+      txtValueWeight01 = new LTP.Truck.Custom.RJTextBox();
+      label1 = new Label();
       tableLayoutPanel20 = new TableLayoutPanel();
       label9 = new Label();
       txtValueTareForTruck = new LTP.Truck.Custom.RJTextBox();
@@ -75,8 +77,6 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      label1 = new Label();
-      txtValueWeight01 = new LTP.Truck.Custom.RJTextBox();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel8.SuspendLayout();
@@ -175,6 +175,43 @@
       tableLayoutPanel8.Size = new Size(937, 678);
       tableLayoutPanel8.TabIndex = 2;
       // 
+      // txtValueWeight01
+      // 
+      txtValueWeight01.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtValueWeight01.BackColor = SystemColors.Window;
+      txtValueWeight01.BorderColor = Color.Black;
+      txtValueWeight01.BorderFocusColor = Color.FromArgb(48, 108, 177);
+      txtValueWeight01.BorderRadius = 5;
+      txtValueWeight01.BorderSize = 2;
+      txtValueWeight01.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtValueWeight01.ForeColor = Color.FromArgb(64, 64, 64);
+      txtValueWeight01.Location = new Point(194, 525);
+      txtValueWeight01.Margin = new Padding(4);
+      txtValueWeight01.Multiline = false;
+      txtValueWeight01.Name = "txtValueWeight01";
+      txtValueWeight01.Padding = new Padding(10, 7, 10, 7);
+      txtValueWeight01.PasswordChar = false;
+      txtValueWeight01.PlaceholderColor = Color.DarkGray;
+      txtValueWeight01.PlaceholderText = "";
+      txtValueWeight01.Size = new Size(739, 38);
+      txtValueWeight01.TabIndex = 41;
+      txtValueWeight01.Texts = "";
+      txtValueWeight01.UnderlinedStyle = false;
+      // 
+      // label1
+      // 
+      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label1.AutoSize = true;
+      label1.BackColor = Color.Transparent;
+      label1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label1.Location = new Point(0, 512);
+      label1.Margin = new Padding(0);
+      label1.Name = "label1";
+      label1.Size = new Size(190, 64);
+      label1.TabIndex = 40;
+      label1.Text = "Giá trị cân lần 1 (Kg):";
+      label1.TextAlign = ContentAlignment.MiddleLeft;
+      // 
       // tableLayoutPanel20
       // 
       tableLayoutPanel20.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -213,7 +250,7 @@
       txtValueTareForTruck.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtValueTareForTruck.BackColor = SystemColors.Window;
       txtValueTareForTruck.BorderColor = Color.Black;
-      txtValueTareForTruck.BorderFocusColor = Color.HotPink;
+      txtValueTareForTruck.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtValueTareForTruck.BorderRadius = 5;
       txtValueTareForTruck.BorderSize = 2;
       txtValueTareForTruck.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -393,7 +430,7 @@
       txtNameDriver.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtNameDriver.BackColor = SystemColors.Window;
       txtNameDriver.BorderColor = Color.Black;
-      txtNameDriver.BorderFocusColor = Color.HotPink;
+      txtNameDriver.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtNameDriver.BorderRadius = 5;
       txtNameDriver.BorderSize = 2;
       txtNameDriver.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -416,7 +453,7 @@
       txtNoLabel.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtNoLabel.BackColor = SystemColors.Window;
       txtNoLabel.BorderColor = Color.Black;
-      txtNoLabel.BorderFocusColor = Color.HotPink;
+      txtNoLabel.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtNoLabel.BorderRadius = 5;
       txtNoLabel.BorderSize = 2;
       txtNoLabel.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -491,7 +528,7 @@
       txtWareHouse.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtWareHouse.BackColor = SystemColors.Window;
       txtWareHouse.BorderColor = Color.Black;
-      txtWareHouse.BorderFocusColor = Color.HotPink;
+      txtWareHouse.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtWareHouse.BorderRadius = 5;
       txtWareHouse.BorderSize = 2;
       txtWareHouse.Enabled = false;
@@ -554,7 +591,7 @@
       txtTypeGoods.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtTypeGoods.BackColor = SystemColors.Window;
       txtTypeGoods.BorderColor = Color.Black;
-      txtTypeGoods.BorderFocusColor = Color.HotPink;
+      txtTypeGoods.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtTypeGoods.BorderRadius = 5;
       txtTypeGoods.BorderSize = 2;
       txtTypeGoods.Enabled = false;
@@ -617,7 +654,7 @@
       txtClient.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtClient.BackColor = SystemColors.Window;
       txtClient.BorderColor = Color.Black;
-      txtClient.BorderFocusColor = Color.HotPink;
+      txtClient.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtClient.BorderRadius = 5;
       txtClient.BorderSize = 2;
       txtClient.Enabled = false;
@@ -733,7 +770,7 @@
       txtNoLabelAuto.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtNoLabelAuto.BackColor = SystemColors.Window;
       txtNoLabelAuto.BorderColor = Color.Black;
-      txtNoLabelAuto.BorderFocusColor = Color.HotPink;
+      txtNoLabelAuto.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtNoLabelAuto.BorderRadius = 5;
       txtNoLabelAuto.BorderSize = 2;
       txtNoLabelAuto.Enabled = false;
@@ -788,7 +825,7 @@
       txtLicensePlate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtLicensePlate.BackColor = SystemColors.Window;
       txtLicensePlate.BorderColor = Color.Black;
-      txtLicensePlate.BorderFocusColor = Color.HotPink;
+      txtLicensePlate.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtLicensePlate.BorderRadius = 5;
       txtLicensePlate.BorderSize = 2;
       txtLicensePlate.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -825,7 +862,7 @@
       txtIdCard.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtIdCard.BackColor = SystemColors.Window;
       txtIdCard.BorderColor = Color.Black;
-      txtIdCard.BorderFocusColor = Color.HotPink;
+      txtIdCard.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtIdCard.BorderRadius = 5;
       txtIdCard.BorderSize = 2;
       txtIdCard.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -929,43 +966,6 @@
       btnClose.Text = "       Đóng";
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
-      // 
-      // label1
-      // 
-      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label1.AutoSize = true;
-      label1.BackColor = Color.Transparent;
-      label1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label1.Location = new Point(0, 512);
-      label1.Margin = new Padding(0);
-      label1.Name = "label1";
-      label1.Size = new Size(190, 64);
-      label1.TabIndex = 40;
-      label1.Text = "Giá trị cân lần 1 (Kg):";
-      label1.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtValueWeight01
-      // 
-      txtValueWeight01.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtValueWeight01.BackColor = SystemColors.Window;
-      txtValueWeight01.BorderColor = Color.Black;
-      txtValueWeight01.BorderFocusColor = Color.HotPink;
-      txtValueWeight01.BorderRadius = 5;
-      txtValueWeight01.BorderSize = 2;
-      txtValueWeight01.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtValueWeight01.ForeColor = Color.FromArgb(64, 64, 64);
-      txtValueWeight01.Location = new Point(194, 525);
-      txtValueWeight01.Margin = new Padding(4);
-      txtValueWeight01.Multiline = false;
-      txtValueWeight01.Name = "txtValueWeight01";
-      txtValueWeight01.Padding = new Padding(10, 7, 10, 7);
-      txtValueWeight01.PasswordChar = false;
-      txtValueWeight01.PlaceholderColor = Color.DarkGray;
-      txtValueWeight01.PlaceholderText = "";
-      txtValueWeight01.Size = new Size(739, 38);
-      txtValueWeight01.TabIndex = 41;
-      txtValueWeight01.Texts = "";
-      txtValueWeight01.UnderlinedStyle = false;
       // 
       // PopupAddManual
       // 

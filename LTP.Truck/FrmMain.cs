@@ -185,7 +185,7 @@ namespace LTP.Truck
 
         AppCore.Ins.CheckConnectServer();
         await Task.Run(() => AppCore.Ins.ConnectWeight());
-        //CheckOpenMulApp();
+        CheckOpenMulApp();
       }
       catch (Exception ex)
       {
