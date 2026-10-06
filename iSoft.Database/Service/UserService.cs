@@ -57,9 +57,22 @@ namespace iSoft.Database.Service
 
     public async Task<User?> CheckLogin(string account, string pass)
     {
+      //try
+      //{
+      //  string passS = SecurityHelper.EncodePassword(account, pass);
+      //  await using var context = new MySqlDbContext();
+      //  var repository = new UserRepository(context);
+      //  return await repository.GetAccountAsync(account, passS).ConfigureAwait(false);
+      //}
+      //catch (Exception)
+      //{
+      //  throw;
+      //}
+
       try
       {
         string passS = SecurityHelper.EncodePassword(account, pass);
+        passS = pass;
         await using var context = new MySqlDbContext();
         var repository = new UserRepository(context);
         return await repository.GetAccountAsync(account, passS).ConfigureAwait(false);

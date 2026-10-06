@@ -19,6 +19,7 @@ using System.Drawing.Drawing2D;
 using System.Globalization;
 using static Common.EnumData;
 using static HelperManager.EnumData;
+using static iSoft.Communication.EnumCommunication;
 using static iSoft.Database.EnumData;
 
 namespace LTP.Truck.Forms
@@ -1452,6 +1453,9 @@ namespace LTP.Truck.Forms
 
       ShowRecordDetail(recordTruck);
       ShowTareForTruck(recordTruck);
+      cbbType.SelectedIndex = string.IsNullOrWhiteSpace(recordTruck.Type)
+        ? -1
+        : cbbType.FindStringExact(recordTruck.Type);
     }
 
     private void ShowRecordDetail(RecordTruck recordTruck)
@@ -1912,6 +1916,7 @@ namespace LTP.Truck.Forms
                                 .Replace("{actual}", actual + " Kg")
                                 .Replace("{time_tare}", timeTare)
                                 .Replace("{time_gross}", timeGross)
+                                .Replace("{type_weight}", recordTruck.Type)
                                 .Replace("{note}", recordTruck.Note)
                                 .Replace("{path_file_logo}", fileImageLogo)
                                 ;

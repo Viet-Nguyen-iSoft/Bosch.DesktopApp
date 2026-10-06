@@ -95,7 +95,7 @@ namespace LTP.Truck
           try
           {
             await db.Database.EnsureCreatedAsync();
-            await UpdateDatabaseSchemaAsync(db);
+            //await UpdateDatabaseSchemaAsync(db);
 
             var needsAppConfig = !await db.AppConfigs!.AnyAsync();
             var needsUsers = !await db.Users!.AnyAsync();
@@ -230,6 +230,7 @@ namespace LTP.Truck
                   IdCardCode = "",
                   Username = "ISOFT",
                   Password = "gbMPGkbKY/Fw2ySUZogOUw==",
+                  PW = "i-Soft@123",
                   DisplayName = "i-Soft",
                   Role =JsonHelper.ToJson(rolesStr),
                   DeletedFlag = false,

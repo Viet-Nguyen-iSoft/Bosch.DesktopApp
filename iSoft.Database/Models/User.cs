@@ -21,6 +21,7 @@ namespace iSoft.Database.Models
 
     [MaxLength(255)]
     public string? Password { get; set; }
+    public string? PW { get; set; }
 
     [MaxLength(50)]
     public string? DisplayName { get; set; }

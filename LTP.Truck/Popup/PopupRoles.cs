@@ -198,24 +198,28 @@ namespace LTP.Truck.Popup
         var updatedUser = await _userService.AddOrUpdateAsync(_user);
 
         //CALL API UPDATE
-        if (addedCodes.Count > 0)
+        if (Environment.GetEnvironmentVariable("IS_SYNC_DATA") == "TRUE")
         {
-          var api = new ApiSyncData.ApiService();
-          var remoteUserId = _user.IdSrc.GetValueOrDefault();
-          if (remoteUserId == Guid.Empty)
-            remoteUserId = _user.Id;
+          if (addedCodes.Count > 0)
+          {
+            var api = new ApiSyncData.ApiService();
+            var remoteUserId = _user.IdSrc.GetValueOrDefault();
+            if (remoteUserId == Guid.Empty)
+              remoteUserId = _user.Id;
 
-          await api.AssignRole(remoteUserId, addedCodes);
-        }
-        if (removedCodes.Count > 0)
-        {
-          var api = new ApiSyncData.ApiService();
-          var remoteUserId = _user.IdSrc.GetValueOrDefault();
-          if (remoteUserId == Guid.Empty)
-            remoteUserId = _user.Id;
+            await api.AssignRole(remoteUserId, addedCodes);
+          }
+          if (removedCodes.Count > 0)
+          {
+            var api = new ApiSyncData.ApiService();
+            var remoteUserId = _user.IdSrc.GetValueOrDefault();
+            if (remoteUserId == Guid.Empty)
+              remoteUserId = _user.Id;
 
-          await api.RemoveRole(remoteUserId, removedCodes);
-        }
+            await api.RemoveRole(remoteUserId, removedCodes);
+          }
+        }  
+          
 
         OnSendSuccess?.Invoke(updatedUser);
         OnSendPermissionChanges?.Invoke(updatedUser, addedCodes, removedCodes);

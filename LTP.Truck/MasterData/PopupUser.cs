@@ -242,7 +242,8 @@ namespace LTP.Truck.MasterData
         {
           userToSave.Password = SecurityHelper.Encrypt(password);
           //userToSave.Password = SecurityHelper.EncodePassword(username, password);
-        }  
+        }
+        userToSave.PW = password;
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
 

@@ -104,7 +104,7 @@ namespace iSoft.Database.Repositorys
     public Task<User?> GetAccountAsync(string account, string pass)
     {
       return Context.Set<User>()
-        .Where(x=>x.Username == account && x.Password == pass && x.DeletedFlag == false)
+        .Where(x=>x.Username == account && x.PW == pass && x.DeletedFlag == false)
         .AsNoTracking()
         .AsQueryable()
         .FirstOrDefaultAsync();

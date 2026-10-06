@@ -91,14 +91,19 @@ namespace LTP.Truck.Controls
         if (!Directory.Exists(_folderFileLog))
           Directory.CreateDirectory(_folderFileLog);
 
-        _apiJobsTask ??= _apiJobsBackgroundService.RunAsync(
-          _apiJobsCancellation.Token,
-          ex => LogHelper.LogErrorToFileLog(ex, _folderFileLog));
-        Application.ApplicationExit += (_, _) =>
+        //Sync data Web
+        if (Environment.GetEnvironmentVariable("IS_SYNC_DATA") == "TRUE")
         {
-          _apiJobsCancellation.Cancel();
-          _autoLogoutService.Dispose();
-        };
+          _apiJobsTask ??= _apiJobsBackgroundService.RunAsync(
+         _apiJobsCancellation.Token,
+         ex => LogHelper.LogErrorToFileLog(ex, _folderFileLog));
+          Application.ApplicationExit += (_, _) =>
+          {
+            _apiJobsCancellation.Cancel();
+            _autoLogoutService.Dispose();
+          };
+        }  
+         
 
         StartShowUI();
       }
