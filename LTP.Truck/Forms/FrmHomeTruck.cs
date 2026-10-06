@@ -38,6 +38,7 @@ namespace LTP.Truck.Forms
     private bool _initialLoadStarted;
     private bool _isLoadingRecordFromLicensePlate;
     private bool _isViewingHistoricalDetail;
+    private readonly TareTruckService _tareTruckService = new();
     private static string FormatWeight(double value)
     {
       return WeightFormatHelper.Format(value);
@@ -49,12 +50,15 @@ namespace LTP.Truck.Forms
       SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
+      cbbTareForTruck.SelectedIndexChanged += CbbTareForTruck_SelectedIndexChanged;
+      MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
       this.Load += FrmHome_Load;
       this.Shown += FrmHomeTruck_Shown;
       this.Disposed += (_, _) =>
       {
         _deleteReasonToolTip.Dispose();
         _deleteReasonToolTipFont.Dispose();
+        MasterDataChangeNotifier.Changed -= MasterDataChangeNotifier_Changed;
       };
     }
 
@@ -175,7 +179,62 @@ namespace LTP.Truck.Forms
 
       // Give WinForms a chance to present the form before the grid is bound.
       await Task.Yield();
-      await Task.WhenAll(LoadHistorical(), LoadLicensePlateSuggestionsAsync());
+      await Task.WhenAll(
+        LoadHistorical(),
+        LoadLicensePlateSuggestionsAsync(),
+        LoadTareForTruckAsync());
+    }
+
+    private async Task LoadTareForTruckAsync()
+    {
+      try
+      {
+        Guid selectedId = (cbbTareForTruck.SelectedItem as TareTruck)?.Id ?? Guid.Empty;
+        var tareTrucks = await _tareTruckService.GetAllAsync(IsContainDelete: false);
+        var items = tareTrucks
+          .OrderBy(tareTruck => tareTruck.Name ?? string.Empty)
+          .ToList();
+        items.Insert(0, new TareTruck
+        {
+          Id = Guid.Empty,
+          Name = "Không có",
+          Value = 0,
+        });
+
+        cbbTareForTruck.DisplayMember = nameof(TareTruck.Name);
+        cbbTareForTruck.ValueMember = nameof(TareTruck.Id);
+        cbbTareForTruck.DataSource = items;
+
+        int selectedIndex = items.FindIndex(tareTruck => tareTruck.Id == selectedId);
+        cbbTareForTruck.SelectedIndex = selectedIndex >= 0 ? selectedIndex : 0;
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        cbbTareForTruck.DataSource = new List<TareTruck>
+        {
+          new() { Id = Guid.Empty, Name = "Không có", Value = 0 },
+        };
+        cbbTareForTruck.DisplayMember = nameof(TareTruck.Name);
+        cbbTareForTruck.ValueMember = nameof(TareTruck.Id);
+        cbbTareForTruck.SelectedIndex = 0;
+      }
+    }
+
+    private void CbbTareForTruck_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+      var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
+      txtValueTareForTruck.Texts = selectedTare?.Id == Guid.Empty
+        ? "0"
+        : WeightFormatHelper.Format(selectedTare?.Value ?? 0, 2);
+    }
+
+    private async void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
+    {
+      if (entityType != typeof(TareTruck) || IsDisposed || Disposing)
+        return;
+
+      await LoadTareForTruckAsync();
     }
 
     private async Task LoadLicensePlateSuggestionsAsync()
