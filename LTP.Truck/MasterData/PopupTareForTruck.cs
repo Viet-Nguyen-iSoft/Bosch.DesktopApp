@@ -51,9 +51,9 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        if (!TryGetPositiveTareValue(out double tareValue))
+        if (!TryGetNonNegativeIntegerTareValue(out double tareValue))
         {
-          using var popup = new PopupConfirm("Khối lượng bì phải là số lớn hơn 0 !",
+          using var popup = new PopupConfirm("Khối lượng bì phải là số nguyên lớn hơn hoặc bằng 0 !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popup.ShowDialog(this);
           txtValueTare.Focus();
@@ -95,46 +95,23 @@ namespace LTP.Truck.MasterData
 
     private void TxtValueTare_KeyPress(object? sender, KeyPressEventArgs e)
     {
-      if (char.IsControl(e.KeyChar) || char.IsDigit(e.KeyChar))
-        return;
-
-      if ((e.KeyChar == '.' || e.KeyChar == ',') &&
-          !txtValueTare.Texts.Contains('.') &&
-          !txtValueTare.Texts.Contains(','))
-        return;
-
-      e.Handled = true;
+      e.Handled = !char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar);
     }
 
     private void TxtValueTare_TextChanged(object? sender, EventArgs e)
     {
       string value = txtValueTare.Texts;
-      bool hasDecimalSeparator = false;
-      string sanitizedValue = new(value.Where(character =>
-      {
-        if (char.IsDigit(character))
-          return true;
-
-        if ((character == '.' || character == ',') && !hasDecimalSeparator)
-        {
-          hasDecimalSeparator = true;
-          return true;
-        }
-
-        return false;
-      }).ToArray());
+      string sanitizedValue = new(value.Where(char.IsDigit).ToArray());
 
       if (!string.Equals(value, sanitizedValue, StringComparison.Ordinal))
         txtValueTare.Texts = sanitizedValue;
     }
 
-    private bool TryGetPositiveTareValue(out double tareValue)
+    private bool TryGetNonNegativeIntegerTareValue(out double tareValue)
     {
-      string normalizedValue = txtValueTare.Texts.Trim().Replace(',', '.');
-      return double.TryParse(normalizedValue, NumberStyles.AllowDecimalPoint,
+      return double.TryParse(txtValueTare.Texts.Trim(), NumberStyles.None,
           CultureInfo.InvariantCulture, out tareValue) &&
-        double.IsFinite(tareValue) &&
-        tareValue > 0;
+        double.IsFinite(tareValue) && tareValue >= 0;
     }
   }
 }

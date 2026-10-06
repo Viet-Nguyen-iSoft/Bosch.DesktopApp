@@ -226,7 +226,7 @@ namespace LTP.Truck.Forms
       var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
       txtValueTareForTruck.Texts = selectedTare?.Id == Guid.Empty
         ? "0"
-        : WeightFormatHelper.Format(selectedTare?.Value ?? 0, 2);
+        : WeightFormatHelper.Format(selectedTare?.Value ?? 0);
     }
 
     private async void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
