@@ -1447,6 +1447,8 @@ namespace LTP.Truck.Forms
       _isViewingHistoricalDetail = false;
       _recordTruck = new RecordTruck();
       ShowDataHistorical(_recordTruck);
+      if (cbbTareForTruck.Items.Count > 0)
+        cbbTareForTruck.SelectedIndex = 0;
     }
 
 
