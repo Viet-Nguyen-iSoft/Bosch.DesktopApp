@@ -33,6 +33,7 @@ namespace LTP.Truck.Forms
     private WarehouseService _warehouseService { get; set; }
     private TypeGoodsService _typeGoodsService { get; set; }
     private CategoryTareService _categoryTareService { get; set; }
+    private TareTruckService _tareTruckService { get; set; }
     private ProductGroupService _productGroupService { get; set; }
     private ProductService _productService { get; set; }
     private DeliveryService _deliveryService { get; set; }
@@ -60,6 +61,7 @@ namespace LTP.Truck.Forms
       _warehouseService = new WarehouseService();
       _typeGoodsService = new TypeGoodsService();
       _categoryTareService = new CategoryTareService();
+      _tareTruckService = new TareTruckService();
       _productGroupService = new ProductGroupService();
       _productService = new ProductService();
       _deliveryService = new DeliveryService();
@@ -140,6 +142,12 @@ namespace LTP.Truck.Forms
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoTare = DTOHelper.ConvertCategoryTareDTO(rsTare);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoTare, searchKey));
+            break;
+          case EnumTypeMasterData.TareForTruck:
+            var rsTareTruck = await _tareTruckService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
+            var dtoTareTruck = DTOHelper.ConvertTareTruckDTO(rsTareTruck);
+            SetDgv(enumTypeMaster, FilterBySearchKey(dtoTareTruck, searchKey));
             break;
           case EnumTypeMasterData.GroupProduct:
             var rsGroupProduct = await AppCore.Ins._productGroupService.GetAllAsync();
@@ -340,6 +348,12 @@ namespace LTP.Truck.Forms
         popupTypeTare.OnSendSuccess += PopupTypeTare_OnSendSuccess;
         popupTypeTare.ShowDialog();
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TareForTruck)
+      {
+        var popupTareTruck = new PopupTypeTare(isTareForTruck: true);
+        popupTareTruck.OnSendTareTruckSuccess += PopupTareTruck_OnSendSuccess;
+        popupTareTruck.ShowDialog();
+      }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
       {
         PopupProductGroup popupProductGroup = new PopupProductGroup();
@@ -504,6 +518,20 @@ namespace LTP.Truck.Forms
       catch (Exception ex)
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    private async void PopupTareTruck_OnSendSuccess(TareTruck obj)
+    {
+      try
+      {
+        await LoadData(_enumTypeMasterDataCurrent);
+        MasterDataChangeNotifier.Notify<TareTruck>();
+        ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -724,6 +752,36 @@ namespace LTP.Truck.Forms
         {
           nameof(CategoryTareDTO.Value),
           nameof(CategoryTareDTO.UpdatedAt),
+        };
+        foreach (var columnName in alignmentRightCenterColumns)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+        }
+      }
+      else if (enumTypeMasterData == EnumTypeMasterData.TareForTruck)
+      {
+        var autoSizeColumns = new[]
+        {
+          nameof(TareTruckDTO.No),
+          nameof(TareTruckDTO.Code),
+          nameof(TareTruckDTO.UpdatedAt),
+          nameof(TareTruckDTO.Value),
+        };
+        foreach (var columnName in autoSizeColumns)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+        }
+
+        if (dgv.Columns.Contains(nameof(TareTruckDTO.No)))
+          dgv.Columns[nameof(TareTruckDTO.No)].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleCenter;
+
+        var alignmentRightCenterColumns = new[]
+        {
+          nameof(TareTruckDTO.Value),
+          nameof(TareTruckDTO.UpdatedAt),
         };
         foreach (var columnName in alignmentRightCenterColumns)
         {
@@ -966,6 +1024,22 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TareForTruck)
+      {
+        var data = rowData as TareTruckDTO;
+        if (data?.TareTruck != null)
+        {
+          var popupTareTruck = new PopupTypeTare(data.TareTruck);
+          popupTareTruck.OnSendTareTruckSuccess += PopupTareTruck_OnSendSuccess;
+          popupTareTruck.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
       {
         var data = rowData as ProductGroupDTO;
@@ -1201,6 +1275,24 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TareForTruck)
+      {
+        var data = rowData as TareTruckDTO;
+        if (data?.TareTruck != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+            EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.TareTruck);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)
       {
         var data = rowData as ProductGroupDTO;
@@ -1370,6 +1462,18 @@ namespace LTP.Truck.Forms
             await _apiJobsService.AddOrUpdateAsync(apiJobs);
             await LoadData(_enumTypeMasterDataCurrent);
             MasterDataChangeNotifier.Notify<CategoryTare>();
+          }
+        }
+        else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TareForTruck)
+        {
+          var tareTruck = e.Obj as TareTruck;
+          if (tareTruck != null)
+          {
+            tareTruck.DeletedFlag = true;
+            tareTruck.UpdatedAt = DateTime.UtcNow;
+            await _tareTruckService.AddOrUpdateAsync(tareTruck);
+            await LoadData(_enumTypeMasterDataCurrent);
+            MasterDataChangeNotifier.Notify<TareTruck>();
           }
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)

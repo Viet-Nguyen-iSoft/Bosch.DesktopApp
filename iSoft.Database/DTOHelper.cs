@@ -192,6 +192,31 @@ namespace iSoft.Database
       return rsDto;
     }
 
+    public static List<TareTruckDTO>? ConvertTareTruckDTO(List<TareTruck>? tareTrucks)
+    {
+      var rsDto = new List<TareTruckDTO>();
+      if (tareTrucks?.Count() > 0)
+      {
+        tareTrucks = tareTrucks.OrderBy(e => e.Name).ToList();
+        rsDto = tareTrucks
+          .Select((e, index) => new TareTruckDTO
+          {
+            TareTruck = e,
+            No = index + 1,
+            Code = e.Code,
+            Name = e.Name,
+            Description = e.Description,
+            Value = WeightFormatHelper.Format(e.Value ?? 0.0, 2),
+            UpdatedAt = e.UpdatedAt != null
+              ? e.UpdatedAt.Value.AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss")
+              : e.CreatedAt?.AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
+          })
+          .OrderBy(e => e.Name)
+          .ToList();
+      }
+      return rsDto;
+    }
+
     public static List<ProductGroupDTO>? ConvertProductGroupDTO(List<ProductGroup>? productGroups)
     {
       var rsDto = new List<ProductGroupDTO>();

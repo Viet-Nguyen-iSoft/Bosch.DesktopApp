@@ -55,8 +55,8 @@ namespace LTP.Truck.Forms
       Button[] menuButtons =
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
-        btnUser, btnClient, btnTypeGoods, btnWarehouse, btnTare, btnGroupProduct, btnProduct,
-        btnDelivery
+        btnUser, btnClient, btnTypeGoods, btnWarehouse, btnTareForTruck, btnTare,
+        btnGroupProduct, btnProduct, btnDelivery
       };
 
       foreach (Button button in menuButtons)
@@ -111,8 +111,8 @@ namespace LTP.Truck.Forms
     private bool IsMasterDataChild(Button button)
     {
       return button == btnClient || button == btnTypeGoods || button == btnWarehouse
-        || button == btnTare || button == btnGroupProduct || button == btnProduct
-        || button == btnDelivery;
+        || button == btnTareForTruck || button == btnTare || button == btnGroupProduct
+        || button == btnProduct || button == btnDelivery;
     }
 
     private void SetMasterDataExpanded(bool expanded)
@@ -143,6 +143,7 @@ namespace LTP.Truck.Forms
       bool isTruckStation = Environment.GetEnvironmentVariable("STATION") == "1";
       return isTruckStation
         ? button == btnClient || button == btnWarehouse || button == btnTypeGoods
+          || button == btnTareForTruck
         : button == btnGroupProduct || button == btnProduct || button == btnTare
           || button == btnDelivery;
     }
@@ -558,6 +559,7 @@ namespace LTP.Truck.Forms
         EnumScreen.MD_Client => "Trang chính > Master Data > Khách hàng",
         EnumScreen.MD_TypeGoods => "Trang chính > Master Data > Loại hàng",
         EnumScreen.MD_Warehouse => "Trang chính > Master Data > Kho hàng",
+        EnumScreen.MD_TareForTruck => "Trang chính > Master Data > Tare thùng xe tải",
         EnumScreen.MD_Tare => "Trang chính > Master Data > Nhóm Tare",
         EnumScreen.MD_GroupProduct => "Trang chính > Master Data > Nhóm chất thải",
         EnumScreen.MD_Product => "Trang chính > Master Data > Chất thải",
