@@ -698,6 +698,7 @@ namespace LTP.Truck.Forms
           _recordTruck.Note = txtDocument.Text;
           _recordTruck.Tare = GetTareForTruckValue();
           _recordTruck.NameTareForTruck = GetTareForTruckName();
+          _recordTruck.Type = cbbType.SelectedItem?.ToString();
           _recordTruck.StationId = AppCore.Ins._station?.Id;
           _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
           _recordTruck.CreatedAt = DateTime.UtcNow;
@@ -788,6 +789,7 @@ namespace LTP.Truck.Forms
         _recordTruck.Note = txtDocument.Text;
         _recordTruck.Tare = GetTareForTruckValue();
         _recordTruck.NameTareForTruck = GetTareForTruckName();
+        _recordTruck.Type = cbbType.SelectedItem?.ToString();
         _recordTruck.StationId = AppCore.Ins._station?.Id;
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
         _recordTruck.UpdatedAt = DateTime.UtcNow;
