@@ -883,6 +883,7 @@ namespace LTP.Truck.Forms
         nameof(RecordWeightDTO.Tare),
         nameof(RecordWeightDTO.Gross),
         nameof(RecordWeightDTO.NameDriver),
+        nameof(RecordWeightDTO.Type),
       };
       foreach (var columnName in autoSizeColumns)
       {

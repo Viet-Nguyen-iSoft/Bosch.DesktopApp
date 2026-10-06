@@ -77,8 +77,8 @@
       // btnClose
       // 
       btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnClose.BackColor = Color.Red;
-      btnClose.BackgroundColor = Color.Red;
+      btnClose.BackColor = Color.Tomato;
+      btnClose.BackgroundColor = Color.Tomato;
       btnClose.BorderColor = Color.PaleVioletRed;
       btnClose.BorderRadius = 4;
       btnClose.BorderSize = 0;
@@ -88,7 +88,7 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(185, 292);
+      btnClose.Location = new Point(185, 294);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
       btnClose.Size = new Size(154, 59);

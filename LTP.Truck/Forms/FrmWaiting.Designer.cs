@@ -31,6 +31,7 @@ namespace LTP.Truck.Forms
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmWaiting));
       tableLayoutPanel1 = new TableLayoutPanel();
       tableLayoutPanel2 = new TableLayoutPanel();
+      lbVersion = new Label();
       lbs = new Label();
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel4 = new TableLayoutPanel();
@@ -40,7 +41,6 @@ namespace LTP.Truck.Forms
       label2 = new Label();
       lbTitle = new Label();
       btnMenu = new PictureBox();
-      lbVersion = new Label();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -83,6 +83,20 @@ namespace LTP.Truck.Forms
       tableLayoutPanel2.Size = new Size(1886, 50);
       tableLayoutPanel2.TabIndex = 21;
       // 
+      // lbVersion
+      // 
+      lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbVersion.AutoSize = true;
+      lbVersion.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
+      lbVersion.ForeColor = Color.White;
+      lbVersion.Location = new Point(649, 0);
+      lbVersion.Margin = new Padding(0);
+      lbVersion.Name = "lbVersion";
+      lbVersion.Padding = new Padding(10, 0, 0, 0);
+      lbVersion.Size = new Size(1237, 50);
+      lbVersion.TabIndex = 22;
+      lbVersion.TextAlign = ContentAlignment.MiddleLeft;
+      // 
       // lbs
       // 
       lbs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -93,7 +107,7 @@ namespace LTP.Truck.Forms
       lbs.Margin = new Padding(0);
       lbs.Name = "lbs";
       lbs.Padding = new Padding(10, 0, 0, 0);
-      lbs.Size = new Size(693, 50);
+      lbs.Size = new Size(649, 50);
       lbs.TabIndex = 14;
       lbs.Text = "Copyright @ 2026 i-Soft JSC. All rights reserved.  | ";
       lbs.TextAlign = ContentAlignment.MiddleLeft;
@@ -165,7 +179,7 @@ namespace LTP.Truck.Forms
       // 
       pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-      pictureBox1.Location = new Point(200, 373);
+      pictureBox1.Location = new Point(200, 381);
       pictureBox1.Margin = new Padding(200, 10, 200, 10);
       pictureBox1.Name = "pictureBox1";
       pictureBox1.Size = new Size(455, 110);
@@ -178,9 +192,9 @@ namespace LTP.Truck.Forms
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label2.Location = new Point(3, 575);
+      label2.Location = new Point(3, 574);
       label2.Name = "label2";
-      label2.Size = new Size(849, 45);
+      label2.Size = new Size(849, 39);
       label2.TabIndex = 2;
       label2.Text = "Weight Logging System";
       label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -190,9 +204,9 @@ namespace LTP.Truck.Forms
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
       lbTitle.Font = new Font("Roboto", 45.25F, FontStyle.Bold);
-      lbTitle.Location = new Point(3, 493);
+      lbTitle.Location = new Point(3, 501);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(849, 82);
+      lbTitle.Size = new Size(849, 73);
       lbTitle.TabIndex = 1;
       lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
       lbTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -210,24 +224,11 @@ namespace LTP.Truck.Forms
       btnMenu.TabStop = false;
       btnMenu.Click += btnMenu_Click;
       // 
-      // lbVersion
-      // 
-      lbVersion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      lbVersion.AutoSize = true;
-      lbVersion.Font = new Font("Roboto", 20.25F, FontStyle.Bold);
-      lbVersion.ForeColor = Color.White;
-      lbVersion.Location = new Point(693, 0);
-      lbVersion.Margin = new Padding(0);
-      lbVersion.Name = "lbVersion";
-      lbVersion.Padding = new Padding(10, 0, 0, 0);
-      lbVersion.Size = new Size(1193, 50);
-      lbVersion.TabIndex = 22;
-      lbVersion.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // FrmWaiting
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
+      BackColor = Color.White;
       ClientSize = new Size(1886, 1041);
       Controls.Add(tableLayoutPanel1);
       Name = "FrmWaiting";

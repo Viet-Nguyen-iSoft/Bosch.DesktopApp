@@ -208,6 +208,7 @@ namespace LTP.Truck.Forms
 
       this.btnHomeTruck.Click += btnHomeTruck_Click;
       this.btnHomeGoods.Click += btnHomeGoods_Click;
+      this.btnSetting.Click += btnSetting_Click;
 
       this.btnClient.Click += BtnClient_Click;
       this.btnTypeGoods.Click += BtnTypeGoods_Click;
@@ -437,7 +438,7 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.HomeGoods);
     }
-    private async void btnSetting_Click(object sender, EventArgs e)
+    private async void btnSetting_Click(object? sender, EventArgs e)
     {
       if (Environment.GetEnvironmentVariable("STATION") == "1")
       {

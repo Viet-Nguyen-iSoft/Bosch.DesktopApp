@@ -48,7 +48,6 @@ namespace LTP.Truck.Forms
       cbbPrintLabel = new ComboBox();
       cbbPrintA4 = new ComboBox();
       tableLayoutPanel22 = new TableLayoutPanel();
-      btnSavePrint = new Common.Custom.RJButton();
       tableLayoutPanel4 = new TableLayoutPanel();
       tableLayoutPanel6 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
@@ -77,6 +76,7 @@ namespace LTP.Truck.Forms
       label22 = new Label();
       txtPhoneForAgentAddress = new RJTextBox();
       tableLayoutPanel20 = new TableLayoutPanel();
+      btnSavePrint = new Common.Custom.RJButton();
       btnInforReport = new Common.Custom.RJButton();
       tableLayoutPanel11 = new TableLayoutPanel();
       tableLayoutPanel12 = new TableLayoutPanel();
@@ -85,6 +85,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13 = new TableLayoutPanel();
       label9 = new Label();
       cbbStations = new ComboBox();
+      label17 = new Label();
+      txtTimeAutoLogOut = new RJTextBox();
       tableLayoutPanel21 = new TableLayoutPanel();
       tableLayoutPanel25 = new TableLayoutPanel();
       label19 = new Label();
@@ -100,8 +102,10 @@ namespace LTP.Truck.Forms
       txtValueWeightPermit = new RJTextBox();
       label11 = new Label();
       picPermitCheckWeight = new PictureBox();
-      label17 = new Label();
-      txtTimeAutoLogOut = new RJTextBox();
+      label23 = new Label();
+      label24 = new Label();
+      pictureBox1 = new PictureBox();
+      pictureBox2 = new PictureBox();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel14.SuspendLayout();
@@ -127,6 +131,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel16.SuspendLayout();
       tableLayoutPanel18.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)picPermitCheckWeight).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
       SuspendLayout();
       // 
       // tableLayoutPanel1
@@ -266,16 +272,17 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.ColumnCount = 1;
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel7.Controls.Add(label5, 0, 0);
+      tableLayoutPanel7.Controls.Add(tableLayoutPanel22, 0, 3);
       tableLayoutPanel7.Controls.Add(tableLayoutPanel9, 0, 1);
       tableLayoutPanel7.Location = new Point(856, 0);
       tableLayoutPanel7.Margin = new Padding(0);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
-      tableLayoutPanel7.RowCount = 3;
+      tableLayoutPanel7.RowCount = 5;
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel7.Size = new Size(848, 280);
       tableLayoutPanel7.TabIndex = 2;
       // 
@@ -296,23 +303,27 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel9
       // 
       tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel9.ColumnCount = 3;
+      tableLayoutPanel9.ColumnCount = 5;
       tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
       tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 3F));
+      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
       tableLayoutPanel9.Controls.Add(label18, 0, 1);
       tableLayoutPanel9.Controls.Add(label6, 0, 0);
       tableLayoutPanel9.Controls.Add(cbbPrintLabel, 1, 1);
       tableLayoutPanel9.Controls.Add(cbbPrintA4, 1, 0);
-      tableLayoutPanel9.Controls.Add(tableLayoutPanel22, 1, 2);
+      tableLayoutPanel9.Controls.Add(label24, 3, 1);
+      tableLayoutPanel9.Controls.Add(label23, 3, 0);
+      tableLayoutPanel9.Controls.Add(pictureBox1, 4, 0);
+      tableLayoutPanel9.Controls.Add(pictureBox2, 4, 1);
       tableLayoutPanel9.Location = new Point(0, 60);
       tableLayoutPanel9.Margin = new Padding(0);
       tableLayoutPanel9.Name = "tableLayoutPanel9";
-      tableLayoutPanel9.RowCount = 3;
+      tableLayoutPanel9.RowCount = 2;
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-      tableLayoutPanel9.Size = new Size(848, 215);
+      tableLayoutPanel9.Size = new Size(848, 150);
       tableLayoutPanel9.TabIndex = 7;
       // 
       // label18
@@ -321,10 +332,10 @@ namespace LTP.Truck.Forms
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 14F);
-      label18.Location = new Point(0, 77);
+      label18.Location = new Point(0, 75);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
-      label18.Size = new Size(150, 77);
+      label18.Size = new Size(150, 75);
       label18.TabIndex = 1;
       label18.Text = "Máy in nhãn";
       label18.TextAlign = ContentAlignment.MiddleLeft;
@@ -338,7 +349,7 @@ namespace LTP.Truck.Forms
       label6.Location = new Point(0, 0);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(150, 77);
+      label6.Size = new Size(150, 75);
       label6.TabIndex = 1;
       label6.Text = "Máy in A4";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -349,10 +360,10 @@ namespace LTP.Truck.Forms
       cbbPrintLabel.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbPrintLabel.Font = new Font("Roboto", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbPrintLabel.FormattingEnabled = true;
-      cbbPrintLabel.Location = new Point(153, 95);
+      cbbPrintLabel.Location = new Point(153, 92);
       cbbPrintLabel.Margin = new Padding(3, 3, 10, 3);
       cbbPrintLabel.Name = "cbbPrintLabel";
-      cbbPrintLabel.Size = new Size(682, 41);
+      cbbPrintLabel.Size = new Size(480, 41);
       cbbPrintLabel.TabIndex = 2;
       // 
       // cbbPrintA4
@@ -361,10 +372,10 @@ namespace LTP.Truck.Forms
       cbbPrintA4.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbPrintA4.Font = new Font("Roboto", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbPrintA4.FormattingEnabled = true;
-      cbbPrintA4.Location = new Point(153, 18);
+      cbbPrintA4.Location = new Point(153, 17);
       cbbPrintA4.Margin = new Padding(3, 3, 10, 3);
       cbbPrintA4.Name = "cbbPrintA4";
-      cbbPrintA4.Size = new Size(682, 41);
+      cbbPrintA4.Size = new Size(480, 41);
       cbbPrintA4.TabIndex = 2;
       // 
       // tableLayoutPanel22
@@ -375,36 +386,13 @@ namespace LTP.Truck.Forms
       tableLayoutPanel22.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel22.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel22.Controls.Add(btnSavePrint, 1, 0);
-      tableLayoutPanel22.Location = new Point(150, 154);
+      tableLayoutPanel22.Location = new Point(0, 215);
       tableLayoutPanel22.Margin = new Padding(0);
       tableLayoutPanel22.Name = "tableLayoutPanel22";
       tableLayoutPanel22.RowCount = 1;
       tableLayoutPanel22.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel22.Size = new Size(695, 61);
+      tableLayoutPanel22.Size = new Size(848, 60);
       tableLayoutPanel22.TabIndex = 8;
-      // 
-      // btnSavePrint
-      // 
-      btnSavePrint.Anchor = AnchorStyles.Right;
-      btnSavePrint.BackColor = Color.FromArgb(51, 108, 181);
-      btnSavePrint.BackgroundColor = Color.FromArgb(51, 108, 181);
-      btnSavePrint.BorderColor = Color.PaleVioletRed;
-      btnSavePrint.BorderRadius = 4;
-      btnSavePrint.BorderSize = 0;
-      btnSavePrint.FlatAppearance.BorderSize = 0;
-      btnSavePrint.FlatStyle = FlatStyle.Flat;
-      btnSavePrint.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      btnSavePrint.ForeColor = Color.White;
-      btnSavePrint.Image = Properties.Resources.icon_save;
-      btnSavePrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSavePrint.Location = new Point(493, 3);
-      btnSavePrint.Name = "btnSavePrint";
-      btnSavePrint.Padding = new Padding(10, 0, 0, 0);
-      btnSavePrint.Size = new Size(194, 54);
-      btnSavePrint.TabIndex = 0;
-      btnSavePrint.Text = "       Lưu thay đổi";
-      btnSavePrint.TextColor = Color.White;
-      btnSavePrint.UseVisualStyleBackColor = false;
       // 
       // tableLayoutPanel4
       // 
@@ -925,6 +913,29 @@ namespace LTP.Truck.Forms
       tableLayoutPanel20.Size = new Size(1102, 60);
       tableLayoutPanel20.TabIndex = 7;
       // 
+      // btnSavePrint
+      // 
+      btnSavePrint.Anchor = AnchorStyles.Right;
+      btnSavePrint.BackColor = Color.FromArgb(51, 108, 181);
+      btnSavePrint.BackgroundColor = Color.FromArgb(51, 108, 181);
+      btnSavePrint.BorderColor = Color.PaleVioletRed;
+      btnSavePrint.BorderRadius = 5;
+      btnSavePrint.BorderSize = 0;
+      btnSavePrint.FlatAppearance.BorderSize = 0;
+      btnSavePrint.FlatStyle = FlatStyle.Flat;
+      btnSavePrint.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnSavePrint.ForeColor = Color.White;
+      btnSavePrint.Image = Properties.Resources.icon_save;
+      btnSavePrint.ImageAlign = ContentAlignment.MiddleLeft;
+      btnSavePrint.Location = new Point(646, 3);
+      btnSavePrint.Name = "btnSavePrint";
+      btnSavePrint.Padding = new Padding(10, 0, 0, 0);
+      btnSavePrint.Size = new Size(194, 54);
+      btnSavePrint.TabIndex = 0;
+      btnSavePrint.Text = "       Lưu thay đổi";
+      btnSavePrint.TextColor = Color.White;
+      btnSavePrint.UseVisualStyleBackColor = false;
+      // 
       // btnInforReport
       // 
       btnInforReport.Anchor = AnchorStyles.Right;
@@ -1053,7 +1064,7 @@ namespace LTP.Truck.Forms
       label9.Location = new Point(0, 0);
       label9.Margin = new Padding(0);
       label9.Name = "label9";
-      label9.Size = new Size(94, 58);
+      label9.Size = new Size(181, 58);
       label9.TabIndex = 1;
       label9.Text = "Trạm cân:";
       label9.TextAlign = ContentAlignment.MiddleLeft;
@@ -1064,10 +1075,47 @@ namespace LTP.Truck.Forms
       cbbStations.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbStations.Font = new Font("Roboto", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbStations.FormattingEnabled = true;
-      cbbStations.Location = new Point(97, 8);
+      cbbStations.Location = new Point(184, 8);
       cbbStations.Name = "cbbStations";
-      cbbStations.Size = new Size(481, 41);
+      cbbStations.Size = new Size(394, 41);
       cbbStations.TabIndex = 2;
+      // 
+      // label17
+      // 
+      label17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label17.AutoSize = true;
+      label17.BackColor = Color.Transparent;
+      label17.Font = new Font("Roboto", 14F);
+      label17.Location = new Point(0, 58);
+      label17.Margin = new Padding(0);
+      label17.Name = "label17";
+      label17.Size = new Size(181, 58);
+      label17.TabIndex = 3;
+      label17.Text = "Tự đăng xuất (phút):";
+      label17.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // txtTimeAutoLogOut
+      // 
+      txtTimeAutoLogOut.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtTimeAutoLogOut.BackColor = SystemColors.Window;
+      txtTimeAutoLogOut.BorderColor = Color.Black;
+      txtTimeAutoLogOut.BorderFocusColor = Color.HotPink;
+      txtTimeAutoLogOut.BorderRadius = 5;
+      txtTimeAutoLogOut.BorderSize = 2;
+      txtTimeAutoLogOut.Font = new Font("Roboto", 14F);
+      txtTimeAutoLogOut.ForeColor = Color.FromArgb(64, 64, 64);
+      txtTimeAutoLogOut.Location = new Point(185, 68);
+      txtTimeAutoLogOut.Margin = new Padding(4);
+      txtTimeAutoLogOut.Multiline = false;
+      txtTimeAutoLogOut.Name = "txtTimeAutoLogOut";
+      txtTimeAutoLogOut.Padding = new Padding(10, 7, 10, 7);
+      txtTimeAutoLogOut.PasswordChar = false;
+      txtTimeAutoLogOut.PlaceholderColor = Color.DarkGray;
+      txtTimeAutoLogOut.PlaceholderText = "";
+      txtTimeAutoLogOut.Size = new Size(392, 38);
+      txtTimeAutoLogOut.TabIndex = 5;
+      txtTimeAutoLogOut.Texts = "";
+      txtTimeAutoLogOut.UnderlinedStyle = false;
       // 
       // tableLayoutPanel21
       // 
@@ -1340,42 +1388,55 @@ namespace LTP.Truck.Forms
       picPermitCheckWeight.TabStop = false;
       picPermitCheckWeight.Click += picPermitCheckWeight_Click;
       // 
-      // label17
+      // label23
       // 
-      label17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label17.AutoSize = true;
-      label17.BackColor = Color.Transparent;
-      label17.Font = new Font("Roboto", 14F);
-      label17.Location = new Point(0, 58);
-      label17.Margin = new Padding(0);
-      label17.Name = "label17";
-      label17.Size = new Size(94, 58);
-      label17.TabIndex = 3;
-      label17.Text = "Tự đăng xuất (phút):";
-      label17.TextAlign = ContentAlignment.MiddleLeft;
+      label23.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label23.AutoSize = true;
+      label23.BackColor = Color.Transparent;
+      label23.Font = new Font("Roboto", 14F);
+      label23.Location = new Point(646, 0);
+      label23.Margin = new Padding(0);
+      label23.Name = "label23";
+      label23.Size = new Size(102, 75);
+      label23.TabIndex = 3;
+      label23.Text = "Tự động in";
+      label23.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // txtTimeAutoLogOut
-      //
-      txtTimeAutoLogOut.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtTimeAutoLogOut.BackColor = SystemColors.Window;
-      txtTimeAutoLogOut.BorderColor = Color.Black;
-      txtTimeAutoLogOut.BorderFocusColor = Color.HotPink;
-      txtTimeAutoLogOut.BorderRadius = 5;
-      txtTimeAutoLogOut.BorderSize = 2;
-      txtTimeAutoLogOut.Font = new Font("Roboto", 14F);
-      txtTimeAutoLogOut.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTimeAutoLogOut.Location = new Point(98, 68);
-      txtTimeAutoLogOut.Margin = new Padding(4);
-      txtTimeAutoLogOut.Multiline = false;
-      txtTimeAutoLogOut.Name = "txtTimeAutoLogOut";
-      txtTimeAutoLogOut.Padding = new Padding(10, 7, 10, 7);
-      txtTimeAutoLogOut.PasswordChar = false;
-      txtTimeAutoLogOut.PlaceholderColor = Color.DarkGray;
-      txtTimeAutoLogOut.PlaceholderText = "";
-      txtTimeAutoLogOut.Size = new Size(479, 38);
-      txtTimeAutoLogOut.TabIndex = 5;
-      txtTimeAutoLogOut.Texts = "";
-      txtTimeAutoLogOut.UnderlinedStyle = false;
+      // label24
+      // 
+      label24.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label24.AutoSize = true;
+      label24.BackColor = Color.Transparent;
+      label24.Font = new Font("Roboto", 14F);
+      label24.Location = new Point(646, 75);
+      label24.Margin = new Padding(0);
+      label24.Name = "label24";
+      label24.Size = new Size(102, 75);
+      label24.TabIndex = 4;
+      label24.Text = "Tự động in";
+      label24.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // pictureBox1
+      // 
+      pictureBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      pictureBox1.Image = Properties.Resources.icon_toggle_off;
+      pictureBox1.Location = new Point(751, 8);
+      pictureBox1.Name = "pictureBox1";
+      pictureBox1.Size = new Size(94, 58);
+      pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+      pictureBox1.TabIndex = 7;
+      pictureBox1.TabStop = false;
+      // 
+      // pictureBox2
+      // 
+      pictureBox2.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      pictureBox2.Image = Properties.Resources.icon_toggle_off;
+      pictureBox2.Location = new Point(751, 83);
+      pictureBox2.Name = "pictureBox2";
+      pictureBox2.Size = new Size(94, 58);
+      pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+      pictureBox2.TabIndex = 8;
+      pictureBox2.TabStop = false;
       // 
       // FrmSetting
       // 
@@ -1425,6 +1486,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel18.ResumeLayout(false);
       tableLayoutPanel18.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)picPermitCheckWeight).EndInit();
+      ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+      ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
       ResumeLayout(false);
     }
 
@@ -1499,5 +1562,9 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel14;
     private RJTextBox txtTimeAutoLogOut;
     private Label label17;
+    private Label label24;
+    private Label label23;
+    private PictureBox pictureBox1;
+    private PictureBox pictureBox2;
   }
 }

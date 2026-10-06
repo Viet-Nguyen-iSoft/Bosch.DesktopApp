@@ -203,6 +203,12 @@ namespace LTP.Truck.Forms
       {
         tableLayoutPanel16.Visible = true;
         tableLayoutPanel25.Visible = false;
+
+        label18.Visible = false;
+        cbbPrintLabel.Visible = false;
+        tableLayoutPanel16.Visible = false;
+        label24.Visible = false;
+        pictureBox2.Visible = false;
       }
       else
       {
@@ -528,8 +534,8 @@ namespace LTP.Truck.Forms
               AutoConnect = GetConnectionAutoConnect(connection),
               Tag = connection,
               Margin = new Padding(3),
-              Width = Math.Max(100, flowCommWeight.ClientSize.Width - 10),
-              Height = Math.Max(200, flowCommWeight.ClientSize.Height - 10),
+              Width = flowCommWeight.ClientSize.Width - 8,
+              Height = flowCommWeight.ClientSize.Height - 8,
             };
             item.OnSendDataDetail += Item_OnSendDataDetail;
             item.OnSendDelete += Item_OnSendDelete;
@@ -1003,5 +1009,7 @@ namespace LTP.Truck.Forms
         popupError.ShowDialog(this);
       }
     }
+
+
   }
 }

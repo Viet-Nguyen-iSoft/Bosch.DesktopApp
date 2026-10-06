@@ -808,7 +808,8 @@ namespace ApiSyncData
         $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/get-list-simplify" +
         $"?ExcludeStationId={stationId:D}" +
         $"&dateFrom={dateFromQuery}" +
-        $"&dateTo={dateToQuery}";
+        $"&dateTo={dateToQuery}" +
+        $"&isDeleted=true";
       using var httpClient = new HttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
