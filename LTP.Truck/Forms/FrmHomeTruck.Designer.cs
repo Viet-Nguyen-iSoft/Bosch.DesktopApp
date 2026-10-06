@@ -87,7 +87,6 @@ namespace LTP.Truck.Forms
       label15 = new Label();
       label8 = new Label();
       tableLayoutPanel11 = new TableLayoutPanel();
-      txtTypeWeight = new RJTextBox();
       label12 = new Label();
       txtNoLabelAuto = new RJTextBox();
       tableLayoutPanel16 = new TableLayoutPanel();
@@ -97,6 +96,7 @@ namespace LTP.Truck.Forms
       txtDocument = new TextBox();
       label10 = new Label();
       tableLayoutPanel9 = new TableLayoutPanel();
+      ucItemOffsetWeightAndTare = new LTP.Truck.UserControls.UcItem();
       ucItemTareForTruck = new LTP.Truck.UserControls.UcItem();
       ucItemOffsetWeight = new LTP.Truck.UserControls.UcItem();
       label14 = new Label();
@@ -115,7 +115,7 @@ namespace LTP.Truck.Forms
       btnPrint = new RJButton();
       btnSearchHistorical = new RJButton();
       label27 = new Label();
-      ucItemOffsetWeightAndTare = new LTP.Truck.UserControls.UcItem();
+      cbbType = new ComboBox();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -1098,9 +1098,9 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-      tableLayoutPanel11.Controls.Add(txtTypeWeight, 3, 0);
       tableLayoutPanel11.Controls.Add(label12, 2, 0);
       tableLayoutPanel11.Controls.Add(txtNoLabelAuto, 0, 0);
+      tableLayoutPanel11.Controls.Add(cbbType, 3, 0);
       tableLayoutPanel11.Location = new Point(139, 0);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
@@ -1108,30 +1108,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.Size = new Size(487, 54);
       tableLayoutPanel11.TabIndex = 16;
-      // 
-      // txtTypeWeight
-      // 
-      txtTypeWeight.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtTypeWeight.BackColor = SystemColors.Window;
-      txtTypeWeight.BorderColor = Color.Black;
-      txtTypeWeight.BorderFocusColor = Color.HotPink;
-      txtTypeWeight.BorderRadius = 5;
-      txtTypeWeight.BorderSize = 2;
-      txtTypeWeight.Enabled = false;
-      txtTypeWeight.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtTypeWeight.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTypeWeight.Location = new Point(311, 8);
-      txtTypeWeight.Margin = new Padding(4);
-      txtTypeWeight.Multiline = false;
-      txtTypeWeight.Name = "txtTypeWeight";
-      txtTypeWeight.Padding = new Padding(10, 7, 10, 7);
-      txtTypeWeight.PasswordChar = false;
-      txtTypeWeight.PlaceholderColor = Color.DarkGray;
-      txtTypeWeight.PlaceholderText = "";
-      txtTypeWeight.Size = new Size(172, 38);
-      txtTypeWeight.TabIndex = 22;
-      txtTypeWeight.Texts = "";
-      txtTypeWeight.UnderlinedStyle = false;
       // 
       // label12
       // 
@@ -1298,6 +1274,15 @@ namespace LTP.Truck.Forms
       tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 18.5185184F));
       tableLayoutPanel9.Size = new Size(251, 590);
       tableLayoutPanel9.TabIndex = 2;
+      // 
+      // ucItemOffsetWeightAndTare
+      // 
+      ucItemOffsetWeightAndTare.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucItemOffsetWeightAndTare.BackColor = Color.FromArgb(223, 239, 255);
+      ucItemOffsetWeightAndTare.Location = new Point(3, 493);
+      ucItemOffsetWeightAndTare.Name = "ucItemOffsetWeightAndTare";
+      ucItemOffsetWeightAndTare.Size = new Size(245, 94);
+      ucItemOffsetWeightAndTare.TabIndex = 7;
       // 
       // ucItemTareForTruck
       // 
@@ -1608,14 +1593,17 @@ namespace LTP.Truck.Forms
       label27.Text = "Lịch sử cân";
       label27.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // ucItemOffsetWeightAndTare
+      // cbbType
       // 
-      ucItemOffsetWeightAndTare.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucItemOffsetWeightAndTare.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemOffsetWeightAndTare.Location = new Point(3, 493);
-      ucItemOffsetWeightAndTare.Name = "ucItemOffsetWeightAndTare";
-      ucItemOffsetWeightAndTare.Size = new Size(245, 94);
-      ucItemOffsetWeightAndTare.TabIndex = 7;
+      cbbType.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbType.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbType.FormattingEnabled = true;
+      cbbType.Items.AddRange(new object[] { "Xuất hàng", "Nhập hàng", "Khác" });
+      cbbType.Location = new Point(310, 10);
+      cbbType.Name = "cbbType";
+      cbbType.Size = new Size(174, 33);
+      cbbType.TabIndex = 20;
       // 
       // FrmHomeTruck
       // 
@@ -1702,7 +1690,6 @@ namespace LTP.Truck.Forms
     private Custom.RJTextBox txtIdCard;
     private Custom.RJTextBox txtNameDriver;
     private Label label19;
-    private Custom.RJTextBox txtTypeWeight;
     private RJButton btnZero;
     private RJButton btnBack;
     private RJButton btnPrint;
@@ -1747,5 +1734,6 @@ namespace LTP.Truck.Forms
     private ComboBox cbbTareForTruck;
     private UserControls.UcItem ucItemTareForTruck;
     private UserControls.UcItem ucItemOffsetWeightAndTare;
+    private ComboBox cbbType;
   }
 }

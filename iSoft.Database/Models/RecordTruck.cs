@@ -30,6 +30,7 @@ namespace iSoft.Database.Models
 
     public DateTime? WeighInAt { get; set; }
     public DateTime? WeighOutAt { get; set; }
+    public string? Type { get; set; }
 
     #region Mapping
     public Guid? ClientId { get; set; }

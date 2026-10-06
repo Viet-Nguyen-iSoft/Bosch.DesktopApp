@@ -1007,18 +1007,18 @@ namespace LTP.Truck.Forms
       UpdateTareForTruck(recordTruck);
       lbWeightTrigger.Text = FormatWeight(recordTruck.NetTimeTemp);
 
-      if (valueGoods > 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
-      {
-        txtTypeWeight.Texts = "Xuất hàng";
-      }
-      else if (valueGoods < 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
-      {
-        txtTypeWeight.Texts = "Nhập hàng";
-      }
-      else
-      {
-        txtTypeWeight.Texts = "Chưa xác định";
-      }
+      //if (valueGoods > 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
+      //{
+      //  txtTypeWeight.Texts = "Xuất hàng";
+      //}
+      //else if (valueGoods < 0 && recordTruck.NetTime01 > 0 && recordTruck.NetTime02 > 0)
+      //{
+      //  txtTypeWeight.Texts = "Nhập hàng";
+      //}
+      //else
+      //{
+      //  txtTypeWeight.Texts = "Chưa xác định";
+      //}
 
 
       //Show thông tin
