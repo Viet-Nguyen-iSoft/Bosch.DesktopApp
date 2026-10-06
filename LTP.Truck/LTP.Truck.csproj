@@ -75,6 +75,9 @@
     <None Update="Template\TemplateTracking.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\TemplateTruck - BK.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\Tracking.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
