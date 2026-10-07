@@ -51,6 +51,7 @@ namespace LTP.Truck.Forms
       SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
+      cbbTareForTruck.Format += CbbTareForTruck_Format;
       cbbTareForTruck.SelectedIndexChanged += CbbTareForTruck_SelectedIndexChanged;
       numericUpDownNumberTare.ValueChanged += NumericUpDownNumberTare_ValueChanged;
       MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
@@ -90,6 +91,7 @@ namespace LTP.Truck.Forms
       ucItemOffsetWeight.VisibleTime = false;
       ucItemTareForTruck.VisibleTime = false;
       ucItemOffsetWeightAndTare.VisibleTime = false;
+      txtValueTareForTruck.TextAlign(HorizontalAlignment.Right);
 
       ElipseControl elipseControl = new ElipseControl();
       elipseControl.TargetControl = tableLayoutPanel3;
@@ -232,6 +234,14 @@ namespace LTP.Truck.Forms
     private void CbbTareForTruck_SelectedIndexChanged(object? sender, EventArgs e)
     {
       UpdateTareForTruckValue();
+    }
+
+    private void CbbTareForTruck_Format(object? sender, ListControlConvertEventArgs e)
+    {
+      if (e.ListItem is not TareTruck tareTruck)
+        return;
+
+      e.Value = $"{tareTruck.Name} - {WeightFormatHelper.Format(tareTruck.Value ?? 0)} Kg";
     }
 
     private void NumericUpDownNumberTare_ValueChanged(object? sender, EventArgs e)
