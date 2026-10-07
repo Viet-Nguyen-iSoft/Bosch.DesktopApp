@@ -52,6 +52,7 @@ namespace LTP.Truck.Forms
       CustomUI();
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       cbbTareForTruck.SelectedIndexChanged += CbbTareForTruck_SelectedIndexChanged;
+      numericUpDownNumberTare.ValueChanged += NumericUpDownNumberTare_ValueChanged;
       MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
       this.Load += FrmHome_Load;
       this.Shown += FrmHomeTruck_Shown;
@@ -230,10 +231,21 @@ namespace LTP.Truck.Forms
 
     private void CbbTareForTruck_SelectedIndexChanged(object? sender, EventArgs e)
     {
+      UpdateTareForTruckValue();
+    }
+
+    private void NumericUpDownNumberTare_ValueChanged(object? sender, EventArgs e)
+    {
+      UpdateTareForTruckValue();
+    }
+
+    private void UpdateTareForTruckValue()
+    {
       var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
-      txtValueTareForTruck.Texts = selectedTare?.Id == Guid.Empty
-        ? "0"
-        : WeightFormatHelper.Format(selectedTare?.Value ?? 0);
+      var tareValue = selectedTare?.Id == Guid.Empty
+        ? 0
+        : (selectedTare?.Value ?? 0) * (double)numericUpDownNumberTare.Value;
+      txtValueTareForTruck.Texts = WeightFormatHelper.Format(tareValue);
     }
 
     private void ShowTareForTruck(RecordTruck recordTruck)
@@ -256,6 +268,11 @@ namespace LTP.Truck.Forms
       if (cbbTareForTruck.Items.Count > 0)
         cbbTareForTruck.SelectedIndex = selectedIndex;
 
+      var numberTare = recordTruck.NumberTare ?? 1;
+      numericUpDownNumberTare.Value = Math.Clamp(
+        numberTare,
+        decimal.ToInt32(numericUpDownNumberTare.Minimum),
+        decimal.ToInt32(numericUpDownNumberTare.Maximum));
       txtValueTareForTruck.Texts = FormatWeight(recordTruck.Tare);
     }
 
@@ -762,6 +779,7 @@ namespace LTP.Truck.Forms
           _recordTruck.Note = txtDocument.Text;
           _recordTruck.Tare = GetTareForTruckValue();
           _recordTruck.NameTareForTruck = GetTareForTruckName();
+          _recordTruck.NumberTare = decimal.ToInt32(numericUpDownNumberTare.Value);
           _recordTruck.Type = cbbType.SelectedItem?.ToString();
           _recordTruck.StationId = AppCore.Ins._station?.Id;
           _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
@@ -853,6 +871,7 @@ namespace LTP.Truck.Forms
         _recordTruck.Note = txtDocument.Text;
         _recordTruck.Tare = GetTareForTruckValue();
         _recordTruck.NameTareForTruck = GetTareForTruckName();
+        _recordTruck.NumberTare = decimal.ToInt32(numericUpDownNumberTare.Value);
         _recordTruck.Type = cbbType.SelectedItem?.ToString();
         _recordTruck.StationId = AppCore.Ins._station?.Id;
         _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
@@ -1542,6 +1561,7 @@ namespace LTP.Truck.Forms
       ShowDataHistorical(_recordTruck);
       if (cbbTareForTruck.Items.Count > 0)
         cbbTareForTruck.SelectedIndex = 0;
+      numericUpDownNumberTare.Value = 1;
       cbbType.SelectedIndex = -1;
     }
 
