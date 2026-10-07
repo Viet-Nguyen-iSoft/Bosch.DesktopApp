@@ -20,6 +20,7 @@ namespace iSoft.Database.Models
     public double TareTime02 { get; set; } = 0.0;
     public double Tare { get; set; } = 0.0;
     public string? NameTareForTruck { get; set; }
+    public int? NumberTare { get; set; } = 1;
     public EnumTypeDataTruck EnumTypeDataTruck { get; set; } = EnumTypeDataTruck.None;
 
     public string? NameDriver { get; set; }

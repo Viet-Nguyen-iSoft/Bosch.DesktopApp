@@ -97,6 +97,9 @@ namespace LTP.Truck
           try
           {
             await db.Database.EnsureCreatedAsync();
+
+            //TEST UPDATE DB
+            await EnsureRecordTruckNumberTareColumnAsync(db);
             //await UpdateDatabaseSchemaAsync(db);
 
             var needsAppConfig = !await db.AppConfigs!.AnyAsync();
@@ -263,99 +266,39 @@ namespace LTP.Truck
       }
     }
 
-    private static async Task UpdateDatabaseSchemaAsync(MySqlDbContext db)
+    private static async Task EnsureRecordTruckNumberTareColumnAsync(
+      MySqlDbContext db)
     {
       await db.Database.OpenConnectionAsync();
       try
       {
-        static async Task<int> GetTableCountAsync(
-          MySqlDbContext context,
-          string tableName)
-        {
-          await using var command = context.Database.GetDbConnection().CreateCommand();
-          command.CommandText = @"
-            SELECT COUNT(*)
-            FROM INFORMATION_SCHEMA.TABLES
-            WHERE TABLE_SCHEMA = DATABASE()
-              AND TABLE_NAME = @tableName;";
-          var parameter = command.CreateParameter();
-          parameter.ParameterName = "@tableName";
-          parameter.Value = tableName;
-          command.Parameters.Add(parameter);
-          return Convert.ToInt32(await command.ExecuteScalarAsync());
-        }
-
-        var legacyUsersTableCount = await GetTableCountAsync(db, "m_users");
-        var usersTableCount = await GetTableCountAsync(db, "Users");
-        if (legacyUsersTableCount > 0 && usersTableCount > 0)
-        {
-          throw new InvalidOperationException(
-            "Both 'm_users' and 'Users' exist. Automatic rename was stopped to avoid data loss.");
-        }
-
-        // Remove the obsolete many-to-many table before removing permissions,
-        // so its foreign keys cannot block the schema cleanup.
-        await using (var dropPermissionUsersCommand =
-          db.Database.GetDbConnection().CreateCommand())
-        {
-          dropPermissionUsersCommand.CommandText =
-            "DROP TABLE IF EXISTS `ref_permission_user`;";
-          await dropPermissionUsersCommand.ExecuteNonQueryAsync();
-        }
-
-        await using (var dropPermissionsCommand =
-          db.Database.GetDbConnection().CreateCommand())
-        {
-          dropPermissionsCommand.CommandText =
-            "DROP TABLE IF EXISTS `m_permissions`;";
-          await dropPermissionsCommand.ExecuteNonQueryAsync();
-        }
-
-        if (legacyUsersTableCount > 0)
-        {
-          await using var renameUsersCommand =
-            db.Database.GetDbConnection().CreateCommand();
-          renameUsersCommand.CommandText =
-            "RENAME TABLE `m_users` TO `Users`;";
-          await renameUsersCommand.ExecuteNonQueryAsync();
-        }
-
-        await using var checkColumnCommand = db.Database.GetDbConnection().CreateCommand();
+        await using var checkColumnCommand =
+          db.Database.GetDbConnection().CreateCommand();
         checkColumnCommand.CommandText = @"
           SELECT COUNT(*)
           FROM INFORMATION_SCHEMA.COLUMNS
           WHERE TABLE_SCHEMA = DATABASE()
-            AND TABLE_NAME = 'Users'
-            AND COLUMN_NAME = 'IdSrc';";
-        var columnCount = Convert.ToInt32(await checkColumnCommand.ExecuteScalarAsync());
-        if (columnCount == 0)
-        {
-          await using var addColumnCommand = db.Database.GetDbConnection().CreateCommand();
-          addColumnCommand.CommandText =
-            "ALTER TABLE `Users` ADD COLUMN `IdSrc` char(36) NULL;";
-          await addColumnCommand.ExecuteNonQueryAsync();
-        }
+            AND TABLE_NAME = 'RecordTrucks'
+            AND COLUMN_NAME = 'NumberTare';";
 
-        await using var checkIndexCommand = db.Database.GetDbConnection().CreateCommand();
-        checkIndexCommand.CommandText = @"
-          SELECT COUNT(*)
-          FROM INFORMATION_SCHEMA.STATISTICS
-          WHERE TABLE_SCHEMA = DATABASE()
-            AND TABLE_NAME = 'Users'
-            AND COLUMN_NAME = 'IdSrc';";
-        var indexCount = Convert.ToInt32(await checkIndexCommand.ExecuteScalarAsync());
-        if (indexCount == 0)
-        {
-          await using var addIndexCommand = db.Database.GetDbConnection().CreateCommand();
-          addIndexCommand.CommandText =
-            "CREATE INDEX `IX_Users_IdSrc` ON `Users` (`IdSrc`);";
-          await addIndexCommand.ExecuteNonQueryAsync();
-        }
+        var columnCount = Convert.ToInt32(
+          await checkColumnCommand.ExecuteScalarAsync());
+        if (columnCount > 0)
+          return;
+
+        await using var addColumnCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        addColumnCommand.CommandText = @"
+          ALTER TABLE `RecordTrucks`
+          ADD COLUMN `NumberTare` int NULL DEFAULT 1;";
+        await addColumnCommand.ExecuteNonQueryAsync();
       }
       finally
       {
         await db.Database.CloseConnectionAsync();
       }
     }
+
+    
   }
 }

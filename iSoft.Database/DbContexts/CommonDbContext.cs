@@ -49,6 +49,10 @@ namespace iSoft.Database.DbContexts
         .Property(record => record.LicensePlate)
         .HasMaxLength(20);
 
+      modelBuilder.Entity<RecordTruck>()
+        .Property(record => record.NumberTare)
+        .HasDefaultValue(1);
+
       modelBuilder.Entity<LicensePlate>()
         .Property(licensePlate => licensePlate.Plate)
         .HasMaxLength(20);
