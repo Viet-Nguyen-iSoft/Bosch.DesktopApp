@@ -92,7 +92,7 @@ namespace LTP.Truck.Forms
       ucItemTareForTruck.VisibleTime = false;
       ucItemOffsetWeightAndTare.VisibleTime = false;
       txtValueTareForTruck.TextAlign(HorizontalAlignment.Right);
-      txtValueTareForTruck.ReadOnly();
+      txtValueTareForTruck.Enabled = false;
 
       ElipseControl elipseControl = new ElipseControl();
       elipseControl.TargetControl = tableLayoutPanel3;
