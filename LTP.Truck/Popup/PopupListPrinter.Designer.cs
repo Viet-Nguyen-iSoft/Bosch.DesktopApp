@@ -34,9 +34,14 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      flowLayoutPanel1 = new FlowLayoutPanel();
+      flowLayoutPanelPrinter = new FlowLayoutPanel();
+      tableLayoutPanelQuantity = new TableLayoutPanel();
+      lbPrintCopies = new Label();
+      numPrintCopies = new NumericUpDown();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanelQuantity.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)numPrintCopies).BeginInit();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -46,7 +51,8 @@
       tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel3.Controls.Add(lbTitle, 0, 0);
       tableLayoutPanel3.Controls.Add(tableLayoutPanel2, 0, 3);
-      tableLayoutPanel3.Controls.Add(flowLayoutPanel1, 0, 1);
+      tableLayoutPanel3.Controls.Add(flowLayoutPanelPrinter, 0, 1);
+      tableLayoutPanel3.Controls.Add(tableLayoutPanelQuantity, 0, 2);
       tableLayoutPanel3.Dock = DockStyle.Fill;
       tableLayoutPanel3.Location = new Point(0, 0);
       tableLayoutPanel3.Margin = new Padding(5);
@@ -55,10 +61,10 @@
       tableLayoutPanel3.RowCount = 5;
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
+      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 65F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
-      tableLayoutPanel3.Size = new Size(925, 535);
+      tableLayoutPanel3.Size = new Size(925, 600);
       tableLayoutPanel3.TabIndex = 5;
       // 
       // lbTitle
@@ -72,7 +78,7 @@
       lbTitle.Name = "lbTitle";
       lbTitle.Size = new Size(915, 60);
       lbTitle.TabIndex = 0;
-      lbTitle.Text = "Chọn máy in";
+      lbTitle.Text = "Chọn máy in và số lượng bản in";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel2
@@ -84,7 +90,7 @@
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(5, 465);
+      tableLayoutPanel2.Location = new Point(5, 530);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
@@ -138,20 +144,64 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // flowLayoutPanel1
+      // flowLayoutPanelPrinter
       // 
-      flowLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      flowLayoutPanel1.Location = new Point(5, 65);
-      flowLayoutPanel1.Margin = new Padding(0);
-      flowLayoutPanel1.Name = "flowLayoutPanel1";
-      flowLayoutPanel1.Size = new Size(915, 395);
-      flowLayoutPanel1.TabIndex = 6;
+      flowLayoutPanelPrinter.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      flowLayoutPanelPrinter.Location = new Point(5, 65);
+      flowLayoutPanelPrinter.Margin = new Padding(0);
+      flowLayoutPanelPrinter.Name = "flowLayoutPanelPrinter";
+      flowLayoutPanelPrinter.Size = new Size(915, 395);
+      flowLayoutPanelPrinter.TabIndex = 6;
+      // 
+      // tableLayoutPanelQuantity
+      // 
+      tableLayoutPanelQuantity.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanelQuantity.BackColor = Color.White;
+      tableLayoutPanelQuantity.ColumnCount = 2;
+      tableLayoutPanelQuantity.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanelQuantity.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanelQuantity.Controls.Add(lbPrintCopies, 0, 0);
+      tableLayoutPanelQuantity.Controls.Add(numPrintCopies, 1, 0);
+      tableLayoutPanelQuantity.Location = new Point(5, 465);
+      tableLayoutPanelQuantity.Margin = new Padding(0, 5, 0, 5);
+      tableLayoutPanelQuantity.Name = "tableLayoutPanelQuantity";
+      tableLayoutPanelQuantity.RowCount = 1;
+      tableLayoutPanelQuantity.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanelQuantity.Size = new Size(915, 55);
+      tableLayoutPanelQuantity.TabIndex = 7;
+      // 
+      // lbPrintCopies
+      // 
+      lbPrintCopies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      lbPrintCopies.AutoSize = true;
+      lbPrintCopies.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      lbPrintCopies.Location = new Point(3, 0);
+      lbPrintCopies.Name = "lbPrintCopies";
+      lbPrintCopies.Padding = new Padding(0, 0, 15, 0);
+      lbPrintCopies.Size = new Size(729, 55);
+      lbPrintCopies.TabIndex = 0;
+      lbPrintCopies.Text = "Số lượng bản in";
+      lbPrintCopies.TextAlign = ContentAlignment.MiddleRight;
+      // 
+      // numPrintCopies
+      // 
+      numPrintCopies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      numPrintCopies.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      numPrintCopies.Location = new Point(745, 10);
+      numPrintCopies.Margin = new Padding(10);
+      numPrintCopies.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
+      numPrintCopies.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+      numPrintCopies.Name = "numPrintCopies";
+      numPrintCopies.Size = new Size(160, 30);
+      numPrintCopies.TabIndex = 1;
+      numPrintCopies.TextAlign = HorizontalAlignment.Center;
+      numPrintCopies.Value = new decimal(new int[] { 1, 0, 0, 0 });
       // 
       // PopupListPrinter
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(925, 535);
+      ClientSize = new Size(925, 600);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupListPrinter";
@@ -159,6 +209,9 @@
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanelQuantity.ResumeLayout(false);
+      tableLayoutPanelQuantity.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)numPrintCopies).EndInit();
       ResumeLayout(false);
     }
 
@@ -169,6 +222,9 @@
     private TableLayoutPanel tableLayoutPanel2;
     private Common.Custom.RJButton btnConfirm;
     private Common.Custom.RJButton btnClose;
-    private FlowLayoutPanel flowLayoutPanel1;
+    private FlowLayoutPanel flowLayoutPanelPrinter;
+    private TableLayoutPanel tableLayoutPanelQuantity;
+    private Label lbPrintCopies;
+    private NumericUpDown numPrintCopies;
   }
 }

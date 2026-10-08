@@ -1733,6 +1733,13 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
+        using var printerPopup = new PopupListPrinter(AppCore.Ins._appConfig?.NamePrintA4);
+        if (printerPopup.ShowDialog(this) != DialogResult.OK ||
+            string.IsNullOrWhiteSpace(printerPopup.SelectedPrinterName))
+          return;
+
+        string selectedPrinterName = printerPopup.SelectedPrinterName;
+        int printCopies = printerPopup.PrintCopies;
         RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id, true);
 
         if (record == null)
@@ -1790,15 +1797,16 @@ namespace LTP.Truck.Forms
         if (File.Exists(pathFilePdf))
         {
           //Printer
-          if (!string.IsNullOrEmpty(AppCore.Ins._appConfig?.NamePrintA4))
+          if (!string.IsNullOrEmpty(selectedPrinterName))
           {
-            var rs = PrinterUSBHelper.GetPrinterStatus(AppCore.Ins._appConfig.NamePrintA4);
+            var rs = PrinterUSBHelper.GetPrinterStatus(selectedPrinterName);
             if (rs.StatusPrintA4 == StatusPrintA4.Idle)
             {
-              PdfPrinter.PrintPdf(pathFilePdf, AppCore.Ins._appConfig?.NamePrintA4);
+              for (int copyIndex = 0; copyIndex < printCopies; copyIndex++)
+                PdfPrinter.PrintPdf(pathFilePdf, selectedPrinterName);
 
               using var popup = new PopupConfirm(
-                                                  "In phiếu thành công.",
+                                                  $"Đã gửi {printCopies} bản in thành công.",
                                                   EnumTypeMsg.MessageAutoClose,
                                                   EnumImageMsg.Information);
                                                   popup.ShowDialog(this);
