@@ -70,7 +70,9 @@ namespace LTP.Truck
 
       ["0100"] = "Cho phép xem danh sách tài khoản",
       ["0101"] = "Cho phép thêm tài khoản",
-      ["0102"] = "Cho phép chỉnh sửa/xóa tài khoản",
+      ["0102"] = "Cho phép chỉnh sửa tài khoản",
+      ["0103"] = "Cho phép chỉnh xóa tài khoản",
+      ["0104"] = "Cho phép phân quyền tài khoản",
 
       ["0200"] = "Cho phép thêm dữ liệu Manual cân lần 1",
     };
@@ -85,7 +87,9 @@ namespace LTP.Truck
 
       ["0110"] = "Cho phép xem danh sách tài khoản",
       ["0111"] = "Cho phép thêm tài khoản",
-      ["0112"] = "Cho phép chỉnh sửa/xóa tài khoản",
+      ["0112"] = "Cho phép chỉnh sửa tài khoản",
+      ["0113"] = "Cho phép chỉnh xóa tài khoản",
+      ["0114"] = "Cho phép phân quyền tài khoản",
     };
 
     static async Task<bool> InitDb()
