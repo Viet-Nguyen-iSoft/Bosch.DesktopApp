@@ -58,7 +58,8 @@ namespace LTP.Truck.Forms
       var popup = new PopupAccountProfile
       {
         StartPosition = FormStartPosition.Manual,
-        ShowInTaskbar = false
+        ShowInTaskbar = false,
+        Width = ucLogin.Width
       };
 
       Rectangle loginBounds = ucLogin.RectangleToScreen(ucLogin.ClientRectangle);
