@@ -97,6 +97,7 @@ namespace LTP.Truck
           try
           {
             await db.Database.EnsureCreatedAsync();
+            await EnsureAppConfigPrintColumnsAsync(db);
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
@@ -299,6 +300,57 @@ namespace LTP.Truck
       }
     }
 
-    
+    private static async Task EnsureAppConfigPrintColumnsAsync(MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        static async Task<bool> ColumnExistsAsync(
+          MySqlDbContext context,
+          string columnName)
+        {
+          await using var command =
+            context.Database.GetDbConnection().CreateCommand();
+          command.CommandText = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'AppConfigs'
+              AND COLUMN_NAME = @columnName;";
+
+          var parameter = command.CreateParameter();
+          parameter.ParameterName = "@columnName";
+          parameter.Value = columnName;
+          command.Parameters.Add(parameter);
+
+          return Convert.ToInt32(await command.ExecuteScalarAsync()) > 0;
+        }
+
+        if (!await ColumnExistsAsync(db, "NumberPrintA4"))
+        {
+          await using var addNumberPrintA4Command =
+            db.Database.GetDbConnection().CreateCommand();
+          addNumberPrintA4Command.CommandText = @"
+            ALTER TABLE `AppConfigs`
+            ADD COLUMN `NumberPrintA4` int NULL DEFAULT 1;";
+          await addNumberPrintA4Command.ExecuteNonQueryAsync();
+        }
+
+        if (!await ColumnExistsAsync(db, "NumberPrintLabel"))
+        {
+          await using var addNumberPrintLabelCommand =
+            db.Database.GetDbConnection().CreateCommand();
+          addNumberPrintLabelCommand.CommandText = @"
+            ALTER TABLE `AppConfigs`
+            ADD COLUMN `NumberPrintLabel` int NULL DEFAULT 1;";
+          await addNumberPrintLabelCommand.ExecuteNonQueryAsync();
+        }
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
   }
 }

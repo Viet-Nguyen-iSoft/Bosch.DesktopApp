@@ -53,6 +53,14 @@ namespace iSoft.Database.DbContexts
         .Property(record => record.NumberTare)
         .HasDefaultValue(1);
 
+      modelBuilder.Entity<AppConfig>()
+        .Property(config => config.NumberPrintA4)
+        .HasDefaultValue(1);
+
+      modelBuilder.Entity<AppConfig>()
+        .Property(config => config.NumberPrintLabel)
+        .HasDefaultValue(1);
+
       modelBuilder.Entity<LicensePlate>()
         .Property(licensePlate => licensePlate.Plate)
         .HasMaxLength(20);

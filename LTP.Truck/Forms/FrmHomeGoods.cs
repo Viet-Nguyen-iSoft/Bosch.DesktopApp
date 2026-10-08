@@ -88,6 +88,10 @@ namespace LTP.Truck.Forms
       elipseControl05.TargetControl = tableLayoutPanel12;
       elipseControl05.CornerRadius = 20;
 
+      ElipseControl elipseControl06 = new ElipseControl();
+      elipseControl06.TargetControl = tableLayoutPanel23;
+      elipseControl06.CornerRadius = 20;
+
       dgv.EnableHeadersVisualStyles = false;
       dgv.ColumnHeadersHeight = 50;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -110,6 +114,10 @@ namespace LTP.Truck.Forms
       };
       dgv.Columns.Insert(0, selectColumn);
       dgv.CellClick += dgv_CellClick;
+
+      ucItemWeight01.Title = "Gross (Kg)";
+      ucItemWeight02.Title = "Net (Kg)";
+      ucItemOffsetWeight.Title = "Tare (Kg)";
     }
 
     private async void FrmHomeGoods_Load(object? sender, EventArgs e)

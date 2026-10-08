@@ -20,9 +20,9 @@ namespace iSoft.Database.Models
     public DateTime? LabelSequenceDate { get; set; }
     public int LabelSequenceNumber { get; set; }
     public string? NamePrintA4 { get; set; }
-    public string? NumberPrintA4 { get; set; }
+    public int? NumberPrintA4 { get; set; } = 1;
     public string? NamePrintLabel { get; set; }
-    public string? NumberPrintLabel { get; set; }
+    public int? NumberPrintLabel { get; set; } = 1;
     public bool PermitCheckWeight { get; set; } = false;
     public double ValueCheckWeight { get; set; } = 0;
 
