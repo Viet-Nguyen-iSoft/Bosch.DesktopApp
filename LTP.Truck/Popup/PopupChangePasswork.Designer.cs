@@ -47,6 +47,9 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
+      btnHidePasswordOld = new Common.Custom.RJButton();
+      btnHidePasswordNew = new Common.Custom.RJButton();
+      btnHideRePasswordNew = new Common.Custom.RJButton();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
@@ -80,9 +83,13 @@
       // tableLayoutPanel5
       // 
       tableLayoutPanel5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel5.ColumnCount = 2;
+      tableLayoutPanel5.ColumnCount = 3;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+      tableLayoutPanel5.Controls.Add(btnHideRePasswordNew, 2, 2);
+      tableLayoutPanel5.Controls.Add(btnHidePasswordNew, 2, 1);
+      tableLayoutPanel5.Controls.Add(btnHidePasswordOld, 2, 0);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel6, 0, 2);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel1, 0, 1);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel4, 0, 0);
@@ -95,7 +102,6 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
       tableLayoutPanel5.Size = new Size(617, 185);
       tableLayoutPanel5.TabIndex = 8;
       // 
@@ -252,7 +258,7 @@
       txtPassNew.PasswordChar = false;
       txtPassNew.PlaceholderColor = Color.DarkGray;
       txtPassNew.PlaceholderText = "";
-      txtPassNew.Size = new Size(372, 38);
+      txtPassNew.Size = new Size(312, 38);
       txtPassNew.TabIndex = 8;
       txtPassNew.Texts = "";
       txtPassNew.UnderlinedStyle = false;
@@ -275,7 +281,7 @@
       txtRePassNew.PasswordChar = false;
       txtRePassNew.PlaceholderColor = Color.DarkGray;
       txtRePassNew.PlaceholderText = "";
-      txtRePassNew.Size = new Size(372, 38);
+      txtRePassNew.Size = new Size(312, 38);
       txtRePassNew.TabIndex = 4;
       txtRePassNew.Texts = "";
       txtRePassNew.UnderlinedStyle = false;
@@ -298,7 +304,7 @@
       txtPassOld.PasswordChar = false;
       txtPassOld.PlaceholderColor = Color.DarkGray;
       txtPassOld.PlaceholderText = "";
-      txtPassOld.Size = new Size(372, 38);
+      txtPassOld.Size = new Size(312, 38);
       txtPassOld.TabIndex = 3;
       txtPassOld.Texts = "";
       txtPassOld.UnderlinedStyle = false;
@@ -380,6 +386,63 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
+      // btnHidePasswordOld
+      // 
+      btnHidePasswordOld.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHidePasswordOld.BackColor = Color.DarkGray;
+      btnHidePasswordOld.BackgroundColor = Color.DarkGray;
+      btnHidePasswordOld.BorderColor = Color.PaleVioletRed;
+      btnHidePasswordOld.BorderRadius = 5;
+      btnHidePasswordOld.BorderSize = 0;
+      btnHidePasswordOld.FlatAppearance.BorderSize = 0;
+      btnHidePasswordOld.FlatStyle = FlatStyle.Flat;
+      btnHidePasswordOld.ForeColor = Color.White;
+      btnHidePasswordOld.Image = Properties.Resources.icon_hide;
+      btnHidePasswordOld.Location = new Point(560, 10);
+      btnHidePasswordOld.Name = "btnHidePasswordOld";
+      btnHidePasswordOld.Size = new Size(54, 40);
+      btnHidePasswordOld.TabIndex = 40;
+      btnHidePasswordOld.TextColor = Color.White;
+      btnHidePasswordOld.UseVisualStyleBackColor = false;
+      // 
+      // btnHidePasswordNew
+      // 
+      btnHidePasswordNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHidePasswordNew.BackColor = Color.DarkGray;
+      btnHidePasswordNew.BackgroundColor = Color.DarkGray;
+      btnHidePasswordNew.BorderColor = Color.PaleVioletRed;
+      btnHidePasswordNew.BorderRadius = 5;
+      btnHidePasswordNew.BorderSize = 0;
+      btnHidePasswordNew.FlatAppearance.BorderSize = 0;
+      btnHidePasswordNew.FlatStyle = FlatStyle.Flat;
+      btnHidePasswordNew.ForeColor = Color.White;
+      btnHidePasswordNew.Image = Properties.Resources.icon_hide;
+      btnHidePasswordNew.Location = new Point(560, 71);
+      btnHidePasswordNew.Name = "btnHidePasswordNew";
+      btnHidePasswordNew.Size = new Size(54, 40);
+      btnHidePasswordNew.TabIndex = 41;
+      btnHidePasswordNew.TextColor = Color.White;
+      btnHidePasswordNew.UseVisualStyleBackColor = false;
+      // 
+      // btnHideRePasswordNew
+      // 
+      btnHideRePasswordNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHideRePasswordNew.BackColor = Color.DarkGray;
+      btnHideRePasswordNew.BackgroundColor = Color.DarkGray;
+      btnHideRePasswordNew.BorderColor = Color.PaleVioletRed;
+      btnHideRePasswordNew.BorderRadius = 5;
+      btnHideRePasswordNew.BorderSize = 0;
+      btnHideRePasswordNew.FlatAppearance.BorderSize = 0;
+      btnHideRePasswordNew.FlatStyle = FlatStyle.Flat;
+      btnHideRePasswordNew.ForeColor = Color.White;
+      btnHideRePasswordNew.Image = Properties.Resources.icon_hide;
+      btnHideRePasswordNew.Location = new Point(560, 133);
+      btnHideRePasswordNew.Name = "btnHideRePasswordNew";
+      btnHideRePasswordNew.Size = new Size(54, 40);
+      btnHideRePasswordNew.TabIndex = 42;
+      btnHideRePasswordNew.TextColor = Color.White;
+      btnHideRePasswordNew.UseVisualStyleBackColor = false;
+      // 
       // PopupChangePasswork
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -422,5 +485,8 @@
     private TableLayoutPanel tableLayoutPanel6;
     private Label label1;
     private Label label2;
+    private Common.Custom.RJButton btnHideRePasswordNew;
+    private Common.Custom.RJButton btnHidePasswordNew;
+    private Common.Custom.RJButton btnHidePasswordOld;
   }
 }
