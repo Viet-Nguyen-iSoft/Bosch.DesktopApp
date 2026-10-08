@@ -1457,7 +1457,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 190F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearchKey, 1, 0);
       tableLayoutPanel10.Controls.Add(label17, 3, 0);
@@ -1508,7 +1508,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.PasswordChar = false;
       txtSearchKey.PlaceholderColor = Color.DarkGray;
       txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(43, 38);
+      txtSearchKey.Size = new Size(33, 38);
       txtSearchKey.TabIndex = 18;
       txtSearchKey.Texts = "";
       txtSearchKey.UnderlinedStyle = false;
@@ -1519,7 +1519,7 @@ namespace LTP.Truck.Forms
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(196, 0);
+      label17.Location = new Point(186, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
       label17.Size = new Size(32, 62);
@@ -1533,7 +1533,7 @@ namespace LTP.Truck.Forms
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(548, 0);
+      label18.Location = new Point(538, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
       label18.Size = new Size(42, 62);
@@ -1544,7 +1544,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(231, 3);
+      ucTimeSearchFrom.Location = new Point(221, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 30;
@@ -1552,7 +1552,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchTo
       // 
       ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(593, 3);
+      ucTimeSearchTo.Location = new Point(583, 3);
       ucTimeSearchTo.Name = "ucTimeSearchTo";
       ucTimeSearchTo.Size = new Size(314, 56);
       ucTimeSearchTo.TabIndex = 31;
@@ -1569,7 +1569,7 @@ namespace LTP.Truck.Forms
       btnFilter.FlatStyle = FlatStyle.Flat;
       btnFilter.ForeColor = Color.White;
       btnFilter.Image = Properties.Resources.icon_filter;
-      btnFilter.Location = new Point(913, 3);
+      btnFilter.Location = new Point(903, 3);
       btnFilter.Name = "btnFilter";
       btnFilter.Size = new Size(54, 55);
       btnFilter.TabIndex = 32;
@@ -1591,7 +1591,7 @@ namespace LTP.Truck.Forms
       btnPrint.ForeColor = Color.White;
       btnPrint.Image = Properties.Resources.icon_print;
       btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnPrint.Location = new Point(1158, 3);
+      btnPrint.Location = new Point(1148, 3);
       btnPrint.Name = "btnPrint";
       btnPrint.Padding = new Padding(10, 0, 0, 0);
       btnPrint.Size = new Size(174, 56);
@@ -1617,7 +1617,7 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(978, 3);
+      btnSearchHistorical.Location = new Point(968, 3);
       btnSearchHistorical.Name = "btnSearchHistorical";
       btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
       btnSearchHistorical.Size = new Size(174, 55);
@@ -1643,10 +1643,10 @@ namespace LTP.Truck.Forms
       btnAddManual.ForeColor = Color.White;
       btnAddManual.Image = Properties.Resources.icon_create_manual;
       btnAddManual.ImageAlign = ContentAlignment.MiddleLeft;
-      btnAddManual.Location = new Point(1338, 3);
+      btnAddManual.Location = new Point(1328, 3);
       btnAddManual.Name = "btnAddManual";
       btnAddManual.Padding = new Padding(10, 0, 0, 0);
-      btnAddManual.Size = new Size(184, 56);
+      btnAddManual.Size = new Size(194, 56);
       btnAddManual.TabIndex = 33;
       btnAddManual.Text = "       Tạo thủ công";
       btnAddManual.TextAlign = ContentAlignment.MiddleLeft;

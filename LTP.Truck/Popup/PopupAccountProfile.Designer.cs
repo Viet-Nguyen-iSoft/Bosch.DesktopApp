@@ -29,8 +29,8 @@
     private void InitializeComponent()
     {
       tableLayoutPanel3 = new TableLayoutPanel();
+      btnChangePass = new Common.Custom.RJButton();
       rjButton1 = new Common.Custom.RJButton();
-      rjButton2 = new Common.Custom.RJButton();
       tableLayoutPanel3.SuspendLayout();
       SuspendLayout();
       // 
@@ -39,20 +39,43 @@
       tableLayoutPanel3.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel3.ColumnCount = 1;
       tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel3.Controls.Add(rjButton2, 0, 1);
+      tableLayoutPanel3.Controls.Add(btnChangePass, 0, 1);
       tableLayoutPanel3.Controls.Add(rjButton1, 0, 0);
       tableLayoutPanel3.Dock = DockStyle.Fill;
       tableLayoutPanel3.Location = new Point(0, 0);
-      tableLayoutPanel3.Margin = new Padding(5);
+      tableLayoutPanel3.Margin = new Padding(2);
       tableLayoutPanel3.Name = "tableLayoutPanel3";
-      tableLayoutPanel3.Padding = new Padding(5);
+      tableLayoutPanel3.Padding = new Padding(2);
       tableLayoutPanel3.RowCount = 2;
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(337, 159);
+      tableLayoutPanel3.Size = new Size(248, 130);
       tableLayoutPanel3.TabIndex = 7;
+      // 
+      // btnChangePass
+      // 
+      btnChangePass.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnChangePass.BackColor = Color.FromArgb(51, 108, 181);
+      btnChangePass.BackgroundColor = Color.FromArgb(51, 108, 181);
+      btnChangePass.BorderColor = Color.PaleVioletRed;
+      btnChangePass.BorderRadius = 4;
+      btnChangePass.BorderSize = 0;
+      btnChangePass.FlatAppearance.BorderSize = 0;
+      btnChangePass.FlatStyle = FlatStyle.Flat;
+      btnChangePass.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnChangePass.ForeColor = Color.White;
+      btnChangePass.ImageAlign = ContentAlignment.MiddleLeft;
+      btnChangePass.Location = new Point(5, 68);
+      btnChangePass.Name = "btnChangePass";
+      btnChangePass.Padding = new Padding(10, 0, 0, 0);
+      btnChangePass.Size = new Size(238, 57);
+      btnChangePass.TabIndex = 7;
+      btnChangePass.Text = "Đổi mật khẩu";
+      btnChangePass.TextAlign = ContentAlignment.MiddleLeft;
+      btnChangePass.TextColor = Color.White;
+      btnChangePass.UseVisualStyleBackColor = false;
       // 
       // rjButton1
       // 
@@ -67,46 +90,24 @@
       rjButton1.Font = new Font("Roboto", 14F, FontStyle.Bold);
       rjButton1.ForeColor = Color.White;
       rjButton1.ImageAlign = ContentAlignment.MiddleLeft;
-      rjButton1.Location = new Point(8, 8);
+      rjButton1.Location = new Point(5, 5);
       rjButton1.Name = "rjButton1";
       rjButton1.Padding = new Padding(10, 0, 0, 0);
-      rjButton1.Size = new Size(321, 68);
+      rjButton1.Size = new Size(238, 57);
       rjButton1.TabIndex = 6;
       rjButton1.Text = "Thông tin";
       rjButton1.TextAlign = ContentAlignment.MiddleLeft;
       rjButton1.TextColor = Color.White;
       rjButton1.UseVisualStyleBackColor = false;
       // 
-      // rjButton2
-      // 
-      rjButton2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      rjButton2.BackColor = Color.FromArgb(51, 108, 181);
-      rjButton2.BackgroundColor = Color.FromArgb(51, 108, 181);
-      rjButton2.BorderColor = Color.PaleVioletRed;
-      rjButton2.BorderRadius = 4;
-      rjButton2.BorderSize = 0;
-      rjButton2.FlatAppearance.BorderSize = 0;
-      rjButton2.FlatStyle = FlatStyle.Flat;
-      rjButton2.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      rjButton2.ForeColor = Color.White;
-      rjButton2.ImageAlign = ContentAlignment.MiddleLeft;
-      rjButton2.Location = new Point(8, 82);
-      rjButton2.Name = "rjButton2";
-      rjButton2.Padding = new Padding(10, 0, 0, 0);
-      rjButton2.Size = new Size(321, 69);
-      rjButton2.TabIndex = 7;
-      rjButton2.Text = "Đổi mật khẩu";
-      rjButton2.TextAlign = ContentAlignment.MiddleLeft;
-      rjButton2.TextColor = Color.White;
-      rjButton2.UseVisualStyleBackColor = false;
-      // 
       // PopupAccountProfile
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(337, 159);
+      ClientSize = new Size(248, 130);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
+      FormBorderStyle = FormBorderStyle.None;
       Name = "PopupAccountProfile";
       StartPosition = FormStartPosition.CenterParent;
       tableLayoutPanel3.ResumeLayout(false);
@@ -116,7 +117,7 @@
     #endregion
 
     private TableLayoutPanel tableLayoutPanel3;
-    private Common.Custom.RJButton rjButton2;
+    private Common.Custom.RJButton btnChangePass;
     private Common.Custom.RJButton rjButton1;
   }
 }

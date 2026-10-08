@@ -23,7 +23,22 @@ namespace LTP.Truck.UserControls
     {
       InitializeComponent();
       CustomUI();
+
+      Cursor = Cursors.Hand;
+      tableLayoutPanel1.Cursor = Cursors.Hand;
+      pictureBox1.Cursor = Cursors.Hand;
+      lbAccount.Cursor = Cursors.Hand;
+
+      tableLayoutPanel1.Click += ForwardClick;
+      pictureBox1.Click += ForwardClick;
+      lbAccount.Click += ForwardClick;
     }
+
+    private void ForwardClick(object? sender, EventArgs e)
+    {
+      OnClick(e);
+    }
+
     private void CustomUI()
     {
       ElipseControl elipseControl = new ElipseControl();

@@ -19,6 +19,7 @@ namespace LTP.Truck.Forms
     private readonly Dictionary<Button, string> _mainMenuTexts = new();
     private bool _masterDataExpanded;
     private bool _menuCollapsed;
+    private PopupAccountProfile? _accountProfilePopup;
 
     private const int ExpandedMenuWidth = 250;
     private const int CollapsedMenuWidth = 80;
@@ -43,6 +44,41 @@ namespace LTP.Truck.Forms
       this.btnReportTruck.Click += btnReportTruck_Click;
       this.btnReportGoods.Click += btnReportGoods_Click;
       this.btnUser.Click += BtnUser_Click;
+      this.ucLogin.Click += UcLogin_Click;
+    }
+
+    private void UcLogin_Click(object? sender, EventArgs e)
+    {
+      if (_accountProfilePopup is { IsDisposed: false })
+      {
+        _accountProfilePopup.Close();
+        return;
+      }
+
+      var popup = new PopupAccountProfile
+      {
+        StartPosition = FormStartPosition.Manual,
+        ShowInTaskbar = false
+      };
+
+      Rectangle loginBounds = ucLogin.RectangleToScreen(ucLogin.ClientRectangle);
+      Rectangle workingArea = Screen.FromControl(ucLogin).WorkingArea;
+      int popupX = Math.Clamp(
+        loginBounds.Right - popup.Width,
+        workingArea.Left,
+        workingArea.Right - popup.Width);
+      int popupY = loginBounds.Bottom;
+
+      popup.Location = new Point(popupX, popupY);
+      popup.Deactivate += (_, _) => popup.Close();
+      popup.FormClosed += (_, _) =>
+      {
+        if (ReferenceEquals(_accountProfilePopup, popup))
+          _accountProfilePopup = null;
+      };
+
+      _accountProfilePopup = popup;
+      popup.Show(this);
     }
 
     private void AppCore_OnChangeStation(Station? station)
