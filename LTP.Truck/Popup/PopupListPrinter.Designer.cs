@@ -34,10 +34,10 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      flowLayoutPanelPrinter = new FlowLayoutPanel();
       tableLayoutPanelQuantity = new TableLayoutPanel();
       lbPrintCopies = new Label();
       numPrintCopies = new NumericUpDown();
+      flowLayoutPanelPrinter = new FlowLayoutPanel();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanelQuantity.SuspendLayout();
@@ -50,18 +50,19 @@
       tableLayoutPanel3.ColumnCount = 1;
       tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel3.Controls.Add(lbTitle, 0, 0);
-      tableLayoutPanel3.Controls.Add(tableLayoutPanel2, 0, 3);
-      tableLayoutPanel3.Controls.Add(flowLayoutPanelPrinter, 0, 1);
+      tableLayoutPanel3.Controls.Add(tableLayoutPanel2, 0, 4);
       tableLayoutPanel3.Controls.Add(tableLayoutPanelQuantity, 0, 2);
+      tableLayoutPanel3.Controls.Add(flowLayoutPanelPrinter, 0, 1);
       tableLayoutPanel3.Dock = DockStyle.Fill;
       tableLayoutPanel3.Location = new Point(0, 0);
       tableLayoutPanel3.Margin = new Padding(5);
       tableLayoutPanel3.Name = "tableLayoutPanel3";
       tableLayoutPanel3.Padding = new Padding(5);
-      tableLayoutPanel3.RowCount = 5;
+      tableLayoutPanel3.RowCount = 6;
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 65F));
+      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel3.Size = new Size(925, 600);
@@ -144,25 +145,17 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // flowLayoutPanelPrinter
-      // 
-      flowLayoutPanelPrinter.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      flowLayoutPanelPrinter.Location = new Point(5, 65);
-      flowLayoutPanelPrinter.Margin = new Padding(0);
-      flowLayoutPanelPrinter.Name = "flowLayoutPanelPrinter";
-      flowLayoutPanelPrinter.Size = new Size(915, 395);
-      flowLayoutPanelPrinter.TabIndex = 6;
-      // 
       // tableLayoutPanelQuantity
       // 
       tableLayoutPanelQuantity.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanelQuantity.BackColor = Color.White;
+      tableLayoutPanelQuantity.BackColor = Color.Transparent;
       tableLayoutPanelQuantity.ColumnCount = 2;
       tableLayoutPanelQuantity.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanelQuantity.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanelQuantity.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanelQuantity.Controls.Add(lbPrintCopies, 0, 0);
       tableLayoutPanelQuantity.Controls.Add(numPrintCopies, 1, 0);
-      tableLayoutPanelQuantity.Location = new Point(5, 465);
+      tableLayoutPanelQuantity.Location = new Point(5, 450);
       tableLayoutPanelQuantity.Margin = new Padding(0, 5, 0, 5);
       tableLayoutPanelQuantity.Name = "tableLayoutPanelQuantity";
       tableLayoutPanelQuantity.RowCount = 1;
@@ -185,17 +178,25 @@
       // 
       // numPrintCopies
       // 
-      numPrintCopies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      numPrintCopies.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      numPrintCopies.Location = new Point(745, 10);
-      numPrintCopies.Margin = new Padding(10);
+      numPrintCopies.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      numPrintCopies.Font = new Font("Roboto", 18F, FontStyle.Bold);
+      numPrintCopies.Location = new Point(738, 9);
       numPrintCopies.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
       numPrintCopies.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
       numPrintCopies.Name = "numPrintCopies";
-      numPrintCopies.Size = new Size(160, 30);
+      numPrintCopies.Size = new Size(174, 36);
       numPrintCopies.TabIndex = 1;
-      numPrintCopies.TextAlign = HorizontalAlignment.Center;
+      numPrintCopies.TextAlign = HorizontalAlignment.Right;
       numPrintCopies.Value = new decimal(new int[] { 1, 0, 0, 0 });
+      // 
+      // flowLayoutPanelPrinter
+      // 
+      flowLayoutPanelPrinter.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      flowLayoutPanelPrinter.Location = new Point(5, 65);
+      flowLayoutPanelPrinter.Margin = new Padding(0);
+      flowLayoutPanelPrinter.Name = "flowLayoutPanelPrinter";
+      flowLayoutPanelPrinter.Size = new Size(915, 380);
+      flowLayoutPanelPrinter.TabIndex = 6;
       // 
       // PopupListPrinter
       // 

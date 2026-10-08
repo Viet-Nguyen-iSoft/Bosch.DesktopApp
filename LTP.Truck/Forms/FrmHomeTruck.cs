@@ -2021,7 +2021,9 @@ namespace LTP.Truck.Forms
                                 .Replace("{type_weight}", recordTruck.Type)
                                 .Replace("{note}", recordTruck.Note)
                                 .Replace("{path_file_logo}", fileImageLogo)
+                                .Replace("{tare_type}", recordTruck.NameTareForTruck+ "-" + recordTruck.NumberTare)
                                 ;
+
         //string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");
         string outputPath = Path.Combine(folderOutput, $"{recordTruck.Id.ToString().Replace("-", "").Replace(" ", "")}.html");
         await File.WriteAllTextAsync(outputPath, result).ConfigureAwait(false);
