@@ -271,7 +271,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      ucLogin.Account = user?.Username ?? "Login";
+      ucLogin.Account = user?.FullName ?? "Login";
     }
 
     private async void FrmOperation_Shown(object? sender, EventArgs e)

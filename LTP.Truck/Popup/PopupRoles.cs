@@ -138,6 +138,8 @@ namespace LTP.Truck.Popup
       dgv.Columns[SelectedColumnName].DefaultCellStyle.Alignment =
         DataGridViewContentAlignment.MiddleCenter;
       dgv.Columns["Code"].HeaderText = "Mã quyền";
+      dgv.Columns["Code"].AutoSizeMode =
+        DataGridViewAutoSizeColumnMode.AllCells;
       dgv.Columns["Name"].HeaderText = "Tên quyền";
       dgv.Columns["Description"].HeaderText = "Mô tả";
 

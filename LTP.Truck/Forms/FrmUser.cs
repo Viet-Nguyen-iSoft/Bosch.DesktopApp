@@ -314,7 +314,7 @@ namespace LTP.Truck.Forms
     {
       if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        if (!AppCore.Ins.CheckPermission("0102"))
+        if (!AppCore.Ins.CheckPermission("0103"))
         {
           using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
@@ -323,7 +323,7 @@ namespace LTP.Truck.Forms
       }
       else
       {
-        if (!AppCore.Ins.CheckPermission("0112"))
+        if (!AppCore.Ins.CheckPermission("0113"))
         {
           using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
@@ -377,7 +377,7 @@ namespace LTP.Truck.Forms
     {
       if (Environment.GetEnvironmentVariable("STATION") == "1")
       {
-        if (!AppCore.Ins.CheckPermission("0102"))
+        if (!AppCore.Ins.CheckPermission("0104"))
         {
           using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
@@ -386,7 +386,7 @@ namespace LTP.Truck.Forms
       }
       else
       {
-        if (!AppCore.Ins.CheckPermission("0112"))
+        if (!AppCore.Ins.CheckPermission("0114"))
         {
           using var openErrorPopup = new PopupNoPermitRole();
           openErrorPopup.ShowDialog(this);
