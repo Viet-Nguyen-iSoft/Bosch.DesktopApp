@@ -892,38 +892,12 @@ namespace LTP.Truck.Forms
         await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
         await LoadHistorical();
 
-        //POST PDF
+        // Tạo sẵn file PDF sau khi hoàn tất cân lần 2 để người dùng có thể
+        // chủ động in bằng nút In.
         RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
         if (record != null)
         {
-          var pathPdf = await DownloadReportTruck02(DateTime.Now, record);
-          //await (new ApiService()).UploadReportTruckPdf(record.Id, pathPdf);
-
-          //Printer
-          if (!string.IsNullOrEmpty(AppCore.Ins._appConfig?.NamePrintA4))
-          {
-            var rs = PrinterUSBHelper.GetPrinterStatus(AppCore.Ins._appConfig.NamePrintA4);
-            if (rs.StatusPrintA4 == StatusPrintA4.Idle)
-            {
-              PdfPrinter.PrintPdf(pathPdf, AppCore.Ins._appConfig?.NamePrintA4);
-            }
-            else
-            {
-              using var popupMsg = new PopupConfirm(
-                                 "Không tìm thấy thông tin máy in !",
-                                 EnumTypeMsg.MessageManualClose,
-                                 EnumImageMsg.Warning);
-              popupMsg.ShowDialog(this);
-            }  
-          }
-          else
-          {
-            using var popupMsg = new PopupConfirm(
-                                 "Không tìm thấy thông tin máy in !",
-                                 EnumTypeMsg.MessageManualClose,
-                                 EnumImageMsg.Warning);
-            popupMsg.ShowDialog(this);
-          }  
+          await DownloadReportTruck02(DateTime.Now, record);
         }
       }
       catch (Exception ex)
