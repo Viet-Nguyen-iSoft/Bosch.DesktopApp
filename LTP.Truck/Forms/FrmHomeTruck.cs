@@ -2021,7 +2021,8 @@ namespace LTP.Truck.Forms
                                 .Replace("{type_weight}", recordTruck.Type)
                                 .Replace("{note}", recordTruck.Note)
                                 .Replace("{path_file_logo}", fileImageLogo)
-                                .Replace("{tare_type}", recordTruck.NameTareForTruck+ "-" + recordTruck.NumberTare)
+                                .Replace("{tare_type}", recordTruck.NameTareForTruck ?? string.Empty)
+                                .Replace("{tare_number}", (recordTruck.NumberTare ?? 1).ToString(CultureInfo.InvariantCulture))
                                 ;
 
         //string outputPath = Path.Combine(folderOutput, $"REPORT_TRUCK_{dt.ToString("yyMMddHHmmss")}.html");
