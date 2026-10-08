@@ -31,6 +31,9 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupChangePasswork));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
+      btnHideRePasswordNew = new Common.Custom.RJButton();
+      btnHidePasswordNew = new Common.Custom.RJButton();
+      btnHidePasswordOld = new Common.Custom.RJButton();
       tableLayoutPanel6 = new TableLayoutPanel();
       label1 = new Label();
       label2 = new Label();
@@ -47,9 +50,6 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      btnHidePasswordOld = new Common.Custom.RJButton();
-      btnHidePasswordNew = new Common.Custom.RJButton();
-      btnHideRePasswordNew = new Common.Custom.RJButton();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
@@ -104,6 +104,63 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel5.Size = new Size(617, 185);
       tableLayoutPanel5.TabIndex = 8;
+      // 
+      // btnHideRePasswordNew
+      // 
+      btnHideRePasswordNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHideRePasswordNew.BackColor = Color.DarkGray;
+      btnHideRePasswordNew.BackgroundColor = Color.DarkGray;
+      btnHideRePasswordNew.BorderColor = Color.PaleVioletRed;
+      btnHideRePasswordNew.BorderRadius = 5;
+      btnHideRePasswordNew.BorderSize = 0;
+      btnHideRePasswordNew.FlatAppearance.BorderSize = 0;
+      btnHideRePasswordNew.FlatStyle = FlatStyle.Flat;
+      btnHideRePasswordNew.ForeColor = Color.White;
+      btnHideRePasswordNew.Image = Properties.Resources.icon_hide;
+      btnHideRePasswordNew.Location = new Point(560, 133);
+      btnHideRePasswordNew.Name = "btnHideRePasswordNew";
+      btnHideRePasswordNew.Size = new Size(54, 40);
+      btnHideRePasswordNew.TabIndex = 42;
+      btnHideRePasswordNew.TextColor = Color.White;
+      btnHideRePasswordNew.UseVisualStyleBackColor = false;
+      // 
+      // btnHidePasswordNew
+      // 
+      btnHidePasswordNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHidePasswordNew.BackColor = Color.DarkGray;
+      btnHidePasswordNew.BackgroundColor = Color.DarkGray;
+      btnHidePasswordNew.BorderColor = Color.PaleVioletRed;
+      btnHidePasswordNew.BorderRadius = 5;
+      btnHidePasswordNew.BorderSize = 0;
+      btnHidePasswordNew.FlatAppearance.BorderSize = 0;
+      btnHidePasswordNew.FlatStyle = FlatStyle.Flat;
+      btnHidePasswordNew.ForeColor = Color.White;
+      btnHidePasswordNew.Image = Properties.Resources.icon_hide;
+      btnHidePasswordNew.Location = new Point(560, 71);
+      btnHidePasswordNew.Name = "btnHidePasswordNew";
+      btnHidePasswordNew.Size = new Size(54, 40);
+      btnHidePasswordNew.TabIndex = 41;
+      btnHidePasswordNew.TextColor = Color.White;
+      btnHidePasswordNew.UseVisualStyleBackColor = false;
+      // 
+      // btnHidePasswordOld
+      // 
+      btnHidePasswordOld.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnHidePasswordOld.BackColor = Color.DarkGray;
+      btnHidePasswordOld.BackgroundColor = Color.DarkGray;
+      btnHidePasswordOld.BorderColor = Color.PaleVioletRed;
+      btnHidePasswordOld.BorderRadius = 5;
+      btnHidePasswordOld.BorderSize = 0;
+      btnHidePasswordOld.FlatAppearance.BorderSize = 0;
+      btnHidePasswordOld.FlatStyle = FlatStyle.Flat;
+      btnHidePasswordOld.ForeColor = Color.White;
+      btnHidePasswordOld.Image = Properties.Resources.icon_hide;
+      btnHidePasswordOld.Location = new Point(560, 10);
+      btnHidePasswordOld.Name = "btnHidePasswordOld";
+      btnHidePasswordOld.Size = new Size(54, 40);
+      btnHidePasswordOld.TabIndex = 40;
+      btnHidePasswordOld.TextColor = Color.White;
+      btnHidePasswordOld.UseVisualStyleBackColor = false;
       // 
       // tableLayoutPanel6
       // 
@@ -245,7 +302,7 @@
       txtPassNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtPassNew.BackColor = SystemColors.Window;
       txtPassNew.BorderColor = Color.Black;
-      txtPassNew.BorderFocusColor = Color.HotPink;
+      txtPassNew.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtPassNew.BorderRadius = 5;
       txtPassNew.BorderSize = 2;
       txtPassNew.Font = new Font("Roboto", 14F);
@@ -268,7 +325,7 @@
       txtRePassNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtRePassNew.BackColor = SystemColors.Window;
       txtRePassNew.BorderColor = Color.Black;
-      txtRePassNew.BorderFocusColor = Color.HotPink;
+      txtRePassNew.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtRePassNew.BorderRadius = 5;
       txtRePassNew.BorderSize = 2;
       txtRePassNew.Font = new Font("Roboto", 14F);
@@ -291,7 +348,7 @@
       txtPassOld.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       txtPassOld.BackColor = SystemColors.Window;
       txtPassOld.BorderColor = Color.Black;
-      txtPassOld.BorderFocusColor = Color.HotPink;
+      txtPassOld.BorderFocusColor = Color.FromArgb(48, 108, 177);
       txtPassOld.BorderRadius = 5;
       txtPassOld.BorderSize = 2;
       txtPassOld.Font = new Font("Roboto", 14F);
@@ -385,63 +442,6 @@
       btnClose.Text = "       Đóng";
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
-      // 
-      // btnHidePasswordOld
-      // 
-      btnHidePasswordOld.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnHidePasswordOld.BackColor = Color.DarkGray;
-      btnHidePasswordOld.BackgroundColor = Color.DarkGray;
-      btnHidePasswordOld.BorderColor = Color.PaleVioletRed;
-      btnHidePasswordOld.BorderRadius = 5;
-      btnHidePasswordOld.BorderSize = 0;
-      btnHidePasswordOld.FlatAppearance.BorderSize = 0;
-      btnHidePasswordOld.FlatStyle = FlatStyle.Flat;
-      btnHidePasswordOld.ForeColor = Color.White;
-      btnHidePasswordOld.Image = Properties.Resources.icon_hide;
-      btnHidePasswordOld.Location = new Point(560, 10);
-      btnHidePasswordOld.Name = "btnHidePasswordOld";
-      btnHidePasswordOld.Size = new Size(54, 40);
-      btnHidePasswordOld.TabIndex = 40;
-      btnHidePasswordOld.TextColor = Color.White;
-      btnHidePasswordOld.UseVisualStyleBackColor = false;
-      // 
-      // btnHidePasswordNew
-      // 
-      btnHidePasswordNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnHidePasswordNew.BackColor = Color.DarkGray;
-      btnHidePasswordNew.BackgroundColor = Color.DarkGray;
-      btnHidePasswordNew.BorderColor = Color.PaleVioletRed;
-      btnHidePasswordNew.BorderRadius = 5;
-      btnHidePasswordNew.BorderSize = 0;
-      btnHidePasswordNew.FlatAppearance.BorderSize = 0;
-      btnHidePasswordNew.FlatStyle = FlatStyle.Flat;
-      btnHidePasswordNew.ForeColor = Color.White;
-      btnHidePasswordNew.Image = Properties.Resources.icon_hide;
-      btnHidePasswordNew.Location = new Point(560, 71);
-      btnHidePasswordNew.Name = "btnHidePasswordNew";
-      btnHidePasswordNew.Size = new Size(54, 40);
-      btnHidePasswordNew.TabIndex = 41;
-      btnHidePasswordNew.TextColor = Color.White;
-      btnHidePasswordNew.UseVisualStyleBackColor = false;
-      // 
-      // btnHideRePasswordNew
-      // 
-      btnHideRePasswordNew.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnHideRePasswordNew.BackColor = Color.DarkGray;
-      btnHideRePasswordNew.BackgroundColor = Color.DarkGray;
-      btnHideRePasswordNew.BorderColor = Color.PaleVioletRed;
-      btnHideRePasswordNew.BorderRadius = 5;
-      btnHideRePasswordNew.BorderSize = 0;
-      btnHideRePasswordNew.FlatAppearance.BorderSize = 0;
-      btnHideRePasswordNew.FlatStyle = FlatStyle.Flat;
-      btnHideRePasswordNew.ForeColor = Color.White;
-      btnHideRePasswordNew.Image = Properties.Resources.icon_hide;
-      btnHideRePasswordNew.Location = new Point(560, 133);
-      btnHideRePasswordNew.Name = "btnHideRePasswordNew";
-      btnHideRePasswordNew.Size = new Size(54, 40);
-      btnHideRePasswordNew.TabIndex = 42;
-      btnHideRePasswordNew.TextColor = Color.White;
-      btnHideRePasswordNew.UseVisualStyleBackColor = false;
       // 
       // PopupChangePasswork
       // 

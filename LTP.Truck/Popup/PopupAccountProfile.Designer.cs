@@ -47,11 +47,9 @@
       tableLayoutPanel3.Name = "tableLayoutPanel3";
       tableLayoutPanel3.Padding = new Padding(2);
       tableLayoutPanel3.RowCount = 2;
-      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(248, 130);
+      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 0F));
+      tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel3.Size = new Size(298, 76);
       tableLayoutPanel3.TabIndex = 7;
       // 
       // btnChangePass
@@ -67,10 +65,10 @@
       btnChangePass.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnChangePass.ForeColor = Color.White;
       btnChangePass.ImageAlign = ContentAlignment.MiddleLeft;
-      btnChangePass.Location = new Point(5, 68);
+      btnChangePass.Location = new Point(5, 5);
       btnChangePass.Name = "btnChangePass";
       btnChangePass.Padding = new Padding(10, 0, 0, 0);
-      btnChangePass.Size = new Size(238, 57);
+      btnChangePass.Size = new Size(288, 66);
       btnChangePass.TabIndex = 7;
       btnChangePass.Text = "Đổi mật khẩu";
       btnChangePass.TextAlign = ContentAlignment.MiddleLeft;
@@ -83,7 +81,7 @@
       rjButton1.BackColor = Color.FromArgb(51, 108, 181);
       rjButton1.BackgroundColor = Color.FromArgb(51, 108, 181);
       rjButton1.BorderColor = Color.PaleVioletRed;
-      rjButton1.BorderRadius = 4;
+      rjButton1.BorderRadius = 1;
       rjButton1.BorderSize = 0;
       rjButton1.FlatAppearance.BorderSize = 0;
       rjButton1.FlatStyle = FlatStyle.Flat;
@@ -93,7 +91,7 @@
       rjButton1.Location = new Point(5, 5);
       rjButton1.Name = "rjButton1";
       rjButton1.Padding = new Padding(10, 0, 0, 0);
-      rjButton1.Size = new Size(238, 57);
+      rjButton1.Size = new Size(288, 1);
       rjButton1.TabIndex = 6;
       rjButton1.Text = "Thông tin";
       rjButton1.TextAlign = ContentAlignment.MiddleLeft;
@@ -104,7 +102,7 @@
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(248, 130);
+      ClientSize = new Size(298, 76);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       FormBorderStyle = FormBorderStyle.None;

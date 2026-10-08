@@ -13,6 +13,9 @@ namespace LTP.Truck.Popup
   {
     private readonly User _user;
     private readonly UserService _userService = new();
+    private bool _isOldPasswordHidden = true;
+    private bool _isNewPasswordHidden = true;
+    private bool _isRePasswordHidden = true;
 
     public PopupChangePasswork(User user)
     {
@@ -25,6 +28,36 @@ namespace LTP.Truck.Popup
 
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += (_, _) => Close();
+      btnHidePasswordOld.Click += BtnHidePasswordOld_Click;
+      btnHidePasswordNew.Click += BtnHidePasswordNew_Click;
+      btnHideRePasswordNew.Click += BtnHideRePasswordNew_Click;
+    }
+
+    private void BtnHidePasswordOld_Click(object? sender, EventArgs e)
+    {
+      _isOldPasswordHidden = !_isOldPasswordHidden;
+      txtPassOld.PasswordChar = _isOldPasswordHidden;
+      btnHidePasswordOld.Image = _isOldPasswordHidden
+        ? Properties.Resources.icon_hide
+        : Properties.Resources.icon_unhide;
+    }
+
+    private void BtnHidePasswordNew_Click(object? sender, EventArgs e)
+    {
+      _isNewPasswordHidden = !_isNewPasswordHidden;
+      txtPassNew.PasswordChar = _isNewPasswordHidden;
+      btnHidePasswordNew.Image = _isNewPasswordHidden
+        ? Properties.Resources.icon_hide
+        : Properties.Resources.icon_unhide;
+    }
+
+    private void BtnHideRePasswordNew_Click(object? sender, EventArgs e)
+    {
+      _isRePasswordHidden = !_isRePasswordHidden;
+      txtRePassNew.PasswordChar = _isRePasswordHidden;
+      btnHideRePasswordNew.Image = _isRePasswordHidden
+        ? Properties.Resources.icon_hide
+        : Properties.Resources.icon_unhide;
     }
 
     private async void BtnConfirm_Click(object? sender, EventArgs e)
