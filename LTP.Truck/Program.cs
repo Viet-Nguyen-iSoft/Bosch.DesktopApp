@@ -109,7 +109,6 @@ namespace LTP.Truck
 
             var needsAppConfig = !await db.AppConfigs!.AnyAsync();
             var needsUsers = !await db.Users!.AnyAsync();
-            var needsRoles = !await db.Roles!.AnyAsync();
             var needStation = !await db.Stations!.AnyAsync();
 
             // Bỏ transaction/SaveChanges trong các lần mở app thông thường.
@@ -186,70 +185,34 @@ namespace LTP.Truck
             }
 
 
-            if (needsRoles)
+            var existingRoles = await db.Roles!.ToListAsync();
+            await SynchronizePermissionsAsync(
+              db, existingRoles, PermissionsTruck, type: 1);
+            await SynchronizePermissionsAsync(
+              db, existingRoles, PermissionsGoods, type: 2);
+
+            if (needsUsers)
             {
-              List<string> rolesStr = new List<string>();
-              List<Role> roles = new List<Role>();
-              if (PermissionsTruck.Count()>0)
-              {
-                foreach (var role in PermissionsTruck)
-                {
-                  roles.Add(new Role()
-                  {
-                    Type = 1,
-                    Code = role.Key,
-                    Name = role.Value,
-                    Description = "",
-                    DeletedFlag = false,
-                    EnableFlag = true,
-                    SyncFlag = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                  });
+              var roleCodes = PermissionsTruck.Keys
+                .Concat(PermissionsGoods.Keys)
+                .ToList();
 
-                  rolesStr.Add(role.Key);
-                }  
-              }
-              if (PermissionsGoods.Count() > 0)
+              await db.Users!.AddAsync(new User
               {
-                foreach (var role in PermissionsGoods)
-                {
-                  roles.Add(new Role()
-                  {
-                    Type = 2,
-                    Code = role.Key,
-                    Name = role.Value,
-                    Description = "",
-                    DeletedFlag = false,
-                    EnableFlag = true,
-                    SyncFlag = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                  });
-                  rolesStr.Add(role.Key);
-                }
-              }
-              await db.Roles.AddRangeAsync(roles);
-
-              if (needsUsers)
-              {
-                await db.Users.AddAsync(new User
-                {
-                  FullName = "i-Soft",
-                  EmployeeCode = "IS000",
-                  IdCardCode = "",
-                  Username = "ISOFT",
-                  Password = "gbMPGkbKY/Fw2ySUZogOUw==",
-                  PW = "i-Soft@123",
-                  DisplayName = "i-Soft",
-                  Role =JsonHelper.ToJson(rolesStr),
-                  DeletedFlag = false,
-                  EnableFlag = true,
-                  SyncFlag = true,
-                  CreatedAt = DateTime.UtcNow,
-                  UpdatedAt = DateTime.UtcNow,
-                });
-              }
+                FullName = "i-Soft",
+                EmployeeCode = "IS000",
+                IdCardCode = "",
+                Username = "ISOFT",
+                Password = "gbMPGkbKY/Fw2ySUZogOUw==",
+                PW = "i-Soft@123",
+                DisplayName = "i-Soft",
+                Role = JsonHelper.ToJson(roleCodes),
+                DeletedFlag = false,
+                EnableFlag = true,
+                SyncFlag = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+              });
             }
 
             await db!.SaveChangesAsync();
@@ -268,6 +231,47 @@ namespace LTP.Truck
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         return false;
+      }
+    }
+
+    private static async Task SynchronizePermissionsAsync(
+      MySqlDbContext db,
+      List<Role> existingRoles,
+      IReadOnlyDictionary<string, string> permissions,
+      int type)
+    {
+      foreach (var permission in permissions)
+      {
+        var existingRole = existingRoles.FirstOrDefault(role =>
+          string.Equals(role.Code, permission.Key,
+            StringComparison.OrdinalIgnoreCase));
+
+        if (existingRole == null)
+        {
+          var newRole = new Role
+          {
+            Type = type,
+            Code = permission.Key,
+            Name = permission.Value,
+            Description = string.Empty,
+            DeletedFlag = false,
+            EnableFlag = true,
+            SyncFlag = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+          };
+
+          await db.Roles!.AddAsync(newRole);
+          existingRoles.Add(newRole);
+          continue;
+        }
+
+        if (!string.Equals(existingRole.Name, permission.Value,
+              StringComparison.Ordinal))
+        {
+          existingRole.Name = permission.Value;
+          existingRole.UpdatedAt = DateTime.UtcNow;
+        }
       }
     }
 
