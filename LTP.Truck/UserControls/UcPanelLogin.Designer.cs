@@ -39,6 +39,7 @@ namespace LTP.Truck.UserControls
       txtPass = new LTP.Truck.Custom.RJTextBox();
       btnHide = new Common.Custom.RJButton();
       btnLogin = new LTP.Truck.Custom.RJButton();
+      btnLoginSSO = new LTP.Truck.Custom.RJButton();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -56,11 +57,12 @@ namespace LTP.Truck.UserControls
       tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 1, 3);
       tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 1, 5);
       tableLayoutPanel1.Controls.Add(btnLogin, 1, 7);
+      tableLayoutPanel1.Controls.Add(btnLoginSSO, 1, 9);
       tableLayoutPanel1.Dock = DockStyle.Fill;
       tableLayoutPanel1.Location = new Point(0, 0);
       tableLayoutPanel1.Margin = new Padding(0);
       tableLayoutPanel1.Name = "tableLayoutPanel1";
-      tableLayoutPanel1.RowCount = 9;
+      tableLayoutPanel1.RowCount = 11;
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
@@ -69,8 +71,10 @@ namespace LTP.Truck.UserControls
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 110F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
-      tableLayoutPanel1.Size = new Size(650, 530);
+      tableLayoutPanel1.Size = new Size(650, 575);
       tableLayoutPanel1.TabIndex = 1;
       // 
       // label1
@@ -240,7 +244,7 @@ namespace LTP.Truck.UserControls
       btnLogin.FlatStyle = FlatStyle.Flat;
       btnLogin.Font = new Font("Roboto", 26.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLogin.ForeColor = Color.White;
-      btnLogin.Location = new Point(33, 433);
+      btnLogin.Location = new Point(33, 388);
       btnLogin.Name = "btnLogin";
       btnLogin.Size = new Size(584, 64);
       btnLogin.TabIndex = 3;
@@ -249,13 +253,33 @@ namespace LTP.Truck.UserControls
       btnLogin.UseVisualStyleBackColor = false;
       btnLogin.Click += btnLogin_Click;
       // 
+      // btnLoginSSO
+      // 
+      btnLoginSSO.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnLoginSSO.BackColor = Color.Red;
+      btnLoginSSO.BackgroundColor = Color.Red;
+      btnLoginSSO.BorderColor = Color.PaleVioletRed;
+      btnLoginSSO.BorderRadius = 5;
+      btnLoginSSO.BorderSize = 0;
+      btnLoginSSO.FlatAppearance.BorderSize = 0;
+      btnLoginSSO.FlatStyle = FlatStyle.Flat;
+      btnLoginSSO.Font = new Font("Roboto", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnLoginSSO.ForeColor = Color.White;
+      btnLoginSSO.Location = new Point(33, 478);
+      btnLoginSSO.Name = "btnLoginSSO";
+      btnLoginSSO.Size = new Size(584, 64);
+      btnLoginSSO.TabIndex = 4;
+      btnLoginSSO.Text = "Tiếp tục với Google";
+      btnLoginSSO.TextColor = Color.White;
+      btnLoginSSO.UseVisualStyleBackColor = false;
+      // 
       // UcPanelLogin
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       Controls.Add(tableLayoutPanel1);
       Name = "UcPanelLogin";
-      Size = new Size(650, 530);
+      Size = new Size(650, 575);
       tableLayoutPanel1.ResumeLayout(false);
       tableLayoutPanel1.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
@@ -279,5 +303,6 @@ namespace LTP.Truck.UserControls
     private Custom.RJButton btnLogin;
     private TableLayoutPanel tableLayoutPanel4;
     private Common.Custom.RJButton btnHide;
+    private Custom.RJButton btnLoginSSO;
   }
 }
