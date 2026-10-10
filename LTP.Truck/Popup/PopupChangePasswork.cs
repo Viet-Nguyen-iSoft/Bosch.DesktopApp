@@ -16,6 +16,7 @@ namespace LTP.Truck.Popup
     private bool _isOldPasswordHidden = true;
     private bool _isNewPasswordHidden = true;
     private bool _isRePasswordHidden = true;
+    public bool PasswordChanged { get; private set; }
 
     public PopupChangePasswork(User user)
     {
@@ -105,10 +106,30 @@ namespace LTP.Truck.Popup
           return;
         }
 
-        _user.Password = SecurityHelper.Encrypt(newPassword);
-        _user.PW = newPassword;
+        string? passwordError = PasswordPolicy.Validate(newPassword,
+          _user.Username, _user.DisplayName, _user.FullName,
+          _user.EmployeeCode, _user.IdCardCode);
+        if (passwordError != null)
+        {
+          ShowWarning(passwordError);
+          txtPassNew.Focus();
+          return;
+        }
+
+        if (UserService.GetPasswordHistory(_user).Any(hash =>
+          PasswordPolicy.HistoryHashMatches(
+            _user.Username, newPassword, hash)))
+        {
+          ShowWarning("Không được sử dụng lại 5 mật khẩu gần nhất !");
+          txtPassNew.Focus();
+          return;
+        }
+
+        UserService.ApplyNewPassword(_user, newPassword,
+          mustChangePassword: false);
         _user.UpdatedAt = DateTime.UtcNow;
         await _userService.AddOrUpdateAsync(_user);
+        PasswordChanged = true;
 
         using var successPopup = new PopupConfirm(
           "Đổi mật khẩu thành công.",

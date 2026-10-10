@@ -23,6 +23,12 @@ namespace iSoft.Database.Models
     public string? Password { get; set; }
     public string? PW { get; set; }
 
+    public DateTime? PasswordChangedAt { get; set; }
+    public bool MustChangePassword { get; set; }
+    public int FailedLoginAttempts { get; set; }
+    public bool IsLoginLocked { get; set; }
+    public string? PasswordHistory { get; set; }
+
     [MaxLength(50)]
     public string? DisplayName { get; set; }
 

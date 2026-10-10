@@ -181,6 +181,28 @@ namespace LTP.Truck.MasterData
           return;
         }
 
+        if (hasPasswordInput)
+        {
+          string? passwordError = PasswordPolicy.Validate(password,
+            username, displayName, fullName, employeeCode,
+            _userUpdate?.IdCardCode);
+          if (passwordError != null)
+          {
+            ShowWarning(passwordError);
+            txtPassword.Focus();
+            return;
+          }
+
+          if (_userUpdate != null && UserService.GetPasswordHistory(_userUpdate)
+            .Any(hash => PasswordPolicy.HistoryHashMatches(
+              username, password, hash)))
+          {
+            ShowWarning("Không được sử dụng lại 5 mật khẩu gần nhất !");
+            txtPassword.Focus();
+            return;
+          }
+        }
+
         if (string.IsNullOrWhiteSpace(fullName))
         {
           ShowWarning("Vui lòng nhập họ và tên !");
@@ -240,10 +262,9 @@ namespace LTP.Truck.MasterData
         userToSave.EnableFlag = _isActive;
         if (hasPasswordInput)
         {
-          userToSave.Password = SecurityHelper.Encrypt(password);
-          //userToSave.Password = SecurityHelper.EncodePassword(username, password);
+          UserService.ApplyNewPassword(userToSave, password,
+            mustChangePassword: _enumTypePopup == EnumTypePopup.Add);
         }
-        userToSave.PW = password;
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
 

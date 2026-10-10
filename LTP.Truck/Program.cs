@@ -101,6 +101,7 @@ namespace LTP.Truck
           try
           {
             await db.Database.EnsureCreatedAsync();
+            await EnsureUserPasswordPolicyColumnsAsync(db);
             await EnsureAppConfigPrintColumnsAsync(db);
 
             //TEST UPDATE DB
@@ -352,6 +353,52 @@ namespace LTP.Truck
             ALTER TABLE `AppConfigs`
             ADD COLUMN `NumberPrintLabel` int NULL DEFAULT 1;";
           await addNumberPrintLabelCommand.ExecuteNonQueryAsync();
+        }
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureUserPasswordPolicyColumnsAsync(
+      MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        var columns = new Dictionary<string, string>
+        {
+          ["PasswordChangedAt"] = "datetime(6) NULL",
+          ["MustChangePassword"] = "tinyint(1) NOT NULL DEFAULT 0",
+          ["FailedLoginAttempts"] = "int NOT NULL DEFAULT 0",
+          ["IsLoginLocked"] = "tinyint(1) NOT NULL DEFAULT 0",
+          ["PasswordHistory"] = "longtext NULL"
+        };
+
+        foreach (var column in columns)
+        {
+          await using var checkCommand =
+            db.Database.GetDbConnection().CreateCommand();
+          checkCommand.CommandText = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'Users'
+              AND COLUMN_NAME = @columnName;";
+          var parameter = checkCommand.CreateParameter();
+          parameter.ParameterName = "@columnName";
+          parameter.Value = column.Key;
+          checkCommand.Parameters.Add(parameter);
+
+          if (Convert.ToInt32(await checkCommand.ExecuteScalarAsync()) > 0)
+            continue;
+
+          await using var addCommand =
+            db.Database.GetDbConnection().CreateCommand();
+          addCommand.CommandText =
+            $"ALTER TABLE `Users` ADD COLUMN `{column.Key}` {column.Value};";
+          await addCommand.ExecuteNonQueryAsync();
         }
       }
       finally

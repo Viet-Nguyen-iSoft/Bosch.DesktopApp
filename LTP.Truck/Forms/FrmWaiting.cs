@@ -2,6 +2,8 @@
 using Common;
 using HelperManager;
 using LTP.Truck.Controls;
+using LTP.Truck.Popup;
+using iSoft.Database.Service;
 using System.Diagnostics;
 using System.Windows.Forms;
 using static Common.EnumData;
@@ -153,12 +155,10 @@ namespace LTP.Truck.Forms
       //ucPanelLogin1.Password = "Hsf@2026";
       //ucPanelLogin1.Account = "admin";
       //ucPanelLogin1.Password = "admin";
-      //ucPanelLogin1.Account = "ISOFT";
-      //ucPanelLogin1.Password = "i-Soft@123";
-      ucPanelLogin1.Account = "";
-      ucPanelLogin1.Password = "";
-      //ucPanelLogin1.Account = "ISOFT";
-      //ucPanelLogin1.Password = "i-Soft@123";
+      ucPanelLogin1.Account = "ISOFT";
+      ucPanelLogin1.Password = "i-Soft@123";
+      //ucPanelLogin1.Account = "";
+      //ucPanelLogin1.Password = "";
 
       //ucPanelLogin1.Account = "HaiThanh";
       //ucPanelLogin1.Password = "HaiThanh@123";
@@ -206,15 +206,37 @@ namespace LTP.Truck.Forms
     private bool isLogin = false;
     private async void UcPanelLogin1_OnSendLogin(object? sender, EventArgs e)
     {
-      AppCore.Ins._userCurrent = await AppCore.Ins._userService.CheckLogin(ucPanelLogin1.Account, ucPanelLogin1.Password);
-      if (AppCore.Ins._userCurrent != null)
+      LoginResult loginResult = await AppCore.Ins._userService.CheckLogin(
+        ucPanelLogin1.Account, ucPanelLogin1.Password);
+      if (loginResult.Status == LoginStatus.Success && loginResult.User != null)
       {
+        if (loginResult.MustChangePassword)
+        {
+          using var changePassword = new PopupChangePasswork(loginResult.User);
+          changePassword.ShowDialog(this);
+          if (!changePassword.PasswordChanged)
+          {
+            AppCore.Ins._userCurrent = null;
+            using var requiredPopup = new PopupConfirm(
+              "Bạn phải đổi mật khẩu trước khi tiếp tục sử dụng hệ thống.",
+              EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            requiredPopup.ShowDialog(this);
+            return;
+          }
+        }
+
+        AppCore.Ins._userCurrent = loginResult.User;
         FrmOperation.Instance.LoadAccount(AppCore.Ins._userCurrent);
         FrmMain.Instance.StartUserSession();
       }
       else
       {
-        using var popupMsg = new PopupConfirm("Tài khoản hoặc mật khẩu sai. Vui lòng thử lại !",
+        string message = loginResult.Status == LoginStatus.Locked
+          ? "Tài khoản đã bị khóa sau 8 lần đăng nhập sai liên tiếp. Vui lòng liên hệ quản trị viên."
+          : loginResult.RemainingAttempts > 0
+            ? $"Tài khoản hoặc mật khẩu sai. Còn {loginResult.RemainingAttempts} lần thử trước khi tài khoản bị khóa."
+            : "Tài khoản hoặc mật khẩu sai. Vui lòng thử lại !";
+        using var popupMsg = new PopupConfirm(message,
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
       }

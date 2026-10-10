@@ -51,6 +51,18 @@ namespace iSoft.Database.Repositorys
       return query.FirstOrDefaultAsync(user => user.Username == username);
     }
 
+    public Task<User?> GetByUsernameForLoginAsync(string username)
+    {
+      return Context.Set<User>().FirstOrDefaultAsync(user =>
+        user.Username == username && !user.DeletedFlag);
+    }
+
+    public async Task SaveLoginStateAsync(User user)
+    {
+      user.UpdatedAt = DateTime.UtcNow;
+      await Context.SaveChangesAsync();
+    }
+
     public Task<bool> ExistsUsernameAsync(string username)
     {
       if (string.IsNullOrWhiteSpace(username))
