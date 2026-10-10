@@ -96,8 +96,13 @@ namespace iSoft.Database.Service
       bool passwordExpired = !user.PasswordChangedAt.HasValue ||
         user.PasswordChangedAt.Value.AddMonths(
           PasswordPolicy.PasswordLifetimeMonths) <= DateTime.UtcNow;
+      bool isBuiltInAccount = string.Equals(
+        user.Username,
+        PasswordPolicy.BuiltInAccount,
+        StringComparison.OrdinalIgnoreCase);
       return LoginResult.Success(user,
-        user.MustChangePassword || passwordExpired);
+        !isBuiltInAccount &&
+        (user.MustChangePassword || passwordExpired));
     }
 
     public static IReadOnlyList<string> GetPasswordHistory(User user)

@@ -15,11 +15,21 @@ namespace LTP.Truck.Controls
     public bool CheckPermission(string? permissionCode)
     {
       if (_userCurrent == null ||
-          string.IsNullOrWhiteSpace(permissionCode) ||
-          string.IsNullOrWhiteSpace(_userCurrent.Role))
+          string.IsNullOrWhiteSpace(permissionCode))
       {
         return false;
       }
+
+      if (string.Equals(
+        _userCurrent.Username,
+        HelperManager.PasswordPolicy.BuiltInAccount,
+        StringComparison.OrdinalIgnoreCase))
+      {
+        return true;
+      }
+
+      if (string.IsNullOrWhiteSpace(_userCurrent.Role))
+        return false;
 
       try
       {

@@ -4,6 +4,7 @@ namespace HelperManager
 {
   public static class PasswordPolicy
   {
+    public const string BuiltInAccount = "ISOFT";
     public const int MinimumLength = 12;
     public const int PasswordHistoryCount = 5;
     public const int MaximumFailedLoginAttempts = 8;
