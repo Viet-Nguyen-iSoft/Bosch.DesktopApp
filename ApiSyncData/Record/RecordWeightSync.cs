@@ -16,6 +16,8 @@ namespace ApiSyncData.Record
     public string? NameDriver { get; set; }
     public string? IdCard { get; set; }
     public string? Note { get; set; }
+    public string? ReasonDelete { get; set; }
+    public bool DeletedFlag { get; set; }
 
     public Guid? StationId { get; set; }
     public Guid? EmployeeId { get; set; }

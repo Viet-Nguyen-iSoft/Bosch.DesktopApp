@@ -23,6 +23,13 @@ namespace LTP.Truck.Forms
   public partial class FrmHomeGoods : Form
   {
     private const string SelectColumnName = "SelectRecord";
+    private readonly ToolTip _deleteReasonToolTip = new()
+    {
+      OwnerDraw = true,
+      ShowAlways = true
+    };
+    private readonly Font _deleteReasonToolTipFont = new("Segoe UI", 14F);
+    private string _deleteReasonToolTipText = string.Empty;
     private List<Product> _products = new();
     private List<ProductGroup> _productGroups = new();
     private Guid? _filterProductGroupId;
@@ -50,6 +57,11 @@ namespace LTP.Truck.Forms
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       lbTare.Text = "---";
       this.Load += FrmHomeGoods_Load;
+      this.Disposed += (_, _) =>
+      {
+        _deleteReasonToolTip.Dispose();
+        _deleteReasonToolTipFont.Dispose();
+      };
     }
 
     #region Instance
@@ -103,6 +115,7 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
+      dgv.ShowCellToolTips = false;
       dgv.ReadOnly = true;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 107, 177);
@@ -121,6 +134,10 @@ namespace LTP.Truck.Forms
       dgv.CellClick += dgv_CellClick;
       dgv.CellContentClick += dgv_CellContentClick;
       dgv.CellFormatting += dgv_CellFormatting;
+      dgv.CellMouseEnter += dgv_CellMouseEnter;
+      dgv.CellMouseLeave += (_, _) => _deleteReasonToolTip.Hide(dgv);
+      _deleteReasonToolTip.Popup += DeleteReasonToolTip_Popup;
+      _deleteReasonToolTip.Draw += DeleteReasonToolTip_Draw;
 
       ucItemWeight01.Title = "Gross (Kg)";
       ucItemWeight02.Title = "Net (Kg)";
@@ -1016,26 +1033,36 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var isDeleted = recordWeight.DeletedFlag;
-      var confirmed = false;
-      using (var popup = new PopupConfirm(
-        isDeleted
-          ? "Có chắc chắn phục hồi dữ liệu này?"
-          : "Có chắc chắn xóa dữ liệu này?",
-        EnumTypeMsg.Confirm,
-        EnumImageMsg.Warning))
+      if (!recordWeight.DeletedFlag)
       {
-        popup.OnSendConfirm += (_, response) =>
-          confirmed = response.EnumResponsible == EnumResponsible.Confirm;
-        popup.ShowDialog(this);
-      }
+        using var inputReason = new PopupInputReason();
+        if (inputReason.ShowDialog(this) != DialogResult.OK)
+          return;
 
-      if (!confirmed)
-        return;
+        recordWeight.ReasonDelete = inputReason.Reason;
+      }
+      else
+      {
+        var confirmed = false;
+        using (var popup = new PopupConfirm(
+          "Có chắc chắn phục hồi dữ liệu này?",
+          EnumTypeMsg.Confirm,
+          EnumImageMsg.Warning))
+        {
+          popup.OnSendConfirm += (_, response) =>
+            confirmed = response.EnumResponsible == EnumResponsible.Confirm;
+          popup.ShowDialog(this);
+        }
+
+        if (!confirmed)
+          return;
+
+        recordWeight.ReasonDelete = string.Empty;
+      }
 
       try
       {
-        recordWeight.DeletedFlag = !isDeleted;
+        recordWeight.DeletedFlag = !recordWeight.DeletedFlag;
         recordWeight.UpdatedAt = DateTime.UtcNow;
         await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
         await LoadHistorical();
@@ -1075,6 +1102,57 @@ namespace LTP.Truck.Forms
           : Color.Gray;
       }
       e.FormattingApplied = true;
+    }
+
+    private void dgv_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
+    {
+      _deleteReasonToolTip.Hide(dgv);
+      _deleteReasonToolTipText = string.Empty;
+
+      if (e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item ||
+          item.RecordWeight?.DeletedFlag != true ||
+          string.IsNullOrWhiteSpace(item.RecordWeight.ReasonDelete))
+      {
+        return;
+      }
+
+      var cellBounds = dgv.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true);
+      _deleteReasonToolTipText = $"Lý do xóa: {item.RecordWeight.ReasonDelete}";
+      _deleteReasonToolTip.Show(
+        _deleteReasonToolTipText,
+        dgv,
+        cellBounds.Left,
+        cellBounds.Bottom,
+        10000);
+    }
+
+    private void DeleteReasonToolTip_Popup(object? sender, PopupEventArgs e)
+    {
+      if (string.IsNullOrEmpty(_deleteReasonToolTipText))
+        return;
+
+      var textSize = TextRenderer.MeasureText(
+        _deleteReasonToolTipText,
+        _deleteReasonToolTipFont,
+        new Size(600, 0),
+        TextFormatFlags.WordBreak);
+      e.ToolTipSize = new Size(textSize.Width + 24, textSize.Height + 16);
+    }
+
+    private void DeleteReasonToolTip_Draw(object? sender, DrawToolTipEventArgs e)
+    {
+      e.Graphics.FillRectangle(Brushes.LightYellow, e.Bounds);
+      e.DrawBorder();
+      TextRenderer.DrawText(
+        e.Graphics,
+        e.ToolTipText,
+        _deleteReasonToolTipFont,
+        Rectangle.Inflate(e.Bounds, -12, -8),
+        Color.Black,
+        TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
     }
 
     private static bool CanModifyRecord(RecordWeight recordWeight)

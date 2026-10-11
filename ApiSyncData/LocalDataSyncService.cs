@@ -254,6 +254,8 @@ namespace ApiSyncData
         Note = record.Note,
         NameDriver = record.NameDriver,
         IdCard = record.IdCard,
+        ReasonDelete = record.ReasonDelete,
+        DeletedFlag = record.DeletedFlag,
         StationId = record.StationId,
         EmployeeId = record.UserId,
         ProductId = record.ProductId,

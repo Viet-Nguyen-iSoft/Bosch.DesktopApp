@@ -103,6 +103,7 @@ namespace LTP.Truck
             await db.Database.EnsureCreatedAsync();
             await EnsureUserPasswordPolicyColumnsAsync(db);
             await EnsureAppConfigPrintColumnsAsync(db);
+            await EnsureRecordWeightReasonDeleteColumnAsync(db);
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
@@ -301,6 +302,39 @@ namespace LTP.Truck
         addColumnCommand.CommandText = @"
           ALTER TABLE `RecordTrucks`
           ADD COLUMN `NumberTare` int NULL DEFAULT 1;";
+        await addColumnCommand.ExecuteNonQueryAsync();
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureRecordWeightReasonDeleteColumnAsync(
+      MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using var checkColumnCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        checkColumnCommand.CommandText = @"
+          SELECT COUNT(*)
+          FROM INFORMATION_SCHEMA.COLUMNS
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'RecordWeights'
+            AND COLUMN_NAME = 'ReasonDelete';";
+
+        var columnCount = Convert.ToInt32(
+          await checkColumnCommand.ExecuteScalarAsync());
+        if (columnCount > 0)
+          return;
+
+        await using var addColumnCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        addColumnCommand.CommandText = @"
+          ALTER TABLE `RecordWeights`
+          ADD COLUMN `ReasonDelete` longtext NULL;";
         await addColumnCommand.ExecuteNonQueryAsync();
       }
       finally
