@@ -31,7 +31,7 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupFilterGoods));
       label1 = new Label();
       label21 = new Label();
-      cbbGroup = new ComboBox();
+      cbbProductGroup = new ComboBox();
       label2 = new Label();
       cbbType = new ComboBox();
       btnConfirm = new Common.Custom.RJButton();
@@ -61,22 +61,22 @@
       label21.Location = new Point(17, 86);
       label21.Margin = new Padding(0);
       label21.Name = "label21";
-      label21.Size = new Size(62, 23);
+      label21.Size = new Size(139, 23);
       label21.TabIndex = 37;
-      label21.Text = "Nhóm";
+      label21.Text = "Nhóm chất thải";
       label21.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // cbbGroup
+      // cbbProductGroup
       // 
-      cbbGroup.Anchor = AnchorStyles.Left;
-      cbbGroup.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbGroup.Font = new Font("Roboto", 20F);
-      cbbGroup.FormattingEnabled = true;
-      cbbGroup.Items.AddRange(new object[] { "Tất cả", "Chưa hoàn thành", "Hoàn thành", "Đã xóa" });
-      cbbGroup.Location = new Point(135, 75);
-      cbbGroup.Name = "cbbGroup";
-      cbbGroup.Size = new Size(334, 41);
-      cbbGroup.TabIndex = 38;
+      cbbProductGroup.Anchor = AnchorStyles.Left;
+      cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbProductGroup.Font = new Font("Roboto", 20F);
+      cbbProductGroup.FormattingEnabled = true;
+      cbbProductGroup.Items.AddRange(new object[] { "Tất cả", "Chưa hoàn thành", "Hoàn thành", "Đã xóa" });
+      cbbProductGroup.Location = new Point(159, 75);
+      cbbProductGroup.Name = "cbbProductGroup";
+      cbbProductGroup.Size = new Size(310, 41);
+      cbbProductGroup.TabIndex = 38;
       // 
       // label2
       // 
@@ -99,9 +99,9 @@
       cbbType.Font = new Font("Roboto", 20F);
       cbbType.FormattingEnabled = true;
       cbbType.Items.AddRange(new object[] { "Tất cả", "Chưa hoàn thành", "Hoàn thành", "Đã xóa" });
-      cbbType.Location = new Point(135, 146);
+      cbbType.Location = new Point(159, 146);
       cbbType.Name = "cbbType";
-      cbbType.Size = new Size(334, 41);
+      cbbType.Size = new Size(310, 41);
       cbbType.TabIndex = 43;
       // 
       // btnConfirm
@@ -163,7 +163,7 @@
       Controls.Add(cbbType);
       Controls.Add(label1);
       Controls.Add(label21);
-      Controls.Add(cbbGroup);
+      Controls.Add(cbbProductGroup);
       Name = "PopupFilterGoods";
       StartPosition = FormStartPosition.CenterParent;
       ResumeLayout(false);
@@ -174,7 +174,7 @@
 
     private Label label1;
     private Label label21;
-    private ComboBox cbbGroup;
+    private ComboBox cbbProductGroup;
     private Label label2;
     private ComboBox cbbType;
     private Common.Custom.RJButton btnConfirm;
