@@ -122,19 +122,6 @@ namespace iSoft.Database.Repositorys
       return query;
     }
 
-    public async Task<double> SumNetByRecordTruckIdAsync(Guid recordTruckId)
-    {
-      return await Context.Set<RecordWeight>()
-        .Where(record => !record.DeletedFlag && record.RecordTruckId == recordTruckId)
-        .SumAsync(record => (double?)record.Net) ?? 0.0;
-    }
-    public async Task<double> SumNetByRecordTruckIdAsync(string plate)
-    {
-      return await Context.Set<RecordWeight>()
-        .Where(record => !record.DeletedFlag && record.LicensePlate == plate)
-        .SumAsync(record => (double?)record.Net) ?? 0.0;
-    }
-
     public async Task<RecordWeight> AddOrUpdateAsync(RecordWeight recordWeight)
     {
       if (recordWeight == null)

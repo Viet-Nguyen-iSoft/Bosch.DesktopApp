@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using static Common.EnumData;
 using static HelperManager.EnumData;
+using static iSoft.Database.EnumData;
 
 namespace LTP.Truck.Forms
 {
@@ -36,13 +37,12 @@ namespace LTP.Truck.Forms
     private List<Delivery> _deliveries = new();
     private bool _isViewingHistoricalDetail;
     private Guid? _filterProductGroupId;
-    private iSoft.Database.EnumData.EnumWasteType? _filterWasteType;
+    private EnumWasteType? _filterWasteType;
     private int _filterDataTypeIndex = 1;
     private int _productGroupRefreshVersion;
     private int _productRefreshVersion;
     private int _tareRefreshVersion;
     private int _deliveryRefreshVersion;
-    private int _sumWeightLoadVersion;
     private bool _initialLoadStarted;
     private bool _waitingForWeightReset;
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
@@ -58,7 +58,6 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       btnFilter.Click += btnFilter_Click;
       btnCreate.Click += btnCreate_Click;
-      txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       lbTare.Text = "---";
       this.Load += FrmHomeGoods_Load;
       this.Disposed += (_, _) =>
@@ -610,7 +609,7 @@ namespace LTP.Truck.Forms
       using var popup = new LTP.Truck.Popup.PopupLoadMD();
       var records = iSoft.Database.DTOHelper.ConvertRecordTruckDTO(filtered.ToList());
       popup.SetData(records);
-      popup.OnSendData += async (data, type) =>
+      popup.OnSendData += (data, type) =>
       {
         if (data is iSoft.Database.DTO.RecordTruckDTO selectedRecord)
         {
@@ -618,63 +617,9 @@ namespace LTP.Truck.Forms
           txtLicensePlate.Texts = selectedRecord.LicensePlate ?? string.Empty;
           txtNameDriver.Texts = selectedRecord.NameDriver ?? string.Empty;
           txtIdCard.Texts = selectedRecord.IdCard ?? string.Empty;
-          await LoadSumWeightAsync(selectedRecord.RecordTruck?.LicensePlate ?? string.Empty);
         }
       };
       popup.ShowDialog(this);
-    }
-
-    private async Task LoadSumWeightAsync(string plate)
-    {
-      var loadVersion = ++_sumWeightLoadVersion;
-
-      try
-      {
-        var totalWeight = !string.IsNullOrEmpty(plate)
-          ? await AppCore.Ins._recordWeightService.SumNetByRecordTruckIdAsync(plate)
-          : 0.0;
-
-        if (IsDisposed || Disposing || loadVersion != _sumWeightLoadVersion)
-          return;
-
-        if (InvokeRequired)
-        {
-          BeginInvoke(new Action(() =>
-          {
-            if (loadVersion == _sumWeightLoadVersion)
-              lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 2);
-          }));
-          return;
-        }
-
-        lbSumWeight.Text = WeightFormatHelper.Format(totalWeight, 2);
-      }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-      }
-    }
-
-    private async void TxtLicensePlate__TextChanged(object? sender, EventArgs e)
-    {
-      var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts.Trim());
-      if (validLicense.IsValid)
-      {
-        await LoadSumWeightAsync(validLicense.Plate);
-      }
-      else
-      {
-        if (InvokeRequired)
-        {
-          BeginInvoke(new Action(() =>
-          {
-            lbSumWeight.Text = "0.000";
-          }));
-          return;
-        }
-
-        lbSumWeight.Text = "0.000";
-      }
     }
 
 
@@ -816,7 +761,6 @@ namespace LTP.Truck.Forms
         }
 
         await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
-        await LoadSumWeightAsync(validLicense.Plate);
         await LoadHistorical();
         _waitingForWeightReset = true;
       }
@@ -1167,7 +1111,7 @@ namespace LTP.Truck.Forms
         recordWeight.StationId == AppCore.Ins._station.Id;
     }
 
-    private async void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
+    private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
     {
       if (e.RowIndex < 0 || e.ColumnIndex < 0)
         return;
@@ -1178,7 +1122,6 @@ namespace LTP.Truck.Forms
         _isViewingHistoricalDetail = true;
         ShowHistoricalRecord(recordWeight);
         ApplyHistoricalViewMode();
-        await LoadSumWeightAsync(recordWeight.LicensePlate ?? string.Empty);
       }
 
       if (dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
@@ -1278,7 +1221,6 @@ namespace LTP.Truck.Forms
       cbbTare.SelectedIndex = -1;
       cbbDelivery.SelectedIndex = -1;
       lbTare.Text = "---";
-      lbSumWeight.Text = "---";
 
       ucItemWeight01.Value = "---";
       ucItemWeight01.Time = "---";

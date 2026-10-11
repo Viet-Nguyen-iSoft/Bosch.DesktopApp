@@ -69,8 +69,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7 = new TableLayoutPanel();
       txtLicensePlate = new RJTextBox();
       btnLoadLicensePlate = new RJButton();
-      lbGrossT = new Label();
-      lbSumWeight = new Label();
       cbbProduct = new ComboBox();
       cbbProductGroup = new ComboBox();
       label3 = new Label();
@@ -700,17 +698,12 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel7
       // 
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel7.ColumnCount = 6;
+      tableLayoutPanel7.ColumnCount = 3;
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
-      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
       tableLayoutPanel7.Controls.Add(txtLicensePlate, 0, 0);
       tableLayoutPanel7.Controls.Add(btnLoadLicensePlate, 2, 0);
-      tableLayoutPanel7.Controls.Add(lbGrossT, 4, 0);
-      tableLayoutPanel7.Controls.Add(lbSumWeight, 5, 0);
       tableLayoutPanel7.Location = new Point(174, 0);
       tableLayoutPanel7.Margin = new Padding(0);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -737,7 +730,7 @@ namespace LTP.Truck.Forms
       txtLicensePlate.PasswordChar = false;
       txtLicensePlate.PlaceholderColor = Color.DarkGray;
       txtLicensePlate.PlaceholderText = "";
-      txtLicensePlate.Size = new Size(289, 38);
+      txtLicensePlate.Size = new Size(583, 38);
       txtLicensePlate.TabIndex = 15;
       txtLicensePlate.Texts = "";
       txtLicensePlate.UnderlinedStyle = false;
@@ -755,7 +748,7 @@ namespace LTP.Truck.Forms
       btnLoadLicensePlate.FlatStyle = FlatStyle.Flat;
       btnLoadLicensePlate.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadLicensePlate.ForeColor = Color.Black;
-      btnLoadLicensePlate.Location = new Point(305, 9);
+      btnLoadLicensePlate.Location = new Point(599, 9);
       btnLoadLicensePlate.Name = "btnLoadLicensePlate";
       btnLoadLicensePlate.Size = new Size(54, 38);
       btnLoadLicensePlate.TabIndex = 17;
@@ -764,41 +757,13 @@ namespace LTP.Truck.Forms
       btnLoadLicensePlate.UseVisualStyleBackColor = false;
       btnLoadLicensePlate.Click += btnLoadLicensePlate_Click;
       // 
-      // lbGrossT
-      // 
-      lbGrossT.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      lbGrossT.AutoSize = true;
-      lbGrossT.BackColor = Color.Transparent;
-      lbGrossT.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      lbGrossT.Location = new Point(382, 0);
-      lbGrossT.Margin = new Padding(0);
-      lbGrossT.Name = "lbGrossT";
-      lbGrossT.Size = new Size(174, 57);
-      lbGrossT.TabIndex = 4;
-      lbGrossT.Text = "Tổng KL hàng (Kg):";
-      lbGrossT.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // lbSumWeight
-      // 
-      lbSumWeight.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      lbSumWeight.AutoSize = true;
-      lbSumWeight.BackColor = Color.Transparent;
-      lbSumWeight.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      lbSumWeight.Location = new Point(556, 0);
-      lbSumWeight.Margin = new Padding(0);
-      lbSumWeight.Name = "lbSumWeight";
-      lbSumWeight.Size = new Size(100, 57);
-      lbSumWeight.TabIndex = 26;
-      lbSumWeight.Text = "---";
-      lbSumWeight.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // cbbProduct
       // 
       cbbProduct.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(177, 235);
+      cbbProduct.Location = new Point(177, 236);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(650, 33);
       cbbProduct.TabIndex = 7;
@@ -809,7 +774,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(177, 180);
+      cbbProductGroup.Location = new Point(177, 179);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(344, 33);
       cbbProductGroup.TabIndex = 6;
@@ -959,7 +924,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 10);
+      cbbTare.Location = new Point(3, 11);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(344, 33);
       cbbTare.TabIndex = 8;
@@ -1119,7 +1084,7 @@ namespace LTP.Truck.Forms
       cbbDelivery.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbDelivery.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbDelivery.FormattingEnabled = true;
-      cbbDelivery.Location = new Point(177, 124);
+      cbbDelivery.Location = new Point(177, 123);
       cbbDelivery.Name = "cbbDelivery";
       cbbDelivery.Size = new Size(650, 33);
       cbbDelivery.TabIndex = 40;
@@ -1588,7 +1553,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.ResumeLayout(false);
       tableLayoutPanel13.PerformLayout();
       tableLayoutPanel7.ResumeLayout(false);
-      tableLayoutPanel7.PerformLayout();
       tableLayoutPanel16.ResumeLayout(false);
       tableLayoutPanel16.PerformLayout();
       tableLayoutPanel19.ResumeLayout(false);
@@ -1627,7 +1591,6 @@ namespace LTP.Truck.Forms
     private Label lbTare;
     private ComboBox cbbTare;
     private ComboBox cbbProduct;
-    private Label lbGrossT;
     private Label label11;
     private ComboBox cbbProductGroup;
     private Label label10;
@@ -1664,7 +1627,6 @@ namespace LTP.Truck.Forms
     private Label label20;
     private Label lbGross;
     private TableLayoutPanel tableLayoutPanel19;
-    private Label lbSumWeight;
     private RJButton btnPrint;
     private RJButton btnExport;
     private TableLayoutPanel tableLayoutPanel20;
