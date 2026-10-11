@@ -14,6 +14,7 @@ namespace LTP.Truck.UserControls
   public partial class UcPanelLogin : UserControl
   {
     public event EventHandler? OnSendLogin;
+    public event EventHandler? OnSendLoginSSO;
     public UcPanelLogin()
     {
       InitializeComponent();
@@ -61,6 +62,11 @@ namespace LTP.Truck.UserControls
     private void btnLogin_Click(object sender, EventArgs e)
     {
       OnSendLogin?.Invoke(this, e);
+    }
+
+    private void btnLoginSSO_Click(object sender, EventArgs e)
+    {
+      OnSendLoginSSO?.Invoke(this, e);
     }
 
     private bool _hide { get; set; } = true;

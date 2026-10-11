@@ -20,6 +20,9 @@ namespace iSoft.Database.Models
     public string Username { get; set; } = string.Empty;
 
     [MaxLength(255)]
+    public string? SsoLoginId { get; set; }
+
+    [MaxLength(255)]
     public string? Password { get; set; }
     public string? PW { get; set; }
 

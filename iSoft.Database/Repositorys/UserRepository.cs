@@ -57,6 +57,22 @@ namespace iSoft.Database.Repositorys
         user.Username == username && !user.DeletedFlag);
     }
 
+    public Task<User?> GetBySsoLoginIdAsync(string ssoLoginId)
+    {
+      return Context.Set<User>().FirstOrDefaultAsync(user =>
+        !user.DeletedFlag && user.SsoLoginId == ssoLoginId);
+    }
+
+    public Task<bool> ExistsSsoLoginIdAsync(
+      string ssoLoginId,
+      Guid? excludedUserId = null)
+    {
+      return Context.Set<User>().AnyAsync(user =>
+        !user.DeletedFlag &&
+        user.SsoLoginId == ssoLoginId &&
+        (!excludedUserId.HasValue || user.Id != excludedUserId.Value));
+    }
+
     public async Task SaveLoginStateAsync(User user)
     {
       user.UpdatedAt = DateTime.UtcNow;

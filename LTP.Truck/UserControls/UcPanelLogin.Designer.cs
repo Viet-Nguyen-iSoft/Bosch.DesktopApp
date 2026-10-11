@@ -269,9 +269,10 @@ namespace LTP.Truck.UserControls
       btnLoginSSO.Name = "btnLoginSSO";
       btnLoginSSO.Size = new Size(584, 64);
       btnLoginSSO.TabIndex = 4;
-      btnLoginSSO.Text = "Tiếp tục với Google";
+      btnLoginSSO.Text = "Tiếp tục với Microsoft";
       btnLoginSSO.TextColor = Color.White;
       btnLoginSSO.UseVisualStyleBackColor = false;
+      btnLoginSSO.Click += btnLoginSSO_Click;
       // 
       // UcPanelLogin
       // 

@@ -3,7 +3,9 @@ using Common;
 using HelperManager;
 using LTP.Truck.Controls;
 using LTP.Truck.Popup;
+using LTP.Truck.Services;
 using iSoft.Database.Service;
+using Microsoft.Identity.Client;
 using System.Diagnostics;
 using System.Windows.Forms;
 using static Common.EnumData;
@@ -13,6 +15,8 @@ namespace LTP.Truck.Forms
 {
   public partial class FrmWaiting : Form
   {
+    private readonly MicrosoftSsoService _microsoftSsoService = new();
+
     public FrmWaiting()
     {
       InitializeComponent();
@@ -163,6 +167,7 @@ namespace LTP.Truck.Forms
       //ucPanelLogin1.Account = "HaiThanh";
       //ucPanelLogin1.Password = "HaiThanh@123";
       ucPanelLogin1.OnSendLogin += UcPanelLogin1_OnSendLogin;
+      ucPanelLogin1.OnSendLoginSSO += UcPanelLogin1_OnSendLoginSSO;
 
       this.Focus();
     }
@@ -274,6 +279,53 @@ namespace LTP.Truck.Forms
       //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
       //  popupMsg.ShowDialog(this);
       //}
+    }
+
+    private async void UcPanelLogin1_OnSendLoginSSO(
+      object? sender,
+      EventArgs e)
+    {
+      try
+      {
+        MicrosoftSsoAccount microsoftAccount =
+          await _microsoftSsoService.SignInAsync();
+
+        LoginResult loginResult = await AppCore.Ins._userService
+          .CheckMicrosoftSsoLogin(microsoftAccount.LoginId);
+
+        if (loginResult.Status == LoginStatus.Success &&
+            loginResult.User != null)
+        {
+          AppCore.Ins._userCurrent = loginResult.User;
+          FrmOperation.Instance.LoadAccount(loginResult.User);
+          FrmMain.Instance.StartUserSession();
+          return;
+        }
+
+        string message = loginResult.Status == LoginStatus.Locked
+          ? "Tài khoản ứng dụng tương ứng với Microsoft SSO ID đã bị khóa. Vui lòng liên hệ quản trị viên."
+          : $"Microsoft ID '{microsoftAccount.LoginId}' chưa được đăng ký hoặc đã bị vô hiệu hóa trong ứng dụng.";
+        ShowLoginWarning(message);
+      }
+      catch (MsalClientException ex) when (
+        ex.ErrorCode == "authentication_canceled")
+      {
+        // Người dùng chủ động đóng cửa sổ Microsoft; không hiển thị lỗi.
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        ShowLoginWarning(ex is InvalidOperationException
+          ? ex.Message
+          : "Đăng nhập Microsoft không thành công. Vui lòng thử lại hoặc sử dụng tài khoản và mật khẩu.");
+      }
+    }
+
+    private void ShowLoginWarning(string message)
+    {
+      using var popupMsg = new PopupConfirm(message,
+        EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      popupMsg.ShowDialog(this);
     }
 
    

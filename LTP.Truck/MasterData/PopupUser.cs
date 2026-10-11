@@ -20,10 +20,12 @@ namespace LTP.Truck.MasterData
     private bool _isActive = true;
     private bool _isPasswordHidden = true;
     private bool _isRePasswordHidden = true;
+    private readonly Common.Custom.RJTextBox _txtSsoLoginId = new();
 
     public PopupUser()
     {
       InitializeComponent();
+      ConfigureSsoLoginIdField();
 
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += BtnClose_Click;
@@ -80,6 +82,7 @@ namespace LTP.Truck.MasterData
       txtDisplayName.Texts = user.DisplayName ?? string.Empty;
       txtFullName.Texts = user.FullName ?? string.Empty;
       txtEmployeeCode.Texts = user.EmployeeCode ?? string.Empty;
+      _txtSsoLoginId.Texts = user.SsoLoginId ?? string.Empty;
       SetActiveUser(user.EnableFlag);
 
       // Không hiển thị mật khẩu đã mã hóa. Người dùng phải nhập mật khẩu mới.
@@ -122,6 +125,7 @@ namespace LTP.Truck.MasterData
         string rePassword = txtRePassword.Texts;
         string fullName = txtFullName.Texts.Trim();
         string employeeCode = txtEmployeeCode.Texts.Trim();
+        string ssoLoginId = _txtSsoLoginId.Texts.Trim().ToLowerInvariant();
 
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -231,6 +235,22 @@ namespace LTP.Truck.MasterData
           return;
         }
 
+        if (ssoLoginId.Length > 255)
+        {
+          ShowWarning("Microsoft SSO ID không được vượt quá 255 ký tự !");
+          _txtSsoLoginId.Focus();
+          return;
+        }
+
+        if (!string.IsNullOrEmpty(ssoLoginId) &&
+            await _userService.ExistsSsoLoginIdAsync(
+              ssoLoginId, _userUpdate?.Id))
+        {
+          ShowWarning("Microsoft SSO ID đã được liên kết với tài khoản khác !");
+          _txtSsoLoginId.Focus();
+          return;
+        }
+
         // Khi chỉnh sửa, username bị khóa nên không cần truy vấn DB kiểm tra lại.
         if (_enumTypePopup == EnumTypePopup.Add &&
             await _userService.ExistsUsernameAsync(username))
@@ -259,6 +279,9 @@ namespace LTP.Truck.MasterData
         userToSave.DisplayName = displayName;
         userToSave.FullName = fullName;
         userToSave.EmployeeCode = employeeCode;
+        userToSave.SsoLoginId = string.IsNullOrEmpty(ssoLoginId)
+          ? null
+          : ssoLoginId;
         userToSave.EnableFlag = _isActive;
         if (hasPasswordInput)
         {
@@ -287,6 +310,46 @@ namespace LTP.Truck.MasterData
         EnumTypeMsg.MessageManualClose,
         EnumImageMsg.Warning);
       popup.ShowDialog(this);
+    }
+
+    private void ConfigureSsoLoginIdField()
+    {
+      tableLayoutPanel5.RowCount = 8;
+      tableLayoutPanel5.RowStyles.Add(
+        new RowStyle(SizeType.Percent, 14.2857141F));
+      tableLayoutPanel5.SetRow(label4, 7);
+      tableLayoutPanel5.SetRow(picActive, 7);
+
+      var label = new Label
+      {
+        Anchor = AnchorStyles.Top | AnchorStyles.Bottom |
+          AnchorStyles.Left | AnchorStyles.Right,
+        AutoSize = true,
+        BackColor = Color.Transparent,
+        Font = new Font("Roboto", 14F, FontStyle.Regular,
+          GraphicsUnit.Point, 0),
+        Margin = new Padding(0),
+        Text = "Microsoft SSO ID",
+        TextAlign = ContentAlignment.MiddleLeft
+      };
+
+      _txtSsoLoginId.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      _txtSsoLoginId.BackColor = SystemColors.Window;
+      _txtSsoLoginId.BorderColor = Color.Black;
+      _txtSsoLoginId.BorderFocusColor = Color.HotPink;
+      _txtSsoLoginId.BorderRadius = 5;
+      _txtSsoLoginId.BorderSize = 2;
+      _txtSsoLoginId.Font = new Font("Roboto", 14F);
+      _txtSsoLoginId.ForeColor = Color.FromArgb(64, 64, 64);
+      _txtSsoLoginId.Margin = new Padding(4);
+      _txtSsoLoginId.Multiline = false;
+      _txtSsoLoginId.Padding = new Padding(10, 7, 10, 7);
+      _txtSsoLoginId.PasswordChar = false;
+      _txtSsoLoginId.PlaceholderColor = Color.DarkGray;
+      _txtSsoLoginId.PlaceholderText = "Ví dụ: user@bosch.com";
+
+      tableLayoutPanel5.Controls.Add(label, 0, 6);
+      tableLayoutPanel5.Controls.Add(_txtSsoLoginId, 1, 6);
     }
 
     private void SetActiveUser(bool check)

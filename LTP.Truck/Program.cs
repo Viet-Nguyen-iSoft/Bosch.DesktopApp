@@ -373,7 +373,8 @@ namespace LTP.Truck
           ["MustChangePassword"] = "tinyint(1) NOT NULL DEFAULT 0",
           ["FailedLoginAttempts"] = "int NOT NULL DEFAULT 0",
           ["IsLoginLocked"] = "tinyint(1) NOT NULL DEFAULT 0",
-          ["PasswordHistory"] = "longtext NULL"
+          ["PasswordHistory"] = "longtext NULL",
+          ["SsoLoginId"] = "varchar(255) NULL"
         };
 
         foreach (var column in columns)

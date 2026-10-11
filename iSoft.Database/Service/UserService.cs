@@ -42,6 +42,17 @@ namespace iSoft.Database.Service
         .ConfigureAwait(false);
     }
 
+    public async Task<bool> ExistsSsoLoginIdAsync(
+      string ssoLoginId,
+      Guid? excludedUserId = null)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new UserRepository(context);
+      return await repository.ExistsSsoLoginIdAsync(
+        ssoLoginId.Trim().ToLowerInvariant(), excludedUserId)
+        .ConfigureAwait(false);
+    }
+
     public async Task<User> AddOrUpdateAsync(User user)
     {
       await using var context = new MySqlDbContext();
@@ -103,6 +114,26 @@ namespace iSoft.Database.Service
       return LoginResult.Success(user,
         !isBuiltInAccount &&
         (user.MustChangePassword || passwordExpired));
+    }
+
+    public async Task<LoginResult> CheckMicrosoftSsoLogin(string ssoLoginId)
+    {
+      if (string.IsNullOrWhiteSpace(ssoLoginId))
+        return LoginResult.Invalid();
+
+      await using var context = new MySqlDbContext();
+      var repository = new UserRepository(context);
+      User? user = await repository.GetBySsoLoginIdAsync(
+        ssoLoginId.Trim().ToLowerInvariant()).ConfigureAwait(false);
+
+      if (user == null || !user.EnableFlag)
+        return LoginResult.Invalid();
+      if (user.IsLoginLocked)
+        return LoginResult.Locked();
+
+      // SSO dùng danh tính Microsoft Entra đã được xác thực; chính sách mật khẩu
+      // cục bộ không áp dụng cho phiên đăng nhập này.
+      return LoginResult.Success(user, mustChangePassword: false);
     }
 
     public static IReadOnlyList<string> GetPasswordHistory(User user)
