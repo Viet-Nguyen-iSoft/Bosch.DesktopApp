@@ -71,6 +71,8 @@ namespace LTP.Truck.Forms
       dgv.ColumnHeadersHeight = 50;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+      dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+      dgv.ScrollBars = ScrollBars.Both;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
     }
@@ -201,7 +203,8 @@ namespace LTP.Truck.Forms
       }
 
       dgv.DataSource = records;
-      AddPrintColumn();
+      if (dgv.Columns.Contains(PrintColumnName))
+        dgv.Columns.Remove(PrintColumnName);
       ApplyGridColumnFormatting(dgv);
     }
 
@@ -212,8 +215,8 @@ namespace LTP.Truck.Forms
         dgv.Columns.Add(new DataGridViewButtonColumn
         {
           Name = PrintColumnName,
-          HeaderText = string.Empty,
-          Text = "In phiếu",
+          HeaderText = "In nhãn",
+          Text = "In nhãn",
           UseColumnTextForButtonValue = true,
           AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
           Width = 120,
@@ -222,7 +225,11 @@ namespace LTP.Truck.Forms
         });
       }
 
-      dgv.Columns[PrintColumnName].DisplayIndex = dgv.Columns.Count - 1;
+      var printColumn = dgv.Columns[PrintColumnName];
+      printColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+      printColumn.Width = 120;
+      printColumn.DisplayIndex = 0;
+      printColumn.Frozen = true;
     }
 
     private void dgv_CellContentClick(object? sender, DataGridViewCellEventArgs e)
@@ -257,10 +264,22 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private static void ApplyGridColumnFormatting(DataGridView grid)
+    private void ApplyGridColumnFormatting(DataGridView grid)
     {
       if (grid.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         grid.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
+
+      if (grid == dgv &&
+          grid.Columns.Contains(nameof(RecordWeightDTO.Source)))
+      {
+        grid.Columns[nameof(RecordWeightDTO.Source)].Visible = false;
+      }
+
+      foreach (DataGridViewColumn column in grid.Columns)
+      {
+        if (column.Visible && column.Name != PrintColumnName)
+          column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+      }
 
       var autoSizeColumns = new[]
       {
