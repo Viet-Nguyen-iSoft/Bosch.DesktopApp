@@ -1161,15 +1161,54 @@ namespace LTP.Truck.Forms
         recordWeight.StationId == AppCore.Ins._station.Id;
     }
 
-    private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
+    private async void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
     {
-      if (e.RowIndex < 0 ||
-          e.ColumnIndex < 0 ||
-          dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
+      if (e.RowIndex < 0 || e.ColumnIndex < 0)
+        return;
+
+      if (dgv.Rows[e.RowIndex].DataBoundItem is RecordWeightDTO recordWeightDto &&
+          recordWeightDto.RecordWeight is RecordWeight recordWeight)
+      {
+        ShowHistoricalRecord(recordWeight);
+        await LoadSumWeightAsync(recordWeight.LicensePlate ?? string.Empty);
+      }
+
+      if (dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
         return;
 
       var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
       checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
+    }
+
+    private void ShowHistoricalRecord(RecordWeight recordWeight)
+    {
+      txtLicensePlate.Texts = recordWeight.LicensePlate ?? string.Empty;
+      txtNameDriver.Texts = recordWeight.NameDriver ?? string.Empty;
+      txtIdCard.Texts = recordWeight.IdCard ?? string.Empty;
+      txtNote.Text = recordWeight.Note ?? string.Empty;
+
+      cbbDelivery.SelectedValue = recordWeight.DeliveryId ?? Guid.Empty;
+      cbbProductGroup.SelectedValue =
+        recordWeight.Product?.ProductGroupId ?? Guid.Empty;
+      cbbProduct.SelectedValue = recordWeight.ProductId ?? Guid.Empty;
+      cbbTare.SelectedValue = recordWeight.CategoryTareId ?? Guid.Empty;
+      _categoryTare = cbbTare.SelectedItem as CategoryTare;
+      lbTare.Text = WeightFormatHelper.Format(recordWeight.Tare, 2);
+
+      ucItemWeight01.Value = WeightFormatHelper.Format(
+        recordWeight.Net + recordWeight.Tare,
+        2);
+      ucItemWeight02.Value = WeightFormatHelper.Format(recordWeight.Net, 2);
+      ucItemOffsetWeight.Value = WeightFormatHelper.Format(recordWeight.Tare, 2);
+
+      var recordedAt = recordWeight.CreatedAt.HasValue
+        ? recordWeight.CreatedAt.Value
+          .AddHours(AppCore.Ins._time)
+          .ToString("dd/MM/yyyy HH:mm:ss")
+        : "---";
+      ucItemWeight01.Time = recordedAt;
+      ucItemWeight02.Time = recordedAt;
+      ucItemOffsetWeight.Time = recordedAt;
     }
 
     private void btnPrint_Click(object sender, EventArgs e)
