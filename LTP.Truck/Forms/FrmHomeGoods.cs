@@ -1174,15 +1174,6 @@ namespace LTP.Truck.Forms
         2);
       ucItemNet.Value = WeightFormatHelper.Format(recordWeight.Net, 2);
       ucItemTare.Value = WeightFormatHelper.Format(recordWeight.Tare, 2);
-
-      var recordedAt = recordWeight.CreatedAt.HasValue
-        ? recordWeight.CreatedAt.Value
-          .AddHours(AppCore.Ins._time)
-          .ToString("dd/MM/yyyy HH:mm:ss")
-        : "---";
-      ucItemGross.Time = recordedAt;
-      ucItemNet.Time = recordedAt;
-      ucItemTare.Time = recordedAt;
     }
 
     private void ApplyHistoricalViewMode()
