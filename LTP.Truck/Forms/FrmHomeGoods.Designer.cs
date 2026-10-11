@@ -96,10 +96,10 @@ namespace LTP.Truck.Forms
       btnCreate = new RJButton();
       label10 = new Label();
       tableLayoutPanel23 = new TableLayoutPanel();
-      ucItemOffsetWeight = new LTP.Truck.UserControls.UcItem();
+      ucItemTare = new LTP.Truck.UserControls.UcItem();
       label26 = new Label();
-      ucItemWeight01 = new LTP.Truck.UserControls.UcItem();
-      ucItemWeight02 = new LTP.Truck.UserControls.UcItem();
+      ucItemGross = new LTP.Truck.UserControls.UcItem();
+      ucItemNet = new LTP.Truck.UserControls.UcItem();
       tableLayoutPanel9 = new TableLayoutPanel();
       dgv = new DataGridView();
       tableLayoutPanel11 = new TableLayoutPanel();
@@ -763,7 +763,7 @@ namespace LTP.Truck.Forms
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(177, 236);
+      cbbProduct.Location = new Point(177, 235);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(650, 33);
       cbbProduct.TabIndex = 7;
@@ -774,7 +774,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(177, 179);
+      cbbProductGroup.Location = new Point(177, 180);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(344, 33);
       cbbProductGroup.TabIndex = 6;
@@ -924,7 +924,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 11);
+      cbbTare.Location = new Point(3, 10);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(344, 33);
       cbbTare.TabIndex = 8;
@@ -1084,7 +1084,7 @@ namespace LTP.Truck.Forms
       cbbDelivery.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbDelivery.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbDelivery.FormattingEnabled = true;
-      cbbDelivery.Location = new Point(177, 123);
+      cbbDelivery.Location = new Point(177, 124);
       cbbDelivery.Name = "cbbDelivery";
       cbbDelivery.Size = new Size(650, 33);
       cbbDelivery.TabIndex = 40;
@@ -1176,10 +1176,10 @@ namespace LTP.Truck.Forms
       tableLayoutPanel23.BackColor = Color.FromArgb(236, 236, 236);
       tableLayoutPanel23.ColumnCount = 1;
       tableLayoutPanel23.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel23.Controls.Add(ucItemOffsetWeight, 0, 3);
+      tableLayoutPanel23.Controls.Add(ucItemTare, 0, 3);
       tableLayoutPanel23.Controls.Add(label26, 0, 0);
-      tableLayoutPanel23.Controls.Add(ucItemWeight01, 0, 1);
-      tableLayoutPanel23.Controls.Add(ucItemWeight02, 0, 2);
+      tableLayoutPanel23.Controls.Add(ucItemGross, 0, 1);
+      tableLayoutPanel23.Controls.Add(ucItemNet, 0, 2);
       tableLayoutPanel23.Location = new Point(1528, 0);
       tableLayoutPanel23.Margin = new Padding(0);
       tableLayoutPanel23.Name = "tableLayoutPanel23";
@@ -1193,14 +1193,14 @@ namespace LTP.Truck.Forms
       tableLayoutPanel23.Size = new Size(251, 537);
       tableLayoutPanel23.TabIndex = 3;
       // 
-      // ucItemOffsetWeight
+      // ucItemTare
       // 
-      ucItemOffsetWeight.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucItemOffsetWeight.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemOffsetWeight.Location = new Point(3, 377);
-      ucItemOffsetWeight.Name = "ucItemOffsetWeight";
-      ucItemOffsetWeight.Size = new Size(245, 157);
-      ucItemOffsetWeight.TabIndex = 5;
+      ucItemTare.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucItemTare.BackColor = Color.FromArgb(223, 239, 255);
+      ucItemTare.Location = new Point(3, 377);
+      ucItemTare.Name = "ucItemTare";
+      ucItemTare.Size = new Size(245, 157);
+      ucItemTare.TabIndex = 5;
       // 
       // label26
       // 
@@ -1216,23 +1216,23 @@ namespace LTP.Truck.Forms
       label26.Text = "Dữ liệu cân";
       label26.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // ucItemWeight01
+      // ucItemGross
       // 
-      ucItemWeight01.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucItemWeight01.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemWeight01.Location = new Point(3, 53);
-      ucItemWeight01.Name = "ucItemWeight01";
-      ucItemWeight01.Size = new Size(245, 156);
-      ucItemWeight01.TabIndex = 2;
+      ucItemGross.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucItemGross.BackColor = Color.FromArgb(223, 239, 255);
+      ucItemGross.Location = new Point(3, 53);
+      ucItemGross.Name = "ucItemGross";
+      ucItemGross.Size = new Size(245, 156);
+      ucItemGross.TabIndex = 2;
       // 
-      // ucItemWeight02
+      // ucItemNet
       // 
-      ucItemWeight02.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucItemWeight02.BackColor = Color.FromArgb(223, 239, 255);
-      ucItemWeight02.Location = new Point(3, 215);
-      ucItemWeight02.Name = "ucItemWeight02";
-      ucItemWeight02.Size = new Size(245, 156);
-      ucItemWeight02.TabIndex = 3;
+      ucItemNet.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      ucItemNet.BackColor = Color.FromArgb(223, 239, 255);
+      ucItemNet.Location = new Point(3, 215);
+      ucItemNet.Name = "ucItemNet";
+      ucItemNet.Size = new Size(245, 156);
+      ucItemNet.TabIndex = 3;
       // 
       // tableLayoutPanel9
       // 
@@ -1649,10 +1649,10 @@ namespace LTP.Truck.Forms
     private Label label25;
     private ComboBox cbbDelivery;
     private TableLayoutPanel tableLayoutPanel23;
-    private UserControls.UcItem ucItemOffsetWeight;
+    private UserControls.UcItem ucItemTare;
     private Label label26;
-    private UserControls.UcItem ucItemWeight01;
-    private UserControls.UcItem ucItemWeight02;
+    private UserControls.UcItem ucItemGross;
+    private UserControls.UcItem ucItemNet;
     private Common.Custom.RJButton btnFilter;
     private RJButton btnCreate;
     private TableLayoutPanel tableLayoutPanel25;

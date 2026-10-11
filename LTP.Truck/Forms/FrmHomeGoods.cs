@@ -10,11 +10,9 @@ using iSoft.Database.Repositorys;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.Popup;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
-using System.Threading.Tasks;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 using static iSoft.Database.EnumData;
@@ -142,9 +140,9 @@ namespace LTP.Truck.Forms
       _deleteReasonToolTip.Popup += DeleteReasonToolTip_Popup;
       _deleteReasonToolTip.Draw += DeleteReasonToolTip_Draw;
 
-      ucItemWeight01.Title = "Gross (Kg)";
-      ucItemWeight02.Title = "Net (Kg)";
-      ucItemOffsetWeight.Title = "Tare (Kg)";
+      ucItemGross.Title = "Gross (Kg)"; ucItemGross.VisibleTime = false;
+      ucItemNet.Title = "Net (Kg)"; ucItemNet.VisibleTime = false;
+      ucItemTare.Title = "Tare (Kg)"; ucItemTare.VisibleTime = false;
     }
 
     private async void FrmHomeGoods_Load(object? sender, EventArgs e)
@@ -255,13 +253,13 @@ namespace LTP.Truck.Forms
       {
         lbStatusWeight.Text = "Kết nối";
         lbStatusWeight.ForeColor = Color.DarkGreen;
-      } 
+      }
       else
       {
-        lbStatusWeight.Text =  "Mất kết nối";
+        lbStatusWeight.Text = "Mất kết nối";
         lbStatusWeight.ForeColor = Color.Red;
-      }  
-      
+      }
+
     }
 
     private void SetDataWeight(DataWeightInterface messageData)
@@ -606,8 +604,8 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      using var popup = new LTP.Truck.Popup.PopupLoadMD();
-      var records = iSoft.Database.DTOHelper.ConvertRecordTruckDTO(filtered.ToList());
+      using var popup = new PopupLoadMD();
+      var records = DTOHelper.ConvertRecordTruckDTO(filtered.ToList());
       popup.SetData(records);
       popup.OnSendData += (data, type) =>
       {
@@ -1163,20 +1161,20 @@ namespace LTP.Truck.Forms
       _categoryTare = cbbTare.SelectedItem as CategoryTare;
       lbTare.Text = WeightFormatHelper.Format(recordWeight.Tare, 2);
 
-      ucItemWeight01.Value = WeightFormatHelper.Format(
+      ucItemGross.Value = WeightFormatHelper.Format(
         recordWeight.Net + recordWeight.Tare,
         2);
-      ucItemWeight02.Value = WeightFormatHelper.Format(recordWeight.Net, 2);
-      ucItemOffsetWeight.Value = WeightFormatHelper.Format(recordWeight.Tare, 2);
+      ucItemNet.Value = WeightFormatHelper.Format(recordWeight.Net, 2);
+      ucItemTare.Value = WeightFormatHelper.Format(recordWeight.Tare, 2);
 
       var recordedAt = recordWeight.CreatedAt.HasValue
         ? recordWeight.CreatedAt.Value
           .AddHours(AppCore.Ins._time)
           .ToString("dd/MM/yyyy HH:mm:ss")
         : "---";
-      ucItemWeight01.Time = recordedAt;
-      ucItemWeight02.Time = recordedAt;
-      ucItemOffsetWeight.Time = recordedAt;
+      ucItemGross.Time = recordedAt;
+      ucItemNet.Time = recordedAt;
+      ucItemTare.Time = recordedAt;
     }
 
     private void ApplyHistoricalViewMode()
@@ -1222,12 +1220,12 @@ namespace LTP.Truck.Forms
       cbbDelivery.SelectedIndex = -1;
       lbTare.Text = "---";
 
-      ucItemWeight01.Value = "---";
-      ucItemWeight01.Time = "---";
-      ucItemWeight02.Value = "---";
-      ucItemWeight02.Time = "---";
-      ucItemOffsetWeight.Value = "---";
-      ucItemOffsetWeight.Time = "---";
+      ucItemGross.Value = "---";
+      ucItemGross.Time = "---";
+      ucItemNet.Value = "---";
+      ucItemNet.Time = "---";
+      ucItemTare.Value = "---";
+      ucItemTare.Time = "---";
 
       dgv.ClearSelection();
       dgv.CurrentCell = null;
@@ -1456,8 +1454,8 @@ namespace LTP.Truck.Forms
         using var openErrorPopup = new PopupNoPermitRole();
         openErrorPopup.ShowDialog(this);
         return;
-      } 
-      
+      }
+
       ExecuteScaleCommand(
         sender,
         AppCore.Ins.ZeroWeight,

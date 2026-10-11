@@ -39,12 +39,12 @@ namespace LTP.Truck.Popup
       label4 = new Label();
       txtSearch = new RJTextBox();
       btnSearch = new RJButton();
+      btnAdd = new RJButton();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
       dgv = new DataGridView();
-      btnAdd = new RJButton();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel10.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
@@ -76,16 +76,17 @@ namespace LTP.Truck.Popup
       // tableLayoutPanel10
       // 
       tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel10.ColumnCount = 5;
+      tableLayoutPanel10.ColumnCount = 6;
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
-      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearch, 1, 0);
       tableLayoutPanel10.Controls.Add(btnSearch, 3, 0);
-      tableLayoutPanel10.Controls.Add(btnAdd, 4, 0);
+      tableLayoutPanel10.Controls.Add(btnAdd, 5, 0);
       tableLayoutPanel10.Location = new Point(0, 60);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -126,7 +127,7 @@ namespace LTP.Truck.Popup
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(703, 38);
+      txtSearch.Size = new Size(700, 38);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;
@@ -146,7 +147,7 @@ namespace LTP.Truck.Popup
       btnSearch.ForeColor = Color.White;
       btnSearch.Image = Properties.Resources.icon_search;
       btnSearch.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearch.Location = new Point(1109, 3);
+      btnSearch.Location = new Point(806, 3);
       btnSearch.Name = "btnSearch";
       btnSearch.Padding = new Padding(10, 0, 0, 0);
       btnSearch.Size = new Size(194, 49);
@@ -154,6 +155,30 @@ namespace LTP.Truck.Popup
       btnSearch.Text = "Tìm kiếm";
       btnSearch.TextColor = Color.White;
       btnSearch.UseVisualStyleBackColor = false;
+      // 
+      // btnAdd
+      // 
+      btnAdd.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnAdd.BackColor = Color.FromArgb(64, 107, 177);
+      btnAdd.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnAdd.BorderColor = Color.White;
+      btnAdd.BorderRadius = 5;
+      btnAdd.BorderSize = 0;
+      btnAdd.FlatAppearance.BorderColor = Color.White;
+      btnAdd.FlatAppearance.BorderSize = 0;
+      btnAdd.FlatStyle = FlatStyle.Flat;
+      btnAdd.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnAdd.ForeColor = Color.White;
+      btnAdd.Image = Properties.Resources.icon_add_new;
+      btnAdd.ImageAlign = ContentAlignment.MiddleLeft;
+      btnAdd.Location = new Point(1309, 3);
+      btnAdd.Name = "btnAdd";
+      btnAdd.Padding = new Padding(10, 0, 0, 0);
+      btnAdd.Size = new Size(195, 49);
+      btnAdd.TabIndex = 28;
+      btnAdd.Text = "Thêm mới";
+      btnAdd.TextColor = Color.White;
+      btnAdd.UseVisualStyleBackColor = false;
       // 
       // lbTitle
       // 
@@ -275,30 +300,6 @@ namespace LTP.Truck.Popup
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.Size = new Size(1501, 545);
       dgv.TabIndex = 6;
-      // 
-      // btnAdd
-      // 
-      btnAdd.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnAdd.BackColor = Color.FromArgb(64, 107, 177);
-      btnAdd.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnAdd.BorderColor = Color.White;
-      btnAdd.BorderRadius = 5;
-      btnAdd.BorderSize = 0;
-      btnAdd.FlatAppearance.BorderColor = Color.White;
-      btnAdd.FlatAppearance.BorderSize = 0;
-      btnAdd.FlatStyle = FlatStyle.Flat;
-      btnAdd.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnAdd.ForeColor = Color.White;
-      btnAdd.Image = Properties.Resources.icon_add_new;
-      btnAdd.ImageAlign = ContentAlignment.MiddleLeft;
-      btnAdd.Location = new Point(1309, 3);
-      btnAdd.Name = "btnAdd";
-      btnAdd.Padding = new Padding(10, 0, 0, 0);
-      btnAdd.Size = new Size(195, 49);
-      btnAdd.TabIndex = 28;
-      btnAdd.Text = "Thêm mới";
-      btnAdd.TextColor = Color.White;
-      btnAdd.UseVisualStyleBackColor = false;
       // 
       // PopupLoadMD
       // 
