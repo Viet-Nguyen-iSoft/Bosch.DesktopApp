@@ -12,6 +12,7 @@ using LTP.Truck.Custom;
 using LTP.Truck.Popup;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using static Common.EnumData;
 using static HelperManager.EnumData;
@@ -136,6 +137,7 @@ namespace LTP.Truck.Forms
       dgv.CellClick += dgv_CellClick;
       dgv.CellContentClick += dgv_CellContentClick;
       dgv.CellFormatting += dgv_CellFormatting;
+      dgv.CellPainting += dgv_CellPainting;
       dgv.CellMouseEnter += dgv_CellMouseEnter;
       dgv.CellMouseLeave += (_, _) => _deleteReasonToolTip.Hide(dgv);
       _deleteReasonToolTip.Popup += DeleteReasonToolTip_Popup;
@@ -1020,6 +1022,14 @@ namespace LTP.Truck.Forms
           dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
 
+      if (dgv.Columns.Contains(nameof(RecordWeightDTO.Source)))
+      {
+        var sourceColumn = dgv.Columns[nameof(RecordWeightDTO.Source)];
+        sourceColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+        sourceColumn.Width = 140;
+        sourceColumn.Resizable = DataGridViewTriState.False;
+      }
+
       var weightColumns = new[]
       {
         nameof(RecordWeightDTO.Net),
@@ -1154,6 +1164,64 @@ namespace LTP.Truck.Forms
           : Color.Gray;
       }
       e.FormattingApplied = true;
+    }
+
+    private void dgv_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
+    {
+      if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].DataPropertyName != nameof(RecordWeightDTO.Source) ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item)
+      {
+        return;
+      }
+
+      var isTruck = item.RecordTruck != null;
+      var borderColor = isTruck
+        ? Color.FromArgb(30, 64, 175)
+        : Color.FromArgb(40, 167, 69);
+      var backColor = isTruck
+        ? Color.FromArgb(219, 234, 254)
+        : Color.FromArgb(220, 245, 228);
+
+      e.PaintBackground(e.CellBounds, true);
+      var badgeBounds = new Rectangle(
+        e.CellBounds.X + 8,
+        e.CellBounds.Y + 8,
+        Math.Max(1, e.CellBounds.Width - 16),
+        Math.Max(1, e.CellBounds.Height - 16));
+
+      using var path = GetRoundRectangle(badgeBounds, 20);
+      using var backgroundBrush = new SolidBrush(backColor);
+      using var borderPen = new Pen(borderColor);
+      e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+      e.Graphics.FillPath(backgroundBrush, path);
+      e.Graphics.DrawPath(borderPen, path);
+      TextRenderer.DrawText(
+        e.Graphics,
+        item.Source ?? string.Empty,
+        e.CellStyle.Font,
+        badgeBounds,
+        borderColor,
+        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+      e.Handled = true;
+    }
+
+    private static GraphicsPath GetRoundRectangle(Rectangle rectangle, int radius)
+    {
+      var path = new GraphicsPath();
+      var diameter = Math.Min(radius * 2, Math.Min(rectangle.Width, rectangle.Height));
+      if (diameter <= 0)
+      {
+        path.AddRectangle(rectangle);
+        return path;
+      }
+
+      path.AddArc(rectangle.X, rectangle.Y, diameter, diameter, 180, 90);
+      path.AddArc(rectangle.Right - diameter, rectangle.Y, diameter, diameter, 270, 90);
+      path.AddArc(rectangle.Right - diameter, rectangle.Bottom - diameter, diameter, diameter, 0, 90);
+      path.AddArc(rectangle.X, rectangle.Bottom - diameter, diameter, diameter, 90, 90);
+      path.CloseFigure();
+      return path;
     }
 
     private void dgv_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
@@ -1299,11 +1367,9 @@ namespace LTP.Truck.Forms
       _categoryTare = null;
 
       var gross = Math.Max(recordTruck.NetTime01, recordTruck.NetTime02);
-      var vehicleNet = Math.Abs(recordTruck.NetTime02 - recordTruck.NetTime01);
-      var netAfterTare = Math.Max(0, vehicleNet - recordTruck.Tare);
       lbTare.Text = WeightFormatHelper.Format(recordTruck.Tare, 2);
       ucItemGross.Value = WeightFormatHelper.Format(gross, 2);
-      ucItemNet.Value = WeightFormatHelper.Format(netAfterTare, 2);
+      ucItemNet.Value = WeightFormatHelper.Format(recordTruck.NetTime01, 2);
       ucItemTare.Value = WeightFormatHelper.Format(recordTruck.Tare, 2);
     }
 
