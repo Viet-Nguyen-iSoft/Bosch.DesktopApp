@@ -56,6 +56,7 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       btnFilter.Click += btnFilter_Click;
       btnCreate.Click += btnCreate_Click;
+      btnAddManual.Click += btnAddManual_Click;
       lbTare.Text = "---";
       this.Load += FrmHomeGoods_Load;
       this.Disposed += (_, _) =>
@@ -618,6 +619,68 @@ namespace LTP.Truck.Forms
         }
       };
       popup.ShowDialog(this);
+    }
+
+    private void btnAddManual_Click(object? sender, EventArgs e)
+    {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupNoPermitRole();
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
+      using var popup = new PopupAddRecordTruckInGoods();
+      popup.OnSendSuccess += SaveManualTruckAsync;
+      popup.ShowDialog(this);
+    }
+
+    private async void SaveManualTruckAsync(RecordTruck recordTruck)
+    {
+      try
+      {
+        recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
+          .CreateNextLabelAsync(AppCore.Ins._appConfig ??
+            throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
+
+        var result = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
+        if (!result.Exist)
+        {
+          var licensePlateRequest = new LicensePlateUpsertRequest
+          {
+            Id = result.LicensePlate?.Id,
+            LicensePlateCode = result.LicensePlate?.Plate ?? string.Empty,
+            Description = result.LicensePlate?.Description,
+          };
+          await AppCore.Ins._apiJobsService.AddOrUpdateAsync(new ApiJobs
+          {
+            Json = JsonHelper.ToJson(licensePlateRequest),
+            EnumTypeAPI = EnumTypeAPI.Plate,
+            EnumStatusAPI = EnumStatusAPI.Created,
+            CreatedAt = DateTime.UtcNow,
+          });
+        }
+
+        txtLicensePlate.Texts = result.Record.LicensePlate ?? string.Empty;
+        txtNameDriver.Texts = result.Record.NameDriver ?? string.Empty;
+        txtIdCard.Texts = result.Record.IdCard ?? string.Empty;
+        await LoadLicensePlateSuggestionsAsync();
+
+        using var successPopup = new PopupConfirm(
+          "Tạo dữ liệu cân xe tải thủ công thành công !",
+          EnumTypeMsg.MessageAutoClose,
+          EnumImageMsg.Information);
+        successPopup.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var errorPopup = new PopupConfirm(
+          "Tạo dữ liệu cân xe tải thủ công thất bại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        errorPopup.ShowDialog(this);
+      }
     }
 
 

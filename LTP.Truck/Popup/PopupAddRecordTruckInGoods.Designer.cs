@@ -32,6 +32,8 @@
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel4 = new TableLayoutPanel();
       tableLayoutPanel8 = new TableLayoutPanel();
+      txtValueGross = new LTP.Truck.Custom.RJTextBox();
+      label2 = new Label();
       tableLayoutPanel20 = new TableLayoutPanel();
       label9 = new Label();
       txtValueTareForTruck = new LTP.Truck.Custom.RJTextBox();
@@ -72,8 +74,7 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      label2 = new Label();
-      txtValueGross = new LTP.Truck.Custom.RJTextBox();
+      tableLayoutPanel1 = new TableLayoutPanel();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel8.SuspendLayout();
@@ -87,6 +88,7 @@
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel16.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanel1.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -135,10 +137,8 @@
       tableLayoutPanel8.ColumnCount = 2;
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel8.Controls.Add(txtValueGross, 1, 7);
-      tableLayoutPanel8.Controls.Add(label2, 0, 7);
+      tableLayoutPanel8.Controls.Add(tableLayoutPanel1, 1, 6);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel20, 1, 5);
-      tableLayoutPanel8.Controls.Add(txtValueNet, 1, 6);
       tableLayoutPanel8.Controls.Add(label1, 0, 6);
       tableLayoutPanel8.Controls.Add(label7, 0, 5);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel22, 0, 4);
@@ -168,6 +168,43 @@
       tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 90F));
       tableLayoutPanel8.Size = new Size(889, 579);
       tableLayoutPanel8.TabIndex = 2;
+      // 
+      // txtValueGross
+      // 
+      txtValueGross.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtValueGross.BackColor = SystemColors.Window;
+      txtValueGross.BorderColor = Color.Black;
+      txtValueGross.BorderFocusColor = Color.FromArgb(48, 108, 177);
+      txtValueGross.BorderRadius = 5;
+      txtValueGross.BorderSize = 2;
+      txtValueGross.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtValueGross.ForeColor = Color.FromArgb(64, 64, 64);
+      txtValueGross.Location = new Point(458, 11);
+      txtValueGross.Margin = new Padding(4);
+      txtValueGross.Multiline = false;
+      txtValueGross.Name = "txtValueGross";
+      txtValueGross.Padding = new Padding(10, 7, 10, 7);
+      txtValueGross.PasswordChar = false;
+      txtValueGross.PlaceholderColor = Color.DarkGray;
+      txtValueGross.PlaceholderText = "";
+      txtValueGross.Size = new Size(229, 38);
+      txtValueGross.TabIndex = 44;
+      txtValueGross.Texts = "";
+      txtValueGross.UnderlinedStyle = false;
+      // 
+      // label2
+      // 
+      label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label2.AutoSize = true;
+      label2.BackColor = Color.Transparent;
+      label2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Location = new Point(256, 0);
+      label2.Margin = new Padding(0);
+      label2.Name = "label2";
+      label2.Size = new Size(198, 60);
+      label2.TabIndex = 43;
+      label2.Text = "Giá trị cân Gross (Kg):";
+      label2.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel20
       // 
@@ -277,7 +314,7 @@
       txtValueNet.BorderSize = 2;
       txtValueNet.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
       txtValueNet.ForeColor = Color.FromArgb(64, 64, 64);
-      txtValueNet.Location = new Point(202, 371);
+      txtValueNet.Location = new Point(4, 11);
       txtValueNet.Margin = new Padding(4);
       txtValueNet.Multiline = false;
       txtValueNet.Name = "txtValueNet";
@@ -285,7 +322,7 @@
       txtValueNet.PasswordChar = false;
       txtValueNet.PlaceholderColor = Color.DarkGray;
       txtValueNet.PlaceholderText = "";
-      txtValueNet.Size = new Size(683, 38);
+      txtValueNet.Size = new Size(228, 38);
       txtValueNet.TabIndex = 41;
       txtValueNet.Texts = "";
       txtValueNet.UnderlinedStyle = false;
@@ -806,7 +843,7 @@
       label10.Name = "label10";
       label10.Size = new Size(895, 50);
       label10.TabIndex = 0;
-      label10.Text = "Thông tin phiếu cân tạo thủ công cân lần 1";
+      label10.Text = "Thông tin dữ liệu cân xe tải tạo thủ công";
       label10.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel2
@@ -872,51 +909,34 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // label2
+      // tableLayoutPanel1
       // 
-      label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label2.AutoSize = true;
-      label2.BackColor = Color.Transparent;
-      label2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label2.Location = new Point(0, 420);
-      label2.Margin = new Padding(0);
-      label2.Name = "label2";
-      label2.Size = new Size(198, 60);
-      label2.TabIndex = 43;
-      label2.Text = "Giá trị cân Gross (Kg):";
-      label2.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtValueGross
-      // 
-      txtValueGross.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtValueGross.BackColor = SystemColors.Window;
-      txtValueGross.BorderColor = Color.Black;
-      txtValueGross.BorderFocusColor = Color.FromArgb(48, 108, 177);
-      txtValueGross.BorderRadius = 5;
-      txtValueGross.BorderSize = 2;
-      txtValueGross.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtValueGross.ForeColor = Color.FromArgb(64, 64, 64);
-      txtValueGross.Location = new Point(202, 431);
-      txtValueGross.Margin = new Padding(4);
-      txtValueGross.Multiline = false;
-      txtValueGross.Name = "txtValueGross";
-      txtValueGross.Padding = new Padding(10, 7, 10, 7);
-      txtValueGross.PasswordChar = false;
-      txtValueGross.PlaceholderColor = Color.DarkGray;
-      txtValueGross.PlaceholderText = "";
-      txtValueGross.Size = new Size(683, 38);
-      txtValueGross.TabIndex = 44;
-      txtValueGross.Texts = "";
-      txtValueGross.UnderlinedStyle = false;
+      tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel1.ColumnCount = 4;
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel1.Controls.Add(txtValueNet, 0, 0);
+      tableLayoutPanel1.Controls.Add(txtValueGross, 3, 0);
+      tableLayoutPanel1.Controls.Add(label2, 2, 0);
+      tableLayoutPanel1.Location = new Point(198, 360);
+      tableLayoutPanel1.Margin = new Padding(0);
+      tableLayoutPanel1.Name = "tableLayoutPanel1";
+      tableLayoutPanel1.RowCount = 1;
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel1.Size = new Size(691, 60);
+      tableLayoutPanel1.TabIndex = 45;
       // 
       // PopupAddRecordTruckInGoods
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(905, 710);
+      ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupAddRecordTruckInGoods";
-      Text = "PopupAddRecordTruckInGoods";
+      StartPosition = FormStartPosition.CenterParent;
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel4.ResumeLayout(false);
       tableLayoutPanel4.PerformLayout();
@@ -937,6 +957,8 @@
       tableLayoutPanel16.ResumeLayout(false);
       tableLayoutPanel16.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanel1.ResumeLayout(false);
+      tableLayoutPanel1.PerformLayout();
       ResumeLayout(false);
     }
 
@@ -987,5 +1009,6 @@
     private Common.Custom.RJButton btnClose;
     private Label label2;
     private Custom.RJTextBox txtValueGross;
+    private TableLayoutPanel tableLayoutPanel1;
   }
 }
