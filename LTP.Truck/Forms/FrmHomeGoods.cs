@@ -746,7 +746,7 @@ namespace LTP.Truck.Forms
         DeliveryId = selectedDelivery.Id,
         //RecordTruckId = selectedRecordTruck.Id,
         Net = _msgDataWeight.IndicatedWeight,
-        Tare = selectedTare.Value ?? 0.0,
+        Tare = _msgDataWeight.TareWeight,
         UserId = AppCore.Ins._userCurrent?.Id,
         StationId = AppCore.Ins._station?.Id,
         LicensePlate = validLicense.Plate,
@@ -911,9 +911,23 @@ namespace LTP.Truck.Forms
           dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
       }
 
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.No)))
-        dgv.Columns[nameof(RecordWeightDTO.No)].DefaultCellStyle.Alignment =
-          DataGridViewContentAlignment.MiddleCenter;
+      //if (dgv.Columns.Contains(nameof(RecordWeightDTO.No)))
+      //  dgv.Columns[nameof(RecordWeightDTO.No)].DefaultCellStyle.Alignment =
+      //    DataGridViewContentAlignment.MiddleCenter;
+      //if (dgv.Columns.Contains(nameof(RecordWeightDTO.ProductGroup)))
+      //  dgv.Columns[nameof(RecordWeightDTO.No)].DefaultCellStyle.Alignment =
+      //    DataGridViewContentAlignment.MiddleCenter;
+
+      var weightColumnsAlignment = new[]
+     {
+        nameof(RecordWeightDTO.No),
+        nameof(RecordWeightDTO.ProductGroup),
+      };
+      foreach (var columnName in weightColumnsAlignment)
+      {
+        if (dgv.Columns.Contains(columnName))
+          dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+      }
     }
 
     private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)

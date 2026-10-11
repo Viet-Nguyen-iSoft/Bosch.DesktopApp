@@ -13,12 +13,6 @@ namespace iSoft.Database.DTO
 
     [DisplayName("Thời gian")]
     public string? Datetime { get; set; }
-    [DisplayName("Bên giao")]
-    public string? Delivery { get; set; }
-    [DisplayName("Biển số xe")]
-    public string? LicensePlate { get; set; }
-    [DisplayName("Tên tài xế")]
-    public string? NameDriver { get; set; }
 
     [DisplayName("Nhóm")]
     public string? ProductGroup { get; set; }
@@ -39,5 +33,14 @@ namespace iSoft.Database.DTO
 
     [DisplayName("Tare (Kg)")]
     public string? Tare { get; set; }
+
+    [DisplayName("Bên nhận")]
+    public string? Delivery { get; set; }
+    [DisplayName("Biển số xe")]
+    public string? LicensePlate { get; set; }
+    [DisplayName("Tên tài xế")]
+    public string? NameDriver { get; set; }
+
+    
   }
 }
