@@ -911,11 +911,14 @@ namespace LTP.Truck.Forms
       // Include records occurring anywhere within the selected ending minute.
       var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
       var searchKey = txtSearchKey.Texts.Trim();
-      var records = await AppCore.Ins._recordWeightService.GetReportAsync(
-        fromUtc,
-        toUtcExclusive,
-        searchKey,
-        _filterDataTypeIndex);
+      var goodsTask = AppCore.Ins._recordWeightService.GetReportAsync(
+        fromUtc, toUtcExclusive, searchKey, _filterDataTypeIndex);
+      var truckTask = AppCore.Ins._recordTruckService.GetReportAsync(
+        fromUtc, toUtcExclusive, searchKey, statusFilterIndex: 0);
+      await Task.WhenAll(goodsTask, truckTask);
+
+      var records = await goodsTask;
+      var truckRecords = await truckTask;
 
       if (_filterProductGroupId.HasValue)
       {
@@ -931,7 +934,18 @@ namespace LTP.Truck.Forms
           .ToList();
       }
 
-      SetDgvHistorical(DTOHelper.ConvertRecordWeightDTO(records));
+      truckRecords = _filterDataTypeIndex switch
+      {
+        2 => truckRecords.Where(record => record.DeletedFlag).ToList(),
+        0 => truckRecords,
+        _ => truckRecords.Where(record => !record.DeletedFlag).ToList(),
+      };
+
+      // Product group and waste type only exist on Goods records.
+      if (_filterProductGroupId.HasValue || _filterWasteType.HasValue)
+        truckRecords.Clear();
+
+      SetDgvHistorical(DTOHelper.ConvertCombinedHistoryDTO(records, truckRecords));
     }
 
     private void SetDgvHistorical(List<RecordWeightDTO> records)
@@ -961,10 +975,10 @@ namespace LTP.Truck.Forms
 
       foreach (DataGridViewRow row in dgv.Rows)
       {
-        if (row.DataBoundItem is not RecordWeightDTO item || item.RecordWeight == null)
+        if (row.DataBoundItem is not RecordWeightDTO item)
           continue;
 
-        if (item.RecordWeight.DeletedFlag)
+        if (IsDeleted(item))
         {
           row.DefaultCellStyle.BackColor = Color.Tomato;
           row.DefaultCellStyle.SelectionBackColor = Color.Tomato;
@@ -981,11 +995,16 @@ namespace LTP.Truck.Forms
 
       if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
+      if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordTruck)))
+        dgv.Columns[nameof(RecordWeightDTO.RecordTruck)].Visible = false;
+      if (dgv.Columns.Contains(nameof(RecordWeightDTO.SortAt)))
+        dgv.Columns[nameof(RecordWeightDTO.SortAt)].Visible = false;
 
       var autoSizeColumns = new[]
       {
         nameof(RecordWeightDTO.No),
         nameof(RecordWeightDTO.Datetime),
+        nameof(RecordWeightDTO.Source),
         nameof(RecordWeightDTO.LicensePlate),
         nameof(RecordWeightDTO.ProductGroup),
         nameof(RecordWeightDTO.CategoryTare),
@@ -1038,13 +1057,16 @@ namespace LTP.Truck.Forms
           e.ColumnIndex < 0 ||
           dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
           dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO recordWeightDto ||
-          recordWeightDto.RecordWeight is not RecordWeight recordWeight ||
-          !CanModifyRecord(recordWeight))
+          !CanModifyRecord(recordWeightDto))
       {
         return;
       }
 
-      var requiredPermission = recordWeight.DeletedFlag ? "0301" : "0300";
+      var isTruckRecord = recordWeightDto.RecordTruck != null;
+      var isDeleted = IsDeleted(recordWeightDto);
+      var requiredPermission = isTruckRecord
+        ? isDeleted ? "0202" : "0201"
+        : isDeleted ? "0301" : "0300";
       if (!AppCore.Ins.CheckPermission(requiredPermission))
       {
         using var openErrorPopup = new PopupNoPermitRole();
@@ -1052,13 +1074,14 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      if (!recordWeight.DeletedFlag)
+      string reasonDelete;
+      if (!isDeleted)
       {
         using var inputReason = new PopupInputReason();
         if (inputReason.ShowDialog(this) != DialogResult.OK)
           return;
 
-        recordWeight.ReasonDelete = inputReason.Reason;
+        reasonDelete = inputReason.Reason;
       }
       else
       {
@@ -1076,14 +1099,25 @@ namespace LTP.Truck.Forms
         if (!confirmed)
           return;
 
-        recordWeight.ReasonDelete = string.Empty;
+        reasonDelete = string.Empty;
       }
 
       try
       {
-        recordWeight.DeletedFlag = !recordWeight.DeletedFlag;
-        recordWeight.UpdatedAt = DateTime.UtcNow;
-        await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
+        if (recordWeightDto.RecordTruck is RecordTruck recordTruck)
+        {
+          recordTruck.ReasonDelete = reasonDelete;
+          recordTruck.DeletedFlag = !recordTruck.DeletedFlag;
+          recordTruck.UpdatedAt = DateTime.UtcNow;
+          await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
+        }
+        else if (recordWeightDto.RecordWeight is RecordWeight recordWeight)
+        {
+          recordWeight.ReasonDelete = reasonDelete;
+          recordWeight.DeletedFlag = !recordWeight.DeletedFlag;
+          recordWeight.UpdatedAt = DateTime.UtcNow;
+          await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
+        }
         await LoadHistorical();
       }
       catch (Exception ex)
@@ -1102,16 +1136,15 @@ namespace LTP.Truck.Forms
       if (e.RowIndex < 0 ||
           e.ColumnIndex < 0 ||
           dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
-          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item ||
-          item.RecordWeight is not RecordWeight recordWeight)
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item)
       {
         return;
       }
 
-      var canModify = CanModifyRecord(recordWeight);
+      var canModify = CanModifyRecord(item);
       e.Value = !canModify
         ? "Chỉ xem"
-        : recordWeight.DeletedFlag
+        : IsDeleted(item)
           ? "Phục hồi"
           : "Xóa";
       if (e.CellStyle != null)
@@ -1132,14 +1165,17 @@ namespace LTP.Truck.Forms
           e.ColumnIndex < 0 ||
           dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
           dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item ||
-          item.RecordWeight?.DeletedFlag != true ||
-          string.IsNullOrWhiteSpace(item.RecordWeight.ReasonDelete))
+          !IsDeleted(item))
       {
         return;
       }
 
+      var reasonDelete = item.RecordWeight?.ReasonDelete ?? item.RecordTruck?.ReasonDelete;
+      if (string.IsNullOrWhiteSpace(reasonDelete))
+        return;
+
       var cellBounds = dgv.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true);
-      _deleteReasonToolTipText = $"Lý do xóa: {item.RecordWeight.ReasonDelete}";
+      _deleteReasonToolTipText = $"Lý do xóa: {reasonDelete}";
       _deleteReasonToolTip.Show(
         _deleteReasonToolTipText,
         dgv,
@@ -1174,11 +1210,14 @@ namespace LTP.Truck.Forms
         TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
     }
 
-    private static bool CanModifyRecord(RecordWeight recordWeight)
+    private static bool CanModifyRecord(RecordWeightDTO item)
     {
-      return AppCore.Ins._station != null &&
-        recordWeight.StationId == AppCore.Ins._station.Id;
+      var stationId = item.RecordWeight?.StationId ?? item.RecordTruck?.StationId;
+      return AppCore.Ins._station != null && stationId == AppCore.Ins._station.Id;
     }
+
+    private static bool IsDeleted(RecordWeightDTO item) =>
+      item.RecordWeight?.DeletedFlag ?? item.RecordTruck?.DeletedFlag ?? false;
 
     private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
     {
@@ -1190,6 +1229,13 @@ namespace LTP.Truck.Forms
       {
         _isViewingHistoricalDetail = true;
         ShowHistoricalRecord(recordWeight);
+        ApplyHistoricalViewMode();
+      }
+      else if (dgv.Rows[e.RowIndex].DataBoundItem is RecordWeightDTO truckDto &&
+        truckDto.RecordTruck is RecordTruck recordTruck)
+      {
+        _isViewingHistoricalDetail = true;
+        ShowHistoricalTruckRecord(recordTruck);
         ApplyHistoricalViewMode();
       }
 
@@ -1237,6 +1283,28 @@ namespace LTP.Truck.Forms
         2);
       ucItemNet.Value = WeightFormatHelper.Format(recordWeight.Net, 2);
       ucItemTare.Value = WeightFormatHelper.Format(recordWeight.Tare, 2);
+    }
+
+    private void ShowHistoricalTruckRecord(RecordTruck recordTruck)
+    {
+      txtLicensePlate.Texts = recordTruck.LicensePlate ?? string.Empty;
+      txtNameDriver.Texts = recordTruck.NameDriver ?? string.Empty;
+      txtIdCard.Texts = recordTruck.IdCard ?? string.Empty;
+      txtNote.Text = recordTruck.Note ?? string.Empty;
+
+      cbbDelivery.SelectedIndex = -1;
+      cbbProductGroup.SelectedIndex = -1;
+      cbbProduct.DataSource = null;
+      cbbTare.SelectedIndex = -1;
+      _categoryTare = null;
+
+      var gross = Math.Max(recordTruck.NetTime01, recordTruck.NetTime02);
+      var vehicleNet = Math.Abs(recordTruck.NetTime02 - recordTruck.NetTime01);
+      var netAfterTare = Math.Max(0, vehicleNet - recordTruck.Tare);
+      lbTare.Text = WeightFormatHelper.Format(recordTruck.Tare, 2);
+      ucItemGross.Value = WeightFormatHelper.Format(gross, 2);
+      ucItemNet.Value = WeightFormatHelper.Format(netAfterTare, 2);
+      ucItemTare.Value = WeightFormatHelper.Format(recordTruck.Tare, 2);
     }
 
     private void ApplyHistoricalViewMode()

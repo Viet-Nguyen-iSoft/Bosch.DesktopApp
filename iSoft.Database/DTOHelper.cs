@@ -85,8 +85,10 @@ namespace iSoft.Database
         .Select((record, index) => new RecordWeightDTO
         {
           RecordWeight = record,
+          SortAt = record.CreatedAt ?? DateTime.MinValue,
           No = orderedRecords.Count - index,
           Datetime = record.CreatedAt!=null ? ((DateTime)record.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") : string.Empty,
+          Source = "Cân hàng",
           LicensePlate = record?.LicensePlate,
           Delivery = record?.Delivery?.Name,
           NameDriver = record?.NameDriver,
@@ -99,6 +101,55 @@ namespace iSoft.Database
           Tare = WeightFormatHelper.Format(record?.Tare ?? 0.0, 2),
         })
         .ToList();
+    }
+
+    public static List<RecordWeightDTO> ConvertCombinedHistoryDTO(
+      IEnumerable<RecordWeight>? recordWeights,
+      IEnumerable<RecordTruck>? recordTrucks)
+    {
+      var result = ConvertRecordWeightDTO(recordWeights?.ToList());
+
+      result.AddRange((recordTrucks ?? Enumerable.Empty<RecordTruck>())
+        .Select(record =>
+        {
+          var firstWeight = record.NetTime01;
+          var secondWeight = record.NetTime02;
+          var gross = Math.Max(firstWeight, secondWeight);
+          var vehicleNet = Math.Abs(secondWeight - firstWeight);
+          var netAfterTare = Math.Max(0, vehicleNet - record.Tare);
+          var time = record.UpdatedAt ?? record.CreatedAt ?? DateTime.MinValue;
+
+          return new RecordWeightDTO
+          {
+            RecordTruck = record,
+            SortAt = time,
+            Datetime = time == DateTime.MinValue
+              ? string.Empty
+              : time.AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss"),
+            Source = "Cân xe tải",
+            Delivery = record.Client?.Name,
+            //Type = record.TypeGoods?.Name,
+            Type = record.Warehouse?.Name,
+            //Type = record.TypeGoods?.Name,
+            Product = record.TypeGoods?.Name,
+            CategoryTare = record.NameTareForTruck,
+            Gross = WeightFormatHelper.Format(gross, 2),
+            Net = WeightFormatHelper.Format(record.NetTime01, 2),
+            Tare = WeightFormatHelper.Format(record.Tare, 2),
+            LicensePlate = record.LicensePlate,
+            NameDriver = record.NameDriver,
+          };
+        }));
+
+      result = result
+        .OrderByDescending(item => item.SortAt)
+        .ThenByDescending(item => item.RecordWeight?.Id ?? item.RecordTruck?.Id ?? Guid.Empty)
+        .ToList();
+
+      for (int index = 0; index < result.Count; index++)
+        result[index].No = result.Count - index;
+
+      return result;
     }
 
     public static List<ClientDTO>? ConvertClientDTO(List<Client>? clients)

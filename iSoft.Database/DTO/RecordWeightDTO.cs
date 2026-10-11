@@ -8,11 +8,20 @@ namespace iSoft.Database.DTO
     [Browsable(false)]
     public RecordWeight? RecordWeight { get; set; }
 
+    [Browsable(false)]
+    public RecordTruck? RecordTruck { get; set; }
+
+    [Browsable(false)]
+    public DateTime SortAt { get; set; }
+
     [DisplayName("Stt")]
     public int No { get; set; }
 
     [DisplayName("Thời gian")]
     public string? Datetime { get; set; }
+
+    [DisplayName("Nguồn")]
+    public string? Source { get; set; }
 
     [DisplayName("Nhóm")]
     public string? ProductGroup { get; set; }
@@ -20,7 +29,7 @@ namespace iSoft.Database.DTO
     [DisplayName("Loại")]
     public string? Type { get; set; }
 
-    [DisplayName("Phế phẩm")]
+    [DisplayName("Phế phẩm / Kho")]
     public string? Product { get; set; }
 
     [DisplayName("Loại bì")]
