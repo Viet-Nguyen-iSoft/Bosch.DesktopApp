@@ -27,6 +27,7 @@ namespace LTP.Truck.Forms
     private List<ProductGroup> _productGroups = new();
     private Guid? _filterProductGroupId;
     private iSoft.Database.EnumData.EnumWasteType? _filterWasteType;
+    private int _filterDataTypeIndex = 1;
     private int _productGroupRefreshVersion;
     private int _productRefreshVersion;
     private int _tareRefreshVersion;
@@ -118,6 +119,8 @@ namespace LTP.Truck.Forms
       };
       dgv.Columns.Insert(0, selectColumn);
       dgv.CellClick += dgv_CellClick;
+      dgv.CellContentClick += dgv_CellContentClick;
+      dgv.CellFormatting += dgv_CellFormatting;
 
       ucItemWeight01.Title = "Gross (Kg)";
       ucItemWeight02.Title = "Net (Kg)";
@@ -850,12 +853,14 @@ namespace LTP.Truck.Forms
       using var popup = new PopupFilterGoods(
         _productGroups,
         _filterProductGroupId,
-        _filterWasteType);
+        _filterWasteType,
+        _filterDataTypeIndex);
 
-      popup.OnSendData += async (productGroupId, wasteType) =>
+      popup.OnSendData += async (productGroupId, wasteType, dataTypeIndex) =>
       {
         _filterProductGroupId = productGroupId;
         _filterWasteType = wasteType;
+        _filterDataTypeIndex = dataTypeIndex;
         await LoadHistorical();
       };
       popup.ShowDialog(this);
@@ -881,7 +886,8 @@ namespace LTP.Truck.Forms
       var records = await AppCore.Ins._recordWeightService.GetReportAsync(
         fromUtc,
         toUtcExclusive,
-        searchKey);
+        searchKey,
+        _filterDataTypeIndex);
 
       if (_filterProductGroupId.HasValue)
       {
@@ -909,6 +915,39 @@ namespace LTP.Truck.Forms
       }
 
       dgv.DataSource = records;
+
+      if (!dgv.Columns.Contains("btnDelete"))
+      {
+        dgv.Columns.Add(new DataGridViewButtonColumn
+        {
+          Name = "btnDelete",
+          HeaderText = string.Empty,
+          UseColumnTextForButtonValue = false,
+          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+          Width = 120,
+          Resizable = DataGridViewTriState.False,
+          SortMode = DataGridViewColumnSortMode.NotSortable,
+        });
+      }
+      dgv.Columns["btnDelete"].DisplayIndex = dgv.Columns.Count - 1;
+
+      foreach (DataGridViewRow row in dgv.Rows)
+      {
+        if (row.DataBoundItem is not RecordWeightDTO item || item.RecordWeight == null)
+          continue;
+
+        if (item.RecordWeight.DeletedFlag)
+        {
+          row.DefaultCellStyle.BackColor = Color.Tomato;
+          row.DefaultCellStyle.SelectionBackColor = Color.Tomato;
+        }
+        else
+        {
+          row.DefaultCellStyle.BackColor = Color.Empty;
+          row.DefaultCellStyle.SelectionBackColor = Color.Empty;
+        }
+      }
+
       dgv.ClearSelection();
       dgv.CurrentCell = null;
 
@@ -963,6 +1002,85 @@ namespace LTP.Truck.Forms
         if (dgv.Columns.Contains(columnName))
           dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
+    }
+
+    private async void dgv_CellContentClick(object? sender, DataGridViewCellEventArgs e)
+    {
+      if (e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO recordWeightDto ||
+          recordWeightDto.RecordWeight is not RecordWeight recordWeight ||
+          !CanModifyRecord(recordWeight))
+      {
+        return;
+      }
+
+      var isDeleted = recordWeight.DeletedFlag;
+      var confirmed = false;
+      using (var popup = new PopupConfirm(
+        isDeleted
+          ? "Có chắc chắn phục hồi dữ liệu này?"
+          : "Có chắc chắn xóa dữ liệu này?",
+        EnumTypeMsg.Confirm,
+        EnumImageMsg.Warning))
+      {
+        popup.OnSendConfirm += (_, response) =>
+          confirmed = response.EnumResponsible == EnumResponsible.Confirm;
+        popup.ShowDialog(this);
+      }
+
+      if (!confirmed)
+        return;
+
+      try
+      {
+        recordWeight.DeletedFlag = !isDeleted;
+        recordWeight.UpdatedAt = DateTime.UtcNow;
+        await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
+        await LoadHistorical();
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể cập nhật trạng thái bản ghi. Vui lòng thử lại!",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+    }
+
+    private void dgv_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+    {
+      if (e.RowIndex < 0 ||
+          e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != "btnDelete" ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item ||
+          item.RecordWeight is not RecordWeight recordWeight)
+      {
+        return;
+      }
+
+      var canModify = CanModifyRecord(recordWeight);
+      e.Value = !canModify
+        ? "Chỉ xem"
+        : recordWeight.DeletedFlag
+          ? "Phục hồi"
+          : "Xóa";
+      if (e.CellStyle != null)
+      {
+        e.CellStyle.ForeColor = canModify
+          ? dgv.DefaultCellStyle.ForeColor
+          : Color.Gray;
+      }
+      e.FormattingApplied = true;
+    }
+
+    private static bool CanModifyRecord(RecordWeight recordWeight)
+    {
+      return AppCore.Ins._station != null &&
+        recordWeight.StationId == AppCore.Ins._station.Id;
     }
 
     private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)

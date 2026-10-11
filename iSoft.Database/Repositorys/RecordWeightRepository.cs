@@ -36,9 +36,10 @@ namespace iSoft.Database.Repositorys
     public Task<List<RecordWeight>> GetReportAsync(
       DateTime fromUtc,
       DateTime toUtcExclusive,
-      string? searchKey)
+      string? searchKey,
+      int dataTypeIndex = 1)
     {
-      return BuildReportQuery(fromUtc, toUtcExclusive, searchKey)
+      return BuildReportQuery(fromUtc, toUtcExclusive, searchKey, dataTypeIndex)
         .OrderBy(record => record.CreatedAt)
         .ThenBy(record => record.Id)
         .ToListAsync();
@@ -71,7 +72,8 @@ namespace iSoft.Database.Repositorys
     private IQueryable<RecordWeight> BuildReportQuery(
       DateTime fromUtc,
       DateTime toUtcExclusive,
-      string? searchKey)
+      string? searchKey,
+      int dataTypeIndex = 1)
     {
       var query = Context.Set<RecordWeight>()
         .AsNoTracking()
@@ -82,9 +84,15 @@ namespace iSoft.Database.Repositorys
         .Include(record => record.RecordTruck)
         .Include(record => record.User)
         .Where(record =>
-          !record.DeletedFlag &&
           record.CreatedAt >= fromUtc &&
           record.CreatedAt < toUtcExclusive);
+
+      query = dataTypeIndex switch
+      {
+        2 => query.Where(record => record.DeletedFlag),
+        0 => query,
+        _ => query.Where(record => !record.DeletedFlag),
+      };
 
       if (!string.IsNullOrWhiteSpace(searchKey))
       {

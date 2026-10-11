@@ -34,6 +34,8 @@
       cbbProductGroup = new ComboBox();
       label2 = new Label();
       cbbType = new ComboBox();
+      label3 = new Label();
+      cbbTypeData = new ComboBox();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
       SuspendLayout();
@@ -58,7 +60,7 @@
       label21.AutoSize = true;
       label21.BackColor = Color.Transparent;
       label21.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label21.Location = new Point(17, 86);
+      label21.Location = new Point(17, 146);
       label21.Margin = new Padding(0);
       label21.Name = "label21";
       label21.Size = new Size(139, 23);
@@ -73,7 +75,7 @@
       cbbProductGroup.Font = new Font("Roboto", 20F);
       cbbProductGroup.FormattingEnabled = true;
       cbbProductGroup.Items.AddRange(new object[] { "Tất cả", "Chưa hoàn thành", "Hoàn thành", "Đã xóa" });
-      cbbProductGroup.Location = new Point(159, 75);
+      cbbProductGroup.Location = new Point(159, 137);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(310, 41);
       cbbProductGroup.TabIndex = 38;
@@ -84,7 +86,7 @@
       label2.AutoSize = true;
       label2.BackColor = Color.Transparent;
       label2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label2.Location = new Point(17, 157);
+      label2.Location = new Point(17, 223);
       label2.Margin = new Padding(0);
       label2.Name = "label2";
       label2.Size = new Size(46, 23);
@@ -99,10 +101,36 @@
       cbbType.Font = new Font("Roboto", 20F);
       cbbType.FormattingEnabled = true;
       cbbType.Items.AddRange(new object[] { "Tất cả", "Chưa hoàn thành", "Hoàn thành", "Đã xóa" });
-      cbbType.Location = new Point(159, 146);
+      cbbType.Location = new Point(159, 214);
       cbbType.Name = "cbbType";
       cbbType.Size = new Size(310, 41);
       cbbType.TabIndex = 43;
+      // 
+      // label3
+      // 
+      label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label3.AutoSize = true;
+      label3.BackColor = Color.Transparent;
+      label3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label3.Location = new Point(17, 74);
+      label3.Margin = new Padding(0);
+      label3.Name = "label3";
+      label3.Size = new Size(139, 23);
+      label3.TabIndex = 48;
+      label3.Text = "Nhóm chất thải";
+      label3.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // cbbTypeData
+      // 
+      cbbTypeData.Anchor = AnchorStyles.Left;
+      cbbTypeData.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbTypeData.Font = new Font("Roboto", 20F);
+      cbbTypeData.FormattingEnabled = true;
+      cbbTypeData.Items.AddRange(new object[] { "Tất cả", "Chưa hoàn thành", "Hoàn thành", "Đã xóa" });
+      cbbTypeData.Location = new Point(159, 65);
+      cbbTypeData.Name = "cbbTypeData";
+      cbbTypeData.Size = new Size(310, 41);
+      cbbTypeData.TabIndex = 49;
       // 
       // btnConfirm
       // 
@@ -118,11 +146,11 @@
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(143, 236);
+      btnConfirm.Location = new Point(143, 298);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
       btnConfirm.Size = new Size(158, 55);
-      btnConfirm.TabIndex = 44;
+      btnConfirm.TabIndex = 50;
       btnConfirm.Text = "       Xác nhận";
       btnConfirm.TextColor = Color.White;
       btnConfirm.UseVisualStyleBackColor = false;
@@ -141,11 +169,11 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(311, 236);
+      btnClose.Location = new Point(311, 298);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
       btnClose.Size = new Size(158, 55);
-      btnClose.TabIndex = 45;
+      btnClose.TabIndex = 51;
       btnClose.Text = "       Đóng";
       btnClose.TextAlign = ContentAlignment.MiddleLeft;
       btnClose.TextColor = Color.White;
@@ -155,10 +183,12 @@
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(481, 303);
+      ClientSize = new Size(481, 365);
       ControlBox = false;
       Controls.Add(btnConfirm);
       Controls.Add(btnClose);
+      Controls.Add(label3);
+      Controls.Add(cbbTypeData);
       Controls.Add(label2);
       Controls.Add(cbbType);
       Controls.Add(label1);
@@ -177,6 +207,8 @@
     private ComboBox cbbProductGroup;
     private Label label2;
     private ComboBox cbbType;
+    private Label label3;
+    private ComboBox cbbTypeData;
     private Common.Custom.RJButton btnConfirm;
     private Common.Custom.RJButton btnClose;
   }

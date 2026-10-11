@@ -7,12 +7,13 @@ namespace LTP.Truck.Popup
 {
   public partial class PopupFilterGoods : Form
   {
-    public event Action<Guid?, EnumWasteType?>? OnSendData;
+    public event Action<Guid?, EnumWasteType?, int>? OnSendData;
 
     public PopupFilterGoods(
       IEnumerable<ProductGroup> productGroups,
       Guid? selectedProductGroupId = null,
-      EnumWasteType? selectedWasteType = null)
+      EnumWasteType? selectedWasteType = null,
+      int selectedDataTypeIndex = 1)
     {
       InitializeComponent();
 
@@ -40,6 +41,18 @@ namespace LTP.Truck.Popup
       cbbType.SelectedItem = wasteTypeItems.FirstOrDefault(item =>
         item.Value == selectedWasteType) ?? wasteTypeItems[0];
 
+      cbbTypeData.Items.Clear();
+      cbbTypeData.Items.AddRange(new object[]
+      {
+        "Tất cả",
+        "Dữ liệu hiện hữu",
+        "Dữ liệu đã xóa",
+      });
+      cbbTypeData.SelectedIndex = selectedDataTypeIndex >= 0 &&
+        selectedDataTypeIndex < cbbTypeData.Items.Count
+          ? selectedDataTypeIndex
+          : 1;
+
       btnConfirm.Click += btnConfirm_Click;
       btnClose.Click += btnClose_Click;
       AcceptButton = btnConfirm;
@@ -51,7 +64,7 @@ namespace LTP.Truck.Popup
       var productGroupId = (cbbProductGroup.SelectedItem as ProductGroupFilterItem)?.Id;
       var wasteType = (cbbType.SelectedItem as WasteTypeFilterItem)?.Value;
 
-      OnSendData?.Invoke(productGroupId, wasteType);
+      OnSendData?.Invoke(productGroupId, wasteType, cbbTypeData.SelectedIndex);
       DialogResult = DialogResult.OK;
       Close();
     }

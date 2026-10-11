@@ -25,14 +25,16 @@ namespace iSoft.Database.Service
     public async Task<List<RecordWeight>> GetReportAsync(
       DateTime fromUtc,
       DateTime toUtcExclusive,
-      string? searchKey)
+      string? searchKey,
+      int dataTypeIndex = 1)
     {
       await using var context = new MySqlDbContext();
       var repository = new RecordWeightRepository(context);
       return await repository.GetReportAsync(
         fromUtc,
         toUtcExclusive,
-        searchKey).ConfigureAwait(false);
+        searchKey,
+        dataTypeIndex).ConfigureAwait(false);
     }
 
     public async Task<(List<RecordWeight> Records, int TotalRecords)> GetReportPageAsync(
