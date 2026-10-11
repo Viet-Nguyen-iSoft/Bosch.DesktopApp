@@ -1182,16 +1182,33 @@ namespace LTP.Truck.Forms
 
     private void ShowHistoricalRecord(RecordWeight recordWeight)
     {
-      txtLicensePlate.Texts = recordWeight.LicensePlate ?? string.Empty;
-      txtNameDriver.Texts = recordWeight.NameDriver ?? string.Empty;
-      txtIdCard.Texts = recordWeight.IdCard ?? string.Empty;
+      txtLicensePlate.Texts = FirstNotBlank(
+        recordWeight.LicensePlate,
+        recordWeight.RecordTruck?.LicensePlate);
+      txtNameDriver.Texts = FirstNotBlank(
+        recordWeight.NameDriver,
+        recordWeight.RecordTruck?.NameDriver);
+      txtIdCard.Texts = FirstNotBlank(
+        recordWeight.IdCard,
+        recordWeight.RecordTruck?.IdCard);
       txtNote.Text = recordWeight.Note ?? string.Empty;
 
-      cbbDelivery.SelectedValue = recordWeight.DeliveryId ?? Guid.Empty;
-      cbbProductGroup.SelectedValue =
-        recordWeight.Product?.ProductGroupId ?? Guid.Empty;
-      cbbProduct.SelectedValue = recordWeight.ProductId ?? Guid.Empty;
-      cbbTare.SelectedValue = recordWeight.CategoryTareId ?? Guid.Empty;
+      SelectHistoricalComboItem(
+        cbbDelivery,
+        recordWeight.Delivery,
+        recordWeight.DeliveryId);
+      SelectHistoricalComboItem(
+        cbbProductGroup,
+        recordWeight.Product?.ProductGroup,
+        recordWeight.Product?.ProductGroupId);
+      SelectHistoricalComboItem(
+        cbbProduct,
+        recordWeight.Product,
+        recordWeight.ProductId);
+      SelectHistoricalComboItem(
+        cbbTare,
+        recordWeight.CategoryTare,
+        recordWeight.CategoryTareId);
       _categoryTare = cbbTare.SelectedItem as CategoryTare;
       lbTare.Text = WeightFormatHelper.Format(recordWeight.Tare, 2);
 
@@ -1209,6 +1226,43 @@ namespace LTP.Truck.Forms
       ucItemWeight01.Time = recordedAt;
       ucItemWeight02.Time = recordedAt;
       ucItemOffsetWeight.Time = recordedAt;
+    }
+
+    private static string FirstNotBlank(string? primary, string? fallback)
+      => !string.IsNullOrWhiteSpace(primary)
+        ? primary
+        : fallback ?? string.Empty;
+
+    private static void SelectHistoricalComboItem<T>(
+      ComboBox comboBox,
+      T? relatedItem,
+      Guid? selectedId)
+      where T : BaseModel
+    {
+      if (!selectedId.HasValue)
+      {
+        comboBox.SelectedIndex = -1;
+        return;
+      }
+
+      var items = comboBox.DataSource is IEnumerable<T> source
+        ? source.ToList()
+        : comboBox.Items.Cast<object>().OfType<T>().ToList();
+      var selectedItem = items.FirstOrDefault(item => item.Id == selectedId.Value);
+
+      if (selectedItem == null && relatedItem != null)
+      {
+        items.Add(relatedItem);
+        var displayMember = comboBox.DisplayMember;
+        var valueMember = comboBox.ValueMember;
+        comboBox.DataSource = null;
+        comboBox.DisplayMember = displayMember;
+        comboBox.ValueMember = valueMember;
+        comboBox.DataSource = items;
+        selectedItem = relatedItem;
+      }
+
+      comboBox.SelectedItem = selectedItem;
     }
 
     private void btnPrint_Click(object sender, EventArgs e)
