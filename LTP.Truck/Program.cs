@@ -75,6 +75,8 @@ namespace LTP.Truck
       ["0104"] = "Cho phép phân quyền tài khoản",
 
       ["0200"] = "Cho phép thêm dữ liệu Manual cân lần 1",
+      ["0201"] = "Cho phép xóa dữ liệu cân",
+      ["0202"] = "Cho phép thu hồi dữ liệu đã xóa",
     };
     private static Dictionary<string, string> PermissionsGoods = new Dictionary<string, string>
     {
@@ -90,6 +92,9 @@ namespace LTP.Truck
       ["0112"] = "Cho phép chỉnh sửa tài khoản",
       ["0113"] = "Cho phép chỉnh xóa tài khoản",
       ["0114"] = "Cho phép phân quyền tài khoản",
+
+      ["0300"] = "Cho phép xóa dữ liệu cân",
+      ["0301"] = "Cho phép thu hồi dữ liệu đã xóa",
     };
 
     static async Task<bool> InitDb()

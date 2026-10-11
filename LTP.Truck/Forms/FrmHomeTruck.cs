@@ -1247,6 +1247,14 @@ namespace LTP.Truck.Forms
       if (recordTruckDto.RecordTruck is not RecordTruck recordTruck)
         return;
 
+      var requiredPermission = recordTruck.DeletedFlag ? "0202" : "0201";
+      if (!AppCore.Ins.CheckPermission(requiredPermission))
+      {
+        using var openErrorPopup = new PopupNoPermitRole();
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       if (!CanModifyRecord(recordTruck))
         return;
 

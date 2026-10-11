@@ -981,6 +981,14 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      var requiredPermission = recordWeight.DeletedFlag ? "0301" : "0300";
+      if (!AppCore.Ins.CheckPermission(requiredPermission))
+      {
+        using var openErrorPopup = new PopupNoPermitRole();
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       if (!recordWeight.DeletedFlag)
       {
         using var inputReason = new PopupInputReason();
