@@ -33,8 +33,10 @@ namespace LTP.Truck.Forms
       cbbTareForTruck.SelectedIndexChanged += (_, _) => UpdateTareForTruckValue();
       numericUpDownNumberTare.ValueChanged += (_, _) => UpdateTareForTruckValue();
       RegisterIntegerTextBox(txtValueNet);
-      RegisterIntegerTextBox(txtValueGross);
       RegisterIntegerTextBox(txtValueTareForTruck);
+      txtValueNet._TextChanged += (_, _) => UpdateGrossValue();
+      txtValueTareForTruck._TextChanged += (_, _) => UpdateGrossValue();
+      txtValueGross.Enabled = false;
       Load += PopupAddRecordTruckInGoods_Load;
     }
 
@@ -151,6 +153,14 @@ namespace LTP.Truck.Forms
         ? 0
         : (selectedTare?.Value ?? 0) * (double)numericUpDownNumberTare.Value;
       txtValueTareForTruck.Texts = WeightFormatHelper.Format(value);
+      UpdateGrossValue();
+    }
+
+    private void UpdateGrossValue()
+    {
+      TryGetDisplayedInteger(txtValueNet.Texts, out double netWeight);
+      TryGetDisplayedInteger(txtValueTareForTruck.Texts, out double tare);
+      txtValueGross.Texts = WeightFormatHelper.Format(netWeight + tare);
     }
 
     private void BtnConfirm_Click(object? sender, EventArgs e)
@@ -163,19 +173,6 @@ namespace LTP.Truck.Forms
         txtValueNet.Focus();
         return;
       }
-      if (!TryGetPositiveInteger(txtValueGross.Texts, out double grossWeight))
-      {
-        ShowWarning("Giá trị cân Gross phải là số nguyên lớn hơn 0 !");
-        txtValueGross.Focus();
-        return;
-      }
-      if (grossWeight <= netWeight)
-      {
-        ShowWarning("Giá trị cân Gross phải lớn hơn giá trị cân Net !");
-        txtValueGross.Focus();
-        return;
-      }
-
       var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
       if (!validLicense.IsValid)
       {
@@ -199,6 +196,7 @@ namespace LTP.Truck.Forms
         txtValueTareForTruck.Focus();
         return;
       }
+      double grossWeight = netWeight + tare;
 
       var now = DateTime.UtcNow;
       var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
@@ -247,6 +245,10 @@ namespace LTP.Truck.Forms
 
     private static bool TryGetNonNegativeInteger(string value, out double result) =>
       double.TryParse(value.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out result) &&
+      double.IsFinite(result) && result >= 0;
+
+    private static bool TryGetDisplayedInteger(string value, out double result) =>
+      double.TryParse(value.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out result) &&
       double.IsFinite(result) && result >= 0;
 
     private void ShowWarning(string message)
