@@ -34,10 +34,6 @@
       tableLayoutPanel8 = new TableLayoutPanel();
       txtValueWeight01 = new LTP.Truck.Custom.RJTextBox();
       label1 = new Label();
-      tableLayoutPanel20 = new TableLayoutPanel();
-      label9 = new Label();
-      txtValueTareForTruck = new LTP.Truck.Custom.RJTextBox();
-      cbbTareForTruck = new ComboBox();
       label7 = new Label();
       tableLayoutPanel22 = new TableLayoutPanel();
       label16 = new Label();
@@ -77,10 +73,15 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
+      tableLayoutPanel20 = new TableLayoutPanel();
+      label9 = new Label();
+      txtValueTareForTruck = new LTP.Truck.Custom.RJTextBox();
+      cbbTareForTruck = new ComboBox();
+      label11 = new Label();
+      numericUpDownNumberTare = new NumericUpDown();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel8.SuspendLayout();
-      tableLayoutPanel20.SuspendLayout();
       tableLayoutPanel22.SuspendLayout();
       tableLayoutPanel19.SuspendLayout();
       tableLayoutPanel15.SuspendLayout();
@@ -90,6 +91,8 @@
       tableLayoutPanel11.SuspendLayout();
       tableLayoutPanel16.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanel20.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)numericUpDownNumberTare).BeginInit();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -138,9 +141,9 @@
       tableLayoutPanel8.ColumnCount = 2;
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel8.Controls.Add(tableLayoutPanel20, 1, 7);
       tableLayoutPanel8.Controls.Add(txtValueWeight01, 1, 8);
       tableLayoutPanel8.Controls.Add(label1, 0, 8);
-      tableLayoutPanel8.Controls.Add(tableLayoutPanel20, 1, 7);
       tableLayoutPanel8.Controls.Add(label7, 0, 7);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel22, 0, 6);
       tableLayoutPanel8.Controls.Add(label23, 0, 4);
@@ -211,73 +214,6 @@
       label1.TabIndex = 40;
       label1.Text = "Giá trị cân lần 1 (Kg):";
       label1.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // tableLayoutPanel20
-      // 
-      tableLayoutPanel20.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel20.ColumnCount = 4;
-      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel20.Controls.Add(label9, 2, 0);
-      tableLayoutPanel20.Controls.Add(txtValueTareForTruck, 3, 0);
-      tableLayoutPanel20.Controls.Add(cbbTareForTruck, 0, 0);
-      tableLayoutPanel20.Location = new Point(190, 448);
-      tableLayoutPanel20.Margin = new Padding(0);
-      tableLayoutPanel20.Name = "tableLayoutPanel20";
-      tableLayoutPanel20.RowCount = 1;
-      tableLayoutPanel20.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel20.Size = new Size(747, 64);
-      tableLayoutPanel20.TabIndex = 39;
-      // 
-      // label9
-      // 
-      label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label9.AutoSize = true;
-      label9.BackColor = Color.Transparent;
-      label9.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label9.Location = new Point(220, 0);
-      label9.Margin = new Padding(0);
-      label9.Name = "label9";
-      label9.Size = new Size(120, 64);
-      label9.TabIndex = 17;
-      label9.Text = "Giá trị (Kg)";
-      label9.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtValueTareForTruck
-      // 
-      txtValueTareForTruck.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtValueTareForTruck.BackColor = SystemColors.Window;
-      txtValueTareForTruck.BorderColor = Color.Black;
-      txtValueTareForTruck.BorderFocusColor = Color.FromArgb(48, 108, 177);
-      txtValueTareForTruck.BorderRadius = 5;
-      txtValueTareForTruck.BorderSize = 2;
-      txtValueTareForTruck.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      txtValueTareForTruck.ForeColor = Color.FromArgb(64, 64, 64);
-      txtValueTareForTruck.Location = new Point(344, 13);
-      txtValueTareForTruck.Margin = new Padding(4);
-      txtValueTareForTruck.Multiline = false;
-      txtValueTareForTruck.Name = "txtValueTareForTruck";
-      txtValueTareForTruck.Padding = new Padding(10, 7, 10, 7);
-      txtValueTareForTruck.PasswordChar = false;
-      txtValueTareForTruck.PlaceholderColor = Color.DarkGray;
-      txtValueTareForTruck.PlaceholderText = "";
-      txtValueTareForTruck.Size = new Size(399, 38);
-      txtValueTareForTruck.TabIndex = 18;
-      txtValueTareForTruck.Texts = "";
-      txtValueTareForTruck.UnderlinedStyle = false;
-      // 
-      // cbbTareForTruck
-      // 
-      cbbTareForTruck.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      cbbTareForTruck.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbTareForTruck.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      cbbTareForTruck.FormattingEnabled = true;
-      cbbTareForTruck.Location = new Point(3, 15);
-      cbbTareForTruck.Name = "cbbTareForTruck";
-      cbbTareForTruck.Size = new Size(194, 33);
-      cbbTareForTruck.TabIndex = 19;
       // 
       // label7
       // 
@@ -967,6 +903,104 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
+      // tableLayoutPanel20
+      // 
+      tableLayoutPanel20.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel20.ColumnCount = 7;
+      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+      tableLayoutPanel20.Controls.Add(label9, 5, 0);
+      tableLayoutPanel20.Controls.Add(txtValueTareForTruck, 6, 0);
+      tableLayoutPanel20.Controls.Add(cbbTareForTruck, 0, 0);
+      tableLayoutPanel20.Controls.Add(label11, 2, 0);
+      tableLayoutPanel20.Controls.Add(numericUpDownNumberTare, 3, 0);
+      tableLayoutPanel20.Location = new Point(190, 448);
+      tableLayoutPanel20.Margin = new Padding(0);
+      tableLayoutPanel20.Name = "tableLayoutPanel20";
+      tableLayoutPanel20.RowCount = 1;
+      tableLayoutPanel20.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel20.Size = new Size(747, 64);
+      tableLayoutPanel20.TabIndex = 42;
+      // 
+      // label9
+      // 
+      label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label9.AutoSize = true;
+      label9.BackColor = Color.Transparent;
+      label9.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label9.Location = new Point(545, 0);
+      label9.Margin = new Padding(0);
+      label9.Name = "label9";
+      label9.Size = new Size(102, 64);
+      label9.TabIndex = 17;
+      label9.Text = "Giá trị (Kg)";
+      label9.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // txtValueTareForTruck
+      // 
+      txtValueTareForTruck.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtValueTareForTruck.BackColor = SystemColors.Window;
+      txtValueTareForTruck.BorderColor = Color.Black;
+      txtValueTareForTruck.BorderFocusColor = Color.HotPink;
+      txtValueTareForTruck.BorderRadius = 5;
+      txtValueTareForTruck.BorderSize = 2;
+      txtValueTareForTruck.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      txtValueTareForTruck.ForeColor = Color.FromArgb(64, 64, 64);
+      txtValueTareForTruck.Location = new Point(651, 13);
+      txtValueTareForTruck.Margin = new Padding(4);
+      txtValueTareForTruck.Multiline = false;
+      txtValueTareForTruck.Name = "txtValueTareForTruck";
+      txtValueTareForTruck.Padding = new Padding(10, 7, 10, 7);
+      txtValueTareForTruck.PasswordChar = false;
+      txtValueTareForTruck.PlaceholderColor = Color.DarkGray;
+      txtValueTareForTruck.PlaceholderText = "";
+      txtValueTareForTruck.Size = new Size(92, 38);
+      txtValueTareForTruck.TabIndex = 18;
+      txtValueTareForTruck.Texts = "";
+      txtValueTareForTruck.UnderlinedStyle = false;
+      // 
+      // cbbTareForTruck
+      // 
+      cbbTareForTruck.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      cbbTareForTruck.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbTareForTruck.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbTareForTruck.FormattingEnabled = true;
+      cbbTareForTruck.Location = new Point(3, 15);
+      cbbTareForTruck.Name = "cbbTareForTruck";
+      cbbTareForTruck.Size = new Size(368, 33);
+      cbbTareForTruck.TabIndex = 19;
+      // 
+      // label11
+      // 
+      label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label11.AutoSize = true;
+      label11.BackColor = Color.Transparent;
+      label11.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label11.Location = new Point(394, 0);
+      label11.Margin = new Padding(0);
+      label11.Name = "label11";
+      label11.Size = new Size(31, 64);
+      label11.TabIndex = 20;
+      label11.Text = "SL";
+      label11.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // numericUpDownNumberTare
+      // 
+      numericUpDownNumberTare.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      numericUpDownNumberTare.Font = new Font("Roboto", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      numericUpDownNumberTare.Location = new Point(428, 15);
+      numericUpDownNumberTare.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+      numericUpDownNumberTare.Name = "numericUpDownNumberTare";
+      numericUpDownNumberTare.Size = new Size(94, 33);
+      numericUpDownNumberTare.TabIndex = 21;
+      numericUpDownNumberTare.TextAlign = HorizontalAlignment.Right;
+      numericUpDownNumberTare.Value = new decimal(new int[] { 1, 0, 0, 0 });
+      // 
       // PopupAddManual
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -981,8 +1015,6 @@
       tableLayoutPanel4.PerformLayout();
       tableLayoutPanel8.ResumeLayout(false);
       tableLayoutPanel8.PerformLayout();
-      tableLayoutPanel20.ResumeLayout(false);
-      tableLayoutPanel20.PerformLayout();
       tableLayoutPanel22.ResumeLayout(false);
       tableLayoutPanel22.PerformLayout();
       tableLayoutPanel19.ResumeLayout(false);
@@ -997,6 +1029,9 @@
       tableLayoutPanel16.ResumeLayout(false);
       tableLayoutPanel16.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanel20.ResumeLayout(false);
+      tableLayoutPanel20.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)numericUpDownNumberTare).EndInit();
       ResumeLayout(false);
     }
 
@@ -1008,10 +1043,6 @@
     private Common.Custom.RJButton btnClose;
     private TableLayoutPanel tableLayoutPanel4;
     private TableLayoutPanel tableLayoutPanel8;
-    private TableLayoutPanel tableLayoutPanel20;
-    private Label label9;
-    private Custom.RJTextBox txtValueTareForTruck;
-    private ComboBox cbbTareForTruck;
     private Label label7;
     private TableLayoutPanel tableLayoutPanel22;
     private Label label16;
@@ -1050,5 +1081,11 @@
     private Custom.RJButton btnLoadWarehouse;
     private Label label1;
     private Custom.RJTextBox txtValueWeight01;
+    private TableLayoutPanel tableLayoutPanel20;
+    private Label label9;
+    private Custom.RJTextBox txtValueTareForTruck;
+    private ComboBox cbbTareForTruck;
+    private Label label11;
+    private NumericUpDown numericUpDownNumberTare;
   }
 }

@@ -27,7 +27,9 @@ namespace LTP.Truck.Popup
       btnLoadClient.Click += BtnLoadClient_Click;
       btnLoadTypeGoods.Click += BtnLoadTypeGoods_Click;
       btnLoadWarehouse.Click += BtnLoadWarehouse_Click;
+      cbbTareForTruck.Format += CbbTareForTruck_Format;
       cbbTareForTruck.SelectedIndexChanged += CbbTareForTruck_SelectedIndexChanged;
+      numericUpDownNumberTare.ValueChanged += NumericUpDownNumberTare_ValueChanged;
       txtValueWeight01.KeyPress += IntegerTextBox_KeyPress;
       txtValueWeight01._TextChanged += IntegerTextBox_TextChanged;
       txtValueTareForTruck.KeyPress += IntegerTextBox_KeyPress;
@@ -130,8 +132,29 @@ namespace LTP.Truck.Popup
 
     private void CbbTareForTruck_SelectedIndexChanged(object? sender, EventArgs e)
     {
-      var value = (cbbTareForTruck.SelectedItem as TareTruck)?.Value ?? 0;
-      txtValueTareForTruck.Texts = WeightFormatHelper.Format(Math.Round(value));
+      UpdateTareForTruckValue();
+    }
+
+    private void CbbTareForTruck_Format(object? sender, ListControlConvertEventArgs e)
+    {
+      if (e.ListItem is not TareTruck tareTruck)
+        return;
+
+      e.Value = $"{tareTruck.Name} - {WeightFormatHelper.Format(tareTruck.Value ?? 0)} Kg";
+    }
+
+    private void NumericUpDownNumberTare_ValueChanged(object? sender, EventArgs e)
+    {
+      UpdateTareForTruckValue();
+    }
+
+    private void UpdateTareForTruckValue()
+    {
+      var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
+      var tareValue = selectedTare?.Id == Guid.Empty
+        ? 0
+        : (selectedTare?.Value ?? 0) * (double)numericUpDownNumberTare.Value;
+      txtValueTareForTruck.Texts = WeightFormatHelper.Format(tareValue);
     }
 
     private void BtnConfirm_Click(object? sender, EventArgs e)
@@ -188,6 +211,7 @@ namespace LTP.Truck.Popup
         WarehouseId = _warehouseId,
         Tare = tare,
         NameTareForTruck = selectedTare?.Name == "Không có" ? null : selectedTare?.Name,
+        NumberTare = decimal.ToInt32(numericUpDownNumberTare.Value),
         Type = cbbType.SelectedItem?.ToString(),
         StationId = AppCore.Ins._station?.Id,
         UserId = AppCore.Ins._userCurrent?.Id,
