@@ -30,9 +30,9 @@ namespace LTP.Truck.Forms
     /// </summary>
     private void InitializeComponent()
     {
-      DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-      DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+      DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
       tableLayoutPanel1 = new TableLayoutPanel();
       tableLayoutPanel2 = new TableLayoutPanel();
       tableLayoutPanel3 = new TableLayoutPanel();
@@ -114,6 +114,7 @@ namespace LTP.Truck.Forms
       btnExport = new RJButton();
       btnFilter = new Common.Custom.RJButton();
       label27 = new Label();
+      btnAddManual = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
@@ -698,12 +699,15 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel7
       // 
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel7.ColumnCount = 3;
+      tableLayoutPanel7.ColumnCount = 5;
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel7.Controls.Add(txtLicensePlate, 0, 0);
       tableLayoutPanel7.Controls.Add(btnLoadLicensePlate, 2, 0);
+      tableLayoutPanel7.Controls.Add(btnAddManual, 4, 0);
       tableLayoutPanel7.Location = new Point(174, 0);
       tableLayoutPanel7.Margin = new Padding(0);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -730,7 +734,7 @@ namespace LTP.Truck.Forms
       txtLicensePlate.PasswordChar = false;
       txtLicensePlate.PlaceholderColor = Color.DarkGray;
       txtLicensePlate.PlaceholderText = "";
-      txtLicensePlate.Size = new Size(583, 38);
+      txtLicensePlate.Size = new Size(363, 38);
       txtLicensePlate.TabIndex = 15;
       txtLicensePlate.Texts = "";
       txtLicensePlate.UnderlinedStyle = false;
@@ -748,7 +752,7 @@ namespace LTP.Truck.Forms
       btnLoadLicensePlate.FlatStyle = FlatStyle.Flat;
       btnLoadLicensePlate.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoadLicensePlate.ForeColor = Color.Black;
-      btnLoadLicensePlate.Location = new Point(599, 9);
+      btnLoadLicensePlate.Location = new Point(379, 9);
       btnLoadLicensePlate.Name = "btnLoadLicensePlate";
       btnLoadLicensePlate.Size = new Size(54, 38);
       btnLoadLicensePlate.TabIndex = 17;
@@ -1261,35 +1265,35 @@ namespace LTP.Truck.Forms
       dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
       dgv.BackgroundColor = Color.FromArgb(236, 236, 236);
       dgv.BorderStyle = BorderStyle.None;
-      dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle1.BackColor = SystemColors.Control;
-      dataGridViewCellStyle1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle7.BackColor = SystemColors.Control;
+      dataGridViewCellStyle7.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
+      dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle2.BackColor = SystemColors.Window;
-      dataGridViewCellStyle2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-      dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-      dgv.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle8.BackColor = SystemColors.Window;
+      dataGridViewCellStyle8.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle8.ForeColor = SystemColors.ControlText;
+      dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
+      dgv.DefaultCellStyle = dataGridViewCellStyle8;
       dgv.EnableHeadersVisualStyles = false;
       dgv.Location = new Point(3, 115);
       dgv.Name = "dgv";
       dgv.ReadOnly = true;
-      dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle3.BackColor = SystemColors.Control;
-      dataGridViewCellStyle3.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-      dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle9.BackColor = SystemColors.Control;
+      dataGridViewCellStyle9.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      dataGridViewCellStyle9.ForeColor = SystemColors.WindowText;
+      dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
+      dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
+      dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
+      dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
       dgv.RowHeadersVisible = false;
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.Size = new Size(1773, 419);
@@ -1520,6 +1524,31 @@ namespace LTP.Truck.Forms
       label27.Text = "Lịch sử cân";
       label27.TextAlign = ContentAlignment.MiddleLeft;
       // 
+      // btnAddManual
+      // 
+      btnAddManual.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnAddManual.BackColor = Color.FromArgb(64, 107, 177);
+      btnAddManual.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnAddManual.BorderColor = Color.White;
+      btnAddManual.BorderRadius = 5;
+      btnAddManual.BorderSize = 0;
+      btnAddManual.FlatAppearance.BorderColor = Color.White;
+      btnAddManual.FlatAppearance.BorderSize = 0;
+      btnAddManual.FlatStyle = FlatStyle.Flat;
+      btnAddManual.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnAddManual.ForeColor = Color.White;
+      btnAddManual.Image = Properties.Resources.icon_create_manual;
+      btnAddManual.ImageAlign = ContentAlignment.MiddleLeft;
+      btnAddManual.Location = new Point(459, 3);
+      btnAddManual.Name = "btnAddManual";
+      btnAddManual.Padding = new Padding(10, 0, 0, 0);
+      btnAddManual.Size = new Size(194, 51);
+      btnAddManual.TabIndex = 34;
+      btnAddManual.Text = "       Tạo thủ công";
+      btnAddManual.TextAlign = ContentAlignment.MiddleLeft;
+      btnAddManual.TextColor = Color.White;
+      btnAddManual.UseVisualStyleBackColor = false;
+      // 
       // FrmHomeGoods
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1657,5 +1686,6 @@ namespace LTP.Truck.Forms
     private RJButton btnCreate;
     private TableLayoutPanel tableLayoutPanel25;
     private TableLayoutPanel tableLayoutPanel26;
+    private RJButton btnAddManual;
   }
 }
