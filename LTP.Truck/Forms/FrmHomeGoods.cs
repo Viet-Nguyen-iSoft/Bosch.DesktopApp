@@ -32,6 +32,9 @@ namespace LTP.Truck.Forms
     private string _deleteReasonToolTipText = string.Empty;
     private List<Product> _products = new();
     private List<ProductGroup> _productGroups = new();
+    private List<CategoryTare> _categoryTares = new();
+    private List<Delivery> _deliveries = new();
+    private bool _isViewingHistoricalDetail;
     private Guid? _filterProductGroupId;
     private iSoft.Database.EnumData.EnumWasteType? _filterWasteType;
     private int _filterDataTypeIndex = 1;
@@ -54,6 +57,7 @@ namespace LTP.Truck.Forms
       cbbTare.SelectionChangeCommitted += cbbTare_SelectedValueChanged;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       btnFilter.Click += btnFilter_Click;
+      btnCreate.Click += btnCreate_Click;
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       lbTare.Text = "---";
       this.Load += FrmHomeGoods_Load;
@@ -94,12 +98,12 @@ namespace LTP.Truck.Forms
       elipseControl02.CornerRadius = 20;
 
       ElipseControl elipseControl03 = new ElipseControl();
-      elipseControl03.TargetControl = tableLayoutPanel14;
+      elipseControl03.TargetControl = tableLayoutPanel26;
       elipseControl03.CornerRadius = 20;
 
-      ElipseControl elipseControl04 = new ElipseControl();
-      elipseControl04.TargetControl = tableLayoutPanel17;
-      elipseControl04.CornerRadius = 20;
+      //ElipseControl elipseControl04 = new ElipseControl();
+      //elipseControl04.TargetControl = tableLayoutPanel17;
+      //elipseControl04.CornerRadius = 20;
 
       ElipseControl elipseControl05 = new ElipseControl();
       elipseControl05.TargetControl = tableLayoutPanel12;
@@ -477,6 +481,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      _categoryTares = categoryTares;
       cbbTare.DisplayMember = nameof(CategoryTare.Name);
       cbbTare.ValueMember = nameof(CategoryTare.Id);
       cbbTare.DataSource = categoryTares;
@@ -490,6 +495,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      _deliveries = deliveries;
       cbbDelivery.DisplayMember = nameof(Delivery.Name);
       cbbDelivery.ValueMember = nameof(Delivery.Id);
       cbbDelivery.DataSource = deliveries;
@@ -1169,7 +1175,9 @@ namespace LTP.Truck.Forms
       if (dgv.Rows[e.RowIndex].DataBoundItem is RecordWeightDTO recordWeightDto &&
           recordWeightDto.RecordWeight is RecordWeight recordWeight)
       {
+        _isViewingHistoricalDetail = true;
         ShowHistoricalRecord(recordWeight);
+        ApplyHistoricalViewMode();
         await LoadSumWeightAsync(recordWeight.LicensePlate ?? string.Empty);
       }
 
@@ -1226,6 +1234,63 @@ namespace LTP.Truck.Forms
       ucItemWeight01.Time = recordedAt;
       ucItemWeight02.Time = recordedAt;
       ucItemOffsetWeight.Time = recordedAt;
+    }
+
+    private void ApplyHistoricalViewMode()
+    {
+      var canEdit = !_isViewingHistoricalDetail;
+
+      txtLicensePlate.Enabled = canEdit;
+      txtNameDriver.Enabled = canEdit;
+      txtIdCard.Enabled = canEdit;
+      txtNote.ReadOnly = !canEdit;
+      cbbDelivery.Enabled = canEdit;
+      cbbProductGroup.Enabled = canEdit;
+      cbbProduct.Enabled = canEdit;
+      cbbTare.Enabled = canEdit;
+      btnLoadLicensePlate.Enabled = canEdit;
+      btnSaveData.Enabled = canEdit && !_waitingForWeightReset;
+    }
+
+    private void btnCreate_Click(object? sender, EventArgs e)
+    {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var openErrorPopup = new PopupNoPermitRole();
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
+      _isViewingHistoricalDetail = false;
+      _recordTruckDTO = null!;
+      _categoryTare = null;
+
+      SetProductGroup(_productGroups);
+      SetTare(_categoryTares);
+      SetDelivery(_deliveries);
+
+      txtLicensePlate.Texts = string.Empty;
+      txtNameDriver.Texts = string.Empty;
+      txtIdCard.Texts = string.Empty;
+      txtNote.Text = string.Empty;
+      cbbProductGroup.SelectedIndex = -1;
+      cbbProduct.DataSource = null;
+      cbbTare.SelectedIndex = -1;
+      cbbDelivery.SelectedIndex = -1;
+      lbTare.Text = "---";
+      lbSumWeight.Text = "---";
+
+      ucItemWeight01.Value = "---";
+      ucItemWeight01.Time = "---";
+      ucItemWeight02.Value = "---";
+      ucItemWeight02.Time = "---";
+      ucItemOffsetWeight.Value = "---";
+      ucItemOffsetWeight.Time = "---";
+
+      dgv.ClearSelection();
+      dgv.CurrentCell = null;
+      ApplyHistoricalViewMode();
+      txtLicensePlate.Focus();
     }
 
     private static string FirstNotBlank(string? primary, string? fallback)
