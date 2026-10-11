@@ -24,6 +24,9 @@ namespace LTP.Truck.Forms
   {
     private const string SelectColumnName = "SelectRecord";
     private List<Product> _products = new();
+    private List<ProductGroup> _productGroups = new();
+    private Guid? _filterProductGroupId;
+    private iSoft.Database.EnumData.EnumWasteType? _filterWasteType;
     private int _productGroupRefreshVersion;
     private int _productRefreshVersion;
     private int _tareRefreshVersion;
@@ -42,6 +45,7 @@ namespace LTP.Truck.Forms
 
       cbbTare.SelectionChangeCommitted += cbbTare_SelectedValueChanged;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
+      btnFilter.Click += btnFilter_Click;
       txtLicensePlate._TextChanged += TxtLicensePlate__TextChanged;
       lbTare.Text = "---";
       this.Load += FrmHomeGoods_Load;
@@ -437,6 +441,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      _productGroups = productGroups;
       cbbProductGroup.DisplayMember = nameof(ProductGroup.Name);
       cbbProductGroup.ValueMember = nameof(ProductGroup.Id);
       cbbProductGroup.DataSource = productGroups;
@@ -840,6 +845,22 @@ namespace LTP.Truck.Forms
       }
     }
 
+    private void btnFilter_Click(object? sender, EventArgs e)
+    {
+      using var popup = new PopupFilterGoods(
+        _productGroups,
+        _filterProductGroupId,
+        _filterWasteType);
+
+      popup.OnSendData += async (productGroupId, wasteType) =>
+      {
+        _filterProductGroupId = productGroupId;
+        _filterWasteType = wasteType;
+        await LoadHistorical();
+      };
+      popup.ShowDialog(this);
+    }
+
     private async Task LoadHistorical()
     {
       var fromDateTime = ucTimeSearchFrom.Value;
@@ -861,6 +882,20 @@ namespace LTP.Truck.Forms
         fromUtc,
         toUtcExclusive,
         searchKey);
+
+      if (_filterProductGroupId.HasValue)
+      {
+        records = records
+          .Where(record => record.Product?.ProductGroupId == _filterProductGroupId.Value)
+          .ToList();
+      }
+
+      if (_filterWasteType.HasValue)
+      {
+        records = records
+          .Where(record => record.Product?.EnumWasteType == _filterWasteType.Value)
+          .ToList();
+      }
 
       SetDgvHistorical(DTOHelper.ConvertRecordWeightDTO(records));
     }
