@@ -67,7 +67,7 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
-      rjButton1 = new RJButton();
+      btnAuditLog = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -182,7 +182,7 @@ namespace LTP.Truck.Forms
       flowLayoutPanel1.Controls.Add(btnReportGoods);
       flowLayoutPanel1.Controls.Add(btnUser);
       flowLayoutPanel1.Controls.Add(btnSetting);
-      flowLayoutPanel1.Controls.Add(rjButton1);
+      flowLayoutPanel1.Controls.Add(btnAuditLog);
       flowLayoutPanel1.Location = new Point(0, 0);
       flowLayoutPanel1.Margin = new Padding(0);
       flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -758,29 +758,29 @@ namespace LTP.Truck.Forms
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
       // 
-      // rjButton1
+      // btnAuditLog
       // 
-      rjButton1.BackColor = Color.Silver;
-      rjButton1.BackgroundColor = Color.Silver;
-      rjButton1.BorderColor = Color.PaleVioletRed;
-      rjButton1.BorderRadius = 5;
-      rjButton1.BorderSize = 0;
-      rjButton1.Dock = DockStyle.Top;
-      rjButton1.FlatAppearance.BorderSize = 0;
-      rjButton1.FlatStyle = FlatStyle.Flat;
-      rjButton1.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      rjButton1.ForeColor = Color.Black;
-      rjButton1.Image = Properties.Resources.management;
-      rjButton1.ImageAlign = ContentAlignment.MiddleLeft;
-      rjButton1.Location = new Point(3, 903);
-      rjButton1.Name = "rjButton1";
-      rjButton1.Padding = new Padding(15, 0, 0, 0);
-      rjButton1.Size = new Size(242, 70);
-      rjButton1.TabIndex = 47;
-      rjButton1.Text = "        AUDIT LOG";
-      rjButton1.TextAlign = ContentAlignment.MiddleLeft;
-      rjButton1.TextColor = Color.Black;
-      rjButton1.UseVisualStyleBackColor = false;
+      btnAuditLog.BackColor = Color.Silver;
+      btnAuditLog.BackgroundColor = Color.Silver;
+      btnAuditLog.BorderColor = Color.PaleVioletRed;
+      btnAuditLog.BorderRadius = 5;
+      btnAuditLog.BorderSize = 0;
+      btnAuditLog.Dock = DockStyle.Top;
+      btnAuditLog.FlatAppearance.BorderSize = 0;
+      btnAuditLog.FlatStyle = FlatStyle.Flat;
+      btnAuditLog.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnAuditLog.ForeColor = Color.Black;
+      btnAuditLog.Image = Properties.Resources.management;
+      btnAuditLog.ImageAlign = ContentAlignment.MiddleLeft;
+      btnAuditLog.Location = new Point(3, 903);
+      btnAuditLog.Name = "btnAuditLog";
+      btnAuditLog.Padding = new Padding(15, 0, 0, 0);
+      btnAuditLog.Size = new Size(242, 70);
+      btnAuditLog.TabIndex = 47;
+      btnAuditLog.Text = "        AUDIT LOG";
+      btnAuditLog.TextAlign = ContentAlignment.MiddleLeft;
+      btnAuditLog.TextColor = Color.Black;
+      btnAuditLog.UseVisualStyleBackColor = false;
       // 
       // FrmOperation
       // 
@@ -846,6 +846,6 @@ namespace LTP.Truck.Forms
     private RJButton btnReportGoods;
     private RJButton btnUser;
     private RJButton btnSetting;
-    private RJButton rjButton1;
+    private RJButton btnAuditLog;
   }
 }

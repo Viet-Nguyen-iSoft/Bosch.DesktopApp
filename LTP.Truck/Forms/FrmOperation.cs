@@ -44,6 +44,7 @@ namespace LTP.Truck.Forms
       this.btnReportTruck.Click += btnReportTruck_Click;
       this.btnReportGoods.Click += btnReportGoods_Click;
       this.btnUser.Click += BtnUser_Click;
+      this.btnAuditLog.Click += BtnAuditLog_Click;
       this.ucLogin.Click += UcLogin_Click;
     }
 
@@ -92,7 +93,7 @@ namespace LTP.Truck.Forms
       Button[] menuButtons =
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
-        btnUser, btnClient, btnTypeGoods, btnWarehouse, btnTareForTruck, btnTare,
+        btnUser, btnAuditLog, btnClient, btnTypeGoods, btnWarehouse, btnTareForTruck, btnTare,
         btnGroupProduct, btnProduct, btnDelivery
       };
 
@@ -112,7 +113,7 @@ namespace LTP.Truck.Forms
       return new[]
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
-        btnUser
+        btnUser, btnAuditLog
       };
     }
 
@@ -576,6 +577,10 @@ namespace LTP.Truck.Forms
             OpenChildForm(appModulSupport, FrmUser.Instance);
             await FrmUser.Instance.LoadData();
             break;
+          case EnumScreen.AuditLog:
+            OpenChildForm(appModulSupport, FrmAuditLog.Instance);
+            await FrmAuditLog.Instance.LoadData();
+            break;
         }
 
         ShowPagePath(appModulSupport);
@@ -610,6 +615,7 @@ namespace LTP.Truck.Forms
         EnumScreen.MD_Product => "Trang chính > Master Data > Chất thải",
         EnumScreen.MD_Delivery => "Trang chính > Master Data > Khách hàng giao",
         EnumScreen.User => "Trang chính > Tài khoản",
+        EnumScreen.AuditLog => "Trang chính > Audit Log",
         _ => "Trang chính"
       };
     }
@@ -757,6 +763,12 @@ namespace LTP.Truck.Forms
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.User);
+    }
+
+    private async void BtnAuditLog_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      await ChangePage(EnumScreen.AuditLog);
     }
   }
 }

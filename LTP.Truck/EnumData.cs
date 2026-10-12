@@ -30,6 +30,7 @@ namespace LTP.Truck
       MD_TareForTruck,
 
       User,
+      AuditLog,
 
       OpChooseModeFunction,
       OpTypePO,

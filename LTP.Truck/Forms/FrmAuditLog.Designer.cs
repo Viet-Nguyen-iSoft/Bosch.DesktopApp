@@ -113,20 +113,15 @@
       // tableLayoutPanel11
       // 
       tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel11.ColumnCount = 10;
+      tableLayoutPanel11.ColumnCount = 8;
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 12F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 12F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.Controls.Add(label17, 2, 0);
       tableLayoutPanel11.Controls.Add(label18, 4, 0);
       tableLayoutPanel11.Controls.Add(ucTimeSearchFrom, 3, 0);
@@ -147,7 +142,7 @@
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(-130, 0);
+      label17.Location = new Point(278, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
       label17.Size = new Size(32, 62);
@@ -161,7 +156,7 @@
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(222, 0);
+      label18.Location = new Point(630, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
       label18.Size = new Size(42, 62);
@@ -172,7 +167,7 @@
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(-95, 3);
+      ucTimeSearchFrom.Location = new Point(313, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 28;
@@ -180,7 +175,7 @@
       // ucTimeSearchTo
       // 
       ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(267, 3);
+      ucTimeSearchTo.Location = new Point(675, 3);
       ucTimeSearchTo.Name = "ucTimeSearchTo";
       ucTimeSearchTo.Size = new Size(314, 56);
       ucTimeSearchTo.TabIndex = 29;
@@ -200,7 +195,7 @@
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(607, 3);
+      btnSearchHistorical.Location = new Point(1007, 3);
       btnSearchHistorical.Name = "btnSearchHistorical";
       btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
       btnSearchHistorical.Size = new Size(174, 55);
@@ -215,10 +210,9 @@
       cbbType.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbType.Font = new Font("Roboto", 16.25F, FontStyle.Bold);
       cbbType.FormattingEnabled = true;
-      cbbType.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số", "Nhóm theo Bên nhận", "Nhóm theo Nhóm chất thải" });
       cbbType.Location = new Point(3, 13);
       cbbType.Name = "cbbType";
-      cbbType.Size = new Size(1, 35);
+      cbbType.Size = new Size(260, 35);
       cbbType.TabIndex = 32;
       // 
       // label27

@@ -117,7 +117,27 @@ namespace LTP.Truck.Controls
 
     public AppConfig? _appConfig { get;set; }
     public Station? _station { get;set; }
-    public User? _userCurrent { get;set; }
+    private User? _currentUser;
+    public User? _userCurrent
+    {
+      get => _currentUser;
+      set
+      {
+        _currentUser = value;
+        if (value == null)
+        {
+          AuditActorContext.Clear();
+          return;
+        }
+
+        AuditActorContext.SetActor(
+          value.Id,
+          value.Username,
+          string.IsNullOrWhiteSpace(value.DisplayName)
+            ? value.FullName
+            : value.DisplayName);
+      }
+    }
     public Connection? _connection { get;set; }
 
 
