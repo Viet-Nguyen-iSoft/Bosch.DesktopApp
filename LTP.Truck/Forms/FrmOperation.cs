@@ -769,6 +769,16 @@ namespace LTP.Truck.Forms
 
     private async void BtnAuditLog_Click(object? sender, EventArgs e)
     {
+      var permissionCode = Environment.GetEnvironmentVariable("STATION") == "1"
+        ? "0203"
+        : "0303";
+      if (!AppCore.Ins.CheckPermission(permissionCode))
+      {
+        using var openErrorPopup = new PopupNoPermitRole();
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.AuditLog);
     }

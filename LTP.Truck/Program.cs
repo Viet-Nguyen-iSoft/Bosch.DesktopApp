@@ -91,6 +91,8 @@ namespace LTP.Truck
       ["0200"] = "Cho phép thêm dữ liệu Manual cân lần 1",
       ["0201"] = "Cho phép xóa dữ liệu cân",
       ["0202"] = "Cho phép thu hồi dữ liệu đã xóa",
+      ["0203"] = "Cho phép xem Audit Log",
+      ["0203"] = "Cho phép truy cập trang Audit",
     };
     private static Dictionary<string, string> PermissionsGoods = new Dictionary<string, string>
     {
@@ -109,6 +111,8 @@ namespace LTP.Truck
 
       ["0300"] = "Cho phép xóa dữ liệu cân",
       ["0301"] = "Cho phép thu hồi dữ liệu đã xóa",
+      ["0303"] = "Cho phép xem Audit Log",
+      ["0303"] = "Cho phép truy cập trang Audit",
     };
 
     static async Task<bool> InitDb()

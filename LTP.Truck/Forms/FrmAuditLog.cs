@@ -50,7 +50,7 @@ namespace LTP.Truck.Forms
       dgv.EnableHeadersVisualStyles = false;
       dgv.ColumnHeadersHeight = 50;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-      dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+      dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
       dgv.ScrollBars = ScrollBars.Both;
       dgv.RowTemplate.Height = 60;
@@ -124,34 +124,12 @@ namespace LTP.Truck.Forms
 
     private void ConfigureGridColumns()
     {
-      SetColumnWidth(nameof(AuditLogDTO.OccurredAt), 180);
-      SetColumnWidth(nameof(AuditLogDTO.Action), 190);
-      SetColumnWidth(nameof(AuditLogDTO.EntityType), 170);
       if (dgv.Columns.Contains(nameof(AuditLogDTO.EntityId)))
         dgv.Columns[nameof(AuditLogDTO.EntityId)].Visible = false;
-      SetColumnWidth(nameof(AuditLogDTO.EntityName), 220);
-      SetColumnWidth(nameof(AuditLogDTO.Username), 160);
-      SetColumnWidth(nameof(AuditLogDTO.UserDisplayName), 220);
-      SetColumnWidth(nameof(AuditLogDTO.Source), 180);
-      SetColumnWidth(nameof(AuditLogDTO.Reason), 300);
-      SetColumnWidth(nameof(AuditLogDTO.Result), 130);
-      SetColumnWidth(nameof(AuditLogDTO.BeforeData), 420);
-      SetColumnWidth(nameof(AuditLogDTO.AfterData), 420);
-      SetColumnWidth(nameof(AuditLogDTO.ErrorMessage), 420);
 
       if (dgv.Columns.Contains(nameof(AuditLogDTO.OccurredAt)))
         dgv.Columns[nameof(AuditLogDTO.OccurredAt)].DefaultCellStyle.Format =
           "dd/MM/yyyy HH:mm:ss";
-    }
-
-    private void SetColumnWidth(string columnName, int width)
-    {
-      if (!dgv.Columns.Contains(columnName))
-        return;
-
-      dgv.Columns[columnName].AutoSizeMode =
-        DataGridViewAutoSizeColumnMode.None;
-      dgv.Columns[columnName].Width = width;
     }
 
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)
