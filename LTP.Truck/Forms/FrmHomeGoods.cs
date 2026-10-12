@@ -1515,7 +1515,7 @@ namespace LTP.Truck.Forms
         .Cast<DataGridViewRow>()
         .Where(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value))
         .Select(row => row.DataBoundItem as RecordWeightDTO)
-        .Where(dto => dto?.RecordWeight is not null)
+        //.Where(dto => dto?.RecordWeight is not null)
         .Select(dto => dto!)
         .ToList();
 

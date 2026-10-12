@@ -1,0 +1,12 @@
+<tr>
+	<td>
+		Biển số xe:
+		<span class="fill"
+			>{vehiclePlate}</span
+		>
+	</td>
+	<td class="seal-no">
+		SEAL số:
+		<span class="fill">{sealNo}</span>
+	</td>
+</tr>

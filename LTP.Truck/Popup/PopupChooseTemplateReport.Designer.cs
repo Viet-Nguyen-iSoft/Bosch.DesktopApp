@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupChooseTemplateReport));
       btnHcP_TH = new LTP.Truck.Custom.RJButton();
       btnHcP_CN = new LTP.Truck.Custom.RJButton();
       btnHcP_SH = new LTP.Truck.Custom.RJButton();
@@ -36,6 +37,8 @@
       btnTGA_TH = new LTP.Truck.Custom.RJButton();
       btnBiwaseScrapSale = new LTP.Truck.Custom.RJButton();
       lbStatusWeight = new Label();
+      btnConfirm = new Common.Custom.RJButton();
+      btnClose = new Common.Custom.RJButton();
       SuspendLayout();
       // 
       // btnHcP_TH
@@ -193,12 +196,61 @@
       lbStatusWeight.Text = "Chọn mẫu biên bản";
       lbStatusWeight.TextAlign = ContentAlignment.MiddleRight;
       // 
+      // btnConfirm
+      // 
+      btnConfirm.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnConfirm.BackColor = Color.FromArgb(51, 108, 181);
+      btnConfirm.BackgroundColor = Color.FromArgb(51, 108, 181);
+      btnConfirm.BorderColor = Color.PaleVioletRed;
+      btnConfirm.BorderRadius = 4;
+      btnConfirm.BorderSize = 0;
+      btnConfirm.FlatAppearance.BorderSize = 0;
+      btnConfirm.FlatStyle = FlatStyle.Flat;
+      btnConfirm.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnConfirm.ForeColor = Color.White;
+      btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
+      btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
+      btnConfirm.Location = new Point(378, 434);
+      btnConfirm.Name = "btnConfirm";
+      btnConfirm.Padding = new Padding(10, 0, 0, 0);
+      btnConfirm.Size = new Size(174, 54);
+      btnConfirm.TabIndex = 9;
+      btnConfirm.Text = "       Xác nhận";
+      btnConfirm.TextColor = Color.White;
+      btnConfirm.UseVisualStyleBackColor = false;
+      // 
+      // btnClose
+      // 
+      btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnClose.BackColor = Color.Tomato;
+      btnClose.BackgroundColor = Color.Tomato;
+      btnClose.BorderColor = Color.PaleVioletRed;
+      btnClose.BorderRadius = 4;
+      btnClose.BorderSize = 0;
+      btnClose.FlatAppearance.BorderSize = 0;
+      btnClose.FlatStyle = FlatStyle.Flat;
+      btnClose.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnClose.ForeColor = Color.White;
+      btnClose.Image = (Image)resources.GetObject("btnClose.Image");
+      btnClose.ImageAlign = ContentAlignment.MiddleLeft;
+      btnClose.Location = new Point(558, 434);
+      btnClose.Name = "btnClose";
+      btnClose.Padding = new Padding(10, 0, 0, 0);
+      btnClose.Size = new Size(174, 54);
+      btnClose.TabIndex = 10;
+      btnClose.Text = "       Đóng";
+      btnClose.TextColor = Color.White;
+      btnClose.UseVisualStyleBackColor = false;
+      btnClose.Click += btnClose_Click;
+      // 
       // PopupChooseTemplateReport
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(744, 500);
       ControlBox = false;
+      Controls.Add(btnConfirm);
+      Controls.Add(btnClose);
       Controls.Add(lbStatusWeight);
       Controls.Add(btnBiwaseScrapSale);
       Controls.Add(btnTGA_SH);
@@ -224,5 +276,7 @@
     private Custom.RJButton btnTGA_TH;
     private Custom.RJButton btnBiwaseScrapSale;
     private Label lbStatusWeight;
+    private Common.Custom.RJButton btnConfirm;
+    private Common.Custom.RJButton btnClose;
   }
 }

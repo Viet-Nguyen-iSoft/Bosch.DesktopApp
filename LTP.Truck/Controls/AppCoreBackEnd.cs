@@ -273,7 +273,8 @@ namespace LTP.Truck.Controls
       string licensePlate, 
       List<RecordWeight> exportData, 
       InforCompanyDTO inforCompanyA,
-      InforCompanyDTO inforCompanyB)
+      InforCompanyDTO inforCompanyB,
+      List<RecordTruck>? exportTruckData = null)
     {
       string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
       //string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
@@ -322,6 +323,25 @@ namespace LTP.Truck.Controls
           ProductName = group.First().Product?.Name ?? string.Empty,
           ProductCode = group.First().Product?.Code ?? string.Empty,
           SumNet = group.Sum(recordWeight => recordWeight.Net)
+        })
+        .Concat((exportTruckData ?? new List<RecordTruck>())
+          .GroupBy(recordTruck => recordTruck.TypeGoodsId)
+          .Select(group => new
+          {
+            ProductGroup = (string?)null,
+            ProductName = group.First().TypeGoods?.Name ?? string.Empty,
+            ProductCode = group.First().TypeGoods?.Code ?? string.Empty,
+            SumNet = group.Sum(recordTruck => Math.Max(
+              0,
+              Math.Abs(recordTruck.NetTime01)))
+          }))
+        .GroupBy(item => new { item.ProductName, item.ProductCode })
+        .Select(group => new
+        {
+          ProductGroup = group.First().ProductGroup,
+          group.Key.ProductName,
+          group.Key.ProductCode,
+          SumNet = group.Sum(item => item.SumNet)
         })
         .ToList();
 

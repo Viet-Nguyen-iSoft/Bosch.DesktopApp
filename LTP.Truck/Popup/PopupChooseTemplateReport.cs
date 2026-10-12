@@ -41,11 +41,33 @@ namespace LTP.Truck.Popup
 
     private async void btnHcP_TH_Click(object sender, EventArgs e)
     {
-      List<RecordWeight> exportData = SelectedData?.Where(x=>x.Source == "Cân hàng")
-        .Select(dto => dto.RecordWeight!)
+      List<RecordWeight> recordWeights = SelectedData
+        .Where(dto => string.Equals(dto.Source, "Cân hàng", StringComparison.OrdinalIgnoreCase))
+        .Select(dto => dto.RecordWeight)
+        .Where(record => record is not null)
+        .Select(record => record!)
         .ToList();
 
-      string licensePlate = exportData[0].LicensePlate?.Trim() ?? string.Empty;
+      List<RecordTruck> recordTrucks = SelectedData
+        .Where(dto => string.Equals(dto.Source, "Cân xe tải", StringComparison.OrdinalIgnoreCase))
+        .Select(dto => dto.RecordTruck)
+        .Where(record => record is not null)
+        .Select(record => record!)
+        .ToList();
+
+      if (recordWeights.Count == 0 && recordTrucks.Count == 0)
+      {
+        using var popupMsg = new PopupConfirm(
+          "Không có dữ liệu hợp lệ để xuất báo cáo !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      string licensePlate = recordWeights.FirstOrDefault()?.LicensePlate?.Trim()
+        ?? recordTrucks.FirstOrDefault()?.LicensePlate?.Trim()
+        ?? string.Empty;
       InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
       {
         Company = AppCore.Ins._appConfig?.Company,
@@ -57,21 +79,28 @@ namespace LTP.Truck.Popup
 
       InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
       {
-        Company = exportData.FirstOrDefault()?.Delivery?.Name,
-        OfficeAddress = exportData.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
+        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
+          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
+        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
+        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
+        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
+        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
       };
 
-      await DownloadFileWorkReport(exportData, licensePlate, inforCompanyDTO_A, inforCompanyDTO_B);
+      await DownloadFileWorkReport(
+        recordWeights,
+        recordTrucks,
+        licensePlate,
+        inforCompanyDTO_A,
+        inforCompanyDTO_B);
     }
 
 
 
     #region Export PDF Goods
     private async Task DownloadFileWorkReport(
-      List<RecordWeight> exportData,
+      List<RecordWeight> recordWeights,
+      List<RecordTruck> recordTrucks,
       string licensePlate,
       InforCompanyDTO inforCompanyA,
       InforCompanyDTO inforCompanyB)
@@ -80,7 +109,13 @@ namespace LTP.Truck.Popup
       {
         DateTime dt = DateTime.Now;
 
-        var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData, inforCompanyA, inforCompanyB);
+        var pdfPath = await AppCore.Ins.ExportPdfGoods(
+          dt,
+          licensePlate,
+          recordWeights,
+          inforCompanyA,
+          inforCompanyB,
+          recordTrucks);
 
         var openReportFile = false;
         using (var popup = new PopupConfirm(
@@ -131,5 +166,10 @@ namespace LTP.Truck.Popup
     }
 
     #endregion
+
+    private void btnClose_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
   }
 }
