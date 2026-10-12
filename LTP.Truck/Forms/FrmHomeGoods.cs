@@ -927,12 +927,18 @@ namespace LTP.Truck.Forms
         records = records
           .Where(record => record.Product?.ProductGroupId == _filterProductGroupId.Value)
           .ToList();
+        truckRecords = truckRecords
+          .Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value)
+          .ToList();
       }
 
       if (_filterWasteType.HasValue)
       {
         records = records
           .Where(record => record.Product?.EnumWasteType == _filterWasteType.Value)
+          .ToList();
+        truckRecords = truckRecords
+          .Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value)
           .ToList();
       }
 
@@ -942,10 +948,6 @@ namespace LTP.Truck.Forms
         0 => truckRecords,
         _ => truckRecords.Where(record => !record.DeletedFlag).ToList(),
       };
-
-      // Product group and waste type only exist on Goods records.
-      if (_filterProductGroupId.HasValue || _filterWasteType.HasValue)
-        truckRecords.Clear();
 
       SetDgvHistorical(DTOHelper.ConvertCombinedHistoryDTO(records, truckRecords));
     }

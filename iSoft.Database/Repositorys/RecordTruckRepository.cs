@@ -86,6 +86,7 @@ namespace iSoft.Database.Repositorys
         .AsNoTracking()
         .Include(record => record.Client)
         .Include(record => record.TypeGoods)
+          .ThenInclude(typeGoods => typeGoods.ProductGroup)
         .Include(record => record.Warehouse)
         .Include(record => record.User)
         .Include(record => record.Station)
@@ -115,6 +116,10 @@ namespace iSoft.Database.Repositorys
           (record.Note != null && EF.Functions.Collate(record.Note, SearchCollation).Contains(searchKey)) ||
           (record.Client != null && record.Client.Name != null && EF.Functions.Collate(record.Client.Name, SearchCollation).Contains(searchKey)) ||
           (record.TypeGoods != null && record.TypeGoods.Name != null && EF.Functions.Collate(record.TypeGoods.Name, SearchCollation).Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.ProductGroup != null &&
+            record.TypeGoods.ProductGroup.Code != null && EF.Functions.Collate(record.TypeGoods.ProductGroup.Code, SearchCollation).Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.ProductGroup != null &&
+            record.TypeGoods.ProductGroup.Name != null && EF.Functions.Collate(record.TypeGoods.ProductGroup.Name, SearchCollation).Contains(searchKey)) ||
           (record.Warehouse != null && record.Warehouse.Name != null && EF.Functions.Collate(record.Warehouse.Name, SearchCollation).Contains(searchKey)) ||
           (record.Station != null && record.Station.Name != null && EF.Functions.Collate(record.Station.Name, SearchCollation).Contains(searchKey)));
       }

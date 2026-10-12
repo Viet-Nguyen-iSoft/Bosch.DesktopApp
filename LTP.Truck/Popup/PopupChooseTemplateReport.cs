@@ -73,7 +73,6 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      string licensePlate = string.Join(", ", licensePlates);
       InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
       {
         Company = AppCore.Ins._appConfig?.Company,
