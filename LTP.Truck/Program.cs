@@ -109,6 +109,7 @@ namespace LTP.Truck
             await EnsureUserPasswordPolicyColumnsAsync(db);
             await EnsureAppConfigPrintColumnsAsync(db);
             await EnsureRecordWeightReasonDeleteColumnAsync(db);
+            await EnsureTypeGoodsWasteColumnsAsync(db);
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
@@ -308,6 +309,50 @@ namespace LTP.Truck
           ALTER TABLE `RecordTrucks`
           ADD COLUMN `NumberTare` int NULL DEFAULT 1;";
         await addColumnCommand.ExecuteNonQueryAsync();
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureTypeGoodsWasteColumnsAsync(
+      MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        var columns = new Dictionary<string, string>
+        {
+          ["EnumWasteType"] = "int NOT NULL DEFAULT 0",
+          ["ProductGroupId"] = "char(36) NULL"
+        };
+
+        foreach (var column in columns)
+        {
+          await using var checkCommand =
+            db.Database.GetDbConnection().CreateCommand();
+          checkCommand.CommandText = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'TypeGoods'
+              AND COLUMN_NAME = @columnName;";
+
+          var parameter = checkCommand.CreateParameter();
+          parameter.ParameterName = "@columnName";
+          parameter.Value = column.Key;
+          checkCommand.Parameters.Add(parameter);
+
+          if (Convert.ToInt32(await checkCommand.ExecuteScalarAsync()) > 0)
+            continue;
+
+          await using var addCommand =
+            db.Database.GetDbConnection().CreateCommand();
+          addCommand.CommandText =
+            $"ALTER TABLE `TypeGoods` ADD COLUMN `{column.Key}` {column.Value};";
+          await addCommand.ExecuteNonQueryAsync();
+        }
       }
       finally
       {

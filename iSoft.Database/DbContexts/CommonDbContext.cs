@@ -101,6 +101,16 @@ namespace iSoft.Database.DbContexts
         .HasConversion<int>()
         .HasDefaultValue((EnumData.EnumWasteType)0);
 
+      modelBuilder.Entity<TypeGoods>()
+        .Property(typeGoods => typeGoods.EnumWasteType)
+        .HasConversion<int>()
+        .HasDefaultValue((EnumData.EnumWasteType)0);
+
+      modelBuilder.Entity<TypeGoods>()
+        .HasOne(typeGoods => typeGoods.ProductGroup)
+        .WithMany()
+        .HasForeignKey(typeGoods => typeGoods.ProductGroupId);
+
       modelBuilder.Entity<Connection>()
         .HasIndex(connection => new
         {
