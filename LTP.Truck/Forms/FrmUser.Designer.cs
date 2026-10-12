@@ -40,6 +40,7 @@
       btnAddnew = new LTP.Truck.Custom.RJButton();
       label27 = new Label();
       ucPage1 = new LTP.Truck.UserControls.UcPage();
+      btnImport = new LTP.Truck.Custom.RJButton();
       tableLayoutPanel7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel10.SuspendLayout();
@@ -111,17 +112,19 @@
       // tableLayoutPanel10
       // 
       tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel10.ColumnCount = 6;
+      tableLayoutPanel10.ColumnCount = 7;
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.3333321F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.6666679F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearch, 1, 0);
       tableLayoutPanel10.Controls.Add(btnSearch, 3, 0);
-      tableLayoutPanel10.Controls.Add(btnAddnew, 5, 0);
+      tableLayoutPanel10.Controls.Add(btnAddnew, 6, 0);
+      tableLayoutPanel10.Controls.Add(btnImport, 5, 0);
       tableLayoutPanel10.Location = new Point(0, 50);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -162,7 +165,7 @@
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(417, 38);
+      txtSearch.Size = new Size(301, 38);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;
@@ -182,7 +185,7 @@
       btnSearch.ForeColor = Color.White;
       btnSearch.Image = Properties.Resources.icon_search;
       btnSearch.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearch.Location = new Point(528, 3);
+      btnSearch.Location = new Point(412, 3);
       btnSearch.Name = "btnSearch";
       btnSearch.Padding = new Padding(10, 0, 0, 0);
       btnSearch.Size = new Size(194, 54);
@@ -238,6 +241,30 @@
       ucPage1.Size = new Size(1230, 60);
       ucPage1.TabIndex = 24;
       // 
+      // btnImport
+      // 
+      btnImport.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnImport.BackColor = Color.FromArgb(64, 107, 177);
+      btnImport.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnImport.BorderColor = Color.White;
+      btnImport.BorderRadius = 5;
+      btnImport.BorderSize = 0;
+      btnImport.FlatAppearance.BorderColor = Color.White;
+      btnImport.FlatAppearance.BorderSize = 0;
+      btnImport.FlatStyle = FlatStyle.Flat;
+      btnImport.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnImport.ForeColor = Color.White;
+      btnImport.Image = Properties.Resources.icon_excel;
+      btnImport.ImageAlign = ContentAlignment.MiddleLeft;
+      btnImport.Location = new Point(832, 3);
+      btnImport.Name = "btnImport";
+      btnImport.Padding = new Padding(10, 0, 0, 0);
+      btnImport.Size = new Size(194, 54);
+      btnImport.TabIndex = 31;
+      btnImport.Text = "Import";
+      btnImport.TextColor = Color.White;
+      btnImport.UseVisualStyleBackColor = false;
+      // 
       // FrmUser
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -265,5 +292,6 @@
     private Label label27;
     private Custom.RJButton btnAddnew;
     private UserControls.UcPage ucPage1;
+    private Custom.RJButton btnImport;
   }
 }

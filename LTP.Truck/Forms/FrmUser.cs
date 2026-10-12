@@ -1,9 +1,11 @@
 using Common;
 using ApiSyncData.Req;
+using ClosedXML.Excel;
 using HelperManager;
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
+using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
@@ -29,6 +31,7 @@ namespace LTP.Truck.Forms
 
       btnSearch.Click += btnSearch_Click;
       btnAddnew.Click += btnAddnew_Click;
+      btnImport.Click += btnImport_Click;
       txtSearch._TextChanged += txtSearch_TextChanged;
       dgv.CellContentClick += dgv_CellContentClick;
       ucPage1.PageChanged += ucPage1_PageChanged;
@@ -508,6 +511,200 @@ namespace LTP.Truck.Forms
       catch (Exception ex)
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
+    }
+
+    private async void btnImport_Click(object? sender, EventArgs e)
+    {
+      if (Environment.GetEnvironmentVariable("STATION") == "1")
+      {
+        if (!AppCore.Ins.CheckPermission("0101"))
+        {
+          using var openErrorPopup = new PopupNoPermitRole();
+          openErrorPopup.ShowDialog(this);
+          return;
+        }
+      }
+      else if (!AppCore.Ins.CheckPermission("0111"))
+      {
+        using var openErrorPopup = new PopupNoPermitRole();
+        openErrorPopup.ShowDialog(this);
+        return;
+      }
+
+      using var openFileDialog = new OpenFileDialog
+      {
+        Title = "Chọn file Excel import tài khoản",
+        Filter = "Excel Workbook (*.xlsx;*.xlsm)|*.xlsx;*.xlsm",
+        CheckFileExists = true,
+        Multiselect = false,
+      };
+
+      if (openFileDialog.ShowDialog(this) != DialogResult.OK)
+        return;
+
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      try
+      {
+        using var workbook = new XLWorkbook(openFileDialog.FileName);
+        if (!workbook.Worksheets.TryGetWorksheet("Account", out var worksheet))
+        {
+          using var popup = new PopupConfirm(
+            "Không tìm thấy sheet Account trong file Excel !",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Warning);
+          popup.ShowDialog(this);
+          return;
+        }
+
+        var existingUsers = await AppCore.Ins._userService.GetAllAsync(
+          isContainDelete: true);
+        var usersByUsername = existingUsers
+          .Where(user => !string.IsNullOrWhiteSpace(user.Username))
+          .GroupBy(user => user.Username.Trim(), StringComparer.OrdinalIgnoreCase)
+          .ToDictionary(group => group.Key, group => group.First(),
+            StringComparer.OrdinalIgnoreCase);
+
+        var errors = new List<string>();
+        var importedCount = 0;
+        var addedCount = 0;
+        var updatedCount = 0;
+        var lastRow = worksheet.LastRowUsed()?.RowNumber() ?? 2;
+
+        for (var rowNumber = 3; rowNumber <= lastRow; rowNumber++)
+        {
+          var username = worksheet.Cell(rowNumber, 1).GetFormattedString().Trim();
+          var password = worksheet.Cell(rowNumber, 2).GetFormattedString().Trim();
+          var displayName = worksheet.Cell(rowNumber, 3).GetFormattedString().Trim();
+          var fullName = worksheet.Cell(rowNumber, 4).GetFormattedString().Trim();
+          var employeeCode = worksheet.Cell(rowNumber, 5).GetFormattedString().Trim();
+
+          if (string.IsNullOrWhiteSpace(username) &&
+              string.IsNullOrWhiteSpace(password) &&
+              string.IsNullOrWhiteSpace(displayName) &&
+              string.IsNullOrWhiteSpace(fullName) &&
+              string.IsNullOrWhiteSpace(employeeCode))
+          {
+            continue;
+          }
+
+          var rowErrors = new List<string>();
+          if (string.IsNullOrWhiteSpace(username))
+            rowErrors.Add("thiếu Account");
+          else if (username.Length > 50)
+            rowErrors.Add("Account vượt quá 50 ký tự");
+
+          if (string.IsNullOrWhiteSpace(password))
+            rowErrors.Add("thiếu Mật khẩu");
+
+          if (string.IsNullOrWhiteSpace(displayName))
+            rowErrors.Add("thiếu Tên hiển thị");
+          else if (displayName.Length > 50)
+            rowErrors.Add("Tên hiển thị vượt quá 50 ký tự");
+
+          if (fullName.Length > 255)
+            rowErrors.Add("Họ và tên vượt quá 255 ký tự");
+          if (employeeCode.Length > 255)
+            rowErrors.Add("Mã nhân viên vượt quá 255 ký tự");
+
+          if (string.Equals(username, PasswordPolicy.BuiltInAccount,
+                StringComparison.OrdinalIgnoreCase) ||
+              string.Equals(username, "root", StringComparison.OrdinalIgnoreCase))
+          {
+            rowErrors.Add("không được import tài khoản hệ thống");
+          }
+
+          if (!string.IsNullOrWhiteSpace(password))
+          {
+            rowErrors.AddRange(PasswordPolicy.ValidateAll(
+              password, username, displayName, fullName, employeeCode));
+          }
+
+          usersByUsername.TryGetValue(username, out var existingUser);
+          if (existingUser != null &&
+              UserService.GetPasswordHistory(existingUser).Any(hash =>
+                PasswordPolicy.HistoryHashMatches(username, password, hash)))
+          {
+            rowErrors.Add("không được sử dụng lại 5 mật khẩu gần nhất");
+          }
+
+          if (rowErrors.Count > 0)
+          {
+            errors.Add($"Dòng {rowNumber}: {string.Join("; ", rowErrors)}.");
+            continue;
+          }
+
+          var isNew = existingUser == null;
+          var user = existingUser;
+          user ??= new User
+          {
+            Id = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+          };
+
+          user.Username = username;
+          user.DisplayName = displayName;
+          user.FullName = fullName;
+          user.EmployeeCode = string.IsNullOrWhiteSpace(employeeCode)
+            ? null
+            : employeeCode;
+          user.DeletedFlag = false;
+          user.EnableFlag = true;
+          user.SyncFlag = false;
+          UserService.ApplyNewPassword(
+            user,
+            password,
+            mustChangePassword: isNew);
+
+          try
+          {
+            var savedUser = await AppCore.Ins._userService.AddOrUpdateAsync(user);
+            await QueueUserUpsertJobAsync(savedUser);
+            usersByUsername[username] = savedUser;
+            importedCount++;
+            if (isNew)
+              addedCount++;
+            else
+              updatedCount++;
+          }
+          catch (Exception rowException)
+          {
+            LogHelper.LogErrorToFileLog(rowException, AppCore.Ins._folderFileLog);
+            errors.Add($"Dòng {rowNumber}: không thể lưu tài khoản.");
+          }
+        }
+
+        await LoadData(resetPage: true);
+
+        var message =
+          $"Import tài khoản hoàn tất.\r\n" +
+          $"- Tổng thành công: {importedCount}\r\n" +
+          $"- Thêm mới: {addedCount}\r\n" +
+          $"- Cập nhật: {updatedCount}\r\n" +
+          $"- Bỏ qua: {errors.Count}";
+
+        if (errors.Count > 0)
+        {
+          message += "\r\n\r\n" + string.Join("\r\n", errors.Take(10));
+          if (errors.Count > 10)
+            message += $"\r\n... và {errors.Count - 10} lỗi khác.";
+        }
+
+        using var resultPopup = new PopupConfirm(
+          message,
+          EnumTypeMsg.MessageManualClose,
+          errors.Count == 0 ? EnumImageMsg.Information : EnumImageMsg.Warning,
+          height: 616);
+        resultPopup.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể import tài khoản. Vui lòng kiểm tra lại file Excel !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
       }
     }
 
