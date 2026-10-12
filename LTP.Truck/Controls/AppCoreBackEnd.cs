@@ -327,6 +327,7 @@ namespace LTP.Truck.Controls
           ProductGroup = group.First().Product.ProductGroup?.Name,
           ProductName = group.First().Product?.Name ?? string.Empty,
           ProductCode = group.First().Product?.Code ?? string.Empty,
+          Description = group.First().Product?.Description ?? string.Empty,
           SumNet = group.Sum(recordWeight => recordWeight.Net)
         })
         .Concat((exportTruckData ?? new List<RecordTruck>())
@@ -336,6 +337,7 @@ namespace LTP.Truck.Controls
             ProductGroup = (string?)null,
             ProductName = group.First().TypeGoods?.Name ?? string.Empty,
             ProductCode = group.First().TypeGoods?.Code ?? string.Empty,
+            Description = group.First().TypeGoods?.Description ?? string.Empty,
             SumNet = group.Sum(recordTruck => Math.Max(
               0,
               Math.Abs(recordTruck.NetTime01)))
@@ -346,6 +348,10 @@ namespace LTP.Truck.Controls
           ProductGroup = group.First().ProductGroup,
           group.Key.ProductName,
           group.Key.ProductCode,
+          Description = string.Join("; ", group
+            .Select(item => item.Description)
+            .Where(description => !string.IsNullOrWhiteSpace(description))
+            .Distinct(StringComparer.OrdinalIgnoreCase)),
           SumNet = group.Sum(item => item.SumNet)
         })
         .ToList();
@@ -362,7 +368,8 @@ namespace LTP.Truck.Controls
           tempTableDetal = tempTableDetal.Replace("{name}", recordWeightsByProduct[no - 1].ProductName);
           tempTableDetal = tempTableDetal.Replace("{code}", recordWeightsByProduct[no - 1].ProductCode);
           tempTableDetal = tempTableDetal.Replace("{quantity}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
-          tempTableDetal = tempTableDetal.Replace("{note}", "");
+          string description = recordWeightsByProduct[no - 1].Description;
+          tempTableDetal = tempTableDetal.Replace("{note}", description);
 
 
           tableDetails.Append(tempTableDetal);
