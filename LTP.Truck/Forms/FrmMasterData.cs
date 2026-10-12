@@ -118,7 +118,8 @@ namespace LTP.Truck.Forms
       {
         int loadVersion = Interlocked.Increment(ref _loadDataVersion);
         _enumTypeMasterDataCurrent = enumTypeMaster;
-        btnImport.Visible = enumTypeMaster == EnumTypeMasterData.TypeGoods;
+        btnImport.Visible = enumTypeMaster is
+          EnumTypeMasterData.TypeGoods or EnumTypeMasterData.Product;
         await ConfigureProductGroupFilterAsync(enumTypeMaster, loadVersion);
         if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
 
@@ -284,10 +285,11 @@ namespace LTP.Truck.Forms
 
     private async void btnImport_Click(object? sender, EventArgs e)
     {
-      if (_enumTypeMasterDataCurrent != EnumTypeMasterData.TypeGoods)
+      if (_enumTypeMasterDataCurrent is not
+          (EnumTypeMasterData.TypeGoods or EnumTypeMasterData.Product))
       {
         using var popup = new PopupConfirm(
-          "Chức năng Import chỉ áp dụng cho danh sách Loại hàng !",
+          "Chức năng Import chỉ áp dụng cho danh sách Loại hàng hoặc Chất thải !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popup.ShowDialog(this);
@@ -296,7 +298,7 @@ namespace LTP.Truck.Forms
 
       using var openFileDialog = new OpenFileDialog
       {
-        Title = "Chọn file Excel import loại hàng",
+        Title = "Chọn file Excel import dữ liệu",
         Filter = "Excel Workbook (*.xlsx;*.xlsm)|*.xlsx;*.xlsm",
         CheckFileExists = true,
         Multiselect = false,
@@ -308,6 +310,13 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
+        using var workbook = new XLWorkbook(openFileDialog.FileName);
+        if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Product)
+        {
+          await ImportProductsAsync(workbook);
+          return;
+        }
+
         var productGroups = await _productGroupService.GetAllAsync();
         var hcpProductGroup = productGroups
           .OrderBy(group => group.Name)
@@ -324,7 +333,6 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        using var workbook = new XLWorkbook(openFileDialog.FileName);
         if (!workbook.Worksheets.TryGetWorksheet("HcP_Xetai", out var worksheet))
         {
           using var popup = new PopupConfirm(
@@ -487,6 +495,173 @@ namespace LTP.Truck.Forms
       }
 
       return builder.ToString();
+    }
+
+    private async Task ImportProductsAsync(XLWorkbook workbook)
+    {
+      if (!workbook.Worksheets.TryGetWorksheet("TGA_ChatThai", out var tgaSheet) ||
+          !workbook.Worksheets.TryGetWorksheet("HcP_ChatThai", out var hcpSheet))
+      {
+        using var popup = new PopupConfirm(
+          "File Excel phải có đủ hai sheet TGA_ChatThai và HcP_ChatThai !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      var productGroups = await _productGroupService.GetAllAsync();
+      var tgaProductGroup = FindProductGroup(productGroups, "TGA");
+      var hcpProductGroup = FindProductGroup(productGroups, "HcP");
+      if (tgaProductGroup == null || hcpProductGroup == null)
+      {
+        var missingGroups = new List<string>();
+        if (tgaProductGroup == null) missingGroups.Add("TGA");
+        if (hcpProductGroup == null) missingGroups.Add("HcP");
+
+        using var popup = new PopupConfirm(
+          $"Không tìm thấy nhóm chất thải: {string.Join(", ", missingGroups)} !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      var existingProducts = await _productService.GetAllAsync(IsContainDelete: true);
+      var productsByCode = existingProducts
+        .Where(item => !string.IsNullOrWhiteSpace(item.Code))
+        .GroupBy(item => item.Code!.Trim(), StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(group => group.Key, group => group.First(),
+          StringComparer.OrdinalIgnoreCase);
+      var productsByGroupAndName = existingProducts
+        .Where(item => item.ProductGroupId.HasValue &&
+          !string.IsNullOrWhiteSpace(item.Name))
+        .GroupBy(item => BuildProductImportKey(
+          item.ProductGroupId!.Value, item.Name!), StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(group => group.Key, group => group.First(),
+          StringComparer.OrdinalIgnoreCase);
+
+      var errors = new List<string>();
+      var importedCount = 0;
+      var addedCount = 0;
+      var updatedCount = 0;
+
+      async Task ImportSheetAsync(IXLWorksheet worksheet, ProductGroup productGroup)
+      {
+        var lastRow = worksheet.LastRowUsed()?.RowNumber() ?? 2;
+        for (var rowNumber = 3; rowNumber <= lastRow; rowNumber++)
+        {
+          var wasteTypeText = worksheet.Cell(rowNumber, 1).GetString().Trim();
+          var code = worksheet.Cell(rowNumber, 2).GetString().Trim();
+          var name = worksheet.Cell(rowNumber, 3).GetString().Trim();
+
+          if (string.IsNullOrWhiteSpace(wasteTypeText) &&
+              string.IsNullOrWhiteSpace(code) &&
+              string.IsNullOrWhiteSpace(name))
+          {
+            continue;
+          }
+
+          if (string.IsNullOrWhiteSpace(name))
+          {
+            errors.Add($"Sheet {worksheet.Name}, dòng {rowNumber}: thiếu Tên.");
+            continue;
+          }
+
+          if (!TryParseWasteType(wasteTypeText, out var wasteType))
+          {
+            errors.Add(
+              $"Sheet {worksheet.Name}, dòng {rowNumber}: loại chất thải '{wasteTypeText}' không hợp lệ.");
+            continue;
+          }
+
+          Product? product = null;
+          if (!string.IsNullOrWhiteSpace(code))
+            productsByCode.TryGetValue(code, out product);
+          if (product == null)
+          {
+            productsByGroupAndName.TryGetValue(
+              BuildProductImportKey(productGroup.Id, name), out product);
+          }
+
+          var isNew = product == null;
+          product ??= new Product
+          {
+            CreatedAt = DateTime.UtcNow,
+            EnableFlag = true,
+          };
+
+          product.Code = string.IsNullOrWhiteSpace(code) ? null : code;
+          product.Name = name;
+          product.ProductGroupId = productGroup.Id;
+          product.EnumWasteType = wasteType;
+          product.DeletedFlag = false;
+          product.EnableFlag = true;
+          product.SyncFlag = false;
+
+          try
+          {
+            var savedProduct = await _productService.AddOrUpdateAsync(product);
+            if (!string.IsNullOrWhiteSpace(code))
+              productsByCode[code] = savedProduct;
+            productsByGroupAndName[BuildProductImportKey(productGroup.Id, name)] =
+              savedProduct;
+            importedCount++;
+            if (isNew)
+              addedCount++;
+            else
+              updatedCount++;
+          }
+          catch (Exception rowException)
+          {
+            LogHelper.LogErrorToFileLog(rowException, AppCore.Ins._folderFileLog);
+            errors.Add(
+              $"Sheet {worksheet.Name}, dòng {rowNumber}: không thể lưu dữ liệu.");
+          }
+        }
+      }
+
+      await ImportSheetAsync(tgaSheet, tgaProductGroup);
+      await ImportSheetAsync(hcpSheet, hcpProductGroup);
+
+      await LoadData(EnumTypeMasterData.Product);
+      MasterDataChangeNotifier.Notify<Product>();
+
+      var message =
+        $"Import chất thải hoàn tất.\r\n" +
+        $"- Tổng thành công: {importedCount}\r\n" +
+        $"- Thêm mới: {addedCount}\r\n" +
+        $"- Cập nhật: {updatedCount}\r\n" +
+        $"- Bỏ qua: {errors.Count}";
+
+      if (errors.Count > 0)
+      {
+        message += "\r\n\r\n" + string.Join("\r\n", errors.Take(10));
+        if (errors.Count > 10)
+          message += $"\r\n... và {errors.Count - 10} lỗi khác.";
+      }
+
+      using var resultPopup = new PopupConfirm(
+        message,
+        EnumTypeMsg.MessageManualClose,
+        errors.Count == 0 ? EnumImageMsg.Information : EnumImageMsg.Warning,
+        height: 616);
+      resultPopup.ShowDialog(this);
+    }
+
+    private static ProductGroup? FindProductGroup(
+      IEnumerable<ProductGroup> productGroups,
+      string groupName)
+    {
+      return productGroups
+        .OrderBy(group => group.Name)
+        .FirstOrDefault(group => group.Name?.Contains(
+          groupName, StringComparison.OrdinalIgnoreCase) == true);
+    }
+
+    private static string BuildProductImportKey(Guid productGroupId, string name)
+    {
+      return $"{productGroupId:N}|{name.Trim()}";
     }
 
     private async void txtSearch_TextChanged(object? sender, EventArgs e)
