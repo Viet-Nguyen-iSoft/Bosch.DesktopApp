@@ -41,6 +41,8 @@ namespace LTP.Truck.Popup
 
     private async void btnHcP_TH_Click(object sender, EventArgs e)
     {
+      using var uiLock = LockExportUi();
+
       var hcpData = SelectedData
         .Where(dto => HasProductGroupName(dto, "HcP"))
         .ToList();
@@ -130,6 +132,8 @@ namespace LTP.Truck.Popup
 
     private async void btnHcP_CN_Click(object sender, EventArgs e)
     {
+      using var uiLock = LockExportUi();
+
       var hcpData = SelectedData
         .Where(dto => HasProductGroupName(dto, "HcP"))
         .ToList();
@@ -219,6 +223,8 @@ namespace LTP.Truck.Popup
 
     private async void btnHcP_SH_Click(object sender, EventArgs e)
     {
+      using var uiLock = LockExportUi();
+
       var hcpData = SelectedData
        .Where(dto => HasProductGroupName(dto, "HcP"))
        .ToList();
@@ -310,6 +316,8 @@ namespace LTP.Truck.Popup
 
     private async void btnTGA_TH_Click(object sender, EventArgs e)
     {
+      using var uiLock = LockExportUi();
+
       var tgaData = SelectedData
         .Where(dto => HasProductGroupName(dto, "TGA"))
         .ToList();
@@ -400,6 +408,8 @@ namespace LTP.Truck.Popup
 
     private async void btnTGA_CN_Click(object sender, EventArgs e)
     {
+      using var uiLock = LockExportUi();
+
       var tgaData = SelectedData
         .Where(dto => HasProductGroupName(dto, "TGA"))
         .ToList();
@@ -489,6 +499,8 @@ namespace LTP.Truck.Popup
 
     private async void btnTGA_SH_Click(object sender, EventArgs e)
     {
+      using var uiLock = LockExportUi();
+
       var tgaData = SelectedData
         .Where(dto => HasProductGroupName(dto, "TGA"))
         .ToList();
@@ -581,41 +593,15 @@ namespace LTP.Truck.Popup
 
     private async void btnBiwaseScrapSale_Click(object sender, EventArgs e)
     {
-      var hcpData = SelectedData
-        .Where(dto => HasProductGroupName(dto, "HcP"))
-        .ToList();
-      var tgaCount = SelectedData.Count(dto => HasProductGroupName(dto, "TGA"));
+      using var uiLock = LockExportUi();
 
-      if (hcpData.Count != SelectedData.Count)
-      {
-        var continueExport = false;
-        using (var popup = new PopupConfirm(
-          $"Dữ liệu đã chọn gồm:\r\n" +
-          $"- HcP: {hcpData.Count}\r\n" +
-          $"- TGA: {tgaCount}\r\n\r\n" +
-          "Có dữ liệu không phải HcP. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu HcP không?",
-          EnumTypeMsg.Confirm,
-          EnumImageMsg.Question,
-          height: 400))
-        {
-          popup.OnSendConfirm += (_, response) =>
-            continueExport = response.EnumResponsible == EnumResponsible.Confirm;
-          popup.ShowDialog(this);
-        }
-
-        if (!continueExport)
-          return;
-      }
-
-      List<RecordWeight> recordWeights = hcpData
-        .Where(dto => string.Equals(dto.Source, "Cân hàng", StringComparison.OrdinalIgnoreCase))
+      List<RecordWeight> recordWeights = SelectedData
         .Select(dto => dto.RecordWeight)
         .Where(record => record is not null)
         .Select(record => record!)
         .ToList();
 
-      List<RecordTruck> recordTrucks = hcpData
-        .Where(dto => string.Equals(dto.Source, "Cân xe tải", StringComparison.OrdinalIgnoreCase))
+      List<RecordTruck> recordTrucks = SelectedData
         .Select(dto => dto.RecordTruck)
         .Where(record => record is not null)
         .Select(record => record!)
@@ -632,7 +618,7 @@ namespace LTP.Truck.Popup
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
-          "Không có dữ liệu HcP hợp lệ để xuất báo cáo !",
+          "Không có dữ liệu hợp lệ để xuất báo cáo !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
@@ -669,6 +655,70 @@ namespace LTP.Truck.Popup
     }
 
 
+    private async void btnBiwaseCNTT_Click(object sender, EventArgs e)
+    {
+      using var uiLock = LockExportUi();
+
+      List<RecordWeight> recordWeights = SelectedData
+        .Select(dto => dto.RecordWeight)
+        .Where(record => record is not null)
+        .Select(record => record!)
+        .ToList();
+
+      List<RecordTruck> recordTrucks = SelectedData
+        .Select(dto => dto.RecordTruck)
+        .Where(record => record is not null)
+        .Select(record => record!)
+        .ToList();
+
+      List<string> licensePlates = recordWeights
+        .Select(record => record.LicensePlate)
+        .Concat(recordTrucks.Select(record => record.LicensePlate))
+        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
+        .Select(licensePlate => licensePlate!.Trim())
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+      if (recordWeights.Count == 0 && recordTrucks.Count == 0)
+      {
+        using var popupMsg = new PopupConfirm(
+          "Không có dữ liệu hợp lệ để xuất báo cáo !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
+
+      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
+      {
+        Company = AppCore.Ins._appConfig?.Company,
+        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
+        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
+        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
+        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
+      };
+
+      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
+      {
+        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
+          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
+        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
+        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
+        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
+        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
+      };
+
+      await DownloadFileWorkReport_Biwase(
+        "Template_W2",
+        "TemplateTableSH",
+        recordWeights,
+        recordTrucks,
+        licensePlates,
+        inforCompanyDTO_A,
+        inforCompanyDTO_B);
+    }
+
+
 
 
 
@@ -684,6 +734,56 @@ namespace LTP.Truck.Popup
           groupName, StringComparison.OrdinalIgnoreCase) == true ||
         dto.RecordTruck?.TypeGoods?.ProductGroup?.Name?.Contains(
           groupName, StringComparison.OrdinalIgnoreCase) == true;
+    }
+
+    private IDisposable LockExportUi()
+    {
+      return new ExportUiExecutionScope(
+        this,
+        panel1,
+        panel2,
+        panel3,
+        btnClose);
+    }
+
+    private sealed class ExportUiExecutionScope : IDisposable
+    {
+      private readonly Form _form;
+      private readonly (Control Control, bool WasEnabled)[] _controls;
+      private readonly bool _wasUseWaitCursor;
+      private bool _disposed;
+
+      public ExportUiExecutionScope(Form form, params Control[] controls)
+      {
+        _form = form;
+        _wasUseWaitCursor = form.UseWaitCursor;
+        _controls = controls
+          .Select(control => (control, control.Enabled))
+          .ToArray();
+
+        foreach (var item in _controls)
+          item.Control.Enabled = false;
+
+        form.UseWaitCursor = true;
+      }
+
+      public void Dispose()
+      {
+        if (_disposed)
+          return;
+
+        _disposed = true;
+        if (_form.IsDisposed)
+          return;
+
+        foreach (var item in _controls)
+        {
+          if (!item.Control.IsDisposed)
+            item.Control.Enabled = item.WasEnabled;
+        }
+
+        _form.UseWaitCursor = _wasUseWaitCursor;
+      }
     }
 
 

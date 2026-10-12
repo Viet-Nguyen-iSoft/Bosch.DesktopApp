@@ -41,7 +41,7 @@
       panel1 = new Panel();
       panel2 = new Panel();
       panel3 = new Panel();
-      rjButton1 = new LTP.Truck.Custom.RJButton();
+      btnBiwaseCNTT = new LTP.Truck.Custom.RJButton();
       panel1.SuspendLayout();
       panel2.SuspendLayout();
       panel3.SuspendLayout();
@@ -257,32 +257,33 @@
       // panel3
       // 
       panel3.BackColor = Color.Bisque;
-      panel3.Controls.Add(rjButton1);
+      panel3.Controls.Add(btnBiwaseCNTT);
       panel3.Controls.Add(btnBiwaseScrapSale);
       panel3.Location = new Point(21, 395);
       panel3.Name = "panel3";
       panel3.Size = new Size(844, 134);
       panel3.TabIndex = 12;
       // 
-      // rjButton1
+      // btnBiwaseCNTT
       // 
-      rjButton1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      rjButton1.BackColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BackgroundColor = Color.FromArgb(64, 107, 177);
-      rjButton1.BorderColor = Color.PaleVioletRed;
-      rjButton1.BorderRadius = 5;
-      rjButton1.BorderSize = 0;
-      rjButton1.FlatAppearance.BorderSize = 0;
-      rjButton1.FlatStyle = FlatStyle.Flat;
-      rjButton1.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      rjButton1.ForeColor = Color.White;
-      rjButton1.Location = new Point(450, 41);
-      rjButton1.Name = "rjButton1";
-      rjButton1.Size = new Size(377, 57);
-      rjButton1.TabIndex = 8;
-      rjButton1.Text = "BIWASE SCRAP SALE";
-      rjButton1.TextColor = Color.White;
-      rjButton1.UseVisualStyleBackColor = false;
+      btnBiwaseCNTT.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnBiwaseCNTT.BackColor = Color.FromArgb(64, 107, 177);
+      btnBiwaseCNTT.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnBiwaseCNTT.BorderColor = Color.PaleVioletRed;
+      btnBiwaseCNTT.BorderRadius = 5;
+      btnBiwaseCNTT.BorderSize = 0;
+      btnBiwaseCNTT.FlatAppearance.BorderSize = 0;
+      btnBiwaseCNTT.FlatStyle = FlatStyle.Flat;
+      btnBiwaseCNTT.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnBiwaseCNTT.ForeColor = Color.White;
+      btnBiwaseCNTT.Location = new Point(450, 41);
+      btnBiwaseCNTT.Name = "btnBiwaseCNTT";
+      btnBiwaseCNTT.Size = new Size(377, 57);
+      btnBiwaseCNTT.TabIndex = 8;
+      btnBiwaseCNTT.Text = "BIWASE CNTT";
+      btnBiwaseCNTT.TextColor = Color.White;
+      btnBiwaseCNTT.UseVisualStyleBackColor = false;
+      btnBiwaseCNTT.Click += btnBiwaseCNTT_Click;
       // 
       // PopupChooseTemplateReport
       // 
@@ -318,6 +319,6 @@
     private Panel panel1;
     private Panel panel2;
     private Panel panel3;
-    private Custom.RJButton rjButton1;
+    private Custom.RJButton btnBiwaseCNTT;
   }
 }
