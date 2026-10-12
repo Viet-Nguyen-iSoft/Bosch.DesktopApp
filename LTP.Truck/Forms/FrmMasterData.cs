@@ -1,4 +1,5 @@
 using ApiSyncData.Req;
+using ClosedXML.Excel;
 using Common;
 using HelperManager;
 using iSoft.Database;
@@ -12,10 +13,13 @@ using LTP.Truck.Popup;
 using LTP.Truck.UserControls;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Common.EnumData;
 using static HelperManager.EnumData;
+using static iSoft.Database.EnumData;
 using static LTP.Truck.EnumData;
 
 namespace LTP.Truck.Forms
@@ -47,6 +51,7 @@ namespace LTP.Truck.Forms
 
       txtSearch._TextChanged += txtSearch_TextChanged;
       dgv.CellContentClick += dgv_CellContentClick;
+      btnImport.Click += btnImport_Click;
       cbbFilter.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbFilter.DisplayMember = nameof(ProductGroupFilterItem.Name);
       cbbFilter.ValueMember = nameof(ProductGroupFilterItem.Id);
@@ -113,6 +118,7 @@ namespace LTP.Truck.Forms
       {
         int loadVersion = Interlocked.Increment(ref _loadDataVersion);
         _enumTypeMasterDataCurrent = enumTypeMaster;
+        btnImport.Visible = enumTypeMaster == EnumTypeMasterData.TypeGoods;
         await ConfigureProductGroupFilterAsync(enumTypeMaster, loadVersion);
         if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
 
@@ -274,6 +280,213 @@ namespace LTP.Truck.Forms
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await LoadData(_enumTypeMasterDataCurrent);
+    }
+
+    private async void btnImport_Click(object? sender, EventArgs e)
+    {
+      if (_enumTypeMasterDataCurrent != EnumTypeMasterData.TypeGoods)
+      {
+        using var popup = new PopupConfirm(
+          "Chức năng Import chỉ áp dụng cho danh sách Loại hàng !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      using var openFileDialog = new OpenFileDialog
+      {
+        Title = "Chọn file Excel import loại hàng",
+        Filter = "Excel Workbook (*.xlsx;*.xlsm)|*.xlsx;*.xlsm",
+        CheckFileExists = true,
+        Multiselect = false,
+      };
+
+      if (openFileDialog.ShowDialog(this) != DialogResult.OK)
+        return;
+
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      try
+      {
+        var productGroups = await _productGroupService.GetAllAsync();
+        var hcpProductGroup = productGroups
+          .OrderBy(group => group.Name)
+          .FirstOrDefault(group => group.Name?.Contains(
+            "HcP", StringComparison.OrdinalIgnoreCase) == true);
+
+        if (hcpProductGroup == null)
+        {
+          using var popup = new PopupConfirm(
+            "Không tìm thấy nhóm chất thải có tên chứa HcP !",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Warning);
+          popup.ShowDialog(this);
+          return;
+        }
+
+        using var workbook = new XLWorkbook(openFileDialog.FileName);
+        if (!workbook.Worksheets.TryGetWorksheet("HcP_Xetai", out var worksheet))
+        {
+          using var popup = new PopupConfirm(
+            "Không tìm thấy sheet HcP_Xetai trong file Excel !",
+            EnumTypeMsg.MessageManualClose,
+            EnumImageMsg.Warning);
+          popup.ShowDialog(this);
+          return;
+        }
+
+        var existingTypeGoods = await _typeGoodsService.GetAllAsync(IsContainDelete: true);
+        var typeGoodsByCode = existingTypeGoods
+          .Where(item => !string.IsNullOrWhiteSpace(item.Code))
+          .GroupBy(item => item.Code!.Trim(), StringComparer.OrdinalIgnoreCase)
+          .ToDictionary(group => group.Key, group => group.First(),
+            StringComparer.OrdinalIgnoreCase);
+        var typeGoodsByName = existingTypeGoods
+          .Where(item => item.ProductGroupId == hcpProductGroup.Id &&
+            !string.IsNullOrWhiteSpace(item.Name))
+          .GroupBy(item => item.Name!.Trim(), StringComparer.OrdinalIgnoreCase)
+          .ToDictionary(group => group.Key, group => group.First(),
+            StringComparer.OrdinalIgnoreCase);
+
+        var errors = new List<string>();
+        var importedCount = 0;
+        var addedCount = 0;
+        var updatedCount = 0;
+        var lastRow = worksheet.LastRowUsed()?.RowNumber() ?? 2;
+
+        for (var rowNumber = 3; rowNumber <= lastRow; rowNumber++)
+        {
+          var wasteTypeText = worksheet.Cell(rowNumber, 1).GetString().Trim();
+          var code = worksheet.Cell(rowNumber, 2).GetString().Trim();
+          var name = worksheet.Cell(rowNumber, 3).GetString().Trim();
+
+          if (string.IsNullOrWhiteSpace(wasteTypeText) &&
+              string.IsNullOrWhiteSpace(code) &&
+              string.IsNullOrWhiteSpace(name))
+          {
+            continue;
+          }
+
+          if (string.IsNullOrWhiteSpace(name))
+          {
+            errors.Add($"Dòng {rowNumber}: thiếu Tên.");
+            continue;
+          }
+
+          if (!TryParseWasteType(wasteTypeText, out var wasteType))
+          {
+            errors.Add($"Dòng {rowNumber}: loại chất thải '{wasteTypeText}' không hợp lệ.");
+            continue;
+          }
+
+          TypeGoods? typeGoods = null;
+          if (!string.IsNullOrWhiteSpace(code))
+            typeGoodsByCode.TryGetValue(code, out typeGoods);
+          if (typeGoods == null)
+            typeGoodsByName.TryGetValue(name, out typeGoods);
+
+          var isNew = typeGoods == null;
+          typeGoods ??= new TypeGoods
+          {
+            CreatedAt = DateTime.UtcNow,
+            EnableFlag = true,
+          };
+
+          typeGoods.Code = string.IsNullOrWhiteSpace(code) ? null : code;
+          typeGoods.Name = name;
+          typeGoods.ProductGroupId = hcpProductGroup.Id;
+          typeGoods.EnumWasteType = wasteType;
+          typeGoods.DeletedFlag = false;
+          typeGoods.EnableFlag = true;
+          typeGoods.SyncFlag = false;
+
+          try
+          {
+            var savedTypeGoods = await _typeGoodsService.AddOrUpdateAsync(typeGoods);
+            if (!string.IsNullOrWhiteSpace(code))
+              typeGoodsByCode[code] = savedTypeGoods;
+            typeGoodsByName[name] = savedTypeGoods;
+            importedCount++;
+            if (isNew)
+              addedCount++;
+            else
+              updatedCount++;
+          }
+          catch (Exception rowException)
+          {
+            LogHelper.LogErrorToFileLog(rowException, AppCore.Ins._folderFileLog);
+            errors.Add($"Dòng {rowNumber}: không thể lưu dữ liệu.");
+          }
+        }
+
+        await LoadData(EnumTypeMasterData.TypeGoods);
+        MasterDataChangeNotifier.Notify<TypeGoods>();
+
+        var message =
+          $"Import hoàn tất.\r\n" +
+          $"- Tổng thành công: {importedCount}\r\n" +
+          $"- Thêm mới: {addedCount}\r\n" +
+          $"- Cập nhật: {updatedCount}\r\n" +
+          $"- Bỏ qua: {errors.Count}";
+
+        if (errors.Count > 0)
+        {
+          message += "\r\n\r\n" + string.Join("\r\n", errors.Take(10));
+          if (errors.Count > 10)
+            message += $"\r\n... và {errors.Count - 10} lỗi khác.";
+        }
+
+        using var resultPopup = new PopupConfirm(
+          message,
+          EnumTypeMsg.MessageManualClose,
+          errors.Count == 0 ? EnumImageMsg.Information : EnumImageMsg.Warning,
+          height: 616);
+        resultPopup.ShowDialog(this);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể import file Excel. Vui lòng kiểm tra lại file !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+    }
+
+    private static bool TryParseWasteType(
+      string value,
+      out EnumWasteType wasteType)
+    {
+      var normalizedValue = NormalizeImportValue(value);
+      wasteType = normalizedValue switch
+      {
+        "1" or "hazardous" or "nguyhai" => EnumWasteType.Hazardous,
+        "2" or "nonrecyclable" or "khongtaiche" or "khongthetaiche" =>
+          EnumWasteType.NonRecyclable,
+        "3" or "recyclable" or "taiche" or "cothetaiche" =>
+          EnumWasteType.Recyclable,
+        _ => EnumWasteType.None,
+      };
+
+      return wasteType != EnumWasteType.None;
+    }
+
+    private static string NormalizeImportValue(string value)
+    {
+      var normalized = (value ?? string.Empty).Trim().Normalize(NormalizationForm.FormD);
+      var builder = new StringBuilder(normalized.Length);
+
+      foreach (var character in normalized)
+      {
+        if (CharUnicodeInfo.GetUnicodeCategory(character) !=
+            UnicodeCategory.NonSpacingMark && char.IsLetterOrDigit(character))
+        {
+          builder.Append(char.ToLowerInvariant(character));
+        }
+      }
+
+      return builder.ToString();
     }
 
     private async void txtSearch_TextChanged(object? sender, EventArgs e)

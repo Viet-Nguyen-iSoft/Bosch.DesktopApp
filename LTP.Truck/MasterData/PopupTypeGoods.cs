@@ -112,15 +112,6 @@ namespace LTP.Truck.MasterData
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        if (string.IsNullOrWhiteSpace(txtCode.Texts))
-        {
-          using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập mã !",
-            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupMsgAlarm.ShowDialog(this);
-          txtCode.Focus();
-          return;
-        }
-
         if (string.IsNullOrWhiteSpace(txtName.Texts))
         {
           using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập tên !",
@@ -147,9 +138,11 @@ namespace LTP.Truck.MasterData
 
         if (_enumTypePopup == EnumTypePopup.Add)
         {
-          string typeGoodsCode = txtCode.Texts.Trim();
+          string? typeGoodsCode = string.IsNullOrWhiteSpace(txtCode.Texts)
+            ? null
+            : txtCode.Texts.Trim();
           var typeGoodsList = await _typeGoodsService.GetAllAsync(IsContainDelete: true);
-          bool isDuplicateCode = typeGoodsList.Any(typeGoods =>
+          bool isDuplicateCode = typeGoodsCode != null && typeGoodsList.Any(typeGoods =>
             !typeGoods.DeletedFlag &&
             string.Equals(typeGoods.Code?.Trim(), typeGoodsCode,
               StringComparison.CurrentCultureIgnoreCase));
@@ -177,7 +170,9 @@ namespace LTP.Truck.MasterData
         }
         else if (_enumTypePopup == EnumTypePopup.Update)
         {
-          _typeGoodsUpdate.Code = txtCode.Texts.Trim();
+          _typeGoodsUpdate.Code = string.IsNullOrWhiteSpace(txtCode.Texts)
+            ? null
+            : txtCode.Texts.Trim();
           _typeGoodsUpdate.Name = txtName.Texts.Trim();
           _typeGoodsUpdate.Description = txtDescription.Texts.Trim();
           _typeGoodsUpdate.ProductGroupId = selectedProductGroup.Id;
