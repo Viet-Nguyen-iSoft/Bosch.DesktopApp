@@ -19,7 +19,7 @@ namespace iSoft.Database.DTO
     [DisplayName("Nhóm")]
     public string? Group { get; set; }
 
-    [DisplayName("Loại phế phẩm")]
+    [DisplayName("Loại chất thải")]
     public string? WasteType { get; set; }
 
     [DisplayName("Mã")]

@@ -81,7 +81,7 @@ namespace LTP.Truck.MasterData
       catch (Exception ex)
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        ShowWarning("Không thể tải danh sách nhóm phế phẩm !");
+        ShowWarning("Không thể tải danh sách nhóm chất thải !");
       }
     }
 
@@ -133,14 +133,14 @@ namespace LTP.Truck.MasterData
         if ((cbbType.SelectedIndex == 0) ||
             cbbType.SelectedValue is not EnumWasteType selectedWasteType)
         {
-          ShowWarning("Vui lòng chọn loại phế phẩm !");
+          ShowWarning("Vui lòng chọn loại chất thải !");
           cbbType.Focus();
           return;
         }
 
         if (cbbProductGroup.SelectedItem is not ProductGroup selectedProductGroup)
         {
-          ShowWarning("Vui lòng chọn nhóm phế phẩm !");
+          ShowWarning("Vui lòng chọn nhóm chất thải !");
           cbbProductGroup.Focus();
           return;
         }

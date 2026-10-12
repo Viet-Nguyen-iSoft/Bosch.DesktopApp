@@ -245,7 +245,7 @@ namespace LTP.Truck.Forms
       cbbType.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbType.Font = new Font("Roboto", 16.25F, FontStyle.Bold);
       cbbType.FormattingEnabled = true;
-      cbbType.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số", "Nhóm theo Bên nhận", "Nhóm theo Nhóm phế phẩm" });
+      cbbType.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số", "Nhóm theo Bên nhận", "Nhóm theo Nhóm chất thải" });
       cbbType.Location = new Point(3, 13);
       cbbType.Name = "cbbType";
       cbbType.Size = new Size(585, 35);

@@ -29,7 +29,7 @@ namespace iSoft.Database.DTO
     [DisplayName("Loại")]
     public string? Type { get; set; }
 
-    [DisplayName("Phế phẩm / Kho")]
+    [DisplayName("Chất thải / Kho")]
     public string? Product { get; set; }
 
     [DisplayName("Loại bì")]

@@ -436,7 +436,7 @@ namespace LTP.Truck.Controls
           using Font fontValue = new Font("Arial", 10, FontStyle.Bold);
 
           // Draw PALLET LẺ
-          e.Graphics.DrawString("Phiếu in phế phẩm", fontTitlePallet, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString("Phiếu in chất thải", fontTitlePallet, brush, new PointF(startX, startY + rowIndex * offsetY));
 
           rowIndex++;
 
@@ -445,12 +445,12 @@ namespace LTP.Truck.Controls
 
           rowIndex++;
 
-          e.Graphics.DrawString("Nhóm phế phẩm:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString("Nhóm chất thải:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
           e.Graphics.DrawString(recordWeightDTO?.ProductGroup ?? string.Empty, fontValue, brush, new PointF(startX + 28, startY + rowIndex * offsetY));
 
           rowIndex++;
 
-          e.Graphics.DrawString("Tên phế phẩm:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
+          e.Graphics.DrawString("Tên chất thải:", fontTilte, brush, new PointF(startX, startY + rowIndex * offsetY));
           e.Graphics.DrawString(recordWeightDTO?.Product ?? string.Empty, fontValue, brush, new PointF(startX + 28, startY + rowIndex * offsetY));
 
           rowIndex++;

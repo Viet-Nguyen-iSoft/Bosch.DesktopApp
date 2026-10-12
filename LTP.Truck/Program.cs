@@ -177,7 +177,7 @@ namespace LTP.Truck
               });
               stations.Add(new Station
               {
-                Name = "Cân phế phẩm 3 tấn - Trạm 03",
+                Name = "Cân chất thải 3 tấn - Trạm 03",
                 Code = "ST03",
                 Description = "",
                 WeightDeviation = 0,

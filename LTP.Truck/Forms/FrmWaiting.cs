@@ -199,7 +199,7 @@ namespace LTP.Truck.Forms
       }
       else
       {
-        lbTitle.Text = "HỆ THỐNG CÂN PHẾ PHẨM";
+        lbTitle.Text = "HỆ THỐNG CÂN CHẤT THẢI";
       }
     }
 

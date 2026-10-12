@@ -1550,7 +1550,7 @@ namespace LTP.Truck.Forms
 
       //if (productGroupNameCount > 1)
       //{
-      //  using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm phế phẩm !",
+      //  using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm chất thải !",
       //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
       //  popupMsg.ShowDialog(this);
       //  return;

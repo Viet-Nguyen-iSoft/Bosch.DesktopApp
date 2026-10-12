@@ -32,7 +32,7 @@ namespace iSoft.Database
       [Description("Kho hóa chất")]
       Chemical = 6,
 
-      [Description("Phế phẩm")]
+      [Description("Chất thải")]
       MRsDefect = 7,
 
       [Description("TS_CCDC")]
