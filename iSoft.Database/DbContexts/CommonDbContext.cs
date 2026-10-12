@@ -17,6 +17,7 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<Connection>? Connections { get; set; }
     public virtual DbSet<AppConfig>? AppConfigs { get; set; }
     public virtual DbSet<LogAction>? LogActions { get; set; }
+    public virtual DbSet<AuditLog>? AuditLogs { get; set; }
     public virtual DbSet<ProductGroup>? ProductGroups { get; set; }
     public virtual DbSet<Product>? Products { get; set; }
     public virtual DbSet<CategoryTare>? CategoryTares { get; set; }
@@ -127,6 +128,23 @@ namespace iSoft.Database.DbContexts
       modelBuilder.Entity<LogAction>()
         .HasIndex(log => new { log.CreatedAt, log.eAction })
         .HasDatabaseName("IX_LogActions_CreatedAt_Action");
+
+      modelBuilder.Entity<AuditLog>(entity =>
+      {
+        entity.Property(log => log.Action).HasMaxLength(50);
+        entity.Property(log => log.EntityType).HasMaxLength(150);
+        entity.Property(log => log.EntityId).HasMaxLength(100);
+        entity.Property(log => log.EntityName).HasMaxLength(500);
+        entity.Property(log => log.Username).HasMaxLength(255);
+        entity.Property(log => log.UserDisplayName).HasMaxLength(255);
+        entity.Property(log => log.Source).HasMaxLength(255);
+        entity.HasIndex(log => log.OccurredAt)
+          .HasDatabaseName("IX_AuditLogs_OccurredAt");
+        entity.HasIndex(log => new { log.EntityType, log.EntityId })
+          .HasDatabaseName("IX_AuditLogs_Entity");
+        entity.HasIndex(log => new { log.UserId, log.OccurredAt })
+          .HasDatabaseName("IX_AuditLogs_User_OccurredAt");
+      });
 
     }
 

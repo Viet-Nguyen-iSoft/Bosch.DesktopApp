@@ -10,6 +10,7 @@ using iSoft.Database.Repositorys;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.Popup;
+using LTP.Truck.Services;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
@@ -1118,22 +1119,46 @@ namespace LTP.Truck.Forms
       {
         if (recordWeightDto.RecordTruck is RecordTruck recordTruck)
         {
+          var wasDeleted = recordTruck.DeletedFlag;
           recordTruck.ReasonDelete = reasonDelete;
           recordTruck.DeletedFlag = !recordTruck.DeletedFlag;
           recordTruck.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
+          await AuditTrail.WriteAsync(
+            wasDeleted ? AuditActions.Restore : AuditActions.Delete,
+            nameof(RecordTruck), recordTruck.Id, recordTruck.LicensePlate,
+            nameof(FrmHomeGoods), reasonDelete,
+            new { DeletedFlag = wasDeleted },
+            new { recordTruck.DeletedFlag, recordTruck.ReasonDelete });
         }
         else if (recordWeightDto.RecordWeight is RecordWeight recordWeight)
         {
+          var wasDeleted = recordWeight.DeletedFlag;
           recordWeight.ReasonDelete = reasonDelete;
           recordWeight.DeletedFlag = !recordWeight.DeletedFlag;
           recordWeight.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
+          await AuditTrail.WriteAsync(
+            wasDeleted ? AuditActions.Restore : AuditActions.Delete,
+            nameof(RecordWeight), recordWeight.Id,
+            recordWeight.Id.ToString(), nameof(FrmHomeGoods), reasonDelete,
+            new { DeletedFlag = wasDeleted },
+            new { recordWeight.DeletedFlag, recordWeight.ReasonDelete });
         }
         await LoadHistorical();
       }
       catch (Exception ex)
       {
+        var entity = recordWeightDto.RecordTruck as object ??
+          recordWeightDto.RecordWeight;
+        await AuditTrail.WriteAsync(
+          isDeleted ? AuditActions.Restore : AuditActions.Delete,
+          entity?.GetType().Name ?? "WeightRecord",
+          entity is BaseModel model ? model.Id : null,
+          source: nameof(FrmHomeGoods),
+          reason: reasonDelete,
+          isSuccess: false,
+          exception: ex);
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popup = new PopupConfirm(
           "Không thể cập nhật trạng thái bản ghi. Vui lòng thử lại!",

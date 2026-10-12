@@ -10,6 +10,7 @@ using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
 using LTP.Truck.Popup;
+using LTP.Truck.Services;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 
@@ -360,13 +361,39 @@ namespace LTP.Truck.Forms
 
       try
       {
+        var auditBefore = new
+        {
+          user.Id,
+          user.Username,
+          user.DisplayName,
+          user.FullName,
+          user.EmployeeCode,
+          user.DeletedFlag,
+          user.EnableFlag
+        };
         await AppCore.Ins._userService.DeleteAsync(user);
+        await AuditTrail.WriteAsync(
+          AuditActions.Delete,
+          nameof(iSoft.Database.Models.User),
+          user.Id,
+          user.Username,
+          nameof(FrmUser),
+          before: auditBefore,
+          after: new { user.DeletedFlag, user.EnableFlag });
         await QueueUserUpsertJobAsync(user);
         await LoadData(resetPage: false);
         ShowSuccess("Xóa tài khoản thành công.");
       }
       catch (Exception ex)
       {
+        await AuditTrail.WriteAsync(
+          AuditActions.Delete,
+          nameof(iSoft.Database.Models.User),
+          user.Id,
+          user.Username,
+          nameof(FrmUser),
+          isSuccess: false,
+          exception: ex);
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var errorPopup = new PopupConfirm(
           "Xóa tài khoản thất bại !",

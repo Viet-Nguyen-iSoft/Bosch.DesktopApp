@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using iSoft.Database.Models;
+using LTP.Truck.Services;
 
 namespace LTP.Truck.Controls
 {
@@ -36,7 +38,7 @@ namespace LTP.Truck.Controls
         var normalizedCode = permissionCode.Trim();
         var permissions = JArray.Parse(_userCurrent.Role);
 
-        return permissions.Any(permission =>
+        var hasPermission = permissions.Any(permission =>
         {
           // Dữ liệu cũ lưu trực tiếp danh sách mã: ["0043", "0044"].
           var code = permission.Type == JTokenType.String
@@ -49,9 +51,31 @@ namespace LTP.Truck.Controls
             normalizedCode,
             StringComparison.OrdinalIgnoreCase);
         });
+
+        if (!hasPermission)
+        {
+          _ = AuditTrail.WriteAsync(
+            AuditActions.InvalidOperation,
+            "Permission",
+            entityId: normalizedCode,
+            entityName: "Truy cập chức năng không được cấp quyền",
+            source: nameof(CheckPermission),
+            reason: $"Tài khoản không có quyền {normalizedCode}",
+            isSuccess: false);
+        }
+
+        return hasPermission;
       }
       catch (JsonException)
       {
+        _ = AuditTrail.WriteAsync(
+          AuditActions.InvalidOperation,
+          "Permission",
+          entityId: permissionCode,
+          entityName: "Dữ liệu phân quyền không hợp lệ",
+          source: nameof(CheckPermission),
+          reason: "Không đọc được danh sách quyền của tài khoản",
+          isSuccess: false);
         return false;
       }
     }

@@ -13,6 +13,7 @@ using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
 using LTP.Truck.Popup;
+using LTP.Truck.Services;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
@@ -1270,6 +1271,12 @@ namespace LTP.Truck.Forms
 
           recordTruck.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
+          await AuditTrail.WriteAsync(
+            AuditActions.Delete, nameof(RecordTruck), recordTruck.Id,
+            recordTruck.LicensePlate, nameof(FrmHomeTruck),
+            recordTruck.ReasonDelete,
+            new { DeletedFlag = false },
+            new { recordTruck.DeletedFlag, recordTruck.ReasonDelete });
           await LoadHistorical();
         }
         else
@@ -1284,6 +1291,11 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
+        await AuditTrail.WriteAsync(
+          recordTruck.DeletedFlag ? AuditActions.Delete : AuditActions.Restore,
+          nameof(RecordTruck), recordTruck.Id, recordTruck.LicensePlate,
+          nameof(FrmHomeTruck), recordTruck.ReasonDelete,
+          isSuccess: false, exception: ex);
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popup = new PopupConfirm(
           "Không thể cập nhật trạng thái bản ghi. Vui lòng thử lại!",
@@ -1305,11 +1317,19 @@ namespace LTP.Truck.Forms
 
           recordTruck.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
+          await AuditTrail.WriteAsync(
+            AuditActions.Restore, nameof(RecordTruck), recordTruck.Id,
+            recordTruck.LicensePlate, nameof(FrmHomeTruck),
+            before: new { DeletedFlag = true },
+            after: new { recordTruck.DeletedFlag });
           await LoadHistorical();
         }
       }
       catch (Exception ex)
       {
+        await AuditTrail.WriteAsync(
+          AuditActions.Restore, nameof(RecordTruck), source: nameof(FrmHomeTruck),
+          isSuccess: false, exception: ex);
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }

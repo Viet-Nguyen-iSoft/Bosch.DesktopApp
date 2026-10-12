@@ -110,6 +110,7 @@ namespace LTP.Truck
             await EnsureAppConfigPrintColumnsAsync(db);
             await EnsureRecordWeightReasonDeleteColumnAsync(db);
             await EnsureTypeGoodsWasteColumnsAsync(db);
+            await EnsureAuditLogsTableAsync(db);
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
@@ -309,6 +310,42 @@ namespace LTP.Truck
           ALTER TABLE `RecordTrucks`
           ADD COLUMN `NumberTare` int NULL DEFAULT 1;";
         await addColumnCommand.ExecuteNonQueryAsync();
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureAuditLogsTableAsync(MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using var command = db.Database.GetDbConnection().CreateCommand();
+        command.CommandText = @"
+          CREATE TABLE IF NOT EXISTS `AuditLogs` (
+            `Id` char(36) NOT NULL,
+            `OccurredAt` datetime(6) NOT NULL,
+            `Action` varchar(50) NOT NULL,
+            `EntityType` varchar(150) NOT NULL,
+            `EntityId` varchar(100) NULL,
+            `EntityName` varchar(500) NULL,
+            `UserId` char(36) NULL,
+            `Username` varchar(255) NULL,
+            `UserDisplayName` varchar(255) NULL,
+            `Source` varchar(255) NULL,
+            `Reason` longtext NULL,
+            `BeforeData` longtext NULL,
+            `AfterData` longtext NULL,
+            `IsSuccess` tinyint(1) NOT NULL DEFAULT 1,
+            `ErrorMessage` longtext NULL,
+            CONSTRAINT `PK_AuditLogs` PRIMARY KEY (`Id`),
+            INDEX `IX_AuditLogs_OccurredAt` (`OccurredAt`),
+            INDEX `IX_AuditLogs_Entity` (`EntityType`, `EntityId`),
+            INDEX `IX_AuditLogs_User_OccurredAt` (`UserId`, `OccurredAt`)
+          ) CHARACTER SET=utf8mb4;";
+        await command.ExecuteNonQueryAsync();
       }
       finally
       {

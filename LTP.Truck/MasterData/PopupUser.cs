@@ -3,6 +3,7 @@ using HelperManager;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
+using LTP.Truck.Services;
 using static Common.EnumData;
 using static LTP.Truck.EnumData;
 
@@ -244,6 +245,18 @@ namespace LTP.Truck.MasterData
           return;
         }
 
+        var auditBefore = _userUpdate == null ? null : new
+        {
+          _userUpdate.Id,
+          _userUpdate.Username,
+          _userUpdate.DisplayName,
+          _userUpdate.FullName,
+          _userUpdate.EmployeeCode,
+          _userUpdate.SsoLoginId,
+          _userUpdate.EnableFlag,
+          _userUpdate.MustChangePassword
+        };
+
         User userToSave;
         if (_enumTypePopup == EnumTypePopup.Add)
         {
@@ -274,12 +287,35 @@ namespace LTP.Truck.MasterData
         }
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
+        await AuditTrail.WriteAsync(
+          _enumTypePopup == EnumTypePopup.Add
+            ? AuditActions.Create
+            : AuditActions.Update,
+          nameof(User), result.Id, result.Username, nameof(PopupUser),
+          before: auditBefore,
+          after: new
+          {
+            result.Id,
+            result.Username,
+            result.DisplayName,
+            result.FullName,
+            result.EmployeeCode,
+            result.SsoLoginId,
+            result.EnableFlag,
+            result.MustChangePassword
+          });
 
         Close();
         OnSendSuccess?.Invoke(result);
       }
       catch (Exception ex)
       {
+        await AuditTrail.WriteAsync(
+          _enumTypePopup == EnumTypePopup.Add
+            ? AuditActions.Create
+            : AuditActions.Update,
+          nameof(User), _userUpdate?.Id, _userUpdate?.Username,
+          nameof(PopupUser), isSuccess: false, exception: ex);
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         ShowWarning(_enumTypePopup == EnumTypePopup.Add
           ? "Thêm tài khoản thất bại !"
