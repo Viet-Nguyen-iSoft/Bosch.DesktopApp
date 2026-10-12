@@ -110,6 +110,9 @@
     <None Update="Template\Template_TongHop.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\Template_W1.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\Tracking.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

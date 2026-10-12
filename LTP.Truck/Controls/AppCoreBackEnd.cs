@@ -405,6 +405,142 @@ namespace LTP.Truck.Controls
       return pdfPath;
     }
 
+    public async Task<string> ExportPdfGoods_Biwase(
+      string nameFileTemplate,
+      string nameFileTable,
+      DateTime dt,
+      List<string> licensePlates,
+      List<RecordWeight> exportData,
+      InforCompanyDTO inforCompanyA,
+      InforCompanyDTO inforCompanyB,
+      List<RecordTruck>? exportTruckData = null)
+    {
+      string pathFileTemplateTable = Application.StartupPath + $"Template\\{nameFileTable}.html";
+      string pathFileTemplate = Application.StartupPath + $"Template\\{nameFileTemplate}.html";
+
+
+      string pathFileTemplatePlate = Application.StartupPath + "Template\\TemplatePlate.html";
+      string folderOutput = Application.StartupPath + "ReportGoods";
+      if (!Directory.Exists(folderOutput))
+      {
+        Directory.CreateDirectory(folderOutput);
+      }
+
+      var dataFirst = exportData.FirstOrDefault()?.Delivery;
+      string template = await File.ReadAllTextAsync(pathFileTemplate).ConfigureAwait(false);
+      string table = await File.ReadAllTextAsync(pathFileTemplateTable).ConfigureAwait(false);
+      string plateTemplate = await File.ReadAllTextAsync(pathFileTemplatePlate).ConfigureAwait(false);
+      string result = template.Replace("{documentNo}", "......../2025/BBGN/BOSCH – SDV")
+                              .Replace("{day}", dt.Day.ToString())
+                              .Replace("{month}", dt.Month.ToString())
+                              .Replace("{year}", dt.Year.ToString())
+                              //.Replace("{vehiclePlate}", licensePlate)
+                              //.Replace("{sealNo}", "")
+
+                              .Replace("{company_A}", inforCompanyA.Company)
+                              .Replace("{office_address_A}", inforCompanyA.OfficeAddress)
+                              .Replace("{phone_for_office_A}", inforCompanyA.PhoneOfficeAddress)
+                              .Replace("{agent_address_A}", inforCompanyA.AgentAddress)
+                              .Replace("{phone_for_agent_A}", inforCompanyA.PhoneAgentAddress)
+
+                              .Replace("{company_B}", inforCompanyB.Company)
+                              .Replace("{office_address_B}", inforCompanyB.OfficeAddress)
+                              .Replace("{phone_for_office_B}", inforCompanyB.PhoneOfficeAddress)
+                              .Replace("{agent_address_B}", inforCompanyB.AgentAddress)
+                              .Replace("{phone_for_agent_B}", inforCompanyB.PhoneAgentAddress)
+
+                              .Replace("{signPlace}", "Đồng Nai")
+                              .Replace("{signDay}", dt.Day.ToString())
+                              .Replace("{signMonth}", dt.Month.ToString())
+                              .Replace("{signYear}", dt.Year.ToString())
+                              .Replace("{sender.deptCode}", "FCM")
+                              .Replace("{receiver.deptCode}", "SES")
+                              .Replace("{province}", "ĐỒNG NAI");
+
+
+      var recordWeightsByProduct = exportData
+        .GroupBy(recordWeight => recordWeight.ProductId)
+        .Select(group => new
+        {
+          ProductGroup = group.First().Product.ProductGroup?.Name,
+          ProductName = group.First().Product?.Name ?? string.Empty,
+          ProductCode = group.First().Product?.Code ?? string.Empty,
+          Description = group.First().Product?.Description ?? string.Empty,
+          SumNet = group.Sum(recordWeight => recordWeight.Net)
+        })
+        .Concat((exportTruckData ?? new List<RecordTruck>())
+          .GroupBy(recordTruck => recordTruck.TypeGoodsId)
+          .Select(group => new
+          {
+            ProductGroup = (string?)null,
+            ProductName = group.First().TypeGoods?.Name ?? string.Empty,
+            ProductCode = group.First().TypeGoods?.Code ?? string.Empty,
+            Description = group.First().TypeGoods?.Description ?? string.Empty,
+            SumNet = group.Sum(recordTruck => Math.Max(
+              0,
+              Math.Abs(recordTruck.NetTime01)))
+          }))
+        .GroupBy(item => new { item.ProductName, item.ProductCode })
+        .Select(group => new
+        {
+          ProductGroup = group.First().ProductGroup,
+          group.Key.ProductName,
+          group.Key.ProductCode,
+          Description = string.Join("; ", group
+            .Select(item => item.Description)
+            .Where(description => !string.IsNullOrWhiteSpace(description))
+            .Distinct(StringComparer.OrdinalIgnoreCase)),
+          SumNet = group.Sum(item => item.SumNet)
+        })
+        .ToList();
+
+
+      var tableDetails = new StringBuilder();
+      double value = 0.0;
+      if (recordWeightsByProduct?.Count() > 0)
+      {
+        for (int no = 1; no <= recordWeightsByProduct?.Count(); no++)
+        {
+          string tempTableDetal = table;
+          tempTableDetal = tempTableDetal.Replace("{no}", (no).ToString("D2"));
+          tempTableDetal = tempTableDetal.Replace("{name}", recordWeightsByProduct[no - 1].ProductName);
+          tempTableDetal = tempTableDetal.Replace("{code}", recordWeightsByProduct[no - 1].ProductCode);
+          tempTableDetal = tempTableDetal.Replace("{quantity}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
+          string description = recordWeightsByProduct[no - 1].Description;
+          tempTableDetal = tempTableDetal.Replace("{note}", description);
+
+
+          tableDetails.Append(tempTableDetal);
+          value += recordWeightsByProduct[no - 1].SumNet;
+        }
+      }
+
+      result = result.Replace("{totalQuantity}", FormatWeight(value, 3));
+      result = result.Replace("{table}", tableDetails.ToString());
+
+      //Biển số
+      var tableDetailsPlate = new StringBuilder();
+      if (licensePlates?.Count() > 0)
+      {
+        for (int no = 1; no <= licensePlates?.Count(); no++)
+        {
+          string tempPlate = plateTemplate;
+          tempPlate = tempPlate.Replace("{vehiclePlate}", licensePlates[no - 1]);
+          tempPlate = tempPlate.Replace("{sealNo}", "");
+
+          tableDetailsPlate.Append(tempPlate);
+        }
+      }
+      result = result.Replace("{plate_group}", tableDetailsPlate.ToString());
+
+      string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
+      await File.WriteAllTextAsync(outputPath, result).ConfigureAwait(false);
+
+      string pdfPath = Path.ChangeExtension(outputPath, ".pdf");
+      await PdfHelper.HtmlToPdfWithoutConsoleAsync(outputPath, pdfPath).ConfigureAwait(false);
+      return pdfPath;
+    }
+
     private static string FormatWeight(double value, int decimalPlaces = 0)
     {
       return WeightFormatHelper.Format(value, decimalPlaces);

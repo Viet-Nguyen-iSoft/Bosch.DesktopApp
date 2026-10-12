@@ -192,6 +192,7 @@
       btnBiwaseScrapSale.Text = "BIWASE SCRAP SALE";
       btnBiwaseScrapSale.TextColor = Color.White;
       btnBiwaseScrapSale.UseVisualStyleBackColor = false;
+      btnBiwaseScrapSale.Click += btnBiwaseScrapSale_Click;
       // 
       // lbStatusWeight
       // 
@@ -296,7 +297,6 @@
       Controls.Add(lbStatusWeight);
       Name = "PopupChooseTemplateReport";
       StartPosition = FormStartPosition.CenterParent;
-      Load += PopupChooseTemplateReport_Load;
       panel1.ResumeLayout(false);
       panel2.ResumeLayout(false);
       panel3.ResumeLayout(false);
