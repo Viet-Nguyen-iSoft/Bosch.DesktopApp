@@ -121,7 +121,8 @@ namespace LTP.Truck.Forms
         btnImport.Visible = enumTypeMaster is
           EnumTypeMasterData.TypeGoods or
           EnumTypeMasterData.Product or
-          EnumTypeMasterData.Tare;
+          EnumTypeMasterData.Tare or
+          EnumTypeMasterData.TareForTruck;
         await ConfigureProductGroupFilterAsync(enumTypeMaster, loadVersion);
         if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
 
@@ -290,7 +291,8 @@ namespace LTP.Truck.Forms
       if (_enumTypeMasterDataCurrent is not
           (EnumTypeMasterData.TypeGoods or
            EnumTypeMasterData.Product or
-           EnumTypeMasterData.Tare))
+           EnumTypeMasterData.Tare or
+           EnumTypeMasterData.TareForTruck))
       {
         using var popup = new PopupConfirm(
           "Chức năng Import không áp dụng cho danh sách hiện tại !",
@@ -323,6 +325,11 @@ namespace LTP.Truck.Forms
         if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Tare)
         {
           await ImportTaresAsync(workbook);
+          return;
+        }
+        if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TareForTruck)
+        {
+          await ImportTruckTaresAsync(workbook);
           return;
         }
 
@@ -762,6 +769,115 @@ namespace LTP.Truck.Forms
 
       var message =
         $"Import Tare hoàn tất.\r\n" +
+        $"- Tổng thành công: {importedCount}\r\n" +
+        $"- Thêm mới: {addedCount}\r\n" +
+        $"- Cập nhật: {updatedCount}\r\n" +
+        $"- Bỏ qua: {errors.Count}";
+
+      if (errors.Count > 0)
+      {
+        message += "\r\n\r\n" + string.Join("\r\n", errors.Take(10));
+        if (errors.Count > 10)
+          message += $"\r\n... và {errors.Count - 10} lỗi khác.";
+      }
+
+      using var resultPopup = new PopupConfirm(
+        message,
+        EnumTypeMsg.MessageManualClose,
+        errors.Count == 0 ? EnumImageMsg.Information : EnumImageMsg.Warning,
+        height: 616);
+      resultPopup.ShowDialog(this);
+    }
+
+    private async Task ImportTruckTaresAsync(XLWorkbook workbook)
+    {
+      if (!workbook.Worksheets.TryGetWorksheet("Tare_Xetai", out var worksheet))
+      {
+        using var popup = new PopupConfirm(
+          "Không tìm thấy sheet Tare_Xetai trong file Excel !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      var existingTares = await _tareTruckService.GetAllAsync(IsContainDelete: true);
+      var taresByName = existingTares
+        .Where(item => !string.IsNullOrWhiteSpace(item.Name))
+        .GroupBy(item => item.Name!.Trim(), StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(group => group.Key, group => group.First(),
+          StringComparer.OrdinalIgnoreCase);
+
+      var errors = new List<string>();
+      var importedCount = 0;
+      var addedCount = 0;
+      var updatedCount = 0;
+      var lastRow = worksheet.LastRowUsed()?.RowNumber() ?? 2;
+
+      for (var rowNumber = 3; rowNumber <= lastRow; rowNumber++)
+      {
+        var name = worksheet.Cell(rowNumber, 1).GetString().Trim();
+        var valueText = worksheet.Cell(rowNumber, 2).GetFormattedString().Trim();
+
+        if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(valueText))
+          continue;
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+          errors.Add($"Dòng {rowNumber}: thiếu Tên.");
+          continue;
+        }
+
+        var normalizedValue = valueText.Replace(',', '.');
+        if (!double.TryParse(
+              normalizedValue,
+              NumberStyles.Float,
+              CultureInfo.InvariantCulture,
+              out var tareValue) ||
+            !double.IsFinite(tareValue) ||
+            tareValue <= 0)
+        {
+          errors.Add($"Dòng {rowNumber}: giá trị Tare '{valueText}' không hợp lệ.");
+          continue;
+        }
+
+        var isNew = !taresByName.TryGetValue(name, out var tareTruck);
+        tareTruck ??= new TareTruck
+        {
+          CreatedAt = DateTime.UtcNow,
+          EnableFlag = true,
+        };
+
+        tareTruck.Code = null;
+        tareTruck.Name = name;
+        tareTruck.Value = tareValue;
+        tareTruck.Description = null;
+        tareTruck.DeletedFlag = false;
+        tareTruck.EnableFlag = true;
+        tareTruck.SyncFlag = false;
+
+        try
+        {
+          var savedTare = await _tareTruckService.AddOrUpdateAsync(tareTruck);
+          taresByName[name] = savedTare;
+          importedCount++;
+          if (isNew)
+            addedCount++;
+          else
+            updatedCount++;
+        }
+        catch (Exception rowException)
+        {
+          LogHelper.LogErrorToFileLog(rowException, AppCore.Ins._folderFileLog);
+          errors.Add($"Dòng {rowNumber}: không thể lưu dữ liệu.");
+        }
+      }
+
+      await LoadData(EnumTypeMasterData.TareForTruck);
+      MasterDataChangeNotifier.Notify<TareTruck>();
+
+      var message =
+        $"Import Tare xe tải hoàn tất.\r\n" +
         $"- Tổng thành công: {importedCount}\r\n" +
         $"- Thêm mới: {addedCount}\r\n" +
         $"- Cập nhật: {updatedCount}\r\n" +
