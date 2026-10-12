@@ -1,4 +1,5 @@
 using Common;
+using HelperManager;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Common.EnumData;
+using static iSoft.Database.EnumData;
 using static LTP.Truck.EnumData;
 
 namespace LTP.Truck.MasterData
@@ -21,6 +23,7 @@ namespace LTP.Truck.MasterData
     public event Action<TypeGoods>? OnSendSuccess;
 
     private TypeGoodsService _typeGoodsService { get; set; }
+    private ProductGroupService _productGroupService { get; set; }
     private TypeGoods _typeGoodsUpdate { get; set; }
     private EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     public PopupTypeGoods()
@@ -29,6 +32,15 @@ namespace LTP.Truck.MasterData
       this.Load += PopupAddClient_Load;
       this.btnConfirm.Click += BtnConfirm_Click;
       this.btnClose.Click += BtnClose_Click;
+      cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
+
+      cbbType.DisplayMember = "Value";
+      cbbType.ValueMember = "Key";
+      cbbType.DataSource = Enum.GetValues<EnumWasteType>()
+        .ToDictionary(value => value, value => EnumHelper.GetDescription(value))
+        .ToList();
+      cbbType.SelectedIndex = -1;
     }
 
     public PopupTypeGoods(TypeGoods typeGoods) : this()
@@ -38,11 +50,39 @@ namespace LTP.Truck.MasterData
       btnConfirm.Text = "Cập nhật";
 
       LoadDataUpdate(typeGoods);
+
+      if (Enum.IsDefined(typeof(EnumWasteType), typeGoods.EnumWasteType))
+        cbbType.SelectedValue = typeGoods.EnumWasteType;
     }
 
-    private void PopupAddClient_Load(object? sender, EventArgs e)
+    private async void PopupAddClient_Load(object? sender, EventArgs e)
     {
       _typeGoodsService = new TypeGoodsService();
+      _productGroupService = new ProductGroupService();
+
+      try
+      {
+        var productGroups = await _productGroupService.GetAllAsync();
+        cbbProductGroup.DisplayMember = nameof(ProductGroup.Name);
+        cbbProductGroup.ValueMember = nameof(ProductGroup.Id);
+        cbbProductGroup.DataSource = productGroups;
+
+        if (_enumTypePopup == EnumTypePopup.Update &&
+            _typeGoodsUpdate.ProductGroupId.HasValue)
+        {
+          cbbProductGroup.SelectedItem = productGroups.FirstOrDefault(group =>
+            group.Id == _typeGoodsUpdate.ProductGroupId.Value);
+        }
+        else
+        {
+          cbbProductGroup.SelectedIndex = -1;
+        }
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        ShowWarning("Không thể tải danh sách nhóm phế phẩm !");
+      }
     }
 
     private void LoadDataUpdate(TypeGoods typeGoods)
@@ -90,6 +130,21 @@ namespace LTP.Truck.MasterData
           return;
         }
 
+        if ((cbbType.SelectedIndex == 0) ||
+            cbbType.SelectedValue is not EnumWasteType selectedWasteType)
+        {
+          ShowWarning("Vui lòng chọn loại phế phẩm !");
+          cbbType.Focus();
+          return;
+        }
+
+        if (cbbProductGroup.SelectedItem is not ProductGroup selectedProductGroup)
+        {
+          ShowWarning("Vui lòng chọn nhóm phế phẩm !");
+          cbbProductGroup.Focus();
+          return;
+        }
+
         if (_enumTypePopup == EnumTypePopup.Add)
         {
           string typeGoodsCode = txtCode.Texts.Trim();
@@ -112,6 +167,8 @@ namespace LTP.Truck.MasterData
           typeGoods.Code = typeGoodsCode;
           typeGoods.Name = txtName.Texts.Trim();
           typeGoods.Description = txtDescription.Texts.Trim();
+          typeGoods.ProductGroupId = selectedProductGroup.Id;
+          typeGoods.EnumWasteType = selectedWasteType;
           typeGoods.CreatedAt = DateTime.UtcNow;
           var rs = await _typeGoodsService.AddOrUpdateAsync(typeGoods);
 
@@ -123,6 +180,8 @@ namespace LTP.Truck.MasterData
           _typeGoodsUpdate.Code = txtCode.Texts.Trim();
           _typeGoodsUpdate.Name = txtName.Texts.Trim();
           _typeGoodsUpdate.Description = txtDescription.Texts.Trim();
+          _typeGoodsUpdate.ProductGroupId = selectedProductGroup.Id;
+          _typeGoodsUpdate.EnumWasteType = selectedWasteType;
           _typeGoodsUpdate.UpdatedAt = DateTime.UtcNow;
           var rs = await _typeGoodsService.AddOrUpdateAsync(_typeGoodsUpdate);
 
@@ -140,6 +199,13 @@ namespace LTP.Truck.MasterData
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
         popupMsgAlarm.ShowDialog(this);
       }
+    }
+
+    private void ShowWarning(string message)
+    {
+      using var popupMsg = new PopupConfirm(message,
+        EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      popupMsg.ShowDialog(this);
     }
   }
 }
