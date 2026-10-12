@@ -316,7 +316,8 @@ namespace LTP.Truck.Controls
                               .Replace("{signMonth}", dt.Month.ToString())
                               .Replace("{signYear}", dt.Year.ToString())
                               .Replace("{sender.deptCode}", "FCM")
-                              .Replace("{receiver.deptCode}", "SES");
+                              .Replace("{receiver.deptCode}", "SES")
+                              .Replace("{province}", "ĐỒNG NAI");
 
 
       var recordWeightsByProduct = exportData
