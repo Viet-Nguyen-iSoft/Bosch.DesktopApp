@@ -185,7 +185,7 @@
       btnBiwaseScrapSale.FlatStyle = FlatStyle.Flat;
       btnBiwaseScrapSale.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnBiwaseScrapSale.ForeColor = Color.White;
-      btnBiwaseScrapSale.Location = new Point(15, 41);
+      btnBiwaseScrapSale.Location = new Point(15, 21);
       btnBiwaseScrapSale.Name = "btnBiwaseScrapSale";
       btnBiwaseScrapSale.Size = new Size(377, 57);
       btnBiwaseScrapSale.TabIndex = 7;
@@ -222,10 +222,10 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(698, 575);
+      btnClose.Location = new Point(698, 535);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
-      btnClose.Size = new Size(167, 57);
+      btnClose.Size = new Size(167, 59);
       btnClose.TabIndex = 10;
       btnClose.Text = "       Đóng";
       btnClose.TextColor = Color.White;
@@ -259,9 +259,9 @@
       panel3.BackColor = Color.Bisque;
       panel3.Controls.Add(btnBiwaseCNTT);
       panel3.Controls.Add(btnBiwaseScrapSale);
-      panel3.Location = new Point(21, 395);
+      panel3.Location = new Point(21, 387);
       panel3.Name = "panel3";
-      panel3.Size = new Size(844, 134);
+      panel3.Size = new Size(844, 100);
       panel3.TabIndex = 12;
       // 
       // btnBiwaseCNTT
@@ -276,7 +276,7 @@
       btnBiwaseCNTT.FlatStyle = FlatStyle.Flat;
       btnBiwaseCNTT.Font = new Font("Roboto", 14F, FontStyle.Bold);
       btnBiwaseCNTT.ForeColor = Color.White;
-      btnBiwaseCNTT.Location = new Point(450, 41);
+      btnBiwaseCNTT.Location = new Point(450, 21);
       btnBiwaseCNTT.Name = "btnBiwaseCNTT";
       btnBiwaseCNTT.Size = new Size(377, 57);
       btnBiwaseCNTT.TabIndex = 8;
@@ -289,7 +289,7 @@
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(888, 654);
+      ClientSize = new Size(888, 617);
       ControlBox = false;
       Controls.Add(panel3);
       Controls.Add(panel2);
