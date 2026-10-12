@@ -55,6 +55,14 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
+      List<string> licensePlates = recordWeights
+        .Select(record => record.LicensePlate)
+        .Concat(recordTrucks.Select(record => record.LicensePlate))
+        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
+        .Select(licensePlate => licensePlate!.Trim())
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -65,9 +73,7 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      string licensePlate = recordWeights.FirstOrDefault()?.LicensePlate?.Trim()
-        ?? recordTrucks.FirstOrDefault()?.LicensePlate?.Trim()
-        ?? string.Empty;
+      string licensePlate = string.Join(", ", licensePlates);
       InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
       {
         Company = AppCore.Ins._appConfig?.Company,
@@ -90,7 +96,7 @@ namespace LTP.Truck.Popup
       await DownloadFileWorkReport(
         recordWeights,
         recordTrucks,
-        licensePlate,
+        licensePlates,
         inforCompanyDTO_A,
         inforCompanyDTO_B);
     }
@@ -101,7 +107,7 @@ namespace LTP.Truck.Popup
     private async Task DownloadFileWorkReport(
       List<RecordWeight> recordWeights,
       List<RecordTruck> recordTrucks,
-      string licensePlate,
+      List<string> licensePlates,
       InforCompanyDTO inforCompanyA,
       InforCompanyDTO inforCompanyB)
     {
@@ -111,7 +117,7 @@ namespace LTP.Truck.Popup
 
         var pdfPath = await AppCore.Ins.ExportPdfGoods(
           dt,
-          licensePlate,
+          licensePlates,
           recordWeights,
           inforCompanyA,
           inforCompanyB,

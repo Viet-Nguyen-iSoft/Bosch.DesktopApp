@@ -73,6 +73,15 @@
     <None Update="Template\TemplateHtmlGoods.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\TemplateHtmlGoods_TH.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\TemplatePlate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\TemplatePlate.html.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\TemplateReport.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

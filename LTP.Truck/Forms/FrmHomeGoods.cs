@@ -1583,68 +1583,68 @@ namespace LTP.Truck.Forms
     }
 
 
-    #region Export PDF Goods
-    private async Task DownloadFileWorkReport(
-      List<RecordWeight> exportData,
-      string licensePlate,
-      InforCompanyDTO inforCompanyA,
-      InforCompanyDTO inforCompanyB)
-    {
-      try
-      {
-        DateTime dt = DateTime.Now;
+    //#region Export PDF Goods
+    //private async Task DownloadFileWorkReport(
+    //  List<RecordWeight> exportData,
+    //  string licensePlate,
+    //  InforCompanyDTO inforCompanyA,
+    //  InforCompanyDTO inforCompanyB)
+    //{
+    //  try
+    //  {
+    //    DateTime dt = DateTime.Now;
 
-        var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData, inforCompanyA, inforCompanyB);
+    //    var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData, inforCompanyA, inforCompanyB);
 
-        var openReportFile = false;
-        using (var popup = new PopupConfirm(
-            "Tạo phiếu thành công. Bạn có muốn mở file không?",
-            EnumTypeMsg.Confirm,
-            EnumImageMsg.Question))
-        {
-          popup.OnSendConfirm += (_, response) =>
-            openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
-          popup.ShowDialog(this);
-        }
+    //    var openReportFile = false;
+    //    using (var popup = new PopupConfirm(
+    //        "Tạo phiếu thành công. Bạn có muốn mở file không?",
+    //        EnumTypeMsg.Confirm,
+    //        EnumImageMsg.Question))
+    //    {
+    //      popup.OnSendConfirm += (_, response) =>
+    //        openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
+    //      popup.ShowDialog(this);
+    //    }
 
-        if (openReportFile)
-        {
-          try
-          {
-            Process.Start(new ProcessStartInfo
-            {
-              FileName = pdfPath,
-              UseShellExecute = true,
-            });
-          }
-          catch (Exception openException)
-          {
-            HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
-            using var openErrorPopup = new PopupConfirm(
-              "Đã tạo phiếu nhưng không thể mở file.",
-              EnumTypeMsg.MessageManualClose,
-              EnumImageMsg.Warning);
-            openErrorPopup.ShowDialog(this);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        using var popupMsg = new PopupConfirm(
-          "Không thể tạo phiếu. Vui lòng thử lại !",
-          EnumTypeMsg.MessageManualClose,
-          EnumImageMsg.Warning);
-        popupMsg.ShowDialog(this);
-      }
-    }
+    //    if (openReportFile)
+    //    {
+    //      try
+    //      {
+    //        Process.Start(new ProcessStartInfo
+    //        {
+    //          FileName = pdfPath,
+    //          UseShellExecute = true,
+    //        });
+    //      }
+    //      catch (Exception openException)
+    //      {
+    //        HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
+    //        using var openErrorPopup = new PopupConfirm(
+    //          "Đã tạo phiếu nhưng không thể mở file.",
+    //          EnumTypeMsg.MessageManualClose,
+    //          EnumImageMsg.Warning);
+    //        openErrorPopup.ShowDialog(this);
+    //      }
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+    //    using var popupMsg = new PopupConfirm(
+    //      "Không thể tạo phiếu. Vui lòng thử lại !",
+    //      EnumTypeMsg.MessageManualClose,
+    //      EnumImageMsg.Warning);
+    //    popupMsg.ShowDialog(this);
+    //  }
+    //}
 
-    private static string FormatWeight(double value)
-    {
-      return WeightFormatHelper.Format(value);
-    }
+    //private static string FormatWeight(double value)
+    //{
+    //  return WeightFormatHelper.Format(value);
+    //}
 
-    #endregion
+    //#endregion
 
     private void btnZero_Click(object sender, EventArgs e)
     {

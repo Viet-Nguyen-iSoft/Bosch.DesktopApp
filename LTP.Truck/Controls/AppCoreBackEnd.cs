@@ -269,8 +269,8 @@ namespace LTP.Truck.Controls
     }
 
 
-    public async Task<string> ExportPdfGoods(DateTime dt, 
-      string licensePlate, 
+    public async Task<string> ExportPdfGoods(DateTime dt,
+      List<string> licensePlates, 
       List<RecordWeight> exportData, 
       InforCompanyDTO inforCompanyA,
       InforCompanyDTO inforCompanyB,
@@ -278,7 +278,10 @@ namespace LTP.Truck.Controls
     {
       string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
       //string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
-      string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtmlGoods.html";
+      string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtmlGoods_TH.html";
+
+
+      string pathFileTemplatePlate = Application.StartupPath + "Template\\TemplatePlate.html";
       string folderOutput = Application.StartupPath + "ReportGoods";
       if (!Directory.Exists(folderOutput))
       {
@@ -288,12 +291,13 @@ namespace LTP.Truck.Controls
       var dataFirst = exportData.FirstOrDefault()?.Delivery;
       string template = await File.ReadAllTextAsync(pathFileTemplate).ConfigureAwait(false);
       string table = await File.ReadAllTextAsync(pathFileTemplateTable).ConfigureAwait(false);
+      string plateTemplate = await File.ReadAllTextAsync(pathFileTemplatePlate).ConfigureAwait(false);
       string result = template.Replace("{documentNo}", "      /2025/BBGN/BOSCH – SDV")
                               .Replace("{day}", dt.Day.ToString())
                               .Replace("{month}", dt.Month.ToString())
                               .Replace("{year}", dt.Year.ToString())
-                              .Replace("{vehiclePlate}", licensePlate)
-                              .Replace("{sealNo}", "")
+                              //.Replace("{vehiclePlate}", licensePlate)
+                              //.Replace("{sealNo}", "")
 
                               .Replace("{company_A}", inforCompanyA.Company)
                               .Replace("{office_address_A}", inforCompanyA.OfficeAddress)
@@ -367,6 +371,21 @@ namespace LTP.Truck.Controls
 
       result = result.Replace("{totalQuantity}", FormatWeight(value, 3));
       result = result.Replace("{table}", tableDetails.ToString());
+
+      //Biển số
+      var tableDetailsPlate = new StringBuilder();
+      if (licensePlates?.Count() > 0)
+      {
+        for (int no = 1; no <= licensePlates?.Count(); no++)
+        {
+          string tempPlate= plateTemplate;
+          tempPlate = tempPlate.Replace("{vehiclePlate}", licensePlates[no - 1]);
+          tempPlate = tempPlate.Replace("{sealNo}", "");
+
+          tableDetailsPlate.Append(tempPlate);
+        }
+      }
+      result = result.Replace("{plate_group}", tableDetailsPlate.ToString());
 
       string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
       await File.WriteAllTextAsync(outputPath, result).ConfigureAwait(false);

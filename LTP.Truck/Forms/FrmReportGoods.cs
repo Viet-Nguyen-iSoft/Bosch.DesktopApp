@@ -813,7 +813,9 @@ namespace LTP.Truck.Forms
         AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
         PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
       };
-      var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, licensePlate, exportData, inforCompanyDTO_A, inforCompanyDTO_B);
+
+      List<string> plates = new List<string>(); plates.Add(licensePlate);
+      var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, plates, exportData, inforCompanyDTO_A, inforCompanyDTO_B);
 
       var openReportFile = false;
       using (var popup = new PopupConfirm(
