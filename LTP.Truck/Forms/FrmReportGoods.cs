@@ -762,92 +762,92 @@ namespace LTP.Truck.Forms
     private async Task ExportRecordsAsync(
       IReadOnlyList<RecordWeightDTO> records)
     {
-      var licensePlates = records
-        .Select(dto => LicensePlateRepository.Normalize(dto.LicensePlate))
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
+      //var licensePlates = records
+      //  .Select(dto => LicensePlateRepository.Normalize(dto.LicensePlate))
+      //  .Distinct(StringComparer.OrdinalIgnoreCase)
+      //  .ToList();
 
-      if (licensePlates.Count > 1)
-      {
-        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng biển số xe !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupMsg.ShowDialog(this);
-        return;
-      }
+      //if (licensePlates.Count > 1)
+      //{
+      //  using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng biển số xe !",
+      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      //  popupMsg.ShowDialog(this);
+      //  return;
+      //}
 
-      var licensePlate = licensePlates.FirstOrDefault() ?? string.Empty;
+      //var licensePlate = licensePlates.FirstOrDefault() ?? string.Empty;
 
-      int productGroupNameCount = records
-        .Select(dto => (dto.ProductGroup ?? string.Empty).Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .Count();
+      //int productGroupNameCount = records
+      //  .Select(dto => (dto.ProductGroup ?? string.Empty).Trim())
+      //  .Distinct(StringComparer.OrdinalIgnoreCase)
+      //  .Count();
 
-      if (productGroupNameCount > 1)
-      {
-        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm chất thải !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupMsg.ShowDialog(this);
-        return;
-      }
+      //if (productGroupNameCount > 1)
+      //{
+      //  using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm chất thải !",
+      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      //  popupMsg.ShowDialog(this);
+      //  return;
+      //}
 
-      List<RecordWeight> exportData = records
-        .Select(dto => dto.RecordWeight!)
-        .ToList();
+      //List<RecordWeight> exportData = records
+      //  .Select(dto => dto.RecordWeight!)
+      //  .ToList();
 
-      DateTime dt = DateTime.Now;
+      //DateTime dt = DateTime.Now;
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
+      //InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
+      //{
+      //  Company = AppCore.Ins._appConfig?.Company,
+      //  OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
+      //  PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
+      //  AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
+      //  PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
+      //};
 
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = exportData.FirstOrDefault()?.Delivery?.Name,
-        OfficeAddress = exportData.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
+      //InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
+      //{
+      //  Company = exportData.FirstOrDefault()?.Delivery?.Name,
+      //  OfficeAddress = exportData.FirstOrDefault()?.Delivery?.OfficeAddress,
+      //  PhoneOfficeAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
+      //  AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
+      //  PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
+      //};
 
-      List<string> plates = new List<string>(); plates.Add(licensePlate);
-      var pdfPath = await AppCore.Ins.ExportPdfGoods_TongHop(dt, plates, exportData, inforCompanyDTO_A, inforCompanyDTO_B);
+      //List<string> plates = new List<string>(); plates.Add(licensePlate);
+      //var pdfPath = await AppCore.Ins.ExportPdfGoods_TongHop(dt, plates, exportData, inforCompanyDTO_A, inforCompanyDTO_B);
 
-      var openReportFile = false;
-      using (var popup = new PopupConfirm(
-          "Tạo phiếu thành công. Bạn có muốn mở file không?",
-          EnumTypeMsg.Confirm,
-          EnumImageMsg.Question))
-      {
-        popup.OnSendConfirm += (_, response) =>
-          openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
-        popup.ShowDialog(this);
-      }
+      //var openReportFile = false;
+      //using (var popup = new PopupConfirm(
+      //    "Tạo phiếu thành công. Bạn có muốn mở file không?",
+      //    EnumTypeMsg.Confirm,
+      //    EnumImageMsg.Question))
+      //{
+      //  popup.OnSendConfirm += (_, response) =>
+      //    openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
+      //  popup.ShowDialog(this);
+      //}
 
-      if (openReportFile)
-      {
-        try
-        {
-          Process.Start(new ProcessStartInfo
-          {
-            FileName = pdfPath,
-            UseShellExecute = true,
-          });
-        }
-        catch (Exception openException)
-        {
-          HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
-          using var openErrorPopup = new PopupConfirm(
-            "Đã tạo phiếu nhưng không thể mở file.",
-            EnumTypeMsg.MessageManualClose,
-            EnumImageMsg.Warning);
-          openErrorPopup.ShowDialog(this);
-        }
-      }
+      //if (openReportFile)
+      //{
+      //  try
+      //  {
+      //    Process.Start(new ProcessStartInfo
+      //    {
+      //      FileName = pdfPath,
+      //      UseShellExecute = true,
+      //    });
+      //  }
+      //  catch (Exception openException)
+      //  {
+      //    HelperManager.LogHelper.LogErrorToFileLog(openException, AppCore.Ins._folderFileLog);
+      //    using var openErrorPopup = new PopupConfirm(
+      //      "Đã tạo phiếu nhưng không thể mở file.",
+      //      EnumTypeMsg.MessageManualClose,
+      //      EnumImageMsg.Warning);
+      //    openErrorPopup.ShowDialog(this);
+      //  }
+      //}
     }
 
     private static void ExportGoodsReport(

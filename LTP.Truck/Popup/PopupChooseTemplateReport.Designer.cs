@@ -87,6 +87,7 @@
       btnHcP_CN.Text = "BBGN KNH Bosch HCP-CN";
       btnHcP_CN.TextColor = Color.White;
       btnHcP_CN.UseVisualStyleBackColor = false;
+      btnHcP_CN.Click += btnHcP_CN_Click;
       // 
       // btnHcP_SH
       // 
@@ -107,6 +108,7 @@
       btnHcP_SH.Text = "BBGN KNH Bosch HCP-SH";
       btnHcP_SH.TextColor = Color.White;
       btnHcP_SH.UseVisualStyleBackColor = false;
+      btnHcP_SH.Click += btnHcP_SH_Click;
       // 
       // btnTGA_SH
       // 
@@ -127,6 +129,7 @@
       btnTGA_SH.Text = "BBGN KNH Bosch TGA-SH";
       btnTGA_SH.TextColor = Color.White;
       btnTGA_SH.UseVisualStyleBackColor = false;
+      btnTGA_SH.Click += btnTGA_SH_Click;
       // 
       // btnTGA_CN
       // 
@@ -147,6 +150,7 @@
       btnTGA_CN.Text = "BBGN KNH Bosch TGA-CN";
       btnTGA_CN.TextColor = Color.White;
       btnTGA_CN.UseVisualStyleBackColor = false;
+      btnTGA_CN.Click += btnTGA_CN_Click;
       // 
       // btnTGA_TH
       // 

@@ -269,16 +269,18 @@ namespace LTP.Truck.Controls
     }
 
 
-    public async Task<string> ExportPdfGoods_TongHop(DateTime dt,
+    public async Task<string> ExportPdfGoods_TongHop(
+      string nameFileTemplate,
+      string nameFileTable,
+      DateTime dt,
       List<string> licensePlates, 
       List<RecordWeight> exportData, 
       InforCompanyDTO inforCompanyA,
       InforCompanyDTO inforCompanyB,
       List<RecordTruck>? exportTruckData = null)
     {
-      string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
-      //string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
-      string pathFileTemplate = Application.StartupPath + "Template\\TemplateTongHop.html";
+      string pathFileTemplateTable = Application.StartupPath + $"Template\\{nameFileTable}.html";
+      string pathFileTemplate = Application.StartupPath + $"Template\\{nameFileTemplate}.html";
 
 
       string pathFileTemplatePlate = Application.StartupPath + "Template\\TemplatePlate.html";
