@@ -63,9 +63,9 @@ namespace iSoft.Database
       None,
       [Description("Nguy hại")]
       Hazardous = 1,
-      [Description("Không thể tái chế")]
+      [Description("Không tái chế")]
       NonRecyclable = 2,
-      [Description("Có thể tái chế")]
+      [Description("Tái chế")]
       Recyclable = 3,
     }
   }
