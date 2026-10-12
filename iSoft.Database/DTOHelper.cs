@@ -183,6 +183,8 @@ namespace iSoft.Database
           {
             TypeGoods = e,
             No = index + 1,
+            Group = e.ProductGroup?.Name,
+            WasteType = EnumHelper.GetDescription(e.EnumWasteType),
             Code = e.Code,
             Name = e.Name,
             Description = e.Description,

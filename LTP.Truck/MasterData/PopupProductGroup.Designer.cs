@@ -34,9 +34,9 @@
       tableLayoutPanel1 = new TableLayoutPanel();
       label15 = new Label();
       label8 = new Label();
-      txtDescription = new Common.Custom.RJTextBox();
-      label4 = new Label();
       txtName = new Common.Custom.RJTextBox();
+      label4 = new Label();
+      txtDescription = new Common.Custom.RJTextBox();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
@@ -113,7 +113,7 @@
       label15.Location = new Point(41, 0);
       label15.Margin = new Padding(0);
       label15.Name = "label15";
-      label15.Size = new Size(109, 84);
+      label15.Size = new Size(109, 85);
       label15.TabIndex = 4;
       label15.Text = "*";
       label15.TextAlign = ContentAlignment.MiddleLeft;
@@ -127,47 +127,10 @@
       label8.Location = new Point(0, 0);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(41, 84);
+      label8.Size = new Size(41, 85);
       label8.TabIndex = 3;
       label8.Text = "Tên";
       label8.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtDescription
-      // 
-      txtDescription.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtDescription.BackColor = SystemColors.Window;
-      txtDescription.BorderColor = Color.Black;
-      txtDescription.BorderFocusColor = Color.HotPink;
-      txtDescription.BorderRadius = 5;
-      txtDescription.BorderSize = 2;
-      txtDescription.Font = new Font("Roboto", 14F);
-      txtDescription.ForeColor = Color.FromArgb(64, 64, 64);
-      txtDescription.Location = new Point(154, 108);
-      txtDescription.Margin = new Padding(4);
-      txtDescription.Multiline = false;
-      txtDescription.Name = "txtDescription";
-      txtDescription.Padding = new Padding(10, 7, 10, 7);
-      txtDescription.PasswordChar = false;
-      txtDescription.PlaceholderColor = Color.DarkGray;
-      txtDescription.PlaceholderText = "";
-      txtDescription.Size = new Size(450, 38);
-      txtDescription.TabIndex = 4;
-      txtDescription.Texts = "";
-      txtDescription.UnderlinedStyle = false;
-      // 
-      // label4
-      // 
-      label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label4.AutoSize = true;
-      label4.BackColor = Color.Transparent;
-      label4.Font = new Font("Roboto", 14F);
-      label4.Location = new Point(0, 85);
-      label4.Margin = new Padding(0);
-      label4.Name = "label4";
-      label4.Size = new Size(150, 85);
-      label4.TabIndex = 2;
-      label4.Text = "Mô tả";
-      label4.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtName
       // 
@@ -192,6 +155,43 @@
       txtName.Texts = "";
       txtName.UnderlinedStyle = false;
       // 
+      // label4
+      // 
+      label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label4.AutoSize = true;
+      label4.BackColor = Color.Transparent;
+      label4.Font = new Font("Roboto", 14F);
+      label4.Location = new Point(0, 85);
+      label4.Margin = new Padding(0);
+      label4.Name = "label4";
+      label4.Size = new Size(150, 85);
+      label4.TabIndex = 2;
+      label4.Text = "Mô tả";
+      label4.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // txtDescription
+      // 
+      txtDescription.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtDescription.BackColor = SystemColors.Window;
+      txtDescription.BorderColor = Color.Black;
+      txtDescription.BorderFocusColor = Color.HotPink;
+      txtDescription.BorderRadius = 5;
+      txtDescription.BorderSize = 2;
+      txtDescription.Font = new Font("Roboto", 14F);
+      txtDescription.ForeColor = Color.FromArgb(64, 64, 64);
+      txtDescription.Location = new Point(154, 108);
+      txtDescription.Margin = new Padding(4);
+      txtDescription.Multiline = false;
+      txtDescription.Name = "txtDescription";
+      txtDescription.Padding = new Padding(10, 7, 10, 7);
+      txtDescription.PasswordChar = false;
+      txtDescription.PlaceholderColor = Color.DarkGray;
+      txtDescription.PlaceholderText = "";
+      txtDescription.Size = new Size(450, 38);
+      txtDescription.TabIndex = 4;
+      txtDescription.Texts = "";
+      txtDescription.UnderlinedStyle = false;
+      // 
       // lbTitle
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -203,7 +203,7 @@
       lbTitle.Name = "lbTitle";
       lbTitle.Size = new Size(614, 60);
       lbTitle.TabIndex = 0;
-      lbTitle.Text = "Nhóm phế phẩm";
+      lbTitle.Text = "Nhóm chất thải";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel2

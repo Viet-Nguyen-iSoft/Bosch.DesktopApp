@@ -17,7 +17,9 @@ namespace iSoft.Database.Repositorys
 
     public Task<List<TypeGoods>> GetAllAsync(bool IsContainDelete = false)
     {
-      var query = Context.Set<TypeGoods>().AsQueryable();
+      var query = Context.Set<TypeGoods>()
+        .Include(typeGoods => typeGoods.ProductGroup)
+        .AsQueryable();
       if (!IsContainDelete)
         query = query.Where(x => !x.DeletedFlag);
       return query.ToListAsync();
