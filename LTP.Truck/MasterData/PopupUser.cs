@@ -198,7 +198,8 @@ namespace LTP.Truck.MasterData
 
           if (passwordErrors.Count > 0)
           {
-            ShowWarning("Mật khẩu chưa đáp ứng các quy tắc sau:\n- " +
+            ShowPasswordPolicyWarning(
+              "Mật khẩu chưa đáp ứng các quy tắc sau:\n- " +
               string.Join("\n- ", passwordErrors));
             txtPassword.Focus();
             return;
@@ -235,7 +236,6 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        // Khi chỉnh sửa, username bị khóa nên không cần truy vấn DB kiểm tra lại.
         if (_enumTypePopup == EnumTypePopup.Add &&
             await _userService.ExistsUsernameAsync(username))
         {
@@ -293,6 +293,16 @@ namespace LTP.Truck.MasterData
         message,
         EnumTypeMsg.MessageManualClose,
         EnumImageMsg.Warning);
+      popup.ShowDialog(this);
+    }
+
+    private void ShowPasswordPolicyWarning(string message)
+    {
+      using var popup = new PopupConfirm(
+        message,
+        EnumTypeMsg.MessageManualClose,
+        EnumImageMsg.Warning,
+        height: 616);
       popup.ShowDialog(this);
     }
 

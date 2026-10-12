@@ -38,10 +38,18 @@ namespace Common
     }
 
     private object? _obj {  get; set; }
-    public PopupConfirm(string title, EnumTypeMsg enumTypeMsg, EnumImageMsg eImage, object obj=null) : this()
+    public PopupConfirm(
+      string title,
+      EnumTypeMsg enumTypeMsg,
+      EnumImageMsg eImage,
+      object obj = null,
+      int? height = null) : this()
     {
       _obj = obj;
       this.lbInformation.Text = title;
+
+      if (height.HasValue && height.Value > 0)
+        ClientSize = new Size(ClientSize.Width, height.Value);
 
       switch (enumTypeMsg)
       {

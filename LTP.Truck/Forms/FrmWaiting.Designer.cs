@@ -150,10 +150,10 @@ namespace LTP.Truck.Forms
       // ucPanelLogin1
       // 
       ucPanelLogin1.Account = "admin";
-      ucPanelLogin1.Location = new Point(3, 197);
+      ucPanelLogin1.Location = new Point(3, 235);
       ucPanelLogin1.Name = "ucPanelLogin1";
       ucPanelLogin1.Password = "admin";
-      ucPanelLogin1.Size = new Size(562, 589);
+      ucPanelLogin1.Size = new Size(562, 513);
       ucPanelLogin1.TabIndex = 0;
       // 
       // tableLayoutPanel5

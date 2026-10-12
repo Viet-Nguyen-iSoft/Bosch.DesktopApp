@@ -71,10 +71,10 @@ namespace LTP.Truck.UserControls
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 110F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 0F));
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 0F));
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
-      tableLayoutPanel1.Size = new Size(650, 575);
+      tableLayoutPanel1.Size = new Size(650, 516);
       tableLayoutPanel1.TabIndex = 1;
       // 
       // label1
@@ -244,7 +244,7 @@ namespace LTP.Truck.UserControls
       btnLogin.FlatStyle = FlatStyle.Flat;
       btnLogin.Font = new Font("Roboto", 26.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLogin.ForeColor = Color.White;
-      btnLogin.Location = new Point(33, 388);
+      btnLogin.Location = new Point(33, 419);
       btnLogin.Name = "btnLogin";
       btnLogin.Size = new Size(584, 64);
       btnLogin.TabIndex = 3;
@@ -259,19 +259,20 @@ namespace LTP.Truck.UserControls
       btnLoginSSO.BackColor = Color.Red;
       btnLoginSSO.BackgroundColor = Color.Red;
       btnLoginSSO.BorderColor = Color.PaleVioletRed;
-      btnLoginSSO.BorderRadius = 5;
+      btnLoginSSO.BorderRadius = 1;
       btnLoginSSO.BorderSize = 0;
       btnLoginSSO.FlatAppearance.BorderSize = 0;
       btnLoginSSO.FlatStyle = FlatStyle.Flat;
       btnLoginSSO.Font = new Font("Roboto", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
       btnLoginSSO.ForeColor = Color.White;
-      btnLoginSSO.Location = new Point(33, 478);
+      btnLoginSSO.Location = new Point(33, 489);
       btnLoginSSO.Name = "btnLoginSSO";
-      btnLoginSSO.Size = new Size(584, 64);
+      btnLoginSSO.Size = new Size(584, 1);
       btnLoginSSO.TabIndex = 4;
       btnLoginSSO.Text = "Tiếp tục với Microsoft";
       btnLoginSSO.TextColor = Color.White;
       btnLoginSSO.UseVisualStyleBackColor = false;
+      btnLoginSSO.Visible = false;
       btnLoginSSO.Click += btnLoginSSO_Click;
       // 
       // UcPanelLogin
@@ -280,7 +281,7 @@ namespace LTP.Truck.UserControls
       AutoScaleMode = AutoScaleMode.Font;
       Controls.Add(tableLayoutPanel1);
       Name = "UcPanelLogin";
-      Size = new Size(650, 575);
+      Size = new Size(650, 516);
       tableLayoutPanel1.ResumeLayout(false);
       tableLayoutPanel1.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
