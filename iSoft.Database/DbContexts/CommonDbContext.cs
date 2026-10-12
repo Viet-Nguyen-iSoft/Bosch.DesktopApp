@@ -1,6 +1,8 @@
 ﻿using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using iSoft.Database.Service;
+using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +15,18 @@ namespace iSoft.Database.DbContexts
 {
   public class CommonDbContext : DbContext
   {
+    private static readonly HashSet<string> SensitivePropertyNames =
+      new(StringComparer.OrdinalIgnoreCase)
+      {
+        "Password", "PW", "PasswordHistory"
+      };
+
+    private static readonly HashSet<string> SystemOnlyPropertyNames =
+      new(StringComparer.OrdinalIgnoreCase)
+      {
+        "UpdatedAt", "UpdatedBy", "SyncFlag"
+      };
+
     public virtual DbSet<Station>? Stations { get; set; }
     public virtual DbSet<Connection>? Connections { get; set; }
     public virtual DbSet<AppConfig>? AppConfigs { get; set; }
@@ -151,6 +165,124 @@ namespace iSoft.Database.DbContexts
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
      
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+      AddAutomaticAuditEntries();
+      return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(
+      bool acceptAllChangesOnSuccess,
+      CancellationToken cancellationToken = default)
+    {
+      AddAutomaticAuditEntries();
+      return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void AddAutomaticAuditEntries()
+    {
+      ChangeTracker.DetectChanges();
+      var trackedEntries = ChangeTracker.Entries<BaseModel>()
+        .Where(entry => entry.State is EntityState.Added or
+          EntityState.Modified or EntityState.Deleted)
+        .Where(entry => entry.Entity is not iSoft.Database.Models.ApiJobs &&
+          entry.Entity is not iSoft.Database.Models.LogAction)
+        .ToList();
+
+      foreach (var entry in trackedEntries)
+      {
+        var properties = entry.Properties
+          .Where(property => !SensitivePropertyNames.Contains(
+            property.Metadata.Name))
+          .ToList();
+        var changedProperties = entry.State == EntityState.Modified
+          ? properties.Where(property => property.IsModified).ToList()
+          : properties;
+
+        if (entry.State == EntityState.Modified &&
+            changedProperties.All(property =>
+              SystemOnlyPropertyNames.Contains(property.Metadata.Name)))
+          continue;
+
+        // Trạng thái đăng nhập được ghi thành sự kiện LOGIN_* riêng.
+        if (entry.Entity is User && entry.State == EntityState.Modified &&
+            changedProperties.All(property =>
+              SystemOnlyPropertyNames.Contains(property.Metadata.Name) ||
+              property.Metadata.Name is nameof(User.FailedLoginAttempts) or
+                nameof(User.IsLoginLocked)))
+          continue;
+
+        var before = entry.State == EntityState.Added
+          ? null
+          : changedProperties.ToDictionary(
+            property => property.Metadata.Name,
+            property => property.OriginalValue);
+        var after = entry.State == EntityState.Deleted
+          ? null
+          : changedProperties.ToDictionary(
+            property => property.Metadata.Name,
+            property => property.CurrentValue);
+
+        var action = ResolveAction(entry);
+        AuditLogs!.Add(new AuditLog
+        {
+          Id = Guid.NewGuid(),
+          OccurredAt = DateTime.UtcNow,
+          Action = action,
+          EntityType = entry.Metadata.ClrType.Name,
+          EntityId = entry.Entity.Id.ToString(),
+          EntityName = GetEntityName(entry, properties),
+          UserId = AuditActorContext.UserId,
+          Username = AuditActorContext.Username,
+          UserDisplayName = AuditActorContext.DisplayName,
+          Source = AuditActorContext.Source ?? entry.Metadata.ClrType.Name,
+          Reason = properties.FirstOrDefault(property =>
+            property.Metadata.Name == "ReasonDelete")?.CurrentValue?.ToString(),
+          BeforeData = before == null ? null : JsonSerializer.Serialize(before),
+          AfterData = after == null ? null : JsonSerializer.Serialize(after),
+          IsSuccess = true
+        });
+      }
+    }
+
+    private static string ResolveAction(
+      Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<BaseModel> entry)
+    {
+      if (entry.State == EntityState.Added)
+        return AuditActions.Create;
+      if (entry.State == EntityState.Deleted)
+        return AuditActions.Delete;
+
+      var deletedProperty = entry.Property(nameof(BaseModel.DeletedFlag));
+      if (deletedProperty.IsModified)
+      {
+        var before = (bool)(deletedProperty.OriginalValue ?? false);
+        var after = (bool)(deletedProperty.CurrentValue ?? false);
+        if (!before && after)
+          return AuditActions.Delete;
+        if (before && !after)
+          return AuditActions.Restore;
+      }
+
+      return AuditActions.Update;
+    }
+
+    private static string? GetEntityName(
+      Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<BaseModel> entry,
+      IReadOnlyCollection<Microsoft.EntityFrameworkCore.ChangeTracking.PropertyEntry> properties)
+    {
+      foreach (var name in new[] { "Name", "Username", "Code", "LicensePlate" })
+      {
+        var property = properties.FirstOrDefault(item =>
+          item.Metadata.Name == name);
+        var value = property?.CurrentValue?.ToString();
+        if (!string.IsNullOrWhiteSpace(value))
+          return value;
+      }
+
+      return null;
     }
   }
 }

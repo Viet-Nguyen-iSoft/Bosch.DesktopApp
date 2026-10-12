@@ -32,5 +32,8 @@ namespace iSoft.Database.Models
     public const string Import = "IMPORT";
     public const string InvalidOperation = "INVALID_OPERATION";
     public const string Error = "ERROR";
+    public const string LoginSuccess = "LOGIN_SUCCESS";
+    public const string LoginFailed = "LOGIN_FAILED";
+    public const string Logout = "LOGOUT";
   }
 }

@@ -361,25 +361,7 @@ namespace LTP.Truck.Forms
 
       try
       {
-        var auditBefore = new
-        {
-          user.Id,
-          user.Username,
-          user.DisplayName,
-          user.FullName,
-          user.EmployeeCode,
-          user.DeletedFlag,
-          user.EnableFlag
-        };
         await AppCore.Ins._userService.DeleteAsync(user);
-        await AuditTrail.WriteAsync(
-          AuditActions.Delete,
-          nameof(iSoft.Database.Models.User),
-          user.Id,
-          user.Username,
-          nameof(FrmUser),
-          before: auditBefore,
-          after: new { user.DeletedFlag, user.EnableFlag });
         await QueueUserUpsertJobAsync(user);
         await LoadData(resetPage: false);
         ShowSuccess("Xóa tài khoản thành công.");

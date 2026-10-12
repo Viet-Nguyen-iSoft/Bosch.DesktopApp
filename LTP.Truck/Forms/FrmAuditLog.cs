@@ -40,7 +40,10 @@ namespace LTP.Truck.Forms
         new("Khôi phục", AuditActions.Restore),
         new("Import", AuditActions.Import),
         new("Thao tác không hợp lệ", AuditActions.InvalidOperation),
-        new("Lỗi", AuditActions.Error)
+        new("Lỗi", AuditActions.Error),
+        new("Đăng nhập thành công", AuditActions.LoginSuccess),
+        new("Đăng nhập thất bại", AuditActions.LoginFailed),
+        new("Đăng xuất", AuditActions.Logout)
       };
       cbbType.DisplayMember = nameof(AuditActionOption.Text);
 
@@ -124,7 +127,8 @@ namespace LTP.Truck.Forms
       SetColumnWidth(nameof(AuditLogDTO.OccurredAt), 180);
       SetColumnWidth(nameof(AuditLogDTO.Action), 190);
       SetColumnWidth(nameof(AuditLogDTO.EntityType), 170);
-      SetColumnWidth(nameof(AuditLogDTO.EntityId), 300);
+      if (dgv.Columns.Contains(nameof(AuditLogDTO.EntityId)))
+        dgv.Columns[nameof(AuditLogDTO.EntityId)].Visible = false;
       SetColumnWidth(nameof(AuditLogDTO.EntityName), 220);
       SetColumnWidth(nameof(AuditLogDTO.Username), 160);
       SetColumnWidth(nameof(AuditLogDTO.UserDisplayName), 220);

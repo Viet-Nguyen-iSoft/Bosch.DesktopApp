@@ -1,6 +1,7 @@
 using Common;
 using HelperManager;
 using iSoft.Database.Models;
+using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using LTP.Truck.Popup;
 using LTP.Truck.UserControls;
@@ -524,6 +525,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
+        AuditActorContext.SetSource(appModulSupport.ToString());
         switch (appModulSupport)
         {
           case EnumScreen.HomeTruck:

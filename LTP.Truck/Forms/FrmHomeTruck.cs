@@ -1271,12 +1271,6 @@ namespace LTP.Truck.Forms
 
           recordTruck.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
-          await AuditTrail.WriteAsync(
-            AuditActions.Delete, nameof(RecordTruck), recordTruck.Id,
-            recordTruck.LicensePlate, nameof(FrmHomeTruck),
-            recordTruck.ReasonDelete,
-            new { DeletedFlag = false },
-            new { recordTruck.DeletedFlag, recordTruck.ReasonDelete });
           await LoadHistorical();
         }
         else
@@ -1317,11 +1311,6 @@ namespace LTP.Truck.Forms
 
           recordTruck.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
-          await AuditTrail.WriteAsync(
-            AuditActions.Restore, nameof(RecordTruck), recordTruck.Id,
-            recordTruck.LicensePlate, nameof(FrmHomeTruck),
-            before: new { DeletedFlag = true },
-            after: new { recordTruck.DeletedFlag });
           await LoadHistorical();
         }
       }

@@ -3,6 +3,7 @@ using HelperManager;
 using iSoft.Database.Models;
 using LTP.Truck.Custom;
 using LTP.Truck.Forms;
+using LTP.Truck.Services;
 using SixLabors.Fonts;
 using System.Diagnostics;
 using static LTP.Truck.EnumData;
@@ -255,6 +256,18 @@ namespace LTP.Truck
 
       try
       {
+        var currentUser = AppCore.Ins._userCurrent;
+        if (currentUser != null)
+        {
+          _ = AuditTrail.WriteAsync(
+            AuditActions.Logout,
+            "Authentication",
+            currentUser.Id,
+            currentUser.Username,
+            nameof(FrmMain),
+            "Người dùng đăng xuất",
+            isSuccess: true);
+        }
         AppCore.Ins._autoLogoutService.Stop();
         CloseOpenPopups();
         AppCore.Ins._userCurrent = null;

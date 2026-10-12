@@ -245,18 +245,6 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        var auditBefore = _userUpdate == null ? null : new
-        {
-          _userUpdate.Id,
-          _userUpdate.Username,
-          _userUpdate.DisplayName,
-          _userUpdate.FullName,
-          _userUpdate.EmployeeCode,
-          _userUpdate.SsoLoginId,
-          _userUpdate.EnableFlag,
-          _userUpdate.MustChangePassword
-        };
-
         User userToSave;
         if (_enumTypePopup == EnumTypePopup.Add)
         {
@@ -287,24 +275,6 @@ namespace LTP.Truck.MasterData
         }
 
         User result = await _userService.AddOrUpdateAsync(userToSave);
-        await AuditTrail.WriteAsync(
-          _enumTypePopup == EnumTypePopup.Add
-            ? AuditActions.Create
-            : AuditActions.Update,
-          nameof(User), result.Id, result.Username, nameof(PopupUser),
-          before: auditBefore,
-          after: new
-          {
-            result.Id,
-            result.Username,
-            result.DisplayName,
-            result.FullName,
-            result.EmployeeCode,
-            result.SsoLoginId,
-            result.EnableFlag,
-            result.MustChangePassword
-          });
-
         Close();
         OnSendSuccess?.Invoke(result);
       }

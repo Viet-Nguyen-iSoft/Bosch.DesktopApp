@@ -76,10 +76,21 @@ namespace iSoft.Database.Service
         .ConfigureAwait(false);
 
       if (user == null || !user.EnableFlag)
+      {
+        await WriteLoginAuditAsync(
+          normalizedAccount, user, false,
+          user == null ? "Tài khoản không tồn tại" : "Tài khoản đã bị vô hiệu hóa")
+          .ConfigureAwait(false);
         return LoginResult.Invalid();
+      }
 
       if (user.IsLoginLocked)
+      {
+        await WriteLoginAuditAsync(
+          normalizedAccount, user, false, "Tài khoản đang bị khóa")
+          .ConfigureAwait(false);
         return LoginResult.Locked();
+      }
 
       bool passwordMatches = string.Equals(user.PW, pass,
         StringComparison.Ordinal);
@@ -95,6 +106,12 @@ namespace iSoft.Database.Service
         if (user.FailedLoginAttempts >= PasswordPolicy.MaximumFailedLoginAttempts)
           user.IsLoginLocked = true;
         await repository.SaveLoginStateAsync(user).ConfigureAwait(false);
+        await WriteLoginAuditAsync(
+          normalizedAccount, user, false,
+          user.IsLoginLocked
+            ? "Sai mật khẩu; tài khoản đã bị khóa"
+            : $"Sai mật khẩu; còn {PasswordPolicy.MaximumFailedLoginAttempts - user.FailedLoginAttempts} lần thử")
+          .ConfigureAwait(false);
         return user.IsLoginLocked
           ? LoginResult.Locked()
           : LoginResult.Invalid(
@@ -103,6 +120,9 @@ namespace iSoft.Database.Service
 
       user.FailedLoginAttempts = 0;
       await repository.SaveLoginStateAsync(user).ConfigureAwait(false);
+      await WriteLoginAuditAsync(
+        normalizedAccount, user, true, "Đăng nhập bằng tài khoản nội bộ")
+        .ConfigureAwait(false);
 
       bool passwordExpired = !user.PasswordChangedAt.HasValue ||
         user.PasswordChangedAt.Value.AddMonths(
@@ -119,7 +139,12 @@ namespace iSoft.Database.Service
     public async Task<LoginResult> CheckMicrosoftSsoLogin(string ssoLoginId)
     {
       if (string.IsNullOrWhiteSpace(ssoLoginId))
+      {
+        await WriteLoginAuditAsync(
+          string.Empty, null, false, "Microsoft SSO ID trống")
+          .ConfigureAwait(false);
         return LoginResult.Invalid();
+      }
 
       await using var context = new MySqlDbContext();
       var repository = new UserRepository(context);
@@ -127,13 +152,54 @@ namespace iSoft.Database.Service
         ssoLoginId.Trim().ToLowerInvariant()).ConfigureAwait(false);
 
       if (user == null || !user.EnableFlag)
+      {
+        await WriteLoginAuditAsync(
+          ssoLoginId, user, false,
+          user == null
+            ? "Microsoft SSO ID chưa được liên kết"
+            : "Tài khoản đã bị vô hiệu hóa")
+          .ConfigureAwait(false);
         return LoginResult.Invalid();
+      }
       if (user.IsLoginLocked)
+      {
+        await WriteLoginAuditAsync(
+          ssoLoginId, user, false, "Tài khoản đang bị khóa")
+          .ConfigureAwait(false);
         return LoginResult.Locked();
+      }
 
       // SSO dùng danh tính Microsoft Entra đã được xác thực; chính sách mật khẩu
       // cục bộ không áp dụng cho phiên đăng nhập này.
+      await WriteLoginAuditAsync(
+        user.Username, user, true, "Đăng nhập bằng Microsoft SSO")
+        .ConfigureAwait(false);
       return LoginResult.Success(user, mustChangePassword: false);
+    }
+
+    private static Task<bool> WriteLoginAuditAsync(
+      string account,
+      User? user,
+      bool isSuccess,
+      string reason)
+    {
+      return new AuditLogService().WriteAsync(new AuditLog
+      {
+        Id = Guid.NewGuid(),
+        OccurredAt = DateTime.UtcNow,
+        Action = isSuccess
+          ? AuditActions.LoginSuccess
+          : AuditActions.LoginFailed,
+        EntityType = "Authentication",
+        EntityId = user?.Id.ToString(),
+        EntityName = account,
+        UserId = user?.Id,
+        Username = user?.Username ?? account,
+        UserDisplayName = user?.DisplayName ?? user?.FullName,
+        Source = "Login",
+        Reason = reason,
+        IsSuccess = isSuccess
+      });
     }
 
     public static IReadOnlyList<string> GetPasswordHistory(User user)

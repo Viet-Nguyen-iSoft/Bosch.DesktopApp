@@ -8,6 +8,7 @@ namespace iSoft.Database.Service
     public static Guid? UserId { get; private set; }
     public static string? Username { get; private set; }
     public static string? DisplayName { get; private set; }
+    public static string? Source { get; private set; }
 
     public static void SetActor(
       Guid? userId, string? username, string? displayName)
@@ -18,5 +19,7 @@ namespace iSoft.Database.Service
     }
 
     public static void Clear() => SetActor(null, null, null);
+
+    public static void SetSource(string? source) => Source = source;
   }
 }

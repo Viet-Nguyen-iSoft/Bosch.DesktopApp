@@ -1119,31 +1119,17 @@ namespace LTP.Truck.Forms
       {
         if (recordWeightDto.RecordTruck is RecordTruck recordTruck)
         {
-          var wasDeleted = recordTruck.DeletedFlag;
           recordTruck.ReasonDelete = reasonDelete;
           recordTruck.DeletedFlag = !recordTruck.DeletedFlag;
           recordTruck.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
-          await AuditTrail.WriteAsync(
-            wasDeleted ? AuditActions.Restore : AuditActions.Delete,
-            nameof(RecordTruck), recordTruck.Id, recordTruck.LicensePlate,
-            nameof(FrmHomeGoods), reasonDelete,
-            new { DeletedFlag = wasDeleted },
-            new { recordTruck.DeletedFlag, recordTruck.ReasonDelete });
         }
         else if (recordWeightDto.RecordWeight is RecordWeight recordWeight)
         {
-          var wasDeleted = recordWeight.DeletedFlag;
           recordWeight.ReasonDelete = reasonDelete;
           recordWeight.DeletedFlag = !recordWeight.DeletedFlag;
           recordWeight.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
-          await AuditTrail.WriteAsync(
-            wasDeleted ? AuditActions.Restore : AuditActions.Delete,
-            nameof(RecordWeight), recordWeight.Id,
-            recordWeight.Id.ToString(), nameof(FrmHomeGoods), reasonDelete,
-            new { DeletedFlag = wasDeleted },
-            new { recordWeight.DeletedFlag, recordWeight.ReasonDelete });
         }
         await LoadHistorical();
       }

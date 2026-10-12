@@ -74,6 +74,9 @@ namespace iSoft.Database.DTO
       AuditActions.Import => "Import",
       AuditActions.InvalidOperation => "Thao tác không hợp lệ",
       AuditActions.Error => "Lỗi",
+      AuditActions.LoginSuccess => "Đăng nhập thành công",
+      AuditActions.LoginFailed => "Đăng nhập thất bại",
+      AuditActions.Logout => "Đăng xuất",
       _ => action
     };
   }

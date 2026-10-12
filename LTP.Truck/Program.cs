@@ -3,6 +3,7 @@ using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using LTP.Truck.Controls;
 using LTP.Truck.SecurityPassword;
+using LTP.Truck.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace LTP.Truck
@@ -17,15 +18,15 @@ namespace LTP.Truck
     {
       Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
       Application.ThreadException += (_, args) =>
-        LogHelper.LogErrorToFileLog(args.Exception, AppCore.Ins._folderFileLog);
+        LogUnhandledException(args.Exception, "UI Thread");
       AppDomain.CurrentDomain.UnhandledException += (_, args) =>
       {
         if (args.ExceptionObject is Exception ex)
-          LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+          LogUnhandledException(ex, "AppDomain");
       };
       TaskScheduler.UnobservedTaskException += (_, args) =>
       {
-        LogHelper.LogErrorToFileLog(args.Exception, AppCore.Ins._folderFileLog);
+        LogUnhandledException(args.Exception, "TaskScheduler");
         args.SetObserved();
       };
 
@@ -54,6 +55,19 @@ namespace LTP.Truck
     public static void CloseApp()
     {
       Application.Exit();
+    }
+
+    private static void LogUnhandledException(Exception exception, string source)
+    {
+      LogHelper.LogErrorToFileLog(exception, AppCore.Ins._folderFileLog);
+      _ = AuditTrail.WriteAsync(
+        AuditActions.Error,
+        "Application",
+        entityName: "Lỗi ứng dụng chưa được xử lý",
+        source: source,
+        reason: exception.Message,
+        isSuccess: false,
+        exception: exception);
     }
 
 
