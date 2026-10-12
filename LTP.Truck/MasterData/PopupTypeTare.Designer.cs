@@ -34,8 +34,6 @@
       tableLayoutPanel1 = new TableLayoutPanel();
       label15 = new Label();
       label8 = new Label();
-      tableLayoutPanel6 = new TableLayoutPanel();
-      label1 = new Label();
       label6 = new Label();
       tableLayoutPanel4 = new TableLayoutPanel();
       label3 = new Label();
@@ -52,7 +50,6 @@
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel1.SuspendLayout();
-      tableLayoutPanel6.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       SuspendLayout();
@@ -86,7 +83,7 @@
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel5.Controls.Add(tableLayoutPanel1, 0, 2);
-      tableLayoutPanel5.Controls.Add(tableLayoutPanel6, 0, 0);
+      tableLayoutPanel5.Controls.Add(label6, 0, 0);
       tableLayoutPanel5.Controls.Add(tableLayoutPanel4, 0, 1);
       tableLayoutPanel5.Controls.Add(txtValueTare, 1, 2);
       tableLayoutPanel5.Controls.Add(txtCode, 1, 0);
@@ -148,37 +145,6 @@
       label8.Text = "Giá trị Tare (Kg)";
       label8.TextAlign = ContentAlignment.MiddleLeft;
       // 
-      // tableLayoutPanel6
-      // 
-      tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel6.ColumnCount = 2;
-      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel6.Controls.Add(label1, 1, 0);
-      tableLayoutPanel6.Controls.Add(label6, 0, 0);
-      tableLayoutPanel6.Location = new Point(0, 0);
-      tableLayoutPanel6.Margin = new Padding(0);
-      tableLayoutPanel6.Name = "tableLayoutPanel6";
-      tableLayoutPanel6.RowCount = 1;
-      tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel6.Size = new Size(170, 68);
-      tableLayoutPanel6.TabIndex = 40;
-      // 
-      // label1
-      // 
-      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label1.AutoSize = true;
-      label1.BackColor = Color.Transparent;
-      label1.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label1.ForeColor = Color.Red;
-      label1.Location = new Point(37, 0);
-      label1.Margin = new Padding(0);
-      label1.Name = "label1";
-      label1.Size = new Size(133, 68);
-      label1.TabIndex = 4;
-      label1.Text = "*";
-      label1.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // label6
       // 
       label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -188,7 +154,7 @@
       label6.Location = new Point(0, 0);
       label6.Margin = new Padding(0);
       label6.Name = "label6";
-      label6.Size = new Size(37, 68);
+      label6.Size = new Size(170, 68);
       label6.TabIndex = 3;
       label6.Text = "Mã";
       label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -436,8 +402,6 @@
       tableLayoutPanel5.PerformLayout();
       tableLayoutPanel1.ResumeLayout(false);
       tableLayoutPanel1.PerformLayout();
-      tableLayoutPanel6.ResumeLayout(false);
-      tableLayoutPanel6.PerformLayout();
       tableLayoutPanel4.ResumeLayout(false);
       tableLayoutPanel4.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
@@ -460,8 +424,6 @@
     private TableLayoutPanel tableLayoutPanel1;
     private Label label15;
     private Label label8;
-    private TableLayoutPanel tableLayoutPanel6;
-    private Label label1;
     private Label label6;
     private TableLayoutPanel tableLayoutPanel4;
     private Label label3;

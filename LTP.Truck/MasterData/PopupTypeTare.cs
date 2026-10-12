@@ -104,15 +104,6 @@ namespace LTP.Truck.MasterData
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        if (string.IsNullOrWhiteSpace(txtCode.Texts))
-        {
-          using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập mã !",
-            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupMsgAlarm.ShowDialog(this);
-          txtCode.Focus();
-          return;
-        }
-
         if (string.IsNullOrWhiteSpace(txtName.Texts))
         {
           using var popupMsgAlarm = new PopupConfirm("Vui lòng nhập tên !",
@@ -142,11 +133,13 @@ namespace LTP.Truck.MasterData
 
         if (_enumTypePopup == EnumTypePopup.Add)
         {
-          string categoryTareCode = txtCode.Texts.Trim();
+          string? categoryTareCode = string.IsNullOrWhiteSpace(txtCode.Texts)
+            ? null
+            : txtCode.Texts.Trim();
           if (_isTareForTruck)
           {
             var tareTrucks = await _tareTruckService.GetAllAsync(IsContainDelete: true);
-            bool isDuplicateTareTruckCode = tareTrucks.Any(tareTruck =>
+            bool isDuplicateTareTruckCode = categoryTareCode != null && tareTrucks.Any(tareTruck =>
               !tareTruck.DeletedFlag &&
               string.Equals(tareTruck.Code?.Trim(), categoryTareCode,
                 StringComparison.CurrentCultureIgnoreCase));
@@ -175,7 +168,7 @@ namespace LTP.Truck.MasterData
           }
 
           var categoryTares = await _categoryTareService.GetAllAsync(IsContainDelete: true);
-          bool isDuplicateCode = categoryTares.Any(categoryTare =>
+          bool isDuplicateCode = categoryTareCode != null && categoryTares.Any(categoryTare =>
             !categoryTare.DeletedFlag &&
             string.Equals(categoryTare.Code?.Trim(), categoryTareCode,
               StringComparison.CurrentCultureIgnoreCase));
@@ -204,7 +197,9 @@ namespace LTP.Truck.MasterData
         {
           if (_isTareForTruck)
           {
-            _tareTruckUpdate.Code = txtCode.Texts.Trim();
+            _tareTruckUpdate.Code = string.IsNullOrWhiteSpace(txtCode.Texts)
+              ? null
+              : txtCode.Texts.Trim();
             _tareTruckUpdate.Name = txtName.Texts.Trim();
             _tareTruckUpdate.Value = tareValue;
             _tareTruckUpdate.Description = txtDescription.Texts.Trim();
@@ -215,7 +210,9 @@ namespace LTP.Truck.MasterData
             return;
           }
 
-          _categoryTareUpdate.Code = txtCode.Texts.Trim();
+          _categoryTareUpdate.Code = string.IsNullOrWhiteSpace(txtCode.Texts)
+            ? null
+            : txtCode.Texts.Trim();
           _categoryTareUpdate.Name = txtName.Texts.Trim();
           _categoryTareUpdate.Value = tareValue;
           _categoryTareUpdate.Description = txtDescription.Texts.Trim();
