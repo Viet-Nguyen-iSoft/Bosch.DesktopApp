@@ -70,6 +70,9 @@
     <None Update="Template\TemplateHtml.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\TemplateHtmlGoods.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\TemplateReport.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

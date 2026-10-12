@@ -1500,7 +1500,7 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void btnExport_Click(object sender, EventArgs e)
+    private void btnExport_Click(object sender, EventArgs e)
     {
       if (!AppCore.Ins.CheckPermission("0050"))
       {
@@ -1527,56 +1527,59 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      int licensePlateCount = selectedData
-        .Select(dto => LicensePlateRepository.Normalize(dto.LicensePlate))
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .Count();
+      using var popupChooseTemplate = new PopupChooseTemplateReport(selectedData);
+      popupChooseTemplate.ShowDialog(this);
 
-      if (licensePlateCount > 1)
-      {
-        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng biển số xe !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupMsg.ShowDialog(this);
-        return;
-      }
+      //int licensePlateCount = selectedData
+      //  .Select(dto => LicensePlateRepository.Normalize(dto.LicensePlate))
+      //  .Distinct(StringComparer.OrdinalIgnoreCase)
+      //  .Count();
 
-      int productGroupNameCount = selectedData
-        .Select(dto => (dto.ProductGroup ?? string.Empty).Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .Count();
+      //if (licensePlateCount > 1)
+      //{
+      //  using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng biển số xe !",
+      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      //  popupMsg.ShowDialog(this);
+      //  return;
+      //}
 
-      if (productGroupNameCount > 1)
-      {
-        using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm phế phẩm !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popupMsg.ShowDialog(this);
-        return;
-      }
+      //int productGroupNameCount = selectedData
+      //  .Select(dto => (dto.ProductGroup ?? string.Empty).Trim())
+      //  .Distinct(StringComparer.OrdinalIgnoreCase)
+      //  .Count();
 
-      List<RecordWeight> exportData = selectedData
-        .Select(dto => dto.RecordWeight!)
-        .ToList();
+      //if (productGroupNameCount > 1)
+      //{
+      //  using var popupMsg = new PopupConfirm("Các dữ liệu được chọn phải cùng tên nhóm phế phẩm !",
+      //    EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      //  popupMsg.ShowDialog(this);
+      //  return;
+      //}
 
-      string licensePlate = selectedData[0].LicensePlate?.Trim() ?? string.Empty;
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
+      //List<RecordWeight> exportData = selectedData
+      //  .Select(dto => dto.RecordWeight!)
+      //  .ToList();
 
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = exportData.FirstOrDefault()?.Delivery?.Name,
-        OfficeAddress = exportData.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
+      //string licensePlate = selectedData[0].LicensePlate?.Trim() ?? string.Empty;
+      //InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
+      //{
+      //  Company = AppCore.Ins._appConfig?.Company,
+      //  OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
+      //  PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
+      //  AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
+      //  PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
+      //};
 
-      await DownloadFileWorkReport(exportData, licensePlate, inforCompanyDTO_A, inforCompanyDTO_B);
+      //InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
+      //{
+      //  Company = exportData.FirstOrDefault()?.Delivery?.Name,
+      //  OfficeAddress = exportData.FirstOrDefault()?.Delivery?.OfficeAddress,
+      //  PhoneOfficeAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
+      //  AgentAddress = exportData.FirstOrDefault()?.Delivery?.AgentAddress,
+      //  PhoneAgentAddress = exportData.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
+      //};
+
+      //await DownloadFileWorkReport(exportData, licensePlate, inforCompanyDTO_A, inforCompanyDTO_B);
     }
 
 

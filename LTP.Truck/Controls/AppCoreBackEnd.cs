@@ -276,7 +276,8 @@ namespace LTP.Truck.Controls
       InforCompanyDTO inforCompanyB)
     {
       string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
-      string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
+      //string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
+      string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtmlGoods.html";
       string folderOutput = Application.StartupPath + "ReportGoods";
       if (!Directory.Exists(folderOutput))
       {
