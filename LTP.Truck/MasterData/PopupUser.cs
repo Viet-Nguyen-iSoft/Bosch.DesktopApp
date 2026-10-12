@@ -25,7 +25,7 @@ namespace LTP.Truck.MasterData
     public PopupUser()
     {
       InitializeComponent();
-      ConfigureSsoLoginIdField();
+      // Tạm thời không hiển thị cấu hình Microsoft SSO.
 
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += BtnClose_Click;
@@ -187,44 +187,28 @@ namespace LTP.Truck.MasterData
 
         if (hasPasswordInput)
         {
-          string? passwordError = PasswordPolicy.Validate(password,
+          var passwordErrors = PasswordPolicy.ValidateAll(password,
             username, displayName, fullName, employeeCode,
-            _userUpdate?.IdCardCode);
-          if (passwordError != null)
-          {
-            ShowWarning(passwordError);
-            txtPassword.Focus();
-            return;
-          }
+            _userUpdate?.IdCardCode).ToList();
 
           if (_userUpdate != null && UserService.GetPasswordHistory(_userUpdate)
             .Any(hash => PasswordPolicy.HistoryHashMatches(
               username, password, hash)))
+            passwordErrors.Add("Không được sử dụng lại 5 mật khẩu gần nhất.");
+
+          if (passwordErrors.Count > 0)
           {
-            ShowWarning("Không được sử dụng lại 5 mật khẩu gần nhất !");
+            ShowWarning("Mật khẩu chưa đáp ứng các quy tắc sau:\n- " +
+              string.Join("\n- ", passwordErrors));
             txtPassword.Focus();
             return;
           }
-        }
-
-        if (string.IsNullOrWhiteSpace(fullName))
-        {
-          ShowWarning("Vui lòng nhập họ và tên !");
-          txtFullName.Focus();
-          return;
         }
 
         if (fullName.Length > 255)
         {
           ShowWarning("Họ và tên không được vượt quá 255 ký tự !");
           txtFullName.Focus();
-          return;
-        }
-
-        if (string.IsNullOrWhiteSpace(employeeCode))
-        {
-          ShowWarning("Vui lòng nhập mã nhân viên !");
-          txtEmployeeCode.Focus();
           return;
         }
 

@@ -21,39 +21,44 @@ namespace HelperManager
 
     public static string? Validate(
       string password,
+      params string?[] guessableValues) =>
+      ValidateAll(password, guessableValues).FirstOrDefault();
+
+    public static IReadOnlyList<string> ValidateAll(
+      string password,
       params string?[] guessableValues)
     {
+      var errors = new List<string>();
+
       if (password.Length < MinimumLength)
-        return $"Mật khẩu phải có ít nhất {MinimumLength} ký tự.";
+        errors.Add($"Mật khẩu phải có ít nhất {MinimumLength} ký tự.");
       if (!password.Any(char.IsUpper))
-        return "Mật khẩu phải có ít nhất một chữ cái viết hoa.";
+        errors.Add("Mật khẩu phải có ít nhất một chữ cái viết hoa.");
       if (!password.Any(char.IsLower))
-        return "Mật khẩu phải có ít nhất một chữ cái viết thường.";
+        errors.Add("Mật khẩu phải có ít nhất một chữ cái viết thường.");
       if (!password.Any(char.IsDigit))
-        return "Mật khẩu phải có ít nhất một chữ số.";
+        errors.Add("Mật khẩu phải có ít nhất một chữ số.");
       if (!password.Any(character => !char.IsLetterOrDigit(character)))
-        return "Mật khẩu phải có ít nhất một ký tự đặc biệt.";
+        errors.Add("Mật khẩu phải có ít nhất một ký tự đặc biệt.");
 
       string normalizedPassword = password.ToLowerInvariant();
       if (ConsecutiveSequences.Any(sequence =>
         ContainsSequence(normalizedPassword, sequence, 4)))
       {
-        return "Mật khẩu không được chứa chuỗi ký tự hoặc chữ số liên tiếp (ví dụ: 1234, abcd, qwerty).";
+        errors.Add("Mật khẩu không được chứa chuỗi ký tự hoặc chữ số liên tiếp (ví dụ: 1234, abcd, qwerty).");
       }
 
-      foreach (string value in guessableValues
+      bool containsGuessableValue = guessableValues
         .Where(value => !string.IsNullOrWhiteSpace(value))
         .SelectMany(SplitGuessableValue)
-        .Distinct(StringComparer.OrdinalIgnoreCase))
-      {
-        if (value.Length >= 3 && normalizedPassword.Contains(
-          value.ToLowerInvariant(), StringComparison.Ordinal))
-        {
-          return "Mật khẩu không được chứa tên đăng nhập, mã nhân viên hoặc thông tin cá nhân dễ đoán.";
-        }
-      }
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .Any(value => value.Length >= 3 && normalizedPassword.Contains(
+          value.ToLowerInvariant(), StringComparison.Ordinal));
 
-      return null;
+      if (containsGuessableValue)
+        errors.Add("Mật khẩu không được chứa tên đăng nhập, mã nhân viên hoặc thông tin cá nhân dễ đoán.");
+
+      return errors;
     }
 
     public static string CreateHistoryHash(string username, string password) =>

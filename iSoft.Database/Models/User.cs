@@ -5,7 +5,6 @@ namespace iSoft.Database.Models
 {
   public class User : BaseModel
   {
-    [Required]
     [MaxLength(255)]
     public string FullName { get; set; } = string.Empty;
 

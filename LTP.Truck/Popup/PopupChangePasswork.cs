@@ -106,21 +106,19 @@ namespace LTP.Truck.Popup
           return;
         }
 
-        string? passwordError = PasswordPolicy.Validate(newPassword,
+        var passwordErrors = PasswordPolicy.ValidateAll(newPassword,
           _user.Username, _user.DisplayName, _user.FullName,
-          _user.EmployeeCode, _user.IdCardCode);
-        if (passwordError != null)
-        {
-          ShowWarning(passwordError);
-          txtPassNew.Focus();
-          return;
-        }
+          _user.EmployeeCode, _user.IdCardCode).ToList();
 
         if (UserService.GetPasswordHistory(_user).Any(hash =>
           PasswordPolicy.HistoryHashMatches(
             _user.Username, newPassword, hash)))
+          passwordErrors.Add("Không được sử dụng lại 5 mật khẩu gần nhất.");
+
+        if (passwordErrors.Count > 0)
         {
-          ShowWarning("Không được sử dụng lại 5 mật khẩu gần nhất !");
+          ShowWarning("Mật khẩu chưa đáp ứng các quy tắc sau:\n- " +
+            string.Join("\n- ", passwordErrors));
           txtPassNew.Focus();
           return;
         }

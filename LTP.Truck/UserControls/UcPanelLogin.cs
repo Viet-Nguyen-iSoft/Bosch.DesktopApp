@@ -57,6 +57,12 @@ namespace LTP.Truck.UserControls
 
       txtPass.PlaceholderText = "Nhập mật khẩu";
       txtAccount.PlaceholderText = "Nhập tài khoản";
+
+      // Tạm thời vô hiệu hóa đăng nhập Microsoft SSO.
+      btnLoginSSO.Visible = false;
+      btnLoginSSO.Enabled = false;
+      tableLayoutPanel1.RowStyles[8].Height = 0;
+      tableLayoutPanel1.RowStyles[9].Height = 0;
     }
 
     private void btnLogin_Click(object sender, EventArgs e)
