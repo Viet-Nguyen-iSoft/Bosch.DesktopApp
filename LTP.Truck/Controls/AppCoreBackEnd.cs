@@ -269,7 +269,7 @@ namespace LTP.Truck.Controls
     }
 
 
-    public async Task<string> ExportPdfGoods(DateTime dt,
+    public async Task<string> ExportPdfGoods_TongHop(DateTime dt,
       List<string> licensePlates, 
       List<RecordWeight> exportData, 
       InforCompanyDTO inforCompanyA,
@@ -278,7 +278,7 @@ namespace LTP.Truck.Controls
     {
       string pathFileTemplateTable = Application.StartupPath + "Template\\TemplateTableHtml.html";
       //string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtml.html";
-      string pathFileTemplate = Application.StartupPath + "Template\\TemplateHtmlGoods_TH.html";
+      string pathFileTemplate = Application.StartupPath + "Template\\TemplateTongHop.html";
 
 
       string pathFileTemplatePlate = Application.StartupPath + "Template\\TemplatePlate.html";
@@ -292,7 +292,7 @@ namespace LTP.Truck.Controls
       string template = await File.ReadAllTextAsync(pathFileTemplate).ConfigureAwait(false);
       string table = await File.ReadAllTextAsync(pathFileTemplateTable).ConfigureAwait(false);
       string plateTemplate = await File.ReadAllTextAsync(pathFileTemplatePlate).ConfigureAwait(false);
-      string result = template.Replace("{documentNo}", "      /2025/BBGN/BOSCH – SDV")
+      string result = template.Replace("{documentNo}", "......../2025/BBGN/BOSCH – SDV")
                               .Replace("{day}", dt.Day.ToString())
                               .Replace("{month}", dt.Month.ToString())
                               .Replace("{year}", dt.Year.ToString())

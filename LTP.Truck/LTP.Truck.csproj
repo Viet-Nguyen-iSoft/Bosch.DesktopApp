@@ -86,6 +86,9 @@
     <None Update="Template\TemplateReport.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\TemplateTongHop.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\TemplateTracking.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

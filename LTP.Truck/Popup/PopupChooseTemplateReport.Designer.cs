@@ -167,6 +167,7 @@
       btnTGA_TH.Text = "BBGN TỔNG TGA";
       btnTGA_TH.TextColor = Color.White;
       btnTGA_TH.UseVisualStyleBackColor = false;
+      btnTGA_TH.Click += btnTGA_TH_Click;
       // 
       // btnBiwaseScrapSale
       // 

@@ -815,7 +815,7 @@ namespace LTP.Truck.Forms
       };
 
       List<string> plates = new List<string>(); plates.Add(licensePlate);
-      var pdfPath = await AppCore.Ins.ExportPdfGoods(dt, plates, exportData, inforCompanyDTO_A, inforCompanyDTO_B);
+      var pdfPath = await AppCore.Ins.ExportPdfGoods_TongHop(dt, plates, exportData, inforCompanyDTO_A, inforCompanyDTO_B);
 
       var openReportFile = false;
       using (var popup = new PopupConfirm(

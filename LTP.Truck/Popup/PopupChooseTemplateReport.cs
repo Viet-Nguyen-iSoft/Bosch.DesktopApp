@@ -41,14 +41,39 @@ namespace LTP.Truck.Popup
 
     private async void btnHcP_TH_Click(object sender, EventArgs e)
     {
-      List<RecordWeight> recordWeights = SelectedData
+      var hcpData = SelectedData
+        .Where(dto =>
+          dto.RecordWeight?.Product?.ProductGroup?.Name?.Contains(
+            "HcP", StringComparison.OrdinalIgnoreCase) == true ||
+          dto.RecordTruck?.TypeGoods?.ProductGroup?.Name?.Contains(
+            "HcP", StringComparison.OrdinalIgnoreCase) == true)
+        .ToList();
+
+      if (hcpData.Count != SelectedData.Count)
+      {
+        var continueExport = false;
+        using (var popup = new PopupConfirm(
+          "Dữ liệu đã chọn có dữ liệu không phải HcP. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu HcP không?",
+          EnumTypeMsg.Confirm,
+          EnumImageMsg.Question))
+        {
+          popup.OnSendConfirm += (_, response) =>
+            continueExport = response.EnumResponsible == EnumResponsible.Confirm;
+          popup.ShowDialog(this);
+        }
+
+        if (!continueExport)
+          return;
+      }
+
+      List<RecordWeight> recordWeights = hcpData
         .Where(dto => string.Equals(dto.Source, "Cân hàng", StringComparison.OrdinalIgnoreCase))
         .Select(dto => dto.RecordWeight)
         .Where(record => record is not null)
         .Select(record => record!)
         .ToList();
 
-      List<RecordTruck> recordTrucks = SelectedData
+      List<RecordTruck> recordTrucks = hcpData
         .Where(dto => string.Equals(dto.Source, "Cân xe tải", StringComparison.OrdinalIgnoreCase))
         .Select(dto => dto.RecordTruck)
         .Where(record => record is not null)
@@ -66,7 +91,7 @@ namespace LTP.Truck.Popup
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
-          "Không có dữ liệu hợp lệ để xuất báo cáo !",
+          "Không có dữ liệu HcP hợp lệ để xuất báo cáo !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
@@ -92,7 +117,7 @@ namespace LTP.Truck.Popup
         PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
       };
 
-      await DownloadFileWorkReport(
+      await DownloadFileWorkReport_TongHop(
         recordWeights,
         recordTrucks,
         licensePlates,
@@ -100,10 +125,15 @@ namespace LTP.Truck.Popup
         inforCompanyDTO_B);
     }
 
+    private void btnTGA_TH_Click(object sender, EventArgs e)
+    {
+
+    }
+
 
 
     #region Export PDF Goods
-    private async Task DownloadFileWorkReport(
+    private async Task DownloadFileWorkReport_TongHop(
       List<RecordWeight> recordWeights,
       List<RecordTruck> recordTrucks,
       List<string> licensePlates,
@@ -114,7 +144,7 @@ namespace LTP.Truck.Popup
       {
         DateTime dt = DateTime.Now;
 
-        var pdfPath = await AppCore.Ins.ExportPdfGoods(
+        var pdfPath = await AppCore.Ins.ExportPdfGoods_TongHop(
           dt,
           licensePlates,
           recordWeights,
@@ -164,17 +194,13 @@ namespace LTP.Truck.Popup
         popupMsg.ShowDialog(this);
       }
     }
-
-    private static string FormatWeight(double value)
-    {
-      return WeightFormatHelper.Format(value);
-    }
-
     #endregion
 
     private void btnClose_Click(object sender, EventArgs e)
     {
       this.Close();
     }
+
+    
   }
 }
