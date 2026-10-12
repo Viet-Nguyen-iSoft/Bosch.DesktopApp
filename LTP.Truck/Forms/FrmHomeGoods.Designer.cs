@@ -69,7 +69,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7 = new TableLayoutPanel();
       txtLicensePlate = new RJTextBox();
       btnLoadLicensePlate = new RJButton();
-      btnAddManual = new RJButton();
       cbbProduct = new ComboBox();
       cbbProductGroup = new ComboBox();
       label3 = new Label();
@@ -95,6 +94,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10 = new TableLayoutPanel();
       btnSaveData = new RJButton();
       btnCreate = new RJButton();
+      btnAddManual = new RJButton();
       label10 = new Label();
       tableLayoutPanel23 = new TableLayoutPanel();
       ucItemTare = new LTP.Truck.UserControls.UcItem();
@@ -707,7 +707,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel7.Controls.Add(txtLicensePlate, 0, 0);
       tableLayoutPanel7.Controls.Add(btnLoadLicensePlate, 2, 0);
-      tableLayoutPanel7.Controls.Add(btnAddManual, 4, 0);
       tableLayoutPanel7.Location = new Point(174, 0);
       tableLayoutPanel7.Margin = new Padding(0);
       tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -761,38 +760,13 @@ namespace LTP.Truck.Forms
       btnLoadLicensePlate.UseVisualStyleBackColor = false;
       btnLoadLicensePlate.Click += btnLoadLicensePlate_Click;
       // 
-      // btnAddManual
-      // 
-      btnAddManual.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      btnAddManual.BackColor = Color.FromArgb(64, 107, 177);
-      btnAddManual.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnAddManual.BorderColor = Color.White;
-      btnAddManual.BorderRadius = 5;
-      btnAddManual.BorderSize = 0;
-      btnAddManual.FlatAppearance.BorderColor = Color.White;
-      btnAddManual.FlatAppearance.BorderSize = 0;
-      btnAddManual.FlatStyle = FlatStyle.Flat;
-      btnAddManual.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      btnAddManual.ForeColor = Color.White;
-      btnAddManual.Image = Properties.Resources.icon_create_manual;
-      btnAddManual.ImageAlign = ContentAlignment.MiddleLeft;
-      btnAddManual.Location = new Point(459, 3);
-      btnAddManual.Name = "btnAddManual";
-      btnAddManual.Padding = new Padding(10, 0, 0, 0);
-      btnAddManual.Size = new Size(194, 51);
-      btnAddManual.TabIndex = 34;
-      btnAddManual.Text = "       Tạo thủ công";
-      btnAddManual.TextAlign = ContentAlignment.MiddleLeft;
-      btnAddManual.TextColor = Color.White;
-      btnAddManual.UseVisualStyleBackColor = false;
-      // 
       // cbbProduct
       // 
       cbbProduct.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(177, 236);
+      cbbProduct.Location = new Point(177, 235);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(650, 33);
       cbbProduct.TabIndex = 7;
@@ -803,7 +777,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(177, 179);
+      cbbProductGroup.Location = new Point(177, 180);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(344, 33);
       cbbProductGroup.TabIndex = 6;
@@ -953,7 +927,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 11);
+      cbbTare.Location = new Point(3, 10);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(344, 33);
       cbbTare.TabIndex = 8;
@@ -1113,7 +1087,7 @@ namespace LTP.Truck.Forms
       cbbDelivery.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbDelivery.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbDelivery.FormattingEnabled = true;
-      cbbDelivery.Location = new Point(177, 123);
+      cbbDelivery.Location = new Point(177, 124);
       cbbDelivery.Name = "cbbDelivery";
       cbbDelivery.Size = new Size(650, 33);
       cbbDelivery.TabIndex = 40;
@@ -1126,8 +1100,10 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel10.Controls.Add(btnSaveData, 2, 0);
       tableLayoutPanel10.Controls.Add(btnCreate, 1, 0);
+      tableLayoutPanel10.Controls.Add(btnAddManual, 0, 0);
       tableLayoutPanel10.Location = new Point(174, 417);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -1138,7 +1114,7 @@ namespace LTP.Truck.Forms
       // 
       // btnSaveData
       // 
-      btnSaveData.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnSaveData.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       btnSaveData.BackColor = Color.FromArgb(64, 107, 177);
       btnSaveData.BackgroundColor = Color.FromArgb(64, 107, 177);
       btnSaveData.BorderColor = Color.PaleVioletRed;
@@ -1150,7 +1126,7 @@ namespace LTP.Truck.Forms
       btnSaveData.ForeColor = Color.White;
       btnSaveData.Image = Properties.Resources.icon_save;
       btnSaveData.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSaveData.Location = new Point(454, 8);
+      btnSaveData.Location = new Point(454, 5);
       btnSaveData.Name = "btnSaveData";
       btnSaveData.Padding = new Padding(10, 0, 0, 0);
       btnSaveData.Size = new Size(194, 54);
@@ -1163,7 +1139,7 @@ namespace LTP.Truck.Forms
       // 
       // btnCreate
       // 
-      btnCreate.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      btnCreate.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       btnCreate.BackColor = Color.FromArgb(64, 107, 177);
       btnCreate.BackgroundColor = Color.FromArgb(64, 107, 177);
       btnCreate.BorderColor = Color.White;
@@ -1176,14 +1152,39 @@ namespace LTP.Truck.Forms
       btnCreate.ForeColor = Color.White;
       btnCreate.Image = Properties.Resources.icon_new;
       btnCreate.ImageAlign = ContentAlignment.MiddleLeft;
-      btnCreate.Location = new Point(254, 3);
+      btnCreate.Location = new Point(254, 5);
       btnCreate.Name = "btnCreate";
       btnCreate.Padding = new Padding(15, 0, 0, 0);
-      btnCreate.Size = new Size(194, 59);
+      btnCreate.Size = new Size(194, 54);
       btnCreate.TabIndex = 24;
       btnCreate.Text = "Phiếu mới";
       btnCreate.TextColor = Color.White;
       btnCreate.UseVisualStyleBackColor = false;
+      // 
+      // btnAddManual
+      // 
+      btnAddManual.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnAddManual.BackColor = Color.FromArgb(64, 107, 177);
+      btnAddManual.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnAddManual.BorderColor = Color.White;
+      btnAddManual.BorderRadius = 5;
+      btnAddManual.BorderSize = 0;
+      btnAddManual.FlatAppearance.BorderColor = Color.White;
+      btnAddManual.FlatAppearance.BorderSize = 0;
+      btnAddManual.FlatStyle = FlatStyle.Flat;
+      btnAddManual.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnAddManual.ForeColor = Color.White;
+      btnAddManual.Image = Properties.Resources.icon_create_manual;
+      btnAddManual.ImageAlign = ContentAlignment.MiddleLeft;
+      btnAddManual.Location = new Point(3, 5);
+      btnAddManual.Name = "btnAddManual";
+      btnAddManual.Padding = new Padding(10, 0, 0, 0);
+      btnAddManual.Size = new Size(245, 54);
+      btnAddManual.TabIndex = 34;
+      btnAddManual.Text = "       Tạo dữ liệu cân xe tải";
+      btnAddManual.TextAlign = ContentAlignment.MiddleLeft;
+      btnAddManual.TextColor = Color.White;
+      btnAddManual.UseVisualStyleBackColor = false;
       // 
       // label10
       // 

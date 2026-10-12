@@ -47,6 +47,8 @@ namespace iSoft.Database.DTO
     public string? Delivery { get; set; }
     [DisplayName("Biển số xe")]
     public string? LicensePlate { get; set; }
+
+    [Browsable(false)]
     [DisplayName("Tên tài xế")]
     public string? NameDriver { get; set; }
 
