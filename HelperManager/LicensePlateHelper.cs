@@ -8,20 +8,20 @@ namespace HelperManager
 {
   public static class LicensePlateHelper
   {
-    // Accepted weighing template: XXYXXXX or XXYXXXXX.
-    // X is a digit and Y is exactly one letter.
+    // Accepted weighing templates: XXYXXXX, XXYXXXXX, XXYYXXXX or XXYYXXXXX.
+    // X is a digit and Y is a letter.
     private static readonly System.Text.RegularExpressions.Regex VietnamCarLicensePlateRegex = new(
-      @"^(?<province>\d{2})(?<series>[A-Z])-?(?<number>\d{4}|\d{5}|\d{3}\.\d{2})$",
+      @"^(?<province>\d{2})(?<series>[A-Z]{1,2})-?(?<number>\d{4}|\d{5}|\d{3}\.\d{2})$",
       System.Text.RegularExpressions.RegexOptions.Compiled |
       System.Text.RegularExpressions.RegexOptions.CultureInvariant |
       System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
     /// <summary>
     /// Kiểm tra và chuẩn hóa biển số dùng tại trạm cân theo mẫu
-    /// XXYXXXX hoặc XXYXXXXX (X là số, Y là chữ).
+    /// XXYXXXX, XXYXXXXX, XXYYXXXX hoặc XXYYXXXXX (X là số, Y là chữ).
     /// Chấp nhận chữ thường/chữ hoa, khoảng trắng, dấu '-' và dấu chấm phân nhóm.
-    /// Ví dụ hợp lệ: 30A-1234, 30A1234, 30A-12345, 30A12345, 30A-123.45.
-    /// Không chấp nhận nhiều hơn một chữ cái hoặc chữ số trong phần seri.
+    /// Ví dụ hợp lệ: 30A-1234, 30A-12345, 30AB-1234, 30AB-12345, 30AB-123.45.
+    /// Không chấp nhận nhiều hơn hai chữ cái hoặc chữ số trong phần seri.
     /// </summary>
     /// <returns>
     /// IsValid cho biết dữ liệu có hợp lệ hay không; Plate là biển số đã được chuẩn hóa,
