@@ -188,6 +188,7 @@ namespace iSoft.Database
             WasteType = EnumHelper.GetDescription(e.EnumWasteType),
             Code = e.Code,
             Name = e.Name,
+            TagMappingReport = e.TagMappingReport,
             Description = e.Description,
             UpdatedAt = e?.UpdatedAt != null ? (((DateTime)e?.UpdatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? "") :
                                               (((DateTime)e?.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? ""),
@@ -331,6 +332,7 @@ namespace iSoft.Database
             Code = e.Code,
             Name = e.Name,
             WasteType = EnumHelper.GetDescription(e.EnumWasteType),
+            TagMappingReport = e.TagMappingReport,
             Description = e.Description,
             UpdatedAt = e?.UpdatedAt != null ? (((DateTime)e?.UpdatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? "") :
                                               (((DateTime)e?.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? ""),

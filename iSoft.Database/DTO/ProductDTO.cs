@@ -28,7 +28,8 @@ namespace iSoft.Database.DTO
     [DisplayName("Tên sản phẩm")]
     public string? Name { get; set; }
 
-    
+    [DisplayName("Tag mapping báo cáo")]
+    public string? TagMappingReport { get; set; }
 
     [DisplayName("Mô tả")]
     public string? Description { get; set; }
