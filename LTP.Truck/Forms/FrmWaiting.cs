@@ -154,7 +154,7 @@ namespace LTP.Truck.Forms
       //ucPanelLogin1.Account = "Bosch";
       //ucPanelLogin1.Password = "Hsf@2026";
       //ucPanelLogin1.Account = "admin";
-      //ucPanelLogin1.Password = "admin";
+      //ucPanelLogin1.Password = "admin";la
       ucPanelLogin1.Account = "ISOFT";
       ucPanelLogin1.Password = "i-Soft@123";
       //ucPanelLogin1.Account = "";

@@ -70,7 +70,6 @@ namespace LTP.Truck.Forms
       txtLicensePlate = new RJTextBox();
       btnLoadLicensePlate = new RJButton();
       cbbProduct = new ComboBox();
-      cbbProductGroup = new ComboBox();
       label3 = new Label();
       tableLayoutPanel16 = new TableLayoutPanel();
       txtNameDriver = new RJTextBox();
@@ -91,6 +90,10 @@ namespace LTP.Truck.Forms
       label5 = new Label();
       label25 = new Label();
       cbbDelivery = new ComboBox();
+      tableLayoutPanel24 = new TableLayoutPanel();
+      label28 = new Label();
+      cbbProductGroup = new ComboBox();
+      cbbProductType = new ComboBox();
       label10 = new Label();
       tableLayoutPanel10 = new TableLayoutPanel();
       btnSaveData = new RJButton();
@@ -136,6 +139,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel20.SuspendLayout();
       tableLayoutPanel21.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
+      tableLayoutPanel24.SuspendLayout();
       tableLayoutPanel10.SuspendLayout();
       tableLayoutPanel23.SuspendLayout();
       tableLayoutPanel9.SuspendLayout();
@@ -571,7 +575,6 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.Controls.Add(tableLayoutPanel13, 0, 5);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel7, 1, 0);
       tableLayoutPanel8.Controls.Add(cbbProduct, 1, 4);
-      tableLayoutPanel8.Controls.Add(cbbProductGroup, 1, 3);
       tableLayoutPanel8.Controls.Add(label3, 0, 1);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel16, 1, 1);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel19, 1, 5);
@@ -580,6 +583,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel8.Controls.Add(label2, 0, 6);
       tableLayoutPanel8.Controls.Add(tableLayoutPanel6, 0, 2);
       tableLayoutPanel8.Controls.Add(cbbDelivery, 1, 2);
+      tableLayoutPanel8.Controls.Add(tableLayoutPanel24, 1, 3);
       tableLayoutPanel8.Location = new Point(0, 50);
       tableLayoutPanel8.Margin = new Padding(0);
       tableLayoutPanel8.Name = "tableLayoutPanel8";
@@ -768,17 +772,6 @@ namespace LTP.Truck.Forms
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(650, 33);
       cbbProduct.TabIndex = 7;
-      // 
-      // cbbProductGroup
-      // 
-      cbbProductGroup.Anchor = AnchorStyles.Left;
-      cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(177, 180);
-      cbbProductGroup.Name = "cbbProductGroup";
-      cbbProductGroup.Size = new Size(344, 33);
-      cbbProductGroup.TabIndex = 6;
       // 
       // label3
       // 
@@ -1089,6 +1082,62 @@ namespace LTP.Truck.Forms
       cbbDelivery.Name = "cbbDelivery";
       cbbDelivery.Size = new Size(650, 33);
       cbbDelivery.TabIndex = 40;
+      // 
+      // tableLayoutPanel24
+      // 
+      tableLayoutPanel24.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel24.ColumnCount = 4;
+      tableLayoutPanel24.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel24.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel24.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel24.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel24.Controls.Add(label28, 2, 0);
+      tableLayoutPanel24.Controls.Add(cbbProductGroup, 0, 0);
+      tableLayoutPanel24.Controls.Add(cbbProductType, 3, 0);
+      tableLayoutPanel24.Location = new Point(174, 169);
+      tableLayoutPanel24.Margin = new Padding(0);
+      tableLayoutPanel24.Name = "tableLayoutPanel24";
+      tableLayoutPanel24.RowCount = 1;
+      tableLayoutPanel24.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel24.Size = new Size(656, 56);
+      tableLayoutPanel24.TabIndex = 41;
+      // 
+      // label28
+      // 
+      label28.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label28.AutoSize = true;
+      label28.BackColor = Color.Transparent;
+      label28.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label28.Location = new Point(276, 0);
+      label28.Margin = new Padding(0);
+      label28.Name = "label28";
+      label28.Size = new Size(123, 56);
+      label28.TabIndex = 19;
+      label28.Text = "Loại chất thải";
+      label28.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // cbbProductGroup
+      // 
+      cbbProductGroup.Anchor = AnchorStyles.Left;
+      cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbProductGroup.FormattingEnabled = true;
+      cbbProductGroup.Location = new Point(3, 11);
+      cbbProductGroup.Name = "cbbProductGroup";
+      cbbProductGroup.Size = new Size(250, 33);
+      cbbProductGroup.TabIndex = 6;
+      // 
+      // cbbProductType
+      // 
+      cbbProductType.Anchor = AnchorStyles.Left;
+      cbbProductType.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbProductType.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbProductType.FormattingEnabled = true;
+      cbbProductType.Items.AddRange(new object[] { "Tất cả", "Nguy hại", "Tái chế", "Không tái chế" });
+      cbbProductType.Location = new Point(402, 10);
+      cbbProductType.Name = "cbbProductType";
+      cbbProductType.Size = new Size(250, 33);
+      cbbProductType.TabIndex = 20;
       // 
       // label10
       // 
@@ -1591,6 +1640,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel21.PerformLayout();
       tableLayoutPanel6.ResumeLayout(false);
       tableLayoutPanel6.PerformLayout();
+      tableLayoutPanel24.ResumeLayout(false);
+      tableLayoutPanel24.PerformLayout();
       tableLayoutPanel10.ResumeLayout(false);
       tableLayoutPanel23.ResumeLayout(false);
       tableLayoutPanel23.PerformLayout();
@@ -1686,5 +1737,8 @@ namespace LTP.Truck.Forms
     private TableLayoutPanel tableLayoutPanel25;
     private TableLayoutPanel tableLayoutPanel26;
     private RJButton btnAddManual;
+    private TableLayoutPanel tableLayoutPanel24;
+    private Label label28;
+    private ComboBox cbbProductType;
   }
 }

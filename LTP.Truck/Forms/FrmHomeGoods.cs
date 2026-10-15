@@ -6,13 +6,11 @@ using iSoft.Communication.Mode;
 using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
-using iSoft.Database.Repositorys;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.Popup;
 using LTP.Truck.Services;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using static Common.EnumData;
@@ -55,6 +53,7 @@ namespace LTP.Truck.Forms
       CustomUI();
 
       cbbTare.SelectionChangeCommitted += cbbTare_SelectedValueChanged;
+      cbbProductType.SelectionChangeCommitted += cbbProductType_SelectionChangeCommitted;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       btnFilter.Click += btnFilter_Click;
       btnCreate.Click += btnCreate_Click;
@@ -167,6 +166,7 @@ namespace LTP.Truck.Forms
           LoadLicensePlateSuggestionsAsync());
 
         cbbProductGroup.SelectedIndex = -1;
+        cbbProductType.SelectedIndex = 0;
         cbbTare.SelectedIndex = -1;
         cbbDelivery.SelectedIndex = -1;
 
@@ -525,6 +525,12 @@ namespace LTP.Truck.Forms
       FillProduct();
     }
 
+    private void cbbProductType_SelectionChangeCommitted(object? sender, EventArgs e)
+    {
+      var selectedProductId = (cbbProduct.SelectedItem as Product)?.Id;
+      FillProduct(selectedProductId, preserveSelection: true);
+    }
+
     private void FillProduct()
     {
       FillProduct(null, preserveSelection: false);
@@ -549,6 +555,8 @@ namespace LTP.Truck.Forms
 
       var products = _products
         .Where(product => product.ProductGroupId == selectedProductGroup.Id)
+        .Where(product => GetSelectedWasteType() is not EnumWasteType wasteType ||
+          product.EnumWasteType == wasteType)
         .ToList();
 
       cbbProduct.DisplayMember = nameof(Product.Name);
@@ -568,6 +576,14 @@ namespace LTP.Truck.Forms
         cbbProduct.SelectedIndex = -1;
       }
     }
+
+    private EnumWasteType? GetSelectedWasteType() => cbbProductType.SelectedIndex switch
+    {
+      1 => EnumWasteType.Hazardous,
+      2 => EnumWasteType.Recyclable,
+      3 => EnumWasteType.NonRecyclable,
+      _ => null,
+    };
 
     private async void btnLoadLicensePlate_Click(object sender, EventArgs e)
     {
@@ -1344,10 +1360,12 @@ namespace LTP.Truck.Forms
         cbbDelivery,
         recordWeight.Delivery,
         recordWeight.DeliveryId);
+      cbbProductType.SelectedIndex = GetProductTypeIndex(recordWeight.Product?.EnumWasteType);
       SelectHistoricalComboItem(
         cbbProductGroup,
         recordWeight.Product?.ProductGroup,
         recordWeight.Product?.ProductGroupId);
+      FillProduct(recordWeight.ProductId, preserveSelection: true);
       SelectHistoricalComboItem(
         cbbProduct,
         recordWeight.Product,
@@ -1375,6 +1393,7 @@ namespace LTP.Truck.Forms
 
       cbbDelivery.SelectedIndex = -1;
       cbbProductGroup.SelectedIndex = -1;
+      cbbProductType.SelectedIndex = 0;
       cbbProduct.DataSource = null;
       cbbTare.SelectedIndex = -1;
       _categoryTare = null;
@@ -1396,6 +1415,7 @@ namespace LTP.Truck.Forms
       txtNote.ReadOnly = !canEdit;
       cbbDelivery.Enabled = canEdit;
       cbbProductGroup.Enabled = canEdit;
+      cbbProductType.Enabled = canEdit;
       cbbProduct.Enabled = canEdit;
       cbbTare.Enabled = canEdit;
       btnLoadLicensePlate.Enabled = canEdit;
@@ -1424,6 +1444,7 @@ namespace LTP.Truck.Forms
       txtIdCard.Texts = string.Empty;
       txtNote.Text = string.Empty;
       cbbProductGroup.SelectedIndex = -1;
+      cbbProductType.SelectedIndex = 0;
       cbbProduct.DataSource = null;
       cbbTare.SelectedIndex = -1;
       cbbDelivery.SelectedIndex = -1;
@@ -1446,6 +1467,14 @@ namespace LTP.Truck.Forms
       => !string.IsNullOrWhiteSpace(primary)
         ? primary
         : fallback ?? string.Empty;
+
+    private static int GetProductTypeIndex(EnumWasteType? wasteType) => wasteType switch
+    {
+      EnumWasteType.Hazardous => 1,
+      EnumWasteType.Recyclable => 2,
+      EnumWasteType.NonRecyclable => 3,
+      _ => 0,
+    };
 
     private static void SelectHistoricalComboItem<T>(
       ComboBox comboBox,
