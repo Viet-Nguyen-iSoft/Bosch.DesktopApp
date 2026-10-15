@@ -20,9 +20,9 @@ namespace HelperManager
           return await response.Content.ReadAsStringAsync();
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        throw ex;
+        throw;
       }
     }
 

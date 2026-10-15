@@ -41,49 +41,49 @@ namespace LTP.Truck.Services
               }  
               break;
             case EnumTypeAPI.MD_Client:
-              var clientUpsertRequest = JsonHelper.FromJson<ClientUpsertRequest>(apiJob?.Json??string.Empty);
+              var clientUpsertRequest = JsonHelper.FromJson<ClientUpsertRequest>(apiJob.Json ?? string.Empty);
               if (clientUpsertRequest != null)
               {
                 var rs = await api.UpsertClientAsync(clientUpsertRequest);
               }  
               break;
             case EnumTypeAPI.MD_WareHouse:
-              var warehouseUpsert = JsonHelper.FromJson<WarehouseUpsertRequest>(apiJob?.Json ?? string.Empty);
+              var warehouseUpsert = JsonHelper.FromJson<WarehouseUpsertRequest>(apiJob.Json ?? string.Empty);
               if (warehouseUpsert != null)
               {
                 var rs = await api.UpsertWarehouseAsync(warehouseUpsert);
               }
               break;
             case EnumTypeAPI.MD_TypeGoods:
-              var typeGoodsUpsertRequest = JsonHelper.FromJson<TypeGoodsUpsertRequest>(apiJob?.Json ?? string.Empty);
+              var typeGoodsUpsertRequest = JsonHelper.FromJson<TypeGoodsUpsertRequest>(apiJob.Json ?? string.Empty);
               if (typeGoodsUpsertRequest != null)
               {
                 var rs = await api.UpsertTypeGoodsAsync(typeGoodsUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_Tare:
-              var categoryTareUpsertRequest = JsonHelper.FromJson<CategoryTareUpsertRequest>(apiJob?.Json ?? string.Empty);
+              var categoryTareUpsertRequest = JsonHelper.FromJson<CategoryTareUpsertRequest>(apiJob.Json ?? string.Empty);
               if (categoryTareUpsertRequest != null)
               {
                 await api.UpsertCategoryTareAsync(categoryTareUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_ProductGroup:
-              var productGroupUpsertRequest = JsonHelper.FromJson<ProductGroupUpsertRequest>(apiJob?.Json ?? string.Empty);
+              var productGroupUpsertRequest = JsonHelper.FromJson<ProductGroupUpsertRequest>(apiJob.Json ?? string.Empty);
               if (productGroupUpsertRequest != null)
               {
                 await api.UpsertProductGroupAsync(productGroupUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_Product:
-              var productUpsertRequest = JsonHelper.FromJson<ProductUpsertRequest>(apiJob?.Json ?? string.Empty);
+              var productUpsertRequest = JsonHelper.FromJson<ProductUpsertRequest>(apiJob.Json ?? string.Empty);
               if (productUpsertRequest != null)
               {
                 await api.UpsertProductAsync(productUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_Delivery:
-              var deliveryUpsertRequest = JsonHelper.FromJson<DeliveryUpsertRequest>(apiJob?.Json ?? string.Empty);
+              var deliveryUpsertRequest = JsonHelper.FromJson<DeliveryUpsertRequest>(apiJob.Json ?? string.Empty);
               if (deliveryUpsertRequest != null)
               {
                 await api.UpsertDeliveryAsync(deliveryUpsertRequest);

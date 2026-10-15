@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HelperManager\HelperManager.csproj" />
     <ProjectReference Include="..\iSoft.Communication\iSoft.Communication.csproj" />
     <ProjectReference Include="..\iSoft.Database\iSoft.Database.csproj" />

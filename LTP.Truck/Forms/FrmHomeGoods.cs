@@ -711,7 +711,7 @@ namespace LTP.Truck.Forms
       {
         using var popupMsg = new PopupConfirm(
           $"Vui lòng chờ khối lượng trên cân giảm xuống nhỏ hơn hoặc bằng " +
-          $"{WeightFormatHelper.Format(resetThreshold.Value, 2)} kg trước khi cân tiếp tục !",
+          $"{WeightFormatHelper.Format(resetThreshold ?? 0, 2)} kg trước khi cân tiếp tục !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
@@ -1506,7 +1506,16 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      string printerName = AppCore.Ins._appConfig.NamePrintA4;
+      string? printerName = AppCore.Ins._appConfig?.NamePrintA4;
+      if (string.IsNullOrWhiteSpace(printerName))
+      {
+        using var popupMsg = new PopupConfirm(
+          "Chưa cấu hình máy in A4 !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupMsg.ShowDialog(this);
+        return;
+      }
       foreach (var row in selectedData)
       {
         AppCore.Ins.PrinterLabelGoods(printerName, row);

@@ -50,10 +50,17 @@ namespace iSoft.Database.Service
         await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
       }
-      catch
+      catch (Exception ex)
       {
+        LogDatabaseError(ex);
         return false;
       }
+    }
+
+    private static void LogDatabaseError(Exception exception)
+    {
+      HelperManager.LogHelper.LogErrorToFileLog(
+        exception, Path.Combine(AppContext.BaseDirectory, "Logs"));
     }
   }
 }

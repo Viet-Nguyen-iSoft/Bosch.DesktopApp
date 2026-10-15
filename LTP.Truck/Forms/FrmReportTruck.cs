@@ -535,8 +535,8 @@ namespace LTP.Truck.Forms
 
         TextRenderer.DrawText(
             e.Graphics,
-            itemMaterial.Status,
-            e.CellStyle.Font,
+            itemMaterial.Status ?? string.Empty,
+            e.CellStyle.Font ?? dgv.Font,
             rectMaterial,
             textColor,
             TextFormatFlags.HorizontalCenter |

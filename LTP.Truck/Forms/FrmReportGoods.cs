@@ -245,7 +245,9 @@ namespace LTP.Truck.Forms
       {
         _isPrintingLabel = true;
         dgv.Enabled = false;
-        string printerName = AppCore.Ins._appConfig.NamePrintA4;
+        string? printerName = AppCore.Ins._appConfig?.NamePrintA4;
+        if (string.IsNullOrWhiteSpace(printerName))
+          throw new InvalidOperationException("Chưa cấu hình máy in A4.");
         AppCore.Ins.PrinterLabelGoods(printerName, row);
       }
       catch (Exception ex)

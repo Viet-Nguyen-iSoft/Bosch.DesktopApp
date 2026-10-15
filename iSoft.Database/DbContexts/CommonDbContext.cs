@@ -169,16 +169,55 @@ namespace iSoft.Database.DbContexts
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-      AddAutomaticAuditEntries();
-      return base.SaveChanges(acceptAllChangesOnSuccess);
+      TryAddAutomaticAuditEntries();
+      try
+      {
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+      }
+      catch (Exception ex)
+      {
+        LogDatabaseError(ex);
+        throw;
+      }
     }
 
-    public override Task<int> SaveChangesAsync(
+    public override async Task<int> SaveChangesAsync(
       bool acceptAllChangesOnSuccess,
       CancellationToken cancellationToken = default)
     {
-      AddAutomaticAuditEntries();
-      return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+      TryAddAutomaticAuditEntries();
+      try
+      {
+        return await base.SaveChangesAsync(
+          acceptAllChangesOnSuccess, cancellationToken).ConfigureAwait(false);
+      }
+      catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        LogDatabaseError(ex);
+        throw;
+      }
+    }
+
+    private void TryAddAutomaticAuditEntries()
+    {
+      try
+      {
+        AddAutomaticAuditEntries();
+      }
+      catch (Exception ex)
+      {
+        LogDatabaseError(ex);
+      }
+    }
+
+    private static void LogDatabaseError(Exception exception)
+    {
+      HelperManager.LogHelper.LogErrorToFileLog(
+        exception, Path.Combine(AppContext.BaseDirectory, "Logs"));
     }
 
     private void AddAutomaticAuditEntries()

@@ -143,7 +143,8 @@ namespace HelperManager
                   string.Equals(
                     user.Username,
                         username,
-                        StringComparison.Ordinal));
+                        StringComparison.Ordinal))
+          ?? Enumerable.Empty<UserSimplifyDto>();
 
       // Dùng Any, không dùng FirstOrDefault vì API hiện có nhiều
       // record trùng Username "admin".
