@@ -99,6 +99,7 @@ namespace LTP.Truck.MasterData
       txtCode.Texts = typeGoods?.Code ?? string.Empty;
       txtName.Texts = typeGoods?.Name ?? string.Empty;
       txtDescription.Texts = typeGoods?.Description ?? string.Empty;
+      txtTagMappingReport.Texts = typeGoods?.TagMappingReport ?? string.Empty;
     }
 
 
@@ -160,6 +161,9 @@ namespace LTP.Truck.MasterData
           typeGoods.Code = typeGoodsCode;
           typeGoods.Name = txtName.Texts.Trim();
           typeGoods.Description = txtDescription.Texts.Trim();
+          typeGoods.TagMappingReport = string.IsNullOrWhiteSpace(txtTagMappingReport.Texts)
+            ? null
+            : txtTagMappingReport.Texts.Trim();
           typeGoods.ProductGroupId = selectedProductGroup.Id;
           typeGoods.EnumWasteType = selectedWasteType;
           typeGoods.CreatedAt = DateTime.UtcNow;
@@ -175,6 +179,9 @@ namespace LTP.Truck.MasterData
             : txtCode.Texts.Trim();
           _typeGoodsUpdate.Name = txtName.Texts.Trim();
           _typeGoodsUpdate.Description = txtDescription.Texts.Trim();
+          _typeGoodsUpdate.TagMappingReport = string.IsNullOrWhiteSpace(txtTagMappingReport.Texts)
+            ? null
+            : txtTagMappingReport.Texts.Trim();
           _typeGoodsUpdate.ProductGroupId = selectedProductGroup.Id;
           _typeGoodsUpdate.EnumWasteType = selectedWasteType;
           _typeGoodsUpdate.UpdatedAt = DateTime.UtcNow;

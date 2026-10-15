@@ -31,6 +31,7 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupTypeGoods));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
+      label9 = new Label();
       cbbType = new ComboBox();
       cbbProductGroup = new ComboBox();
       tableLayoutPanel4 = new TableLayoutPanel();
@@ -49,12 +50,11 @@
       tableLayoutPanel7 = new TableLayoutPanel();
       label5 = new Label();
       label7 = new Label();
+      txtTagMappingReport = new Common.Custom.RJTextBox();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      txtTagMappingReport = new Common.Custom.RJTextBox();
-      label9 = new Label();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
@@ -83,7 +83,7 @@
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(624, 584);
+      tableLayoutPanel3.Size = new Size(984, 584);
       tableLayoutPanel3.TabIndex = 4;
       // 
       // tableLayoutPanel5
@@ -113,8 +113,22 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-      tableLayoutPanel5.Size = new Size(608, 443);
+      tableLayoutPanel5.Size = new Size(968, 443);
       tableLayoutPanel5.TabIndex = 8;
+      // 
+      // label9
+      // 
+      label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label9.AutoSize = true;
+      label9.BackColor = Color.Transparent;
+      label9.Font = new Font("Roboto", 14F);
+      label9.Location = new Point(0, 365);
+      label9.Margin = new Padding(0);
+      label9.Name = "label9";
+      label9.Size = new Size(200, 78);
+      label9.TabIndex = 44;
+      label9.Text = "Tag mapping báo cáo";
+      label9.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // cbbType
       // 
@@ -123,7 +137,7 @@
       cbbType.FormattingEnabled = true;
       cbbType.Location = new Point(203, 94);
       cbbType.Name = "cbbType";
-      cbbType.Size = new Size(402, 31);
+      cbbType.Size = new Size(762, 31);
       cbbType.TabIndex = 42;
       // 
       // cbbProductGroup
@@ -133,7 +147,7 @@
       cbbProductGroup.FormattingEnabled = true;
       cbbProductGroup.Location = new Point(203, 21);
       cbbProductGroup.Name = "cbbProductGroup";
-      cbbProductGroup.Size = new Size(402, 31);
+      cbbProductGroup.Size = new Size(762, 31);
       cbbProductGroup.TabIndex = 41;
       // 
       // tableLayoutPanel4
@@ -244,7 +258,7 @@
       txtCode.PasswordChar = false;
       txtCode.PlaceholderColor = Color.DarkGray;
       txtCode.PlaceholderText = "";
-      txtCode.Size = new Size(400, 38);
+      txtCode.Size = new Size(760, 38);
       txtCode.TabIndex = 6;
       txtCode.Texts = "";
       txtCode.UnderlinedStyle = false;
@@ -267,7 +281,7 @@
       txtDescription.PasswordChar = false;
       txtDescription.PlaceholderColor = Color.DarkGray;
       txtDescription.PlaceholderText = "";
-      txtDescription.Size = new Size(400, 38);
+      txtDescription.Size = new Size(760, 38);
       txtDescription.TabIndex = 4;
       txtDescription.Texts = "";
       txtDescription.UnderlinedStyle = false;
@@ -304,7 +318,7 @@
       txtName.PasswordChar = false;
       txtName.PlaceholderColor = Color.DarkGray;
       txtName.PlaceholderText = "";
-      txtName.Size = new Size(400, 38);
+      txtName.Size = new Size(760, 38);
       txtName.TabIndex = 3;
       txtName.Texts = "";
       txtName.UnderlinedStyle = false;
@@ -399,6 +413,29 @@
       label7.Text = "Loại chất thải";
       label7.TextAlign = ContentAlignment.MiddleLeft;
       // 
+      // txtTagMappingReport
+      // 
+      txtTagMappingReport.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtTagMappingReport.BackColor = SystemColors.Window;
+      txtTagMappingReport.BorderColor = Color.Black;
+      txtTagMappingReport.BorderFocusColor = Color.HotPink;
+      txtTagMappingReport.BorderRadius = 5;
+      txtTagMappingReport.BorderSize = 2;
+      txtTagMappingReport.Font = new Font("Roboto", 14F);
+      txtTagMappingReport.ForeColor = Color.FromArgb(64, 64, 64);
+      txtTagMappingReport.Location = new Point(204, 385);
+      txtTagMappingReport.Margin = new Padding(4);
+      txtTagMappingReport.Multiline = false;
+      txtTagMappingReport.Name = "txtTagMappingReport";
+      txtTagMappingReport.Padding = new Padding(10, 7, 10, 7);
+      txtTagMappingReport.PasswordChar = false;
+      txtTagMappingReport.PlaceholderColor = Color.DarkGray;
+      txtTagMappingReport.PlaceholderText = "";
+      txtTagMappingReport.Size = new Size(760, 38);
+      txtTagMappingReport.TabIndex = 43;
+      txtTagMappingReport.Texts = "";
+      txtTagMappingReport.UnderlinedStyle = false;
+      // 
       // lbTitle
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -408,7 +445,7 @@
       lbTitle.Location = new Point(5, 5);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(614, 60);
+      lbTitle.Size = new Size(974, 60);
       lbTitle.TabIndex = 0;
       lbTitle.Text = "Loại hàng";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -427,7 +464,7 @@
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.Size = new Size(614, 60);
+      tableLayoutPanel2.Size = new Size(974, 60);
       tableLayoutPanel2.TabIndex = 5;
       // 
       // btnConfirm
@@ -444,7 +481,7 @@
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(257, 3);
+      btnConfirm.Location = new Point(617, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
       btnConfirm.Size = new Size(174, 54);
@@ -467,7 +504,7 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(437, 3);
+      btnClose.Location = new Point(797, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
       btnClose.Size = new Size(174, 54);
@@ -476,48 +513,11 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // txtTagMappingReport
-      // 
-      txtTagMappingReport.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtTagMappingReport.BackColor = SystemColors.Window;
-      txtTagMappingReport.BorderColor = Color.Black;
-      txtTagMappingReport.BorderFocusColor = Color.HotPink;
-      txtTagMappingReport.BorderRadius = 5;
-      txtTagMappingReport.BorderSize = 2;
-      txtTagMappingReport.Font = new Font("Roboto", 14F);
-      txtTagMappingReport.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTagMappingReport.Location = new Point(204, 385);
-      txtTagMappingReport.Margin = new Padding(4);
-      txtTagMappingReport.Multiline = false;
-      txtTagMappingReport.Name = "txtTagMappingReport";
-      txtTagMappingReport.Padding = new Padding(10, 7, 10, 7);
-      txtTagMappingReport.PasswordChar = false;
-      txtTagMappingReport.PlaceholderColor = Color.DarkGray;
-      txtTagMappingReport.PlaceholderText = "";
-      txtTagMappingReport.Size = new Size(400, 38);
-      txtTagMappingReport.TabIndex = 43;
-      txtTagMappingReport.Texts = "";
-      txtTagMappingReport.UnderlinedStyle = false;
-      // 
-      // label9
-      // 
-      label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label9.AutoSize = true;
-      label9.BackColor = Color.Transparent;
-      label9.Font = new Font("Roboto", 14F);
-      label9.Location = new Point(0, 365);
-      label9.Margin = new Padding(0);
-      label9.Name = "label9";
-      label9.Size = new Size(200, 78);
-      label9.TabIndex = 44;
-      label9.Text = "Tag mapping báo cáo";
-      label9.TextAlign = ContentAlignment.MiddleLeft;
-      // 
       // PopupTypeGoods
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(624, 584);
+      ClientSize = new Size(984, 584);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupTypeGoods";

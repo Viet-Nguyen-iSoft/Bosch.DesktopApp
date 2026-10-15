@@ -44,6 +44,7 @@ namespace LTP.Truck.MasterData
       txtCode.Texts = product.Code ?? string.Empty;
       txtName.Texts = product.Name ?? string.Empty;
       txtDescription.Texts = product.Description ?? string.Empty;
+      txtTagMappingReport.Texts = product.TagMappingReport ?? string.Empty;
 
       if (Enum.IsDefined(typeof(EnumWasteType), product.EnumWasteType))
         cbbType.SelectedValue = product.EnumWasteType;
@@ -141,6 +142,9 @@ namespace LTP.Truck.MasterData
 
         product.Code = txtCode.Texts.Trim();
         product.Description = txtDescription.Texts.Trim();
+        product.TagMappingReport = string.IsNullOrWhiteSpace(txtTagMappingReport.Texts)
+          ? null
+          : txtTagMappingReport.Texts.Trim();
         product.ProductGroupId = selectedProductGroup.Id;
         product.EnumWasteType = selectedWasteType;
 
