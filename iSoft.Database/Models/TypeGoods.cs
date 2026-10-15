@@ -8,6 +8,7 @@ namespace iSoft.Database.Models
     public string? Name { get; set; }
     public string? Description { get; set; }
     public EnumWasteType EnumWasteType { get; set; }
+    public string? TagMappingReport { get; set; }
 
     #region Mapping
     public Guid? ProductGroupId { get; set; }

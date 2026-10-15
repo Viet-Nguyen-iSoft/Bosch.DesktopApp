@@ -128,6 +128,7 @@ namespace LTP.Truck
             await EnsureAppConfigPrintColumnsAsync(db);
             await EnsureRecordWeightReasonDeleteColumnAsync(db);
             await EnsureTypeGoodsWasteColumnsAsync(db);
+            await EnsureProductTagMappingReportColumnAsync(db);
             await EnsureAuditLogsTableAsync(db);
 
             //TEST UPDATE DB
@@ -380,7 +381,8 @@ namespace LTP.Truck
         var columns = new Dictionary<string, string>
         {
           ["EnumWasteType"] = "int NOT NULL DEFAULT 0",
-          ["ProductGroupId"] = "char(36) NULL"
+          ["ProductGroupId"] = "char(36) NULL",
+          ["TagMappingReport"] = "longtext NULL"
         };
 
         foreach (var column in columns)
@@ -440,6 +442,39 @@ namespace LTP.Truck
         addColumnCommand.CommandText = @"
           ALTER TABLE `RecordWeights`
           ADD COLUMN `ReasonDelete` longtext NULL;";
+        await addColumnCommand.ExecuteNonQueryAsync();
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureProductTagMappingReportColumnAsync(
+      MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using var checkColumnCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        checkColumnCommand.CommandText = @"
+          SELECT COUNT(*)
+          FROM INFORMATION_SCHEMA.COLUMNS
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'Products'
+            AND COLUMN_NAME = 'TagMappingReport';";
+
+        var columnCount = Convert.ToInt32(
+          await checkColumnCommand.ExecuteScalarAsync());
+        if (columnCount > 0)
+          return;
+
+        await using var addColumnCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        addColumnCommand.CommandText = @"
+          ALTER TABLE `Products`
+          ADD COLUMN `TagMappingReport` longtext NULL;";
         await addColumnCommand.ExecuteNonQueryAsync();
       }
       finally
