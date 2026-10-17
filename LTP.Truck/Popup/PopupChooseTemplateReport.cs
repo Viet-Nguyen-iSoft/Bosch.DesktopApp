@@ -24,6 +24,12 @@ namespace LTP.Truck.Popup
     private static readonly Regex ReportPlaceholderRegex = new(
       @"\{(?<tag>[^{}\r\n]+)_[ \t]*(?<kind>weight|qty)\}",
       RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex LicensePlatePlaceholderRegex = new(
+      @"\{bien_so_(?<index>\d{2})\}",
+      RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex ExportDatePlaceholderRegex = new(
+      @"\{(?<part>ngay|thang|nam)\}",
+      RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public IReadOnlyList<RecordWeightDTO> SelectedData { get; }
 
@@ -107,7 +113,8 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      await DownloadHcpSummaryReportAsync(recordWeights, recordTrucks);
+      await DownloadHcpSummaryReportAsync(
+        recordWeights, recordTrucks, licensePlates);
     }
 
     private async void btnHcP_CN_Click(object sender, EventArgs e)
@@ -904,7 +911,8 @@ namespace LTP.Truck.Popup
 
     private Task DownloadHcpSummaryReportAsync(
       List<RecordWeight> recordWeights,
-      List<RecordTruck> recordTrucks)
+      List<RecordTruck> recordTrucks,
+      IReadOnlyList<string> licensePlates)
     {
       try
       {
@@ -934,7 +942,7 @@ namespace LTP.Truck.Popup
               group.Sum(item => item.Quantity)),
             StringComparer.OrdinalIgnoreCase);
 
-        var pdfPath = ExportWordTemplateToPdf(summariesByTag);
+        var pdfPath = ExportWordTemplateToPdf(summariesByTag, licensePlates);
         var openReportFile = false;
         using (var popup = new PopupConfirm(
           "Tạo phiếu thành công. Bạn có muốn mở file không?",
@@ -969,8 +977,10 @@ namespace LTP.Truck.Popup
     }
 
     private static string ExportWordTemplateToPdf(
-      IReadOnlyDictionary<string, TagReportSummary> summariesByTag)
+      IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
+      IReadOnlyList<string> licensePlates)
     {
+      var exportDate = DateTime.Now;
       const int wdAlertsNone = 0;
       const int wdDoNotSaveChanges = 0;
       const int wdExportFormatPdf = 17;
@@ -984,7 +994,7 @@ namespace LTP.Truck.Popup
 
       var outputFolder = Path.Combine(Application.StartupPath, "ReportGoods");
       Directory.CreateDirectory(outputFolder);
-      var fileName = $"BBGN_TONG_HCP_{DateTime.Now:yyMMddHHmmssfff}";
+      var fileName = $"BBGN_TONG_HCP_{exportDate:yyMMddHHmmssfff}";
       var workingDocPath = Path.Combine(outputFolder, $"{fileName}.doc");
       var pdfPath = Path.Combine(outputFolder, $"{fileName}.pdf");
       File.Copy(templatePath, workingDocPath, overwrite: true);
@@ -1002,7 +1012,7 @@ namespace LTP.Truck.Popup
         document = wordApplication.Documents.Open(workingDocPath);
 
         ReplaceQuantityCellPlaceholders(document, summariesByTag);
-        ReplaceWordTexts(document, summariesByTag);
+        ReplaceWordTexts(document, summariesByTag, licensePlates, exportDate);
 
         document.ExportAsFixedFormat(pdfPath, wdExportFormatPdf);
         document.Close(wdDoNotSaveChanges);
@@ -1051,7 +1061,9 @@ namespace LTP.Truck.Popup
 
     private static void ReplaceWordTexts(
       dynamic document,
-      IReadOnlyDictionary<string, TagReportSummary> summariesByTag)
+      IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
+      IReadOnlyList<string> licensePlates,
+      DateTime exportDate)
     {
       const int wdFindContinue = 1;
       const int wdReplaceAll = 2;
@@ -1089,6 +1101,36 @@ namespace LTP.Truck.Popup
                     ? "..."
                     : "0.0";
               }
+            }
+
+            foreach (Match match in LicensePlatePlaceholderRegex.Matches(storyText))
+            {
+              var placeholder = match.Value;
+              if (storyReplacements.ContainsKey(placeholder))
+                continue;
+
+              var plateIndex = int.Parse(match.Groups["index"].Value) - 1;
+              storyReplacements[placeholder] =
+                plateIndex >= 0 && plateIndex < licensePlates.Count &&
+                plateIndex < 4
+                  ? licensePlates[plateIndex]
+                  : "...................";
+            }
+
+            foreach (Match match in ExportDatePlaceholderRegex.Matches(storyText))
+            {
+              var placeholder = match.Value;
+              if (storyReplacements.ContainsKey(placeholder))
+                continue;
+
+              storyReplacements[placeholder] = match.Groups["part"].Value
+                .ToLowerInvariant() switch
+                {
+                  "ngay" => exportDate.Day.ToString(),
+                  "thang" => exportDate.Month.ToString(),
+                  "nam" => exportDate.Year.ToString(),
+                  _ => string.Empty,
+                };
             }
 
             foreach (var replacement in storyReplacements)
