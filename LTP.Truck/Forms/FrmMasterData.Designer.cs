@@ -36,6 +36,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel7 = new TableLayoutPanel();
       dgv = new DataGridView();
       tableLayoutPanel10 = new TableLayoutPanel();
+      cbbType = new ComboBox();
       label4 = new Label();
       txtSearch = new RJTextBox();
       cbbFilter = new ComboBox();
@@ -112,21 +113,23 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel10
       // 
       tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel10.ColumnCount = 8;
+      tableLayoutPanel10.ColumnCount = 9;
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 61.53846F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38.46154F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+      tableLayoutPanel10.Controls.Add(cbbType, 3, 0);
       tableLayoutPanel10.Controls.Add(label4, 0, 0);
       tableLayoutPanel10.Controls.Add(txtSearch, 1, 0);
       tableLayoutPanel10.Controls.Add(cbbFilter, 2, 0);
-      tableLayoutPanel10.Controls.Add(btnAddnew, 7, 0);
-      tableLayoutPanel10.Controls.Add(btnSearch, 4, 0);
-      tableLayoutPanel10.Controls.Add(btnImport, 6, 0);
+      tableLayoutPanel10.Controls.Add(btnAddnew, 8, 0);
+      tableLayoutPanel10.Controls.Add(btnSearch, 5, 0);
+      tableLayoutPanel10.Controls.Add(btnImport, 7, 0);
       tableLayoutPanel10.Location = new Point(0, 50);
       tableLayoutPanel10.Margin = new Padding(0);
       tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -134,6 +137,16 @@ namespace LTP.Truck.Forms
       tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel10.Size = new Size(1244, 60);
       tableLayoutPanel10.TabIndex = 22;
+      // 
+      // cbbType
+      // 
+      cbbType.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      cbbType.Font = new Font("Roboto", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      cbbType.FormattingEnabled = true;
+      cbbType.Location = new Point(377, 11);
+      cbbType.Name = "cbbType";
+      cbbType.Size = new Size(194, 37);
+      cbbType.TabIndex = 31;
       // 
       // label4
       // 
@@ -167,7 +180,7 @@ namespace LTP.Truck.Forms
       txtSearch.PasswordChar = false;
       txtSearch.PlaceholderColor = Color.DarkGray;
       txtSearch.PlaceholderText = "";
-      txtSearch.Size = new Size(163, 38);
+      txtSearch.Size = new Size(71, 38);
       txtSearch.TabIndex = 18;
       txtSearch.Texts = "";
       txtSearch.UnderlinedStyle = false;
@@ -177,9 +190,9 @@ namespace LTP.Truck.Forms
       cbbFilter.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbFilter.Font = new Font("Roboto", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
       cbbFilter.FormattingEnabled = true;
-      cbbFilter.Location = new Point(269, 11);
+      cbbFilter.Location = new Point(177, 11);
       cbbFilter.Name = "cbbFilter";
-      cbbFilter.Size = new Size(244, 37);
+      cbbFilter.Size = new Size(194, 37);
       cbbFilter.TabIndex = 29;
       // 
       // btnAddnew
@@ -222,7 +235,7 @@ namespace LTP.Truck.Forms
       btnSearch.ForeColor = Color.White;
       btnSearch.Image = Properties.Resources.icon_search;
       btnSearch.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearch.Location = new Point(539, 3);
+      btnSearch.Location = new Point(597, 3);
       btnSearch.Name = "btnSearch";
       btnSearch.Padding = new Padding(10, 0, 0, 0);
       btnSearch.Size = new Size(194, 54);
@@ -298,5 +311,6 @@ namespace LTP.Truck.Forms
     private RJButton btnAddnew;
     private ComboBox cbbFilter;
     private RJButton btnImport;
+    private ComboBox cbbType;
   }
 }

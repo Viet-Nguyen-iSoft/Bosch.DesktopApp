@@ -31,6 +31,7 @@ namespace LTP.Truck.Forms
 
     private CancellationTokenSource? _searchDebounceCancellation;
     private bool _isLoadingProductGroupFilter;
+    private bool _isLoadingWasteTypeFilter;
     private int _loadDataVersion;
     private ApiJobsService _apiJobsService { get; set; } 
     private ClientService _clientService { get; set; }
@@ -57,6 +58,18 @@ namespace LTP.Truck.Forms
       cbbFilter.ValueMember = nameof(ProductGroupFilterItem.Id);
       cbbFilter.Visible = false;
       cbbFilter.SelectedIndexChanged += cbbFilter_SelectedIndexChanged;
+      cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbbType.DisplayMember = nameof(WasteTypeFilterItem.Name);
+      cbbType.ValueMember = nameof(WasteTypeFilterItem.Value);
+      cbbType.DataSource = Enum.GetValues<EnumWasteType>()
+        .Where(value => value != EnumWasteType.None)
+        .Select(value => new WasteTypeFilterItem(
+          value, EnumHelper.GetDescription(value)))
+        .Prepend(new WasteTypeFilterItem(null, "Tất cả loại"))
+        .ToList();
+      cbbType.SelectedIndex = 0;
+      cbbType.Visible = false;
+      cbbType.SelectedIndexChanged += cbbType_SelectedIndexChanged;
     }
 
     private void RegisterService()
@@ -123,6 +136,7 @@ namespace LTP.Truck.Forms
           EnumTypeMasterData.Product or
           EnumTypeMasterData.Tare or
           EnumTypeMasterData.TareForTruck;
+        ConfigureWasteTypeFilter(enumTypeMaster);
         await ConfigureProductGroupFilterAsync(enumTypeMaster, loadVersion);
         if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
 
@@ -138,6 +152,15 @@ namespace LTP.Truck.Forms
           case EnumTypeMasterData.TypeGoods:
             var rsTypeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync();
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
+            EnumWasteType? typeGoodsWasteType =
+              (cbbType.SelectedItem as WasteTypeFilterItem)?.Value;
+            if (typeGoodsWasteType.HasValue)
+            {
+              rsTypeGoods = rsTypeGoods
+                .Where(typeGoods =>
+                  typeGoods.EnumWasteType == typeGoodsWasteType.Value)
+                .ToList();
+            }
             var dtoTypeGoods = DTOHelper.ConvertTypeGoodsDTO(rsTypeGoods);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoTypeGoods, searchKey));
             break;
@@ -173,6 +196,14 @@ namespace LTP.Truck.Forms
             {
               rsProduct = rsProduct
                 .Where(product => product.ProductGroupId == productGroupId.Value)
+                .ToList();
+            }
+            EnumWasteType? productWasteType =
+              (cbbType.SelectedItem as WasteTypeFilterItem)?.Value;
+            if (productWasteType.HasValue)
+            {
+              rsProduct = rsProduct
+                .Where(product => product.EnumWasteType == productWasteType.Value)
                 .ToList();
             }
             var dtoProduct = DTOHelper.ConvertProductDTO(rsProduct);
@@ -250,6 +281,20 @@ namespace LTP.Truck.Forms
       _isLoadingProductGroupFilter = false;
     }
 
+    private void ConfigureWasteTypeFilter(EnumTypeMasterData enumTypeMaster)
+    {
+      bool supportsWasteTypeFilter = enumTypeMaster is
+        EnumTypeMasterData.Product or EnumTypeMasterData.TypeGoods;
+      cbbType.Visible = supportsWasteTypeFilter;
+
+      if (!supportsWasteTypeFilter && cbbType.SelectedIndex != 0)
+      {
+        _isLoadingWasteTypeFilter = true;
+        cbbType.SelectedIndex = 0;
+        _isLoadingWasteTypeFilter = false;
+      }
+    }
+
     private async void cbbFilter_SelectedIndexChanged(object? sender, EventArgs e)
     {
       if (_isLoadingProductGroupFilter ||
@@ -261,6 +306,18 @@ namespace LTP.Truck.Forms
       await LoadData(EnumTypeMasterData.Product);
     }
 
+    private async void cbbType_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+      if (_isLoadingWasteTypeFilter ||
+          _enumTypeMasterDataCurrent is not
+            (EnumTypeMasterData.Product or EnumTypeMasterData.TypeGoods))
+      {
+        return;
+      }
+
+      await LoadData(_enumTypeMasterDataCurrent);
+    }
+
     private sealed class ProductGroupFilterItem
     {
       public Guid? Id { get; }
@@ -269,6 +326,20 @@ namespace LTP.Truck.Forms
       public ProductGroupFilterItem(Guid? id, string name)
       {
         Id = id;
+        Name = name;
+      }
+
+      public override string ToString() => Name;
+    }
+
+    private sealed class WasteTypeFilterItem
+    {
+      public EnumWasteType? Value { get; }
+      public string Name { get; }
+
+      public WasteTypeFilterItem(EnumWasteType? value, string name)
+      {
+        Value = value;
         Name = name;
       }
 
@@ -383,10 +454,12 @@ namespace LTP.Truck.Forms
           var wasteTypeText = worksheet.Cell(rowNumber, 1).GetString().Trim();
           var code = worksheet.Cell(rowNumber, 2).GetString().Trim();
           var name = worksheet.Cell(rowNumber, 3).GetString().Trim();
+          var tagMappingReport = worksheet.Cell(rowNumber, 4).GetString().Trim();
 
           if (string.IsNullOrWhiteSpace(wasteTypeText) &&
               string.IsNullOrWhiteSpace(code) &&
-              string.IsNullOrWhiteSpace(name))
+              string.IsNullOrWhiteSpace(name) &&
+              string.IsNullOrWhiteSpace(tagMappingReport))
           {
             continue;
           }
@@ -420,6 +493,9 @@ namespace LTP.Truck.Forms
           typeGoods.Name = name;
           typeGoods.ProductGroupId = hcpProductGroup.Id;
           typeGoods.EnumWasteType = wasteType;
+          typeGoods.TagMappingReport = string.IsNullOrWhiteSpace(tagMappingReport)
+            ? null
+            : tagMappingReport;
           typeGoods.DeletedFlag = false;
           typeGoods.EnableFlag = true;
           typeGoods.SyncFlag = false;
@@ -570,10 +646,12 @@ namespace LTP.Truck.Forms
           var wasteTypeText = worksheet.Cell(rowNumber, 1).GetString().Trim();
           var code = worksheet.Cell(rowNumber, 2).GetString().Trim();
           var name = worksheet.Cell(rowNumber, 3).GetString().Trim();
+          var tagMappingReport = worksheet.Cell(rowNumber, 4).GetString().Trim();
 
           if (string.IsNullOrWhiteSpace(wasteTypeText) &&
               string.IsNullOrWhiteSpace(code) &&
-              string.IsNullOrWhiteSpace(name))
+              string.IsNullOrWhiteSpace(name) &&
+              string.IsNullOrWhiteSpace(tagMappingReport))
           {
             continue;
           }
@@ -611,6 +689,9 @@ namespace LTP.Truck.Forms
           product.Name = name;
           product.ProductGroupId = productGroup.Id;
           product.EnumWasteType = wasteType;
+          product.TagMappingReport = string.IsNullOrWhiteSpace(tagMappingReport)
+            ? null
+            : tagMappingReport;
           product.DeletedFlag = false;
           product.EnableFlag = true;
           product.SyncFlag = false;
@@ -1452,6 +1533,9 @@ namespace LTP.Truck.Forms
           nameof(ProductDTO.Group),
           nameof(ProductDTO.Code),
           nameof(ProductDTO.WasteType),
+          nameof(ProductDTO.TagMappingReport),
+          nameof(ProductDTO.Description),
+          //nameof(ProductDTO.Name),
         };
         foreach (var columnName in autoSizeColumns)
         {

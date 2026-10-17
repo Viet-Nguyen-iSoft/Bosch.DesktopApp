@@ -19,7 +19,7 @@ namespace iSoft.Database.DTO
     [DisplayName("Nhóm")]
     public string? Group { get; set; }
 
-    [DisplayName("Loại chất thải")]
+    [DisplayName("Loại")]
     public string? WasteType { get; set; }
 
     [DisplayName("Mã")]
@@ -28,7 +28,7 @@ namespace iSoft.Database.DTO
     [DisplayName("Tên sản phẩm")]
     public string? Name { get; set; }
 
-    [DisplayName("Tag mapping báo cáo")]
+    [DisplayName("Tag mapping")]
     public string? TagMappingReport { get; set; }
 
     [DisplayName("Mô tả")]

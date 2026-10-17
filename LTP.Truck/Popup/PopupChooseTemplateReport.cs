@@ -10,7 +10,9 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Common.EnumData;
@@ -19,6 +21,10 @@ namespace LTP.Truck.Popup
 {
   public partial class PopupChooseTemplateReport : Form
   {
+    private static readonly Regex ReportPlaceholderRegex = new(
+      @"\{(?<tag>[^{}\r\n]+)_[ \t]*(?<kind>weight|qty)\}",
+      RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     public IReadOnlyList<RecordWeightDTO> SelectedData { get; }
 
     public PopupChooseTemplateReport()
@@ -101,33 +107,7 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
-
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
-          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
-        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
-
-      await DownloadFileWorkReport_TongHop(
-        "Template_TongHop",
-        "TemplateTableCN",
-        recordWeights,
-        recordTrucks,
-        licensePlates,
-        inforCompanyDTO_A,
-        inforCompanyDTO_B);
+      await DownloadHcpSummaryReportAsync(recordWeights, recordTrucks);
     }
 
     private async void btnHcP_CN_Click(object sender, EventArgs e)
@@ -919,6 +899,309 @@ namespace LTP.Truck.Popup
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popupMsg.ShowDialog(this);
+      }
+    }
+
+    private Task DownloadHcpSummaryReportAsync(
+      List<RecordWeight> recordWeights,
+      List<RecordTruck> recordTrucks)
+    {
+      try
+      {
+        var summariesByTag = recordWeights
+          .Where(record => !string.IsNullOrWhiteSpace(
+            record.Product?.TagMappingReport))
+          .Select(record => new
+          {
+            Tag = record.Product.TagMappingReport!.Trim(),
+            Weight = record.Net,
+            Quantity = 1,
+          })
+          .Concat(recordTrucks
+            .Where(record => !string.IsNullOrWhiteSpace(
+              record.TypeGoods?.TagMappingReport))
+            .Select(record => new
+            {
+              Tag = record.TypeGoods!.TagMappingReport!.Trim(),
+              Weight = Math.Max(0, Math.Abs(record.NetTime01)),
+              Quantity = 1,
+            }))
+          .GroupBy(item => item.Tag, StringComparer.OrdinalIgnoreCase)
+          .ToDictionary(
+            group => group.Key,
+            group => new TagReportSummary(
+              group.Sum(item => item.Weight),
+              group.Sum(item => item.Quantity)),
+            StringComparer.OrdinalIgnoreCase);
+
+        var pdfPath = ExportWordTemplateToPdf(summariesByTag);
+        var openReportFile = false;
+        using (var popup = new PopupConfirm(
+          "Tạo phiếu thành công. Bạn có muốn mở file không?",
+          EnumTypeMsg.Confirm,
+          EnumImageMsg.Question))
+        {
+          popup.OnSendConfirm += (_, response) =>
+            openReportFile = response.EnumResponsible == EnumResponsible.Confirm;
+          popup.ShowDialog(this);
+        }
+
+        if (openReportFile)
+        {
+          Process.Start(new ProcessStartInfo
+          {
+            FileName = pdfPath,
+            UseShellExecute = true,
+          });
+        }
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể tạo phiếu từ template Word. Vui lòng kiểm tra Microsoft Word và thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+
+      return Task.CompletedTask;
+    }
+
+    private static string ExportWordTemplateToPdf(
+      IReadOnlyDictionary<string, TagReportSummary> summariesByTag)
+    {
+      const int wdAlertsNone = 0;
+      const int wdDoNotSaveChanges = 0;
+      const int wdExportFormatPdf = 17;
+
+      var templatePath = Path.Combine(
+        Application.StartupPath,
+        "Template",
+        "Template_BBGN TỔNG HCP.doc");
+      if (!File.Exists(templatePath))
+        throw new FileNotFoundException("Không tìm thấy template báo cáo HCP.", templatePath);
+
+      var outputFolder = Path.Combine(Application.StartupPath, "ReportGoods");
+      Directory.CreateDirectory(outputFolder);
+      var fileName = $"BBGN_TONG_HCP_{DateTime.Now:yyMMddHHmmssfff}";
+      var workingDocPath = Path.Combine(outputFolder, $"{fileName}.doc");
+      var pdfPath = Path.Combine(outputFolder, $"{fileName}.pdf");
+      File.Copy(templatePath, workingDocPath, overwrite: true);
+
+      dynamic? wordApplication = null;
+      dynamic? document = null;
+      try
+      {
+        var wordType = Type.GetTypeFromProgID("Word.Application")
+          ?? throw new InvalidOperationException("Microsoft Word chưa được cài đặt.");
+        wordApplication = Activator.CreateInstance(wordType)
+          ?? throw new InvalidOperationException("Không thể khởi động Microsoft Word.");
+        wordApplication.Visible = false;
+        wordApplication.DisplayAlerts = wdAlertsNone;
+        document = wordApplication.Documents.Open(workingDocPath);
+
+        ReplaceQuantityCellPlaceholders(document, summariesByTag);
+        ReplaceWordTexts(document, summariesByTag);
+
+        document.ExportAsFixedFormat(pdfPath, wdExportFormatPdf);
+        document.Close(wdDoNotSaveChanges);
+        Marshal.FinalReleaseComObject(document);
+        document = null;
+        wordApplication.Quit(wdDoNotSaveChanges);
+        Marshal.FinalReleaseComObject(wordApplication);
+        wordApplication = null;
+
+        if (!File.Exists(pdfPath) || new FileInfo(pdfPath).Length == 0)
+          throw new InvalidOperationException("Microsoft Word không tạo được file PDF.");
+
+        return pdfPath;
+      }
+      finally
+      {
+        if (document is not null)
+        {
+          try { document.Close(wdDoNotSaveChanges); } catch { }
+          if (Marshal.IsComObject(document))
+            Marshal.FinalReleaseComObject(document);
+        }
+
+        if (wordApplication is not null)
+        {
+          try { wordApplication.Quit(wdDoNotSaveChanges); } catch { }
+          if (Marshal.IsComObject(wordApplication))
+            Marshal.FinalReleaseComObject(wordApplication);
+        }
+
+        try { File.Delete(workingDocPath); } catch { }
+      }
+    }
+
+    private sealed class TagReportSummary
+    {
+      public double Weight { get; }
+      public int Quantity { get; }
+
+      public TagReportSummary(double weight, int quantity)
+      {
+        Weight = weight;
+        Quantity = quantity;
+      }
+    }
+
+    private static void ReplaceWordTexts(
+      dynamic document,
+      IReadOnlyDictionary<string, TagReportSummary> summariesByTag)
+    {
+      const int wdFindContinue = 1;
+      const int wdReplaceAll = 2;
+
+      for (var storyType = 1; storyType <= 17; storyType++)
+      {
+        dynamic? storyRange = null;
+        try
+        {
+          storyRange = document.StoryRanges[storyType];
+          while (storyRange is not null)
+          {
+            var storyText = Convert.ToString(storyRange.Text) ?? string.Empty;
+            var storyReplacements = new Dictionary<string, string>(
+              StringComparer.OrdinalIgnoreCase);
+            foreach (Match match in ReportPlaceholderRegex.Matches(storyText))
+            {
+              var placeholder = match.Value;
+              if (storyReplacements.ContainsKey(placeholder))
+                continue;
+
+              var tag = match.Groups["tag"].Value.Trim();
+              var kind = match.Groups["kind"].Value;
+              if (summariesByTag.TryGetValue(tag, out var summary))
+              {
+                storyReplacements[placeholder] =
+                  string.Equals(kind, "qty", StringComparison.OrdinalIgnoreCase)
+                    ? summary.Quantity.ToString()
+                    : WeightFormatHelper.Format(summary.Weight, 3);
+              }
+              else
+              {
+                storyReplacements[placeholder] =
+                  string.Equals(kind, "qty", StringComparison.OrdinalIgnoreCase)
+                    ? "..."
+                    : "0.0";
+              }
+            }
+
+            foreach (var replacement in storyReplacements)
+            {
+              dynamic? searchRange = null;
+              dynamic? find = null;
+              try
+              {
+                searchRange = storyRange.Duplicate;
+                find = searchRange.Find;
+                find.ClearFormatting();
+                find.Replacement.ClearFormatting();
+                find.Text = replacement.Key;
+                find.Replacement.Text = replacement.Value;
+                find.Forward = true;
+                find.Wrap = wdFindContinue;
+                find.Format = false;
+                find.MatchCase = false;
+                find.MatchWholeWord = false;
+                find.Execute(Replace: wdReplaceAll);
+              }
+              finally
+              {
+                if (find is not null && Marshal.IsComObject(find))
+                  Marshal.FinalReleaseComObject(find);
+                if (searchRange is not null && Marshal.IsComObject(searchRange))
+                  Marshal.FinalReleaseComObject(searchRange);
+              }
+            }
+
+            dynamic? nextRange = storyRange.NextStoryRange;
+            Marshal.FinalReleaseComObject(storyRange);
+            storyRange = nextRange;
+          }
+        }
+        catch (COMException)
+        {
+          if (storyRange is not null && Marshal.IsComObject(storyRange))
+            Marshal.FinalReleaseComObject(storyRange);
+        }
+      }
+    }
+
+    private static void ReplaceQuantityCellPlaceholders(
+      dynamic document,
+      IReadOnlyDictionary<string, TagReportSummary> summariesByTag)
+    {
+      for (var tableIndex = 1; tableIndex <= document.Tables.Count; tableIndex++)
+      {
+        dynamic? table = null;
+        try
+        {
+          table = document.Tables.Item(tableIndex);
+          var cellCount = table.Range.Cells.Count;
+          for (var cellIndex = 1; cellIndex <= cellCount; cellIndex++)
+          {
+            dynamic? cell = null;
+            dynamic? cellRange = null;
+            try
+            {
+              cell = table.Range.Cells.Item(cellIndex);
+              cellRange = cell.Range;
+              string cellText = Convert.ToString((object)cellRange.Text)
+                ?? string.Empty;
+              if (!cellText.Contains(
+                    "Số lượng", StringComparison.OrdinalIgnoreCase))
+              {
+                continue;
+              }
+
+              var matches = ReportPlaceholderRegex.Matches(cellText)
+                .Cast<Match>()
+                .OrderByDescending(match => match.Index)
+                .ToList();
+              foreach (var match in matches)
+              {
+                var tag = match.Groups["tag"].Value.Trim();
+                var replacement = summariesByTag.TryGetValue(tag, out var summary)
+                  ? summary.Quantity.ToString()
+                  : "...";
+
+                dynamic? replacementRange = null;
+                try
+                {
+                  replacementRange = cellRange.Duplicate;
+                  var start = cellRange.Start + match.Index;
+                  replacementRange.SetRange(start, start + match.Length);
+                  replacementRange.Text = replacement;
+                }
+                finally
+                {
+                  if (replacementRange is not null &&
+                      Marshal.IsComObject(replacementRange))
+                  {
+                    Marshal.FinalReleaseComObject(replacementRange);
+                  }
+                }
+              }
+            }
+            finally
+            {
+              if (cellRange is not null && Marshal.IsComObject(cellRange))
+                Marshal.FinalReleaseComObject(cellRange);
+              if (cell is not null && Marshal.IsComObject(cell))
+                Marshal.FinalReleaseComObject(cell);
+            }
+          }
+        }
+        finally
+        {
+          if (table is not null && Marshal.IsComObject(table))
+            Marshal.FinalReleaseComObject(table);
+        }
       }
     }
 
