@@ -76,7 +76,7 @@ namespace LTP.Truck.UserControls
       lbValue.Name = "lbValue";
       lbValue.Size = new Size(241, 53);
       lbValue.TabIndex = 4;
-      lbValue.Text = "0.000";
+      lbValue.Text = "0.0";
       lbValue.TextAlign = ContentAlignment.MiddleCenter;
       // 
       // lbTitle

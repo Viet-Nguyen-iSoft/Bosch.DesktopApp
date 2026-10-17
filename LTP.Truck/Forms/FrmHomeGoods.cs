@@ -147,6 +147,9 @@ namespace LTP.Truck.Forms
       ucItemGross.Title = "Gross (Kg)"; ucItemGross.VisibleTime = false;
       ucItemNet.Title = "Net (Kg)"; ucItemNet.VisibleTime = false;
       ucItemTare.Title = "Tare (Kg)"; ucItemTare.VisibleTime = false;
+      ucItemGross.ValueFontSize = 25F;
+      ucItemNet.ValueFontSize = 25F;
+      ucItemTare.ValueFontSize = 25F;
     }
 
     private async void FrmHomeGoods_Load(object? sender, EventArgs e)
