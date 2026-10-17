@@ -113,10 +113,10 @@ namespace LTP.Truck.Forms
       elipseControl06.CornerRadius = 20;
 
       dgv.EnableHeadersVisualStyles = false;
-      dgv.ColumnHeadersHeight = 50;
+      dgv.ColumnHeadersHeight = 40;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-      dgv.RowTemplate.Height = 60;
+      dgv.RowTemplate.Height = 50;
       dgv.MultiSelect = false;
       dgv.ShowCellToolTips = false;
       dgv.ReadOnly = true;
@@ -135,6 +135,7 @@ namespace LTP.Truck.Forms
       };
       dgv.Columns.Insert(0, selectColumn);
       dgv.CellClick += dgv_CellClick;
+      dgv.CellDoubleClick += dgv_CellDoubleClick;
       dgv.CellContentClick += dgv_CellContentClick;
       dgv.CellFormatting += dgv_CellFormatting;
       dgv.CellPainting += dgv_CellPainting;
@@ -684,6 +685,7 @@ namespace LTP.Truck.Forms
         txtNameDriver.Texts = result.Record.NameDriver ?? string.Empty;
         txtIdCard.Texts = result.Record.IdCard ?? string.Empty;
         await LoadLicensePlateSuggestionsAsync();
+        await LoadHistorical();
 
         using var successPopup = new PopupConfirm(
           "Tạo dữ liệu cân xe tải thủ công thành công !",
@@ -1318,8 +1320,24 @@ namespace LTP.Truck.Forms
 
     private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
     {
-      if (e.RowIndex < 0 || e.ColumnIndex < 0)
+      if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
+      {
         return;
+      }
+
+      var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+      checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
+    }
+
+    private void dgv_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
+    {
+      if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].Name == SelectColumnName ||
+          dgv.Columns[e.ColumnIndex].Name == "btnDelete")
+      {
+        return;
+      }
 
       if (dgv.Rows[e.RowIndex].DataBoundItem is RecordWeightDTO recordWeightDto &&
           recordWeightDto.RecordWeight is RecordWeight recordWeight)
@@ -1336,11 +1354,6 @@ namespace LTP.Truck.Forms
         ApplyHistoricalViewMode();
       }
 
-      if (dgv.Columns[e.ColumnIndex].Name != SelectColumnName)
-        return;
-
-      var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
-      checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
     }
 
     private void ShowHistoricalRecord(RecordWeight recordWeight)

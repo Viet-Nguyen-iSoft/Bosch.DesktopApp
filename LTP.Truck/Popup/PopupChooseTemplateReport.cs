@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Common.EnumData;
@@ -44,6 +45,7 @@ namespace LTP.Truck.Popup
 
       InitializeComponent();
       SelectedData = selectedData;
+      SetExportStatus(string.Empty);
     }
 
     private async void btnHcP_TH_Click(object sender, EventArgs e)
@@ -684,13 +686,57 @@ namespace LTP.Truck.Popup
       }
     }
 
-    private Task DownloadHcpSummaryReportAsync(
+    private void SetExportStatus(string message)
+    {
+      if (IsDisposed || Disposing)
+        return;
+
+      var label = Controls.Find("lbProcessing", true).OfType<Label>().FirstOrDefault();
+      if (label is null)
+      {
+        label = new Label
+        {
+          Name = "lbProcessing",
+          Location = new Point(21, 535),
+          Size = new Size(650, 59),
+          Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
+          TextAlign = ContentAlignment.MiddleLeft,
+          Font = new Font(Font.FontFamily, 11F),
+        };
+        Controls.Add(label);
+      }
+
+      label.Text = message;
+      label.Visible = !string.IsNullOrEmpty(message);
+    }
+
+    private static Task<string> RunWordExportAsync(Func<string> export)
+    {
+      var completion = new TaskCompletionSource<string>(
+        TaskCreationOptions.RunContinuationsAsynchronously);
+      var thread = new Thread(() =>
+      {
+        try { completion.SetResult(export()); }
+        catch (Exception ex) { completion.SetException(ex); }
+      })
+      {
+        IsBackground = true,
+        Name = "Word PDF export",
+      };
+      thread.SetApartmentState(ApartmentState.STA);
+      thread.Start();
+      return completion.Task;
+    }
+
+    private async Task DownloadHcpSummaryReportAsync(
       List<RecordWeight> recordWeights,
       List<RecordTruck> recordTrucks,
       string templateFileName = "Template_BBGN TỔNG HCP.doc")
     {
       try
       {
+        SetExportStatus("Đang tổng hợp dữ liệu...");
+        await Task.Yield();
         var summariesByTag = recordWeights
           .Where(record => !string.IsNullOrWhiteSpace(
             record.Product?.TagMappingReport))
@@ -731,8 +777,10 @@ namespace LTP.Truck.Popup
               LicensePlate: record.LicensePlate)))
           .ToList();
 
-        var pdfPath = ExportWordTemplateToPdf(
-          summariesByTag, vehicleReportEntries, templateFileName);
+        var progress = new Progress<string>(SetExportStatus);
+        var pdfPath = await RunWordExportAsync(() => ExportWordTemplateToPdf(
+          summariesByTag, vehicleReportEntries, templateFileName, progress));
+        SetExportStatus("Xuất PDF hoàn tất.");
         var openReportFile = false;
         using (var popup = new PopupConfirm(
           "Tạo phiếu thành công. Bạn có muốn mở file không?",
@@ -755,6 +803,7 @@ namespace LTP.Truck.Popup
       }
       catch (Exception ex)
       {
+        SetExportStatus("Xuất PDF thất bại.");
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popup = new PopupConfirm(
           "Không thể tạo phiếu từ template Word. Vui lòng kiểm tra Microsoft Word và thử lại !",
@@ -763,19 +812,20 @@ namespace LTP.Truck.Popup
         popup.ShowDialog(this);
       }
 
-      return Task.CompletedTask;
     }
 
     private static string ExportWordTemplateToPdf(
       IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
       IReadOnlyList<(string Tag, string? LicensePlate)> vehicleReportEntries,
-      string templateFileName)
+      string templateFileName,
+      IProgress<string>? progress = null)
     {
       var exportDate = DateTime.Now;
       const int wdAlertsNone = 0;
       const int wdDoNotSaveChanges = 0;
       const int wdExportFormatPdf = 17;
 
+      progress?.Report("Đang chuẩn bị template...");
       var templatePath = Path.Combine(
         Application.StartupPath,
         "Template",
@@ -795,6 +845,7 @@ namespace LTP.Truck.Popup
       dynamic? document = null;
       try
       {
+        progress?.Report("Đang mở template Word...");
         var wordType = Type.GetTypeFromProgID("Word.Application")
           ?? throw new InvalidOperationException("Microsoft Word chưa được cài đặt.");
         wordApplication = Activator.CreateInstance(wordType)
@@ -803,8 +854,10 @@ namespace LTP.Truck.Popup
         wordApplication.DisplayAlerts = wdAlertsNone;
         document = wordApplication.Documents.Open(workingDocPath);
 
+        progress?.Report("Đang đọc các tag trong template...");
         var (templateTags, templateWeightTags) =
           GetReportTagsInDocument((object)document);
+        progress?.Report("Đang điền số liệu và biển số...");
         ReplaceQuantityCellPlaceholders(document, summariesByTag);
         var licensePlates = vehicleReportEntries
           .Where(entry => templateTags.Contains(entry.Tag) &&
@@ -818,7 +871,9 @@ namespace LTP.Truck.Popup
         ReplaceWordTexts(
           document, summariesByTag, licensePlates, exportDate, totalWeight);
 
+        progress?.Report("Đang tạo file PDF...");
         document.ExportAsFixedFormat(pdfPath, wdExportFormatPdf);
+        progress?.Report("Đang hoàn tất file PDF...");
         document.Close(wdDoNotSaveChanges);
         Marshal.FinalReleaseComObject(document);
         document = null;
