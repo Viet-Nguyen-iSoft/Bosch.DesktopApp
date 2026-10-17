@@ -208,9 +208,10 @@ namespace LTP.Truck.Forms
             }
             var dtoProduct = DTOHelper.ConvertProductDTO(rsProduct);
             dtoProduct = dtoProduct?
-              .OrderBy(product => product.Group ?? string.Empty)
-              .ThenBy(product => product.WasteType ?? string.Empty)
-              .ThenBy(product => product.Name ?? string.Empty)
+              .OrderBy(product => product.TagMappingReport ?? string.Empty)
+              //.OrderBy(product => product.Group ?? string.Empty)
+              //.ThenBy(product => product.WasteType ?? string.Empty)
+              //.ThenBy(product => product.Name ?? string.Empty)
               .Select((product, index) =>
               {
                 product.No = index + 1;
@@ -431,15 +432,12 @@ namespace LTP.Truck.Forms
         }
 
         var existingTypeGoods = await _typeGoodsService.GetAllAsync(IsContainDelete: true);
-        var typeGoodsByCode = existingTypeGoods
-          .Where(item => !string.IsNullOrWhiteSpace(item.Code))
-          .GroupBy(item => item.Code!.Trim(), StringComparer.OrdinalIgnoreCase)
-          .ToDictionary(group => group.Key, group => group.First(),
-            StringComparer.OrdinalIgnoreCase);
-        var typeGoodsByName = existingTypeGoods
+        var typeGoodsByNameAndWasteType = existingTypeGoods
           .Where(item => item.ProductGroupId == hcpProductGroup.Id &&
             !string.IsNullOrWhiteSpace(item.Name))
-          .GroupBy(item => item.Name!.Trim(), StringComparer.OrdinalIgnoreCase)
+          .GroupBy(item => BuildImportKey(
+            hcpProductGroup.Id, item.Name!, item.EnumWasteType),
+            StringComparer.OrdinalIgnoreCase)
           .ToDictionary(group => group.Key, group => group.First(),
             StringComparer.OrdinalIgnoreCase);
 
@@ -477,10 +475,9 @@ namespace LTP.Truck.Forms
           }
 
           TypeGoods? typeGoods = null;
-          if (!string.IsNullOrWhiteSpace(code))
-            typeGoodsByCode.TryGetValue(code, out typeGoods);
-          if (typeGoods == null)
-            typeGoodsByName.TryGetValue(name, out typeGoods);
+          typeGoodsByNameAndWasteType.TryGetValue(
+            BuildImportKey(hcpProductGroup.Id, name, wasteType),
+            out typeGoods);
 
           var isNew = typeGoods == null;
           typeGoods ??= new TypeGoods
@@ -503,9 +500,9 @@ namespace LTP.Truck.Forms
           try
           {
             var savedTypeGoods = await _typeGoodsService.AddOrUpdateAsync(typeGoods);
-            if (!string.IsNullOrWhiteSpace(code))
-              typeGoodsByCode[code] = savedTypeGoods;
-            typeGoodsByName[name] = savedTypeGoods;
+            typeGoodsByNameAndWasteType[
+              BuildImportKey(hcpProductGroup.Id, name, wasteType)] =
+              savedTypeGoods;
             importedCount++;
             if (isNew)
               addedCount++;
@@ -620,16 +617,12 @@ namespace LTP.Truck.Forms
       }
 
       var existingProducts = await _productService.GetAllAsync(IsContainDelete: true);
-      var productsByCode = existingProducts
-        .Where(item => !string.IsNullOrWhiteSpace(item.Code))
-        .GroupBy(item => item.Code!.Trim(), StringComparer.OrdinalIgnoreCase)
-        .ToDictionary(group => group.Key, group => group.First(),
-          StringComparer.OrdinalIgnoreCase);
-      var productsByGroupAndName = existingProducts
+      var productsByGroupNameAndWasteType = existingProducts
         .Where(item => item.ProductGroupId.HasValue &&
           !string.IsNullOrWhiteSpace(item.Name))
-        .GroupBy(item => BuildProductImportKey(
-          item.ProductGroupId!.Value, item.Name!), StringComparer.OrdinalIgnoreCase)
+        .GroupBy(item => BuildImportKey(
+          item.ProductGroupId!.Value, item.Name!, item.EnumWasteType),
+          StringComparer.OrdinalIgnoreCase)
         .ToDictionary(group => group.Key, group => group.First(),
           StringComparer.OrdinalIgnoreCase);
 
@@ -670,13 +663,8 @@ namespace LTP.Truck.Forms
           }
 
           Product? product = null;
-          if (!string.IsNullOrWhiteSpace(code))
-            productsByCode.TryGetValue(code, out product);
-          if (product == null)
-          {
-            productsByGroupAndName.TryGetValue(
-              BuildProductImportKey(productGroup.Id, name), out product);
-          }
+          productsByGroupNameAndWasteType.TryGetValue(
+            BuildImportKey(productGroup.Id, name, wasteType), out product);
 
           var isNew = product == null;
           product ??= new Product
@@ -699,9 +687,8 @@ namespace LTP.Truck.Forms
           try
           {
             var savedProduct = await _productService.AddOrUpdateAsync(product);
-            if (!string.IsNullOrWhiteSpace(code))
-              productsByCode[code] = savedProduct;
-            productsByGroupAndName[BuildProductImportKey(productGroup.Id, name)] =
+            productsByGroupNameAndWasteType[
+              BuildImportKey(productGroup.Id, name, wasteType)] =
               savedProduct;
             importedCount++;
             if (isNew)
@@ -756,9 +743,12 @@ namespace LTP.Truck.Forms
           groupName, StringComparison.OrdinalIgnoreCase) == true);
     }
 
-    private static string BuildProductImportKey(Guid productGroupId, string name)
+    private static string BuildImportKey(
+      Guid productGroupId,
+      string name,
+      EnumWasteType wasteType)
     {
-      return $"{productGroupId:N}|{name.Trim()}";
+      return $"{productGroupId:N}|{name.Trim()}|{wasteType}";
     }
 
     private async Task ImportTaresAsync(XLWorkbook workbook)
