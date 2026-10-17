@@ -46,11 +46,6 @@ namespace LTP.Truck.Popup
       SelectedData = selectedData;
     }
 
-    private void PopupChooseTemplateReport_Load(object sender, EventArgs e)
-    {
-
-    }
-
     private async void btnHcP_TH_Click(object sender, EventArgs e)
     {
       using var uiLock = LockExportUi();
@@ -274,14 +269,6 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
-      List<string> licensePlates = recordWeights
-        .Select(record => record.LicensePlate)
-        .Concat(recordTrucks.Select(record => record.LicensePlate))
-        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
-        .Select(licensePlate => licensePlate!.Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
-
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -292,33 +279,10 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
-
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
-          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
-        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
-
-      await DownloadFileWorkReport_TongHop(
-        "Template_TongHop",
-        "TemplateTableCN",
+      await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        licensePlates,
-        inforCompanyDTO_A,
-        inforCompanyDTO_B);
+        "Template_BBGN TỔNG TGA.doc");
 
     }
 
@@ -935,7 +899,7 @@ namespace LTP.Truck.Popup
         "Template",
         templateFileName);
       if (!File.Exists(templatePath))
-        throw new FileNotFoundException("Không tìm thấy template báo cáo HCP.", templatePath);
+        throw new FileNotFoundException("Không tìm thấy template báo cáo.", templatePath);
 
       var outputFolder = Path.Combine(Application.StartupPath, "ReportGoods");
       Directory.CreateDirectory(outputFolder);
