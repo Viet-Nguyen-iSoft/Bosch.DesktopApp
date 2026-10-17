@@ -51,18 +51,18 @@ namespace LTP.Truck.Popup
       using var uiLock = LockExportUi();
 
       var hcpData = SelectedData
-        .Where(dto => HasProductGroupName(dto, "HcP"))
+        .Where(dto => IsTruckSource(dto) || HasProductGroupName(dto, "HcP"))
         .ToList();
-      var tgaCount = SelectedData.Count(dto => HasProductGroupName(dto, "TGA"));
+      var tgaCount = SelectedData.Count(dto => !IsTruckSource(dto) && HasProductGroupName(dto, "TGA"));
 
       if (hcpData.Count != SelectedData.Count)
       {
         var continueExport = false;
         using (var popup = new PopupConfirm(
           $"Dữ liệu đã chọn gồm:\r\n" +
-          $"- HcP: {hcpData.Count}\r\n" +
-          $"- TGA: {tgaCount}\r\n\r\n" +
-          "Có dữ liệu không phải HcP. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu HcP không?",
+          $"- HcP và Cân xe tải: {hcpData.Count}\r\n" +
+          $"- Cân hàng TGA: {tgaCount}\r\n\r\n" +
+          "Có dữ liệu Cân hàng không thuộc HcP. Bạn có muốn tiếp tục và chỉ xuất Cân hàng HcP cùng tất cả dữ liệu Cân xe tải đã chọn không?",
           EnumTypeMsg.Confirm,
           EnumImageMsg.Question,
           height: 400))
@@ -108,18 +108,18 @@ namespace LTP.Truck.Popup
       using var uiLock = LockExportUi();
 
       var hcpData = SelectedData
-        .Where(dto => HasProductGroupName(dto, "HcP"))
+        .Where(dto => IsTruckSource(dto) || HasProductGroupName(dto, "HcP"))
         .ToList();
-      var tgaCount = SelectedData.Count(dto => HasProductGroupName(dto, "TGA"));
+      var tgaCount = SelectedData.Count(dto => !IsTruckSource(dto) && HasProductGroupName(dto, "TGA"));
 
       if (hcpData.Count != SelectedData.Count)
       {
         var continueExport = false;
         using (var popup = new PopupConfirm(
           $"Dữ liệu đã chọn gồm:\r\n" +
-          $"- HcP: {hcpData.Count}\r\n" +
-          $"- TGA: {tgaCount}\r\n\r\n" +
-          "Có dữ liệu không phải HcP. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu HcP không?",
+          $"- HcP và Cân xe tải: {hcpData.Count}\r\n" +
+          $"- Cân hàng TGA: {tgaCount}\r\n\r\n" +
+          "Có dữ liệu Cân hàng không thuộc HcP. Bạn có muốn tiếp tục và chỉ xuất Cân hàng HcP cùng tất cả dữ liệu Cân xe tải đã chọn không?",
           EnumTypeMsg.Confirm,
           EnumImageMsg.Question,
           height: 400))
@@ -168,18 +168,18 @@ namespace LTP.Truck.Popup
       using var uiLock = LockExportUi();
 
       var hcpData = SelectedData
-       .Where(dto => HasProductGroupName(dto, "HcP"))
+       .Where(dto => IsTruckSource(dto) || HasProductGroupName(dto, "HcP"))
        .ToList();
-      var tgaCount = SelectedData.Count(dto => HasProductGroupName(dto, "TGA"));
+      var tgaCount = SelectedData.Count(dto => !IsTruckSource(dto) && HasProductGroupName(dto, "TGA"));
 
       if (hcpData.Count != SelectedData.Count)
       {
         var continueExport = false;
         using (var popup = new PopupConfirm(
           $"Dữ liệu đã chọn gồm:\r\n" +
-          $"- HcP: {hcpData.Count}\r\n" +
-          $"- TGA: {tgaCount}\r\n\r\n" +
-          "Có dữ liệu không phải HcP. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu HcP không?",
+          $"- HcP và Cân xe tải: {hcpData.Count}\r\n" +
+          $"- Cân hàng TGA: {tgaCount}\r\n\r\n" +
+          "Có dữ liệu Cân hàng không thuộc HcP. Bạn có muốn tiếp tục và chỉ xuất Cân hàng HcP cùng tất cả dữ liệu Cân xe tải đã chọn không?",
           EnumTypeMsg.Confirm,
           EnumImageMsg.Question,
           height: 400))
@@ -230,18 +230,18 @@ namespace LTP.Truck.Popup
       using var uiLock = LockExportUi();
 
       var tgaData = SelectedData
-        .Where(dto => HasProductGroupName(dto, "TGA"))
+        .Where(dto => IsTruckSource(dto) || HasProductGroupName(dto, "TGA"))
         .ToList();
-      var hcpCount = SelectedData.Count(dto => HasProductGroupName(dto, "HcP"));
+      var hcpCount = SelectedData.Count(dto => !IsTruckSource(dto) && HasProductGroupName(dto, "HcP"));
 
       if (tgaData.Count != SelectedData.Count)
       {
         var continueExport = false;
         using (var popup = new PopupConfirm(
           $"Dữ liệu đã chọn gồm:\r\n" +
-          $"- HcP: {hcpCount}\r\n" +
-          $"- TGA: {tgaData.Count}\r\n\r\n" +
-          "Có dữ liệu không phải TGA. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu TGA không?",
+          $"- Cân hàng HcP: {hcpCount}\r\n" +
+          $"- TGA và Cân xe tải: {tgaData.Count}\r\n\r\n" +
+          "Có dữ liệu Cân hàng không thuộc TGA. Bạn có muốn tiếp tục và chỉ xuất Cân hàng TGA cùng tất cả dữ liệu Cân xe tải đã chọn không?",
           EnumTypeMsg.Confirm,
           EnumImageMsg.Question,
           height: 400))
@@ -291,18 +291,18 @@ namespace LTP.Truck.Popup
       using var uiLock = LockExportUi();
 
       var tgaData = SelectedData
-        .Where(dto => HasProductGroupName(dto, "TGA"))
+        .Where(dto => IsTruckSource(dto) || HasProductGroupName(dto, "TGA"))
         .ToList();
-      var hcpCount = SelectedData.Count(dto => HasProductGroupName(dto, "HcP"));
+      var hcpCount = SelectedData.Count(dto => !IsTruckSource(dto) && HasProductGroupName(dto, "HcP"));
 
       if (tgaData.Count != SelectedData.Count)
       {
         var continueExport = false;
         using (var popup = new PopupConfirm(
           $"Dữ liệu đã chọn gồm:\r\n" +
-          $"- HcP: {hcpCount}\r\n" +
-          $"- TGA: {tgaData.Count}\r\n\r\n" +
-          "Có dữ liệu không phải TGA. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu TGA không?",
+          $"- Cân hàng HcP: {hcpCount}\r\n" +
+          $"- TGA và Cân xe tải: {tgaData.Count}\r\n\r\n" +
+          "Có dữ liệu Cân hàng không thuộc TGA. Bạn có muốn tiếp tục và chỉ xuất Cân hàng TGA cùng tất cả dữ liệu Cân xe tải đã chọn không?",
           EnumTypeMsg.Confirm,
           EnumImageMsg.Question,
           height: 400))
@@ -351,18 +351,18 @@ namespace LTP.Truck.Popup
       using var uiLock = LockExportUi();
 
       var tgaData = SelectedData
-        .Where(dto => HasProductGroupName(dto, "TGA"))
+        .Where(dto => IsTruckSource(dto) || HasProductGroupName(dto, "TGA"))
         .ToList();
-      var hcpCount = SelectedData.Count(dto => HasProductGroupName(dto, "HcP"));
+      var hcpCount = SelectedData.Count(dto => !IsTruckSource(dto) && HasProductGroupName(dto, "HcP"));
 
       if (tgaData.Count != SelectedData.Count)
       {
         var continueExport = false;
         using (var popup = new PopupConfirm(
           $"Dữ liệu đã chọn gồm:\r\n" +
-          $"- HcP: {hcpCount}\r\n" +
-          $"- TGA: {tgaData.Count}\r\n\r\n" +
-          "Có dữ liệu không phải TGA. Bạn có muốn tiếp tục và chỉ xuất các dữ liệu TGA không?",
+          $"- Cân hàng HcP: {hcpCount}\r\n" +
+          $"- TGA và Cân xe tải: {tgaData.Count}\r\n\r\n" +
+          "Có dữ liệu Cân hàng không thuộc TGA. Bạn có muốn tiếp tục và chỉ xuất Cân hàng TGA cùng tất cả dữ liệu Cân xe tải đã chọn không?",
           EnumTypeMsg.Confirm,
           EnumImageMsg.Question,
           height: 400))
@@ -543,6 +543,12 @@ namespace LTP.Truck.Popup
 
 
 
+
+    private static bool IsTruckSource(RecordWeightDTO dto)
+    {
+      return string.Equals(
+        dto.Source, "Cân xe tải", StringComparison.OrdinalIgnoreCase);
+    }
 
     private static bool HasProductGroupName(
       RecordWeightDTO dto,
