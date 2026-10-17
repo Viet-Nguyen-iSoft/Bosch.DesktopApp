@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using HelperManager;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
@@ -22,7 +22,7 @@ namespace LTP.Truck.Popup
   public partial class PopupChooseTemplateReport : Form
   {
     private static readonly Regex ReportPlaceholderRegex = new(
-      @"\{(?<tag>[^{}\r\n]+)_[ \t]*(?<kind>weight|qty)\}",
+      @"\{[ \t]*(?<tag>[^{}+\r\n]+?)_[ \t]*(?<kind>weight|qty)[ \t]*(?:\+[ \t]*[^{}+\r\n]+?[ \t]*)*\}",
       RegexOptions.IgnoreCase | RegexOptions.Compiled);
     private static readonly Regex LicensePlatePlaceholderRegex = new(
       @"\{bien_so_(?<index>\d{2})\}",
@@ -425,14 +425,6 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
-      List<string> licensePlates = recordWeights
-        .Select(record => record.LicensePlate)
-        .Concat(recordTrucks.Select(record => record.LicensePlate))
-        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
-        .Select(licensePlate => licensePlate!.Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
-
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -443,33 +435,10 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
-
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
-          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
-        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
-
-      await DownloadFileWorkReport_Biwase(
-        "Template_W1",
-        "TemplateTableSH",
+      await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        licensePlates,
-        inforCompanyDTO_A,
-        inforCompanyDTO_B);
+        "Template_Biwase_Scrap sale.docx");
     }
 
 
@@ -489,14 +458,6 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
-      List<string> licensePlates = recordWeights
-        .Select(record => record.LicensePlate)
-        .Concat(recordTrucks.Select(record => record.LicensePlate))
-        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
-        .Select(licensePlate => licensePlate!.Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
-
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -507,33 +468,10 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
-
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
-          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
-        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
-
-      await DownloadFileWorkReport_Biwase(
-        "Template_W2",
-        "TemplateTableSH",
+      await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        licensePlates,
-        inforCompanyDTO_A,
-        inforCompanyDTO_B);
+        "Template_Biwase_CNTT.docx");
     }
 
 
@@ -848,7 +786,8 @@ namespace LTP.Truck.Popup
       var outputFolder = Path.Combine(Application.StartupPath, "ReportGoods");
       Directory.CreateDirectory(outputFolder);
       var fileName = $"{Path.GetFileNameWithoutExtension(templateFileName)}_{exportDate:yyMMddHHmmssfff}";
-      var workingDocPath = Path.Combine(outputFolder, $"{fileName}.doc");
+      var workingDocPath = Path.Combine(
+        outputFolder, $"{fileName}{Path.GetExtension(templateFileName)}");
       var pdfPath = Path.Combine(outputFolder, $"{fileName}.pdf");
       File.Copy(templatePath, workingDocPath, overwrite: true);
 
@@ -924,6 +863,55 @@ namespace LTP.Truck.Popup
       }
     }
 
+    private static IEnumerable<(string Tag, string Kind)> GetReportTerms(Match match)
+    {
+      var defaultKind = match.Groups["kind"].Value;
+      var expression = match.Value.Substring(1, match.Value.Length - 2);
+      foreach (var part in expression.Split('+'))
+      {
+        var term = part.Trim();
+        var suffix = Regex.Match(
+          term, @"^(?<tag>.+?)_[ \t]*(?<kind>weight|qty)$",
+          RegexOptions.IgnoreCase);
+        yield return suffix.Success
+          ? (suffix.Groups["tag"].Value.Trim(), suffix.Groups["kind"].Value)
+          : (term, defaultKind);
+      }
+    }
+
+    private static string GetReportPlaceholderValue(
+      Match match,
+      IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
+      double totalWeight = 0,
+      bool quantityOnly = false)
+    {
+      var terms = GetReportTerms(match).ToList();
+      var isQuantity = quantityOnly || terms.All(term =>
+        string.Equals(term.Kind, "qty", StringComparison.OrdinalIgnoreCase));
+      var value = 0d;
+      var hasData = false;
+      foreach (var term in terms)
+      {
+        var useQuantity = quantityOnly || string.Equals(
+          term.Kind, "qty", StringComparison.OrdinalIgnoreCase);
+        if (!useQuantity && string.Equals(
+              term.Tag, "tong", StringComparison.OrdinalIgnoreCase))
+        {
+          value += totalWeight;
+          hasData = true;
+        }
+        else if (summariesByTag.TryGetValue(term.Tag, out var summary))
+        {
+          value += useQuantity ? summary.Quantity : summary.Weight;
+          hasData = true;
+        }
+      }
+
+      if (isQuantity)
+        return !hasData && terms.Count == 1 ? "..." : value.ToString("0");
+      return !hasData ? "0.0" : WeightFormatHelper.Format(value, 3);
+    }
+
     private static (HashSet<string> Tags, HashSet<string> WeightTags)
       GetReportTagsInDocument(dynamic document)
     {
@@ -938,11 +926,12 @@ namespace LTP.Truck.Popup
           storyRange = document.StoryRanges[storyType];
           while (storyRange is not null)
           {
-            var storyText = Convert.ToString(storyRange.Text) ?? string.Empty;
-            foreach (Match match in ReportPlaceholderRegex.Matches(storyText))
+            string storyText = Convert.ToString((object)storyRange.Text) ?? string.Empty;
+            foreach (var term in ReportPlaceholderRegex.Matches(storyText)
+              .Cast<Match>().SelectMany(GetReportTerms))
             {
-              var tag = match.Groups["tag"].Value.Trim();
-              var kind = match.Groups["kind"].Value;
+              var tag = term.Tag;
+              var kind = term.Kind;
               if (string.Equals(tag, "tong", StringComparison.OrdinalIgnoreCase) &&
                   string.Equals(kind, "weight", StringComparison.OrdinalIgnoreCase))
               {
@@ -990,7 +979,7 @@ namespace LTP.Truck.Popup
           storyRange = document.StoryRanges[storyType];
           while (storyRange is not null)
           {
-            var storyText = Convert.ToString(storyRange.Text) ?? string.Empty;
+            string storyText = Convert.ToString((object)storyRange.Text) ?? string.Empty;
             var storyReplacements = new Dictionary<string, string>(
               StringComparer.OrdinalIgnoreCase);
             foreach (Match match in ReportPlaceholderRegex.Matches(storyText))
@@ -999,28 +988,8 @@ namespace LTP.Truck.Popup
               if (storyReplacements.ContainsKey(placeholder))
                 continue;
 
-              var tag = match.Groups["tag"].Value.Trim();
-              var kind = match.Groups["kind"].Value;
-              if (string.Equals(tag, "tong", StringComparison.OrdinalIgnoreCase) &&
-                  string.Equals(kind, "weight", StringComparison.OrdinalIgnoreCase))
-              {
-                storyReplacements[placeholder] =
-                  WeightFormatHelper.Format(totalWeight, 3);
-              }
-              else if (summariesByTag.TryGetValue(tag, out var summary))
-              {
-                storyReplacements[placeholder] =
-                  string.Equals(kind, "qty", StringComparison.OrdinalIgnoreCase)
-                    ? summary.Quantity.ToString()
-                    : WeightFormatHelper.Format(summary.Weight, 3);
-              }
-              else
-              {
-                storyReplacements[placeholder] =
-                  string.Equals(kind, "qty", StringComparison.OrdinalIgnoreCase)
-                    ? "..."
-                    : "0.0";
-              }
+              storyReplacements[placeholder] = GetReportPlaceholderValue(
+                match, summariesByTag, totalWeight);
             }
 
             foreach (Match match in LicensePlatePlaceholderRegex.Matches(storyText))
@@ -1127,10 +1096,8 @@ namespace LTP.Truck.Popup
                 .ToList();
               foreach (var match in matches)
               {
-                var tag = match.Groups["tag"].Value.Trim();
-                var replacement = summariesByTag.TryGetValue(tag, out var summary)
-                  ? summary.Quantity.ToString()
-                  : "...";
+                var replacement = GetReportPlaceholderValue(
+                  match, summariesByTag, quantityOnly: true);
 
                 dynamic? replacementRange = null;
                 try

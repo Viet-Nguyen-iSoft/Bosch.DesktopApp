@@ -71,6 +71,12 @@
     <None Update="Template\Template_BBGN TỔNG HCP.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\Template_Biwase_CNTT.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\Template_Biwase_Scrap sale.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\Template_BBGN TỔNG TGA.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
