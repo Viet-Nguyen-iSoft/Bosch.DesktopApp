@@ -95,14 +95,6 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
-      List<string> licensePlates = recordWeights
-        .Select(record => record.LicensePlate)
-        .Concat(recordTrucks.Select(record => record.LicensePlate))
-        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
-        .Select(licensePlate => licensePlate!.Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
-
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -113,8 +105,7 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      await DownloadHcpSummaryReportAsync(
-        recordWeights, recordTrucks, licensePlates);
+      await DownloadHcpSummaryReportAsync(recordWeights, recordTrucks);
     }
 
     private async void btnHcP_CN_Click(object sender, EventArgs e)
@@ -161,14 +152,6 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
-      List<string> licensePlates = recordWeights
-        .Select(record => record.LicensePlate)
-        .Concat(recordTrucks.Select(record => record.LicensePlate))
-        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
-        .Select(licensePlate => licensePlate!.Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
-
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -179,33 +162,10 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
-
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
-          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
-        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
-
-      await DownloadFileWorkReport_TongHop(
-        "Template_CN",
-        "TemplateTableCN",
+      await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        licensePlates,
-        inforCompanyDTO_A,
-        inforCompanyDTO_B);
+        "Template_BBGN KNH Bosch HCP-CN.doc");
     }
 
     private async void btnHcP_SH_Click(object sender, EventArgs e)
@@ -252,14 +212,6 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
-      List<string> licensePlates = recordWeights
-        .Select(record => record.LicensePlate)
-        .Concat(recordTrucks.Select(record => record.LicensePlate))
-        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
-        .Select(licensePlate => licensePlate!.Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
-
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -270,33 +222,10 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
-
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
-          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
-        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
-
-      await DownloadFileWorkReport_TongHop(
-        "Template_SH",
-        "TemplateTableSH",
+      await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        licensePlates,
-        inforCompanyDTO_A,
-        inforCompanyDTO_B);
+        "Template_BBGN KNH Bosch HCP-SH.doc");
     }
 
 
@@ -912,7 +841,7 @@ namespace LTP.Truck.Popup
     private Task DownloadHcpSummaryReportAsync(
       List<RecordWeight> recordWeights,
       List<RecordTruck> recordTrucks,
-      IReadOnlyList<string> licensePlates)
+      string templateFileName = "Template_BBGN TỔNG HCP.doc")
     {
       try
       {
@@ -942,7 +871,22 @@ namespace LTP.Truck.Popup
               group.Sum(item => item.Quantity)),
             StringComparer.OrdinalIgnoreCase);
 
-        var pdfPath = ExportWordTemplateToPdf(summariesByTag, licensePlates);
+        var vehicleReportEntries = recordWeights
+          .Where(record => !string.IsNullOrWhiteSpace(
+            record.Product?.TagMappingReport))
+          .Select(record => (
+            Tag: record.Product!.TagMappingReport!.Trim(),
+            LicensePlate: record.LicensePlate))
+          .Concat(recordTrucks
+            .Where(record => !string.IsNullOrWhiteSpace(
+              record.TypeGoods?.TagMappingReport))
+            .Select(record => (
+              Tag: record.TypeGoods!.TagMappingReport!.Trim(),
+              LicensePlate: record.LicensePlate)))
+          .ToList();
+
+        var pdfPath = ExportWordTemplateToPdf(
+          summariesByTag, vehicleReportEntries, templateFileName);
         var openReportFile = false;
         using (var popup = new PopupConfirm(
           "Tạo phiếu thành công. Bạn có muốn mở file không?",
@@ -978,7 +922,8 @@ namespace LTP.Truck.Popup
 
     private static string ExportWordTemplateToPdf(
       IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
-      IReadOnlyList<string> licensePlates)
+      IReadOnlyList<(string Tag, string? LicensePlate)> vehicleReportEntries,
+      string templateFileName)
     {
       var exportDate = DateTime.Now;
       const int wdAlertsNone = 0;
@@ -988,13 +933,13 @@ namespace LTP.Truck.Popup
       var templatePath = Path.Combine(
         Application.StartupPath,
         "Template",
-        "Template_BBGN TỔNG HCP.doc");
+        templateFileName);
       if (!File.Exists(templatePath))
         throw new FileNotFoundException("Không tìm thấy template báo cáo HCP.", templatePath);
 
       var outputFolder = Path.Combine(Application.StartupPath, "ReportGoods");
       Directory.CreateDirectory(outputFolder);
-      var fileName = $"BBGN_TONG_HCP_{exportDate:yyMMddHHmmssfff}";
+      var fileName = $"{Path.GetFileNameWithoutExtension(templateFileName)}_{exportDate:yyMMddHHmmssfff}";
       var workingDocPath = Path.Combine(outputFolder, $"{fileName}.doc");
       var pdfPath = Path.Combine(outputFolder, $"{fileName}.pdf");
       File.Copy(templatePath, workingDocPath, overwrite: true);
@@ -1011,8 +956,20 @@ namespace LTP.Truck.Popup
         wordApplication.DisplayAlerts = wdAlertsNone;
         document = wordApplication.Documents.Open(workingDocPath);
 
+        var (templateTags, templateWeightTags) =
+          GetReportTagsInDocument((object)document);
         ReplaceQuantityCellPlaceholders(document, summariesByTag);
-        ReplaceWordTexts(document, summariesByTag, licensePlates, exportDate);
+        var licensePlates = vehicleReportEntries
+          .Where(entry => templateTags.Contains(entry.Tag) &&
+            !string.IsNullOrWhiteSpace(entry.LicensePlate))
+          .Select(entry => entry.LicensePlate!.Trim())
+          .Distinct(StringComparer.OrdinalIgnoreCase)
+          .ToList();
+        var totalWeight = summariesByTag
+          .Where(entry => templateWeightTags.Contains(entry.Key))
+          .Sum(entry => entry.Value.Weight);
+        ReplaceWordTexts(
+          document, summariesByTag, licensePlates, exportDate, totalWeight);
 
         document.ExportAsFixedFormat(pdfPath, wdExportFormatPdf);
         document.Close(wdDoNotSaveChanges);
@@ -1059,11 +1016,60 @@ namespace LTP.Truck.Popup
       }
     }
 
+    private static (HashSet<string> Tags, HashSet<string> WeightTags)
+      GetReportTagsInDocument(dynamic document)
+    {
+      var tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+      var weightTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+      for (var storyType = 1; storyType <= 17; storyType++)
+      {
+        dynamic? storyRange = null;
+        try
+        {
+          storyRange = document.StoryRanges[storyType];
+          while (storyRange is not null)
+          {
+            var storyText = Convert.ToString(storyRange.Text) ?? string.Empty;
+            foreach (Match match in ReportPlaceholderRegex.Matches(storyText))
+            {
+              var tag = match.Groups["tag"].Value.Trim();
+              var kind = match.Groups["kind"].Value;
+              if (string.Equals(tag, "tong", StringComparison.OrdinalIgnoreCase) &&
+                  string.Equals(kind, "weight", StringComparison.OrdinalIgnoreCase))
+              {
+                continue;
+              }
+
+              tags.Add(tag);
+              if (string.Equals(kind, "weight", StringComparison.OrdinalIgnoreCase))
+              {
+                weightTags.Add(tag);
+              }
+            }
+
+            dynamic? nextRange = storyRange.NextStoryRange;
+            if (Marshal.IsComObject(storyRange))
+              Marshal.FinalReleaseComObject(storyRange);
+            storyRange = nextRange;
+          }
+        }
+        catch (COMException)
+        {
+          if (storyRange is not null && Marshal.IsComObject(storyRange))
+            Marshal.FinalReleaseComObject(storyRange);
+        }
+      }
+
+      return (tags, weightTags);
+    }
+
     private static void ReplaceWordTexts(
       dynamic document,
       IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
       IReadOnlyList<string> licensePlates,
-      DateTime exportDate)
+      DateTime exportDate,
+      double totalWeight)
     {
       const int wdFindContinue = 1;
       const int wdReplaceAll = 2;
@@ -1087,7 +1093,13 @@ namespace LTP.Truck.Popup
 
               var tag = match.Groups["tag"].Value.Trim();
               var kind = match.Groups["kind"].Value;
-              if (summariesByTag.TryGetValue(tag, out var summary))
+              if (string.Equals(tag, "tong", StringComparison.OrdinalIgnoreCase) &&
+                  string.Equals(kind, "weight", StringComparison.OrdinalIgnoreCase))
+              {
+                storyReplacements[placeholder] =
+                  WeightFormatHelper.Format(totalWeight, 3);
+              }
+              else if (summariesByTag.TryGetValue(tag, out var summary))
               {
                 storyReplacements[placeholder] =
                   string.Equals(kind, "qty", StringComparison.OrdinalIgnoreCase)

@@ -71,6 +71,12 @@
     <None Update="Template\Template_BBGN TỔNG HCP.doc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\Template_BBGN KNH Bosch HCP-CN.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\Template_BBGN KNH Bosch HCP-SH.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\TemplateHtml.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
