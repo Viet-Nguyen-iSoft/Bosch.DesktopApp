@@ -390,14 +390,6 @@ namespace LTP.Truck.Popup
         .Select(record => record!)
         .ToList();
 
-      List<string> licensePlates = recordWeights
-        .Select(record => record.LicensePlate)
-        .Concat(recordTrucks.Select(record => record.LicensePlate))
-        .Where(licensePlate => !string.IsNullOrWhiteSpace(licensePlate))
-        .Select(licensePlate => licensePlate!.Trim())
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .ToList();
-
       if (recordWeights.Count == 0 && recordTrucks.Count == 0)
       {
         using var popupMsg = new PopupConfirm(
@@ -408,33 +400,10 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      InforCompanyDTO inforCompanyDTO_A = new InforCompanyDTO()
-      {
-        Company = AppCore.Ins._appConfig?.Company,
-        OfficeAddress = AppCore.Ins._appConfig?.OfficeAddress,
-        PhoneOfficeAddress = AppCore.Ins._appConfig?.PhoneForOfficeAddress,
-        AgentAddress = AppCore.Ins._appConfig?.AgentAddress,
-        PhoneAgentAddress = AppCore.Ins._appConfig?.PhoneForAgentAddress,
-      };
-
-      InforCompanyDTO inforCompanyDTO_B = new InforCompanyDTO()
-      {
-        Company = recordWeights.FirstOrDefault()?.Delivery?.Name
-          ?? recordTrucks.FirstOrDefault()?.Client?.Name,
-        OfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.OfficeAddress,
-        PhoneOfficeAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForOfficeAddress,
-        AgentAddress = recordWeights.FirstOrDefault()?.Delivery?.AgentAddress,
-        PhoneAgentAddress = recordWeights.FirstOrDefault()?.Delivery?.PhoneForAgentAddress,
-      };
-
-      await DownloadFileWorkReport_TongHop(
-        "Template_SH",
-        "TemplateTableSH",
+      await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        licensePlates,
-        inforCompanyDTO_A,
-        inforCompanyDTO_B);
+        "Template_BBGN KNH Bosch TGA-SH.doc");
     }
 
 
