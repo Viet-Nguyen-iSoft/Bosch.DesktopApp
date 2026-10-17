@@ -1913,7 +1913,7 @@ namespace LTP.Truck.Forms
           tempTableDetal = tempTableDetal.Replace("{{no}}", (no).ToString("D2"));
           tempTableDetal = tempTableDetal.Replace("{{name}}", recordWeightsByProduct[no - 1].ProductName);
           tempTableDetal = tempTableDetal.Replace("{{code}}", recordWeightsByProduct[no - 1].ProductCode);
-          tempTableDetal = tempTableDetal.Replace("{{quantity}}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 2));
+          tempTableDetal = tempTableDetal.Replace("{{quantity}}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 1));
           tempTableDetal = tempTableDetal.Replace("{{note}}", "");
 
 
@@ -1922,7 +1922,7 @@ namespace LTP.Truck.Forms
         }
       }
 
-      result = result.Replace("{{totalQuantity}}", FormatWeight(value));
+      result = result.Replace("{{totalQuantity}}", WeightFormatHelper.Format(value, 1));
       result = result.Replace("{table}", tableDetails.ToString());
 
       string outputPath = Path.Combine(folderOutput, $"{dt.ToString("yyMMddHHmmss")}.html");
@@ -1965,9 +1965,9 @@ namespace LTP.Truck.Forms
         bool hasSecondWeight = secondWeight > 0;
 
         string gross = "...";
-        string tare = hasFirstWeight ? FormatWeight(firstWeight) : "...";
+        string tare = hasFirstWeight ? WeightFormatHelper.Format(firstWeight, 1) : "...";
         string net = "...";
-        string deduction = FormatWeight(recordTruck.Tare);
+        string deduction = WeightFormatHelper.Format(recordTruck.Tare, 1);
         string actual = "...";
         string importExport = "Chưa xác định";
         string timeTare = recordTruck.WeighInAt != null ? ((DateTime)(recordTruck.WeighInAt)).AddHours(AppCore.Ins._time).ToString("dd/MM/yyyy HH:mm") : "";
@@ -1980,10 +1980,10 @@ namespace LTP.Truck.Forms
           double tareWeight = Math.Min(firstWeight, secondWeight);
           double netWeight = grossWeight - tareWeight;
 
-          gross = FormatWeight(grossWeight);
-          tare = FormatWeight(tareWeight);
-          net = FormatWeight(netWeight);
-          actual = FormatWeight(netWeight - recordTruck.Tare);
+          gross = WeightFormatHelper.Format(grossWeight, 1);
+          tare = WeightFormatHelper.Format(tareWeight, 1);
+          net = WeightFormatHelper.Format(netWeight, 1);
+          actual = WeightFormatHelper.Format(netWeight - recordTruck.Tare, 1);
           importExport = secondWeight > firstWeight
             ? "Xuất hàng"
             : secondWeight < firstWeight

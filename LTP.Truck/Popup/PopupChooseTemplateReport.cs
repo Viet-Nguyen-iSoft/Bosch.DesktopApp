@@ -909,7 +909,7 @@ namespace LTP.Truck.Popup
 
       if (isQuantity)
         return !hasData && terms.Count == 1 ? "..." : value.ToString("0");
-      return !hasData ? "0.0" : WeightFormatHelper.Format(value, 3);
+      return !hasData ? "0.0" : WeightFormatHelper.Format(value, 1);
     }
 
     private static (HashSet<string> Tags, HashSet<string> WeightTags)

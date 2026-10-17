@@ -389,7 +389,7 @@ namespace LTP.Truck.Controls
           tempTableDetal = tempTableDetal.Replace("{no}", (no).ToString("D2"));
           tempTableDetal = tempTableDetal.Replace("{name}", recordWeightsByProduct[no - 1].ProductName);
           tempTableDetal = tempTableDetal.Replace("{code}", recordWeightsByProduct[no - 1].ProductCode);
-          tempTableDetal = tempTableDetal.Replace("{quantity}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
+          tempTableDetal = tempTableDetal.Replace("{quantity}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 1));
           string description = recordWeightsByProduct[no - 1].Description;
           tempTableDetal = tempTableDetal.Replace("{note}", description);
 
@@ -399,7 +399,7 @@ namespace LTP.Truck.Controls
         }
       }
 
-      result = result.Replace("{totalQuantity}", FormatWeight(value, 3));
+      result = result.Replace("{totalQuantity}", FormatWeight(value, 1));
       result = result.Replace("{table}", tableDetails.ToString());
 
       //Biển số
@@ -525,7 +525,7 @@ namespace LTP.Truck.Controls
           tempTableDetal = tempTableDetal.Replace("{no}", (no).ToString("D2"));
           tempTableDetal = tempTableDetal.Replace("{name}", recordWeightsByProduct[no - 1].ProductName);
           tempTableDetal = tempTableDetal.Replace("{code}", recordWeightsByProduct[no - 1].ProductCode);
-          tempTableDetal = tempTableDetal.Replace("{quantity}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 3));
+          tempTableDetal = tempTableDetal.Replace("{quantity}", WeightFormatHelper.Format(recordWeightsByProduct[no - 1].SumNet, 1));
           string description = recordWeightsByProduct[no - 1].Description;
           tempTableDetal = tempTableDetal.Replace("{note}", description);
 
@@ -535,7 +535,7 @@ namespace LTP.Truck.Controls
         }
       }
 
-      result = result.Replace("{totalQuantity}", FormatWeight(value, 3));
+      result = result.Replace("{totalQuantity}", FormatWeight(value, 1));
       result = result.Replace("{table}", tableDetails.ToString());
 
       //Biển số
