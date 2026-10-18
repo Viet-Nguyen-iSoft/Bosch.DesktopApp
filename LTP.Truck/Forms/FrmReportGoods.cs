@@ -932,11 +932,11 @@ namespace LTP.Truck.Forms
     private async void btnTracking_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateTracking.xlsx");
+      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateFileTracking.xlsx");
       if (!File.Exists(templatePath))
       {
         using var popup = new PopupConfirm(
-          "Không tìm thấy file mẫu TemplateTracking.xlsx.",
+          "Không tìm thấy file mẫu TemplateFileTracking.xlsx.",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popup.ShowDialog(this);
@@ -977,7 +977,13 @@ namespace LTP.Truck.Forms
           toDateTime.AddMinutes(1).ToUniversalTime(),
           "");
 
-        if (records.Count == 0)
+        var truckRecords = await AppCore.Ins._recordTruckService.GetReportAsync(
+          fromDateTime.ToUniversalTime(),
+          toDateTime.AddMinutes(1).ToUniversalTime(),
+          "",
+          statusFilterIndex: 2);
+
+        if (records.Count == 0 && truckRecords.Count == 0)
         {
           using var popup = new PopupConfirm(
             "Không có dữ liệu phù hợp với điều kiện lọc để xuất tracking.",
@@ -991,7 +997,7 @@ namespace LTP.Truck.Forms
           templatePath,
           saveDialog.FileName,
           records,
-          fromDateTime.Year));
+          fromDateTime.Year, truckRecords));
 
         var openExportedFile = false;
         using (var popup = new PopupConfirm(
@@ -1068,261 +1074,189 @@ namespace LTP.Truck.Forms
       string templatePath,
       string outputPath,
       IReadOnlyList<RecordWeight> records,
-      int reportYear)
+      int reportYear,
+      IReadOnlyList<RecordTruck> truckRecords)
     {
       if (records.Any(record => record.Product == null || !record.CreatedAt.HasValue))
         throw new InvalidOperationException("Có dữ liệu cân thiếu sản phẩm hoặc ngày cân.");
 
       using var workbook = new XLWorkbook(templatePath);
-      WriteTrackingSheet(
-        workbook.Worksheet("HW_HcP"),
-        records.Where(record =>
-          record.Product.EnumWasteType == iSoft.Database.EnumData.EnumWasteType.Hazardous)
-          .ToList(),
-        reportYear,
-        hazardous: true);
-      WriteTrackingSheet(
-        workbook.Worksheet("Non HW_HcP"),
-        records.Where(record =>
-          record.Product.EnumWasteType is
-            iSoft.Database.EnumData.EnumWasteType.NonRecyclable or
-            iSoft.Database.EnumData.EnumWasteType.Recyclable)
-          .ToList(),
-        reportYear,
-        hazardous: false);
-
+      FillTrackingSheet(workbook.Worksheet("HW_HcP"), records, reportYear, truckRecords);
+      FillTrackingSheet(workbook.Worksheet("Non HW_HcP"), records, reportYear, truckRecords,
+        dateColumn: 1, firstDailyRow: 12);
+      FillTrackingSheet(workbook.Worksheet("Domestic_HcP&TGA"), records, reportYear, truckRecords,
+        dateColumn: 1, firstDailyRow: 12);
+      workbook.Worksheet("HW_HcP").Row(10).Delete();
+      workbook.Worksheet("Non HW_HcP").Row(10).Delete();
+      workbook.Worksheet("Domestic_HcP&TGA").Row(10).Delete();
       workbook.CalculateMode = XLCalculateMode.Auto;
       workbook.RecalculateAllFormulas();
       workbook.SaveAs(outputPath);
     }
 
-    private static void WriteTrackingSheet(
+    internal static void FillTrackingSheet(
       IXLWorksheet sheet,
       IReadOnlyList<RecordWeight> records,
       int year,
-      bool hazardous)
+      IReadOnlyList<RecordTruck>? truckRecords = null,
+      int dateColumn = 2,
+      int firstDailyRow = 13)
     {
-      var recordsByDate = records
-        .GroupBy(record => record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date)
+      var groupedVehicles = string.Equals(sheet.Name, "Domestic_HcP&TGA", StringComparison.OrdinalIgnoreCase);
+      var groupedVehicleMappings = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+      var vehicleMappings = new Dictionary<int, int>();
+      foreach (var cell in sheet.Row(10).CellsUsed())
+      {
+        var tag = cell.GetString().Trim();
+        if (!tag.StartsWith("bien_so_", StringComparison.OrdinalIgnoreCase)) continue;
+        var suffix = tag["bien_so_".Length..];
+        if (groupedVehicles)
+        {
+          if (!string.Equals(suffix, "hcp", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(suffix, "tga", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException($"Sheet {sheet.Name}: tag biển số '{tag}' không hợp lệ tại {cell.Address}.");
+          if (!groupedVehicleMappings.TryAdd(suffix, cell.Address.ColumnNumber))
+            throw new InvalidOperationException($"Sheet {sheet.Name}: trùng tag {tag} ở hàng 10.");
+          continue;
+        }
+        if (suffix.Length == 0 || suffix.Any(character => character < '0' || character > '9') ||
+          !int.TryParse(suffix, out var order) || order < 1)
+          throw new InvalidOperationException($"Sheet {sheet.Name}: tag biển số '{tag}' không hợp lệ tại {cell.Address}.");
+        if (!vehicleMappings.TryAdd(order, cell.Address.ColumnNumber))
+          throw new InvalidOperationException($"Sheet {sheet.Name}: trùng tag biển số thứ {order} ở hàng 10.");
+      }
+      var vehicleOrders = vehicleMappings.Keys.OrderBy(order => order).ToList();
+      if (!groupedVehicles && (vehicleOrders.Count == 0 ||
+        !vehicleOrders.SequenceEqual(Enumerable.Range(1, vehicleOrders.Count))))
+        throw new InvalidOperationException($"Sheet {sheet.Name}: cần tag biển số liên tiếp từ bien_so_01, bien_so_02, ... ở hàng 10.");
+      if (groupedVehicles && (!groupedVehicleMappings.ContainsKey("hcp") || !groupedVehicleMappings.ContainsKey("tga")))
+        throw new InvalidOperationException($"Sheet {sheet.Name}: cần đủ bien_so_hcp và bien_so_tga ở hàng 10.");
+      var vehicleColumns = groupedVehicles
+        ? groupedVehicleMappings.Values.ToList()
+        : vehicleOrders.Select(order => vehicleMappings[order]).ToList();
+
+      // Mapping belongs to the template; product order must not change its columns.
+      var mappedColumns = sheet.Row(10).CellsUsed()
+        .Where(cell => !string.IsNullOrWhiteSpace(cell.GetString()) &&
+          !vehicleColumns.Contains(cell.Address.ColumnNumber))
+        .ToDictionary(
+          cell => cell.Address.ColumnNumber,
+          cell => cell.GetString().Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+      if (mappedColumns.Count == 0)
+        throw new InvalidOperationException($"Sheet {sheet.Name} không có tag mapping ở hàng 10.");
+
+      var tags = mappedColumns.Values.SelectMany(value => value)
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+      var entries = records
+        .Where(record => record.CreatedAt.HasValue && !record.DeletedFlag &&
+          !string.IsNullOrWhiteSpace(record.Product?.TagMappingReport))
+        .Select(record => (
+          Date: record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date,
+          Tag: record.Product.TagMappingReport!.Trim(),
+          Weight: record.Net,
+          LicensePlate: record.LicensePlate))
+        .Concat((truckRecords ?? Array.Empty<RecordTruck>())
+          .Where(record => !record.DeletedFlag && record.UpdatedAt.HasValue &&
+            record.EnumTypeDataTruck == iSoft.Database.EnumData.EnumTypeDataTruck.DoneTime02 &&
+            !string.IsNullOrWhiteSpace(record.TypeGoods?.TagMappingReport))
+          .Select(record => (
+            Date: record.UpdatedAt!.Value.AddHours(DTOHelper.utc).Date,
+            Tag: record.TypeGoods!.TagMappingReport!.Trim(),
+            Weight: Math.Max(0, Math.Abs(record.NetTime01)),
+            LicensePlate: record.LicensePlate)))
+        .Where(entry => entry.Date.Year == year && tags.Contains(entry.Tag));
+      var dailyRecords = entries.GroupBy(entry => entry.Date)
         .ToDictionary(group => group.Key, group => group.ToList());
-      var licensePlatesByDate = recordsByDate.ToDictionary(
-        item => item.Key,
-        item => item.Value
-          .Where(record => !string.IsNullOrWhiteSpace(record.LicensePlate))
-          .GroupBy(
-            record => LicensePlateRepository.Normalize(record.LicensePlate),
-            StringComparer.OrdinalIgnoreCase)
-          .Select(group => group.First().LicensePlate!.Trim())
-          .OrderBy(licensePlate => licensePlate, StringComparer.OrdinalIgnoreCase)
-          .ToList());
-      var licensePlateColumnCount = licensePlatesByDate.Count == 0
-        ? 0
-        : licensePlatesByDate.Max(item => item.Value.Count);
-      const int firstProductColumn = 2;
-      var products = records.Select(record => record.Product)
-        .GroupBy(product => product.Id)
-        .Select(group => group.First())
-        .OrderBy(product => product.EnumWasteType)
-        .ThenBy(product => product.Code)
-        .ThenBy(product => product.Name)
-        .ThenBy(product => product.Id)
+      var dailyWeights = dailyRecords.ToDictionary(item => item.Key, item => item.Value
+        .GroupBy(entry => entry.Tag, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(group => group.Key, group => group.Sum(entry => entry.Weight),
+          StringComparer.OrdinalIgnoreCase));
+      var dailyLicensePlates = dailyRecords.ToDictionary(item => item.Key, item => item.Value
+        .Where(entry => !string.IsNullOrWhiteSpace(entry.LicensePlate))
+        .GroupBy(entry => LicensePlateRepository.Normalize(entry.LicensePlate),
+          StringComparer.OrdinalIgnoreCase)
+        .Select(group => group.First().LicensePlate!.Trim())
+        .OrderBy(plate => plate, StringComparer.OrdinalIgnoreCase)
+        .ToList());
+      // The supplied template has a daily block followed by a total row for each month.
+      var monthlyTotalRows = sheet.Column(1).CellsUsed()
+        .Where(cell => cell.Address.RowNumber >= firstDailyRow &&
+          cell.GetString().Contains("Total (Kg)", StringComparison.OrdinalIgnoreCase))
+        .Select(cell => cell.Address.RowNumber)
+        .OrderBy(row => row)
         .ToList();
-      if (products.Count + licensePlateColumnCount > 16382)
-        throw new InvalidOperationException("Số sản phẩm và biển số xe vượt giới hạn cột của Excel.");
+      if (monthlyTotalRows.Count != 12)
+        throw new InvalidOperationException($"Sheet {sheet.Name} phải có đủ 12 dòng tổng tháng.");
 
-      var totalColumn = firstProductColumn + products.Count;
-      var firstLicensePlateColumn = totalColumn + 1;
-      var lastColumn = totalColumn + licensePlateColumnCount;
-      var productColumns = products.Select((product, index) => new
-      {
-        product.Id,
-        Column = firstProductColumn + index
-      }).ToDictionary(item => item.Id, item => item.Column);
-
-      var productHeaderStyle = sheet.Cell(7, 2).Style;
-      var recyclableHeaderStyle = hazardous ? productHeaderStyle : sheet.Cell(7, 3).Style;
-      var productNameStyle = sheet.Cell(8, 2).Style;
-      var productCodeStyle = sheet.Cell(9, 2).Style;
-      var totalHeaderStyle = sheet.Cell(7, hazardous ? 3 : 4).Style;
-      var totalHeaderMiddleStyle = sheet.Cell(8, hazardous ? 3 : 4).Style;
-      var totalHeaderBottomStyle = sheet.Cell(9, hazardous ? 3 : 4).Style;
-      var monthlyLabelStyle = sheet.Cell(10, 1).Style;
-      var monthlyValueStyle = sheet.Cell(10, 2).Style;
-      var dateStyle = sheet.Cell(11, 1).Style;
-      var dailyValueStyle = sheet.Cell(11, 2).Style;
-      var firstColumnWidth = sheet.Column(1).Width;
-      var productColumnWidth = sheet.Column(2).Width;
-      var totalColumnWidth = sheet.Column(hazardous ? 3 : 4).Width;
-
-      foreach (var mergedRange in sheet.MergedRanges
-        .Where(range => range.RangeAddress.FirstAddress.RowNumber >= 7)
-        .ToList())
-      {
-        mergedRange.Unmerge();
-      }
-
-      var lastTemplateRow = sheet.LastRowUsed()?.RowNumber() ?? 19;
-      var lastTemplateColumn = sheet.LastColumnUsed()?.ColumnNumber() ?? lastColumn;
-      sheet.Rows(1, Math.Max(lastTemplateRow, 400)).Ungroup(fromAll: true);
-      sheet.Range(
-        7,
-        1,
-        Math.Max(lastTemplateRow, 400),
-        Math.Max(lastTemplateColumn, lastColumn)).Clear(XLClearOptions.Contents);
-
-      sheet.Cell(3, 2).Value = DateTime.Now;
-      sheet.Cell(3, 2).Style.DateFormat.Format = "dd-MMM-yy";
-      sheet.Column(1).Width = firstColumnWidth;
-      for (var column = firstProductColumn; column < totalColumn; column++)
-        sheet.Column(column).Width = productColumnWidth;
-      sheet.Column(totalColumn).Width = totalColumnWidth;
-      for (var column = firstLicensePlateColumn; column <= lastColumn; column++)
-        sheet.Column(column).Width = Math.Max(productColumnWidth, 14);
-
-      sheet.Cell(7, 1).Value = "CATAGORIES";
-      sheet.Cell(8, 1).Value = "PHÂN LOẠI";
-      if (hazardous)
-      {
-        sheet.Cell(9, 1).Value = "MÃ";
-      }
-      else
-      {
-        sheet.Range(8, 1, 9, 1).Merge();
-      }
-
-      for (var index = 0; index < licensePlateColumnCount; index++)
-      {
-        var column = firstLicensePlateColumn + index;
-        sheet.Cell(7, column).Style = totalHeaderStyle;
-        sheet.Cell(8, column).Style = totalHeaderMiddleStyle;
-        sheet.Cell(9, column).Style = totalHeaderBottomStyle;
-        sheet.Cell(7, column).Value = $"Biển số xe {index + 1}";
-        sheet.Range(7, column, 9, column).Merge();
-      }
-
-      for (var index = 0; index < products.Count; index++)
-      {
-        var product = products[index];
-        var column = firstProductColumn + index;
-        var recyclable = product.EnumWasteType ==
-          iSoft.Database.EnumData.EnumWasteType.Recyclable;
-        sheet.Cell(7, column).Style = recyclable
-          ? recyclableHeaderStyle
-          : productHeaderStyle;
-        sheet.Cell(7, column).Value = $"{index + 1:00} - {GetTrackingWasteTypeName(product.EnumWasteType)}";
-        sheet.Cell(8, column).Style = productNameStyle;
-        sheet.Cell(8, column).Value = product.Name ?? string.Empty;
-        if (hazardous)
-        {
-          sheet.Cell(9, column).Style = productCodeStyle;
-          sheet.Cell(9, column).Value = product.Code ?? string.Empty;
-        }
-        else
-        {
-          sheet.Cell(9, column).Style = productCodeStyle;
-          sheet.Range(8, column, 9, column).Merge();
-        }
-      }
-
-      sheet.Cell(7, totalColumn).Style = totalHeaderStyle;
-      sheet.Cell(8, totalColumn).Style = totalHeaderMiddleStyle;
-      sheet.Cell(9, totalColumn).Style = totalHeaderBottomStyle;
-      sheet.Cell(7, totalColumn).Value = "Tổng Khối lượng (Kg)";
-      sheet.Range(7, totalColumn, 9, totalColumn).Merge();
-      sheet.Range(7, 1, 9, lastColumn).Style.Alignment.WrapText = true;
-      sheet.Row(7).Height = 25.5;
-      sheet.Row(8).Height = 53.25;
-      sheet.Row(9).Height = hazardous ? 24 : 19.5;
-
-      sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
-      var row = 10;
+      var firstDayRow = firstDailyRow;
       for (var month = 1; month <= 12; month++)
       {
-        var monthlyTotalRow = row++;
-        var firstDayRow = row;
-        var daysInMonth = DateTime.DaysInMonth(year, month);
-        for (var day = 1; day <= daysInMonth; day++, row++)
+        var totalRow = monthlyTotalRows[month - 1];
+        var days = DateTime.DaysInMonth(year, month);
+        if (totalRow - firstDayRow < days)
+          throw new InvalidOperationException($"Mẫu {sheet.Name} không đủ dòng cho tháng {month}/{year}.");
+
+        // Remove sample plates only from this sheet's vehicle columns.
+        foreach (var column in vehicleColumns)
+          sheet.Range(firstDayRow, column, totalRow - 1, column).Clear(XLClearOptions.Contents);
+        for (var day = 1; day <= days; day++)
         {
+          var row = firstDayRow + day - 1;
           var date = new DateTime(year, month, day);
-          sheet.Cell(row, 1).Style = dateStyle;
-          sheet.Cell(row, 1).Value = date;
-          sheet.Cell(row, 1).Style.DateFormat.Format = "dd/MM/yyyy";
-          for (var column = firstLicensePlateColumn; column <= lastColumn; column++)
-            sheet.Cell(row, column).Style = dailyValueStyle;
-          for (var column = firstProductColumn; column < totalColumn; column++)
-            sheet.Cell(row, column).Style = dailyValueStyle;
-          sheet.Cell(row, totalColumn).Style = dailyValueStyle;
-
-          if (recordsByDate.TryGetValue(date, out var dayRecords))
+          // Write calendar dates without replacing borders, merges, grouping or row sizes.
+          sheet.Cell(row, dateColumn).Value = date;
+          sheet.Cell(row, dateColumn).Style.DateFormat.Format = "dd/MM/yyyy";
+          if (!dailyWeights.TryGetValue(date, out var weights)) continue;
+          foreach (var mapping in mappedColumns)
           {
-            var dayLicensePlates = licensePlatesByDate[date];
-            for (var index = 0; index < dayLicensePlates.Count; index++)
-              sheet.Cell(row, firstLicensePlateColumn + index).Value = dayLicensePlates[index];
-
-            foreach (var productGroup in dayRecords.GroupBy(record => record.Product.Id))
-              sheet.Cell(row, productColumns[productGroup.Key]).Value =
-                productGroup.Sum(record => record.Net);
+            var matchedTags = mapping.Value.Where(weights.ContainsKey).ToList();
+            if (matchedTags.Count > 0)
+              sheet.Cell(row, mapping.Key).Value = matchedTags.Sum(tag => weights[tag]);
           }
-
-          if (products.Count == 0)
+          if (groupedVehicles)
           {
-            sheet.Cell(row, totalColumn).Value = 0;
+            foreach (var mapping in groupedVehicleMappings)
+            {
+              // Group comes from the mapped source tag, e.g. xe_tai.hcp.tag02.
+              var groupPlates = dailyRecords[date]
+                .Where(entry => string.Equals(entry.Tag.Split('.').ElementAtOrDefault(1),
+                  mapping.Key, StringComparison.OrdinalIgnoreCase) &&
+                  !string.IsNullOrWhiteSpace(entry.LicensePlate))
+                .GroupBy(entry => LicensePlateRepository.Normalize(entry.LicensePlate), StringComparer.OrdinalIgnoreCase)
+                .Select(group => group.First().LicensePlate!.Trim())
+                .OrderBy(plate => plate, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+              if (groupPlates.Count > 0)
+                sheet.Cell(row, mapping.Value).Value = string.Join(", ", groupPlates);
+            }
+            continue;
           }
-          else
-          {
-            var firstProductColumnLetter = XLHelper.GetColumnLetterFromNumber(firstProductColumn);
-            var lastProductColumn = XLHelper.GetColumnLetterFromNumber(totalColumn - 1);
-            sheet.Cell(row, totalColumn).FormulaA1 =
-              $"SUM({firstProductColumnLetter}{row}:{lastProductColumn}{row})";
-          }
-          sheet.Row(row).Height = 18.75;
+          var plates = dailyLicensePlates[date];
+          if (plates.Count > vehicleColumns.Count)
+            throw new InvalidOperationException(
+              $"Sheet {sheet.Name}, ngày {date:dd/MM/yyyy} có {plates.Count} biển số phù hợp, vượt quá {vehicleColumns.Count} cột biển số của mẫu. Vui lòng bổ sung cột biển số trong mẫu trước khi xuất.");
+          for (var index = 0; index < plates.Count; index++)
+            sheet.Cell(row, vehicleColumns[index]).Value = plates[index];
         }
-        var dailyRows = sheet.Rows(firstDayRow, row - 1);
-        dailyRows.Group();
-        dailyRows.Collapse();
 
-        sheet.Cell(monthlyTotalRow, 1).Style = monthlyLabelStyle;
-        sheet.Cell(monthlyTotalRow, 1).Value = $"Tháng {month:00} - Grand total (Kg)";
-        for (var column = firstLicensePlateColumn; column <= lastColumn; column++)
-          sheet.Cell(monthlyTotalRow, column).Style = monthlyValueStyle;
-        for (var column = firstProductColumn; column < totalColumn; column++)
+        foreach (var column in mappedColumns.Keys)
         {
-          sheet.Cell(monthlyTotalRow, column).Style = monthlyValueStyle;
-          var columnLetter = XLHelper.GetColumnLetterFromNumber(column);
-          sheet.Cell(monthlyTotalRow, column).FormulaA1 =
-            $"SUM({columnLetter}{firstDayRow}:{columnLetter}{row - 1})";
+          var letter = XLHelper.GetColumnLetterFromNumber(column);
+          sheet.Cell(totalRow, column).FormulaA1 =
+            $"SUM({letter}{firstDayRow}:{letter}{totalRow - 1})";
         }
-        sheet.Cell(monthlyTotalRow, totalColumn).Style = monthlyValueStyle;
-        var totalColumnLetter = XLHelper.GetColumnLetterFromNumber(totalColumn);
-        sheet.Cell(monthlyTotalRow, totalColumn).FormulaA1 =
-          $"SUM({totalColumnLetter}{firstDayRow}:{totalColumnLetter}{row - 1})";
-        sheet.Row(monthlyTotalRow).Height = 18.75;
+        firstDayRow = totalRow + 1;
       }
 
-      sheet.Range(10, firstProductColumn, row - 1, totalColumn)
-        .Style.NumberFormat.Format = "#,##0.000";
-      sheet.SheetView.FreezeRows(9);
-      sheet.SheetView.FreezeColumns(1);
-      sheet.PageSetup.PageOrientation = XLPageOrientation.Landscape;
-      sheet.PageSetup.FitToPages(1, 0);
-      sheet.PageSetup.SetRowsToRepeatAtTop(7, 9);
-      sheet.PageSetup.PrintAreas.Clear();
-      sheet.PageSetup.PrintAreas.Add(
-        $"A1:{XLHelper.GetColumnLetterFromNumber(lastColumn)}{row - 1}");
-    }
-
-    private static string GetTrackingWasteTypeName(
-      iSoft.Database.EnumData.EnumWasteType wasteType)
-    {
-      return wasteType switch
+      sheet.Cell(11, 1).Value = $"{year}_ Grand total (Kg)";
+      foreach (var column in mappedColumns.Keys)
       {
-        iSoft.Database.EnumData.EnumWasteType.Hazardous => "Nguy hại",
-        iSoft.Database.EnumData.EnumWasteType.NonRecyclable => "Không tái chế",
-        iSoft.Database.EnumData.EnumWasteType.Recyclable => "Tái chế",
-        _ => string.Empty
-      };
+        var letter = XLHelper.GetColumnLetterFromNumber(column);
+        sheet.Cell(11, column).FormulaA1 =
+          $"SUM({string.Join(",", monthlyTotalRows.Select(row => $"{letter}{row}"))})";
+      }
     }
-
     private static string GetOperatorName(RecordWeight record)
     {
       if (!string.IsNullOrWhiteSpace(record.User?.DisplayName))
