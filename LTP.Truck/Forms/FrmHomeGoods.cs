@@ -1336,7 +1336,7 @@ namespace LTP.Truck.Forms
       using var popup = new PopupConfirm(
         days <= 0
           ? "Cấu hình hiện tại không cho phép xóa dữ liệu."
-          : $"Chỉ được xóa dữ liệu trong {days} ngày gần nhất, tính cả hôm nay. Bản ghi đã quá hạn, thiếu ngày tạo hoặc có ngày tạo trong tương lai.",
+          : $"Chỉ được xóa dữ liệu trong {days} ngày gần nhất, tính cả hôm nay. Bản ghi đã quá hạn",
         EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
       popup.ShowDialog(this);
       return false;

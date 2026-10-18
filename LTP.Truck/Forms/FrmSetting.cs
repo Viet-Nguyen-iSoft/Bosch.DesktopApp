@@ -23,6 +23,12 @@ namespace LTP.Truck.Forms
       InitializeComponent();
       SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
       CustomUI();
+      txtPortServer.TextAlign(HorizontalAlignment.Right);
+      txtTimeoutServer.TextAlign(HorizontalAlignment.Right);
+      txtTimeAutoLogOut.TextAlign(HorizontalAlignment.Right);
+      txtTimePermitDelete.TextAlign(HorizontalAlignment.Right);
+      txtValueWeightPermit.TextAlign(HorizontalAlignment.Right);
+      txtValueWeightGoodsCheckPermitConfirm.TextAlign(HorizontalAlignment.Right);
       flowCommWeight.AutoScroll = true;
       flowCommWeight.FlowDirection = FlowDirection.LeftToRight;
       flowCommWeight.WrapContents = false;
@@ -33,11 +39,13 @@ namespace LTP.Truck.Forms
       txtPortServer.KeyPress += NonNegativeInteger_KeyPress;
       txtTimeoutServer.KeyPress += NonNegativeInteger_KeyPress;
       txtTimeAutoLogOut.KeyPress += NonNegativeInteger_KeyPress;
+      txtTimePermitDelete.KeyPress += NonNegativeInteger_KeyPress;
       txtValueWeightPermit.KeyPress += NonNegativeDecimal_KeyPress;
       txtValueWeightGoodsCheckPermitConfirm.KeyPress += NonNegativeDecimal_KeyPress;
       txtPortServer._TextChanged += NonNegativeInteger_TextChanged;
       txtTimeoutServer._TextChanged += NonNegativeInteger_TextChanged;
       txtTimeAutoLogOut._TextChanged += NonNegativeInteger_TextChanged;
+      txtTimePermitDelete._TextChanged += NonNegativeInteger_TextChanged;
       txtValueWeightPermit._TextChanged += NonNegativeDecimal_TextChanged;
       txtValueWeightGoodsCheckPermitConfirm._TextChanged += NonNegativeDecimal_TextChanged;
 
@@ -172,6 +180,8 @@ namespace LTP.Truck.Forms
         _permitCheck = AppCore.Ins._appConfig?.PermitCheckWeight ?? false;
         SetStatusPermitCheckWeight(_permitCheck);
         txtTimeAutoLogOut.Texts = (AppCore.Ins._appConfig?.TimeAutoLogOut ?? 2)
+          .ToString(CultureInfo.InvariantCulture);
+        txtTimePermitDelete.Texts = (AppCore.Ins._appConfig?.NumberDayPermitDeleteData ?? 1)
           .ToString(CultureInfo.InvariantCulture);
         txtValueWeightPermit.Texts = (AppCore.Ins._appConfig?.ValueCheckWeight ?? 0)
           .ToString(CultureInfo.CurrentCulture);
@@ -362,10 +372,23 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      if (!int.TryParse(txtTimePermitDelete.Texts.Trim(), NumberStyles.None,
+            CultureInfo.InvariantCulture, out int numberDayPermitDeleteData))
+      {
+        using var popupWarning = new PopupConfirm(
+          "Số ngày cho phép xóa phải là số nguyên không âm (0: không cho phép xóa) !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popupWarning.ShowDialog(this);
+        txtTimePermitDelete.Focus();
+        return;
+      }
+
       try
       {
         appConfig.StationId = selectedStation.Id;
         appConfig.TimeAutoLogOut = timeAutoLogOut;
+        appConfig.NumberDayPermitDeleteData = numberDayPermitDeleteData;
         appConfig.UpdatedAt = DateTime.UtcNow;
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
