@@ -106,6 +106,8 @@ namespace LTP.Truck.Forms
       txtValueWeightPermit = new RJTextBox();
       label11 = new Label();
       picPermitCheckWeight = new PictureBox();
+      label25 = new Label();
+      txtTimePermitDelete = new RJTextBox();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel14.SuspendLayout();
@@ -598,7 +600,7 @@ namespace LTP.Truck.Forms
       label7.Name = "label7";
       label7.Size = new Size(150, 48);
       label7.TabIndex = 5;
-      label7.Text = "Timeout (ms):";
+      label7.Text = "Timeout (ms)";
       label7.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtPortServer
@@ -635,7 +637,7 @@ namespace LTP.Truck.Forms
       label3.Name = "label3";
       label3.Size = new Size(150, 48);
       label3.TabIndex = 1;
-      label3.Text = "IP:";
+      label3.Text = "IP";
       label3.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // label4
@@ -649,7 +651,7 @@ namespace LTP.Truck.Forms
       label4.Name = "label4";
       label4.Size = new Size(150, 48);
       label4.TabIndex = 2;
-      label4.Text = "Port:";
+      label4.Text = "Port";
       label4.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtIpServer
@@ -782,7 +784,7 @@ namespace LTP.Truck.Forms
       label14.Name = "label14";
       label14.Size = new Size(173, 58);
       label14.TabIndex = 5;
-      label14.Text = "Tên công ty:";
+      label14.Text = "Tên công ty";
       label14.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // label15
@@ -1096,6 +1098,8 @@ namespace LTP.Truck.Forms
       tableLayoutPanel13.Controls.Add(cbbStations, 1, 0);
       tableLayoutPanel13.Controls.Add(label17, 0, 1);
       tableLayoutPanel13.Controls.Add(txtTimeAutoLogOut, 1, 1);
+      tableLayoutPanel13.Controls.Add(label25, 0, 2);
+      tableLayoutPanel13.Controls.Add(txtTimePermitDelete, 1, 2);
       tableLayoutPanel13.Location = new Point(3, 63);
       tableLayoutPanel13.Name = "tableLayoutPanel13";
       tableLayoutPanel13.RowCount = 3;
@@ -1114,9 +1118,9 @@ namespace LTP.Truck.Forms
       label9.Location = new Point(0, 0);
       label9.Margin = new Padding(0);
       label9.Name = "label9";
-      label9.Size = new Size(181, 58);
+      label9.Size = new Size(196, 58);
       label9.TabIndex = 1;
-      label9.Text = "Trạm cân:";
+      label9.Text = "Trạm cân";
       label9.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // cbbStations
@@ -1125,9 +1129,9 @@ namespace LTP.Truck.Forms
       cbbStations.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbStations.Font = new Font("Roboto", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbStations.FormattingEnabled = true;
-      cbbStations.Location = new Point(184, 8);
+      cbbStations.Location = new Point(199, 8);
       cbbStations.Name = "cbbStations";
-      cbbStations.Size = new Size(394, 41);
+      cbbStations.Size = new Size(379, 41);
       cbbStations.TabIndex = 2;
       // 
       // label17
@@ -1139,9 +1143,9 @@ namespace LTP.Truck.Forms
       label17.Location = new Point(0, 58);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
-      label17.Size = new Size(181, 58);
+      label17.Size = new Size(196, 58);
       label17.TabIndex = 3;
-      label17.Text = "Tự đăng xuất (phút):";
+      label17.Text = "Tự đăng xuất (phút)";
       label17.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtTimeAutoLogOut
@@ -1154,7 +1158,7 @@ namespace LTP.Truck.Forms
       txtTimeAutoLogOut.BorderSize = 2;
       txtTimeAutoLogOut.Font = new Font("Roboto", 14F);
       txtTimeAutoLogOut.ForeColor = Color.FromArgb(64, 64, 64);
-      txtTimeAutoLogOut.Location = new Point(185, 68);
+      txtTimeAutoLogOut.Location = new Point(200, 68);
       txtTimeAutoLogOut.Margin = new Padding(4);
       txtTimeAutoLogOut.Multiline = false;
       txtTimeAutoLogOut.Name = "txtTimeAutoLogOut";
@@ -1162,7 +1166,7 @@ namespace LTP.Truck.Forms
       txtTimeAutoLogOut.PasswordChar = false;
       txtTimeAutoLogOut.PlaceholderColor = Color.DarkGray;
       txtTimeAutoLogOut.PlaceholderText = "";
-      txtTimeAutoLogOut.Size = new Size(392, 38);
+      txtTimeAutoLogOut.Size = new Size(377, 38);
       txtTimeAutoLogOut.TabIndex = 5;
       txtTimeAutoLogOut.Texts = "";
       txtTimeAutoLogOut.UnderlinedStyle = false;
@@ -1384,9 +1388,9 @@ namespace LTP.Truck.Forms
       label12.Location = new Point(0, 0);
       label12.Margin = new Padding(0);
       label12.Name = "label12";
-      label12.Size = new Size(184, 69);
+      label12.Size = new Size(179, 69);
       label12.TabIndex = 5;
-      label12.Text = "Kiểm tra bất thường:";
+      label12.Text = "Kiểm tra bất thường";
       label12.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtValueWeightPermit
@@ -1430,13 +1434,50 @@ namespace LTP.Truck.Forms
       // 
       picPermitCheckWeight.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       picPermitCheckWeight.Image = Properties.Resources.icon_toggle_off;
-      picPermitCheckWeight.Location = new Point(187, 5);
+      picPermitCheckWeight.Location = new Point(182, 5);
       picPermitCheckWeight.Name = "picPermitCheckWeight";
       picPermitCheckWeight.Size = new Size(94, 58);
       picPermitCheckWeight.SizeMode = PictureBoxSizeMode.StretchImage;
       picPermitCheckWeight.TabIndex = 6;
       picPermitCheckWeight.TabStop = false;
       picPermitCheckWeight.Click += picPermitCheckWeight_Click;
+      // 
+      // label25
+      // 
+      label25.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label25.AutoSize = true;
+      label25.BackColor = Color.Transparent;
+      label25.Font = new Font("Roboto", 14F);
+      label25.Location = new Point(0, 116);
+      label25.Margin = new Padding(0);
+      label25.Name = "label25";
+      label25.Size = new Size(196, 58);
+      label25.TabIndex = 6;
+      label25.Text = "Số ngày cho phép xóa";
+      label25.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // txtTimePermitDelete
+      // 
+      txtTimePermitDelete.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtTimePermitDelete.BackColor = SystemColors.Window;
+      txtTimePermitDelete.BorderColor = Color.Black;
+      txtTimePermitDelete.BorderFocusColor = Color.HotPink;
+      txtTimePermitDelete.BorderRadius = 5;
+      txtTimePermitDelete.BorderSize = 2;
+      txtTimePermitDelete.Font = new Font("Roboto", 14F);
+      txtTimePermitDelete.ForeColor = Color.FromArgb(64, 64, 64);
+      txtTimePermitDelete.Location = new Point(200, 126);
+      txtTimePermitDelete.Margin = new Padding(4);
+      txtTimePermitDelete.Multiline = false;
+      txtTimePermitDelete.Name = "txtTimePermitDelete";
+      txtTimePermitDelete.Padding = new Padding(10, 7, 10, 7);
+      txtTimePermitDelete.PasswordChar = false;
+      txtTimePermitDelete.PlaceholderColor = Color.DarkGray;
+      txtTimePermitDelete.PlaceholderText = "";
+      txtTimePermitDelete.Size = new Size(377, 38);
+      txtTimePermitDelete.TabIndex = 7;
+      txtTimePermitDelete.Texts = "";
+      txtTimePermitDelete.UnderlinedStyle = false;
       // 
       // FrmSetting
       // 
@@ -1566,5 +1607,7 @@ namespace LTP.Truck.Forms
     private Label label23;
     private PictureBox pictureBox1;
     private PictureBox pictureBox2;
+    private Label label25;
+    private RJTextBox txtTimePermitDelete;
   }
 }

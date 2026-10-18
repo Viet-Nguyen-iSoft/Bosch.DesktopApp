@@ -76,6 +76,10 @@ namespace iSoft.Database.DbContexts
         .Property(config => config.NumberPrintLabel)
         .HasDefaultValue(1);
 
+      modelBuilder.Entity<AppConfig>()
+        .Property(config => config.NumberDayPermitDeleteData)
+        .HasDefaultValue(1);
+
       modelBuilder.Entity<LicensePlate>()
         .Property(licensePlate => licensePlate.Plate)
         .HasMaxLength(20);

@@ -1122,6 +1122,7 @@ namespace LTP.Truck.Forms
       string reasonDelete;
       if (!isDeleted)
       {
+        if (!CheckDeleteDate(recordWeightDto)) return;
         using var inputReason = new PopupInputReason();
         if (inputReason.ShowDialog(this) != DialogResult.OK)
           return;
@@ -1149,6 +1150,8 @@ namespace LTP.Truck.Forms
 
       try
       {
+        // Recheck after confirmation in case the calendar day changed meanwhile.
+        if (!isDeleted && !CheckDeleteDate(recordWeightDto)) return;
         if (recordWeightDto.RecordTruck is RecordTruck recordTruck)
         {
           recordTruck.ReasonDelete = reasonDelete;
@@ -1321,6 +1324,22 @@ namespace LTP.Truck.Forms
         Rectangle.Inflate(e.Bounds, -12, -8),
         Color.Black,
         TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+    }
+
+    private bool CheckDeleteDate(RecordWeightDTO item)
+    {
+      var days = AppCore.Ins._appConfig?.NumberDayPermitDeleteData ?? 1;
+      var createdAt = item.RecordWeight?.CreatedAt ?? item.RecordTruck?.CreatedAt;
+      if (DataDeletionPolicy.CanDelete(createdAt, days, DateTime.UtcNow, DTOHelper.utc))
+        return true;
+
+      using var popup = new PopupConfirm(
+        days <= 0
+          ? "Cấu hình hiện tại không cho phép xóa dữ liệu."
+          : $"Chỉ được xóa dữ liệu trong {days} ngày gần nhất, tính cả hôm nay. Bản ghi đã quá hạn, thiếu ngày tạo hoặc có ngày tạo trong tương lai.",
+        EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+      popup.ShowDialog(this);
+      return false;
     }
 
     private static bool CanModifyRecord(RecordWeightDTO item)

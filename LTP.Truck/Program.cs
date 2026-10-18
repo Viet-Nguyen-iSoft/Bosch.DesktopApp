@@ -528,6 +528,14 @@ namespace LTP.Truck
             ADD COLUMN `NumberPrintLabel` int NULL DEFAULT 1;";
           await addNumberPrintLabelCommand.ExecuteNonQueryAsync();
         }
+        if (!await ColumnExistsAsync(db, "NumberDayPermitDeleteData"))
+        {
+          await using var command = db.Database.GetDbConnection().CreateCommand();
+          command.CommandText = @"
+            ALTER TABLE `AppConfigs`
+            ADD COLUMN `NumberDayPermitDeleteData` int NULL DEFAULT 1;";
+          await command.ExecuteNonQueryAsync();
+        }
       }
       finally
       {
