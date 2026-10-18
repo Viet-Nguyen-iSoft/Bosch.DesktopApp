@@ -105,13 +105,15 @@ namespace LTP.Truck.Forms
       await LoadHistorical(resetPage: true);
     }
 
-    private async void txtSearchKey_KeyPress(object? sender, KeyPressEventArgs e)
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-      if (e.KeyChar != (char)Keys.Enter)
-        return;
-
-      e.Handled = true;
-      await LoadHistorical(resetPage: true);
+      if (keyData == Keys.Enter)
+      {
+        if (btnSearchHistorical.Enabled)
+          btnSearchHistorical.PerformClick();
+        return true;
+      }
+      return base.ProcessCmdKey(ref msg, keyData);
     }
 
     private async void ucPage1_PageChanged(object? sender, UserControls.PageChangedEventArgs e)

@@ -875,6 +875,17 @@ namespace LTP.Truck.Forms
         out weight);
     }
 
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+      if (keyData == Keys.Enter)
+      {
+        if (btnSearchHistorical.Enabled)
+          btnSearchHistorical.PerformClick();
+        return true;
+      }
+      return base.ProcessCmdKey(ref msg, keyData);
+    }
+
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);

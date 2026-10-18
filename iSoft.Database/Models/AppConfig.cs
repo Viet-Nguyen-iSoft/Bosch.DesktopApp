@@ -35,5 +35,6 @@ namespace iSoft.Database.Models
 
 
     public double? ValueWeightGoodsCheckPermitConfirm { get; set; } = 0.0;
+    public int? NumberDayPermitDeleteData { get; set; } = 1;
   }
 }
