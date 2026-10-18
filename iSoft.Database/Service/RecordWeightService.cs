@@ -26,7 +26,9 @@ namespace iSoft.Database.Service
       DateTime fromUtc,
       DateTime toUtcExclusive,
       string? searchKey,
-      int dataTypeIndex = 1)
+      int dataTypeIndex = 1,
+      Guid? productGroupId = null,
+      EnumData.EnumWasteType? wasteType = null)
     {
       await using var context = new MySqlDbContext();
       var repository = new RecordWeightRepository(context);
@@ -34,7 +36,7 @@ namespace iSoft.Database.Service
         fromUtc,
         toUtcExclusive,
         searchKey,
-        dataTypeIndex).ConfigureAwait(false);
+        dataTypeIndex, productGroupId, wasteType).ConfigureAwait(false);
     }
 
     public async Task<(List<RecordWeight> Records, int TotalRecords)> GetReportPageAsync(
@@ -42,7 +44,10 @@ namespace iSoft.Database.Service
       DateTime toUtcExclusive,
       string? searchKey,
       int pageNumber,
-      int pageSize)
+      int pageSize,
+      int dataTypeIndex = 1,
+      Guid? productGroupId = null,
+      EnumData.EnumWasteType? wasteType = null)
     {
       await using var context = new MySqlDbContext();
       var repository = new RecordWeightRepository(context);
@@ -51,7 +56,7 @@ namespace iSoft.Database.Service
         toUtcExclusive,
         searchKey,
         pageNumber,
-        pageSize).ConfigureAwait(false);
+        pageSize, dataTypeIndex, productGroupId, wasteType).ConfigureAwait(false);
     }
 
   }

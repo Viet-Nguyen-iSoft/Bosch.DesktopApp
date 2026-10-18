@@ -37,9 +37,11 @@ namespace iSoft.Database.Repositorys
       DateTime fromUtc,
       DateTime toUtcExclusive,
       string? searchKey,
-      int dataTypeIndex = 1)
+      int dataTypeIndex = 1,
+      Guid? productGroupId = null,
+      EnumData.EnumWasteType? wasteType = null)
     {
-      return BuildReportQuery(fromUtc, toUtcExclusive, searchKey, dataTypeIndex)
+      return BuildReportQuery(fromUtc, toUtcExclusive, searchKey, dataTypeIndex, productGroupId, wasteType)
         .OrderBy(record => record.CreatedAt)
         .ThenBy(record => record.Id)
         .ToListAsync();
@@ -50,12 +52,15 @@ namespace iSoft.Database.Repositorys
       DateTime toUtcExclusive,
       string? searchKey,
       int pageNumber,
-      int pageSize)
+      int pageSize,
+      int dataTypeIndex = 1,
+      Guid? productGroupId = null,
+      EnumData.EnumWasteType? wasteType = null)
     {
       pageNumber = Math.Max(1, pageNumber);
       pageSize = Math.Max(1, pageSize);
 
-      var query = BuildReportQuery(fromUtc, toUtcExclusive, searchKey);
+      var query = BuildReportQuery(fromUtc, toUtcExclusive, searchKey, dataTypeIndex, productGroupId, wasteType);
       var totalRecords = await query.CountAsync();
       var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
       pageNumber = Math.Min(pageNumber, totalPages);
@@ -73,7 +78,9 @@ namespace iSoft.Database.Repositorys
       DateTime fromUtc,
       DateTime toUtcExclusive,
       string? searchKey,
-      int dataTypeIndex = 1)
+      int dataTypeIndex = 1,
+      Guid? productGroupId = null,
+      EnumData.EnumWasteType? wasteType = null)
     {
       var query = Context.Set<RecordWeight>()
         .AsNoTracking()
@@ -94,6 +101,10 @@ namespace iSoft.Database.Repositorys
         _ => query.Where(record => !record.DeletedFlag),
       };
 
+      if (productGroupId.HasValue)
+        query = query.Where(record => record.Product != null && record.Product.ProductGroupId == productGroupId.Value);
+      if (wasteType.HasValue)
+        query = query.Where(record => record.Product != null && record.Product.EnumWasteType == wasteType.Value);
       if (!string.IsNullOrWhiteSpace(searchKey))
       {
         query = query.Where(record =>

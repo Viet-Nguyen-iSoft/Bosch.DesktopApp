@@ -7,6 +7,7 @@ using iSoft.Database.Models;
 using iSoft.Database.Repositorys;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
+using LTP.Truck.Popup;
 using System.Data;
 using System.Diagnostics;
 using System.Text;
@@ -20,6 +21,9 @@ namespace LTP.Truck.Forms
     private const string PrintColumnName = "btnPrintLabel";
     private bool _isLoadingPage;
     private bool _isPrintingLabel;
+    private Guid? _filterProductGroupId;
+    private iSoft.Database.EnumData.EnumWasteType? _filterWasteType;
+    private int _filterDataTypeIndex = 1;
     private List<RecordWeightDTO> _currentRecords = new();
     private readonly FlowLayoutPanel _licensePlateGroups = new();
 
@@ -32,6 +36,7 @@ namespace LTP.Truck.Forms
       CustomUI();
 
       btnSearchHistorical.Click += btnSearchHistorical_Click;
+      btnFilter.Click += btnFilter_Click;
       ucPage1.PageChanged += ucPage1_PageChanged;
       Shown += FrmReportGoods_Shown;
       cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -114,6 +119,32 @@ namespace LTP.Truck.Forms
       await LoadHistorical();
     }
 
+    private async void btnFilter_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      try
+      {
+        var productGroups = await AppCore.Ins._productGroupService.GetAllAsync();
+        using var popup = new PopupFilterGoods(productGroups, _filterProductGroupId,
+          _filterWasteType, _filterDataTypeIndex);
+        popup.OnSendData += (productGroupId, wasteType, dataTypeIndex) =>
+        {
+          _filterProductGroupId = productGroupId;
+          _filterWasteType = wasteType;
+          _filterDataTypeIndex = dataTypeIndex;
+        };
+        if (popup.ShowDialog(this) == DialogResult.OK)
+          await LoadHistorical(resetPage: true);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm("Không thể tải bộ lọc. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+    }
+
     private async Task LoadHistorical(bool resetPage = false)
     {
       if (_isLoadingPage)
@@ -123,6 +154,7 @@ namespace LTP.Truck.Forms
       {
         _isLoadingPage = true;
         btnSearchHistorical.Enabled = false;
+        btnFilter.Enabled = false;
         ucPage1.Enabled = false;
 
         if (resetPage)
@@ -141,7 +173,10 @@ namespace LTP.Truck.Forms
           toUtcExclusive,
           string.Empty,
           pageNumber,
-          pageSize);
+          pageSize,
+          _filterDataTypeIndex,
+          _filterProductGroupId,
+          _filterWasteType);
 
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
         var effectivePage = Math.Min(pageNumber, totalPages);
@@ -168,6 +203,7 @@ namespace LTP.Truck.Forms
       {
         _isLoadingPage = false;
         btnSearchHistorical.Enabled = true;
+        btnFilter.Enabled = true;
         ucPage1.Enabled = true;
       }
     }
@@ -683,7 +719,10 @@ namespace LTP.Truck.Forms
         var exportRecords = await AppCore.Ins._recordWeightService.GetReportAsync(
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
-          "");
+          "",
+          _filterDataTypeIndex,
+          _filterProductGroupId,
+          _filterWasteType);
 
         if (exportRecords.Count == 0)
         {

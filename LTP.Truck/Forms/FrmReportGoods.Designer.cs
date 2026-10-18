@@ -44,6 +44,7 @@ namespace LTP.Truck.Forms
       btnTracking = new LTP.Truck.Custom.RJButton();
       label27 = new Label();
       ucPage1 = new LTP.Truck.UserControls.UcPage();
+      btnFilter = new Common.Custom.RJButton();
       tableLayoutPanel9.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel11.SuspendLayout();
@@ -115,28 +116,27 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel11
       // 
       tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel11.ColumnCount = 10;
+      tableLayoutPanel11.ColumnCount = 11;
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.Controls.Add(label17, 2, 0);
       tableLayoutPanel11.Controls.Add(label18, 4, 0);
       tableLayoutPanel11.Controls.Add(ucTimeSearchFrom, 3, 0);
       tableLayoutPanel11.Controls.Add(ucTimeSearchTo, 5, 0);
-      tableLayoutPanel11.Controls.Add(btnSearchHistorical, 7, 0);
-      tableLayoutPanel11.Controls.Add(btnExport, 8, 0);
+      tableLayoutPanel11.Controls.Add(btnSearchHistorical, 8, 0);
+      tableLayoutPanel11.Controls.Add(btnExport, 9, 0);
       tableLayoutPanel11.Controls.Add(cbbType, 0, 0);
-      tableLayoutPanel11.Controls.Add(btnTracking, 9, 0);
+      tableLayoutPanel11.Controls.Add(btnTracking, 10, 0);
+      tableLayoutPanel11.Controls.Add(btnFilter, 6, 0);
       tableLayoutPanel11.Location = new Point(0, 50);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
@@ -151,7 +151,7 @@ namespace LTP.Truck.Forms
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(611, 0);
+      label17.Location = new Point(551, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
       label17.Size = new Size(32, 62);
@@ -165,7 +165,7 @@ namespace LTP.Truck.Forms
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(963, 0);
+      label18.Location = new Point(903, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
       label18.Size = new Size(42, 62);
@@ -176,7 +176,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(646, 3);
+      ucTimeSearchFrom.Location = new Point(586, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 28;
@@ -184,7 +184,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchTo
       // 
       ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(1008, 3);
+      ucTimeSearchTo.Location = new Point(948, 3);
       ucTimeSearchTo.Name = "ucTimeSearchTo";
       ucTimeSearchTo.Size = new Size(314, 56);
       ucTimeSearchTo.TabIndex = 29;
@@ -248,7 +248,7 @@ namespace LTP.Truck.Forms
       cbbType.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số", "Nhóm theo Bên nhận", "Nhóm theo Nhóm chất thải" });
       cbbType.Location = new Point(3, 13);
       cbbType.Name = "cbbType";
-      cbbType.Size = new Size(585, 35);
+      cbbType.Size = new Size(525, 35);
       cbbType.TabIndex = 32;
       // 
       // btnTracking
@@ -299,6 +299,25 @@ namespace LTP.Truck.Forms
       ucPage1.Size = new Size(1919, 54);
       ucPage1.TabIndex = 24;
       // 
+      // btnFilter
+      // 
+      btnFilter.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnFilter.BackColor = Color.FromArgb(64, 107, 177);
+      btnFilter.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnFilter.BorderColor = Color.PaleVioletRed;
+      btnFilter.BorderRadius = 5;
+      btnFilter.BorderSize = 0;
+      btnFilter.FlatAppearance.BorderSize = 0;
+      btnFilter.FlatStyle = FlatStyle.Flat;
+      btnFilter.ForeColor = Color.White;
+      btnFilter.Image = Properties.Resources.icon_filter;
+      btnFilter.Location = new Point(1268, 3);
+      btnFilter.Name = "btnFilter";
+      btnFilter.Size = new Size(54, 55);
+      btnFilter.TabIndex = 34;
+      btnFilter.TextColor = Color.White;
+      btnFilter.UseVisualStyleBackColor = false;
+      // 
       // FrmReportGoods
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -330,5 +349,6 @@ namespace LTP.Truck.Forms
     private UserControls.UcPage ucPage1;
     private ComboBox cbbType;
     private Custom.RJButton btnTracking;
+    private Common.Custom.RJButton btnFilter;
   }
 }
