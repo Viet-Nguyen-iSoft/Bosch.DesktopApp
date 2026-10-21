@@ -42,9 +42,10 @@ namespace LTP.Truck.Forms
       btnExport = new LTP.Truck.Custom.RJButton();
       cbbType = new ComboBox();
       btnTracking = new LTP.Truck.Custom.RJButton();
+      btnFilter = new Common.Custom.RJButton();
+      btnExportPDF = new LTP.Truck.Custom.RJButton();
       label27 = new Label();
       ucPage1 = new LTP.Truck.UserControls.UcPage();
-      btnFilter = new Common.Custom.RJButton();
       tableLayoutPanel9.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)dgv).BeginInit();
       tableLayoutPanel11.SuspendLayout();
@@ -116,7 +117,7 @@ namespace LTP.Truck.Forms
       // tableLayoutPanel11
       // 
       tableLayoutPanel11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel11.ColumnCount = 11;
+      tableLayoutPanel11.ColumnCount = 12;
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
@@ -124,19 +125,21 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle());
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 190F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel11.Controls.Add(label17, 2, 0);
       tableLayoutPanel11.Controls.Add(label18, 4, 0);
       tableLayoutPanel11.Controls.Add(ucTimeSearchFrom, 3, 0);
       tableLayoutPanel11.Controls.Add(ucTimeSearchTo, 5, 0);
       tableLayoutPanel11.Controls.Add(btnSearchHistorical, 8, 0);
-      tableLayoutPanel11.Controls.Add(btnExport, 9, 0);
+      tableLayoutPanel11.Controls.Add(btnExport, 10, 0);
       tableLayoutPanel11.Controls.Add(cbbType, 0, 0);
-      tableLayoutPanel11.Controls.Add(btnTracking, 10, 0);
+      tableLayoutPanel11.Controls.Add(btnTracking, 11, 0);
       tableLayoutPanel11.Controls.Add(btnFilter, 6, 0);
+      tableLayoutPanel11.Controls.Add(btnExportPDF, 9, 0);
       tableLayoutPanel11.Location = new Point(0, 50);
       tableLayoutPanel11.Margin = new Padding(0);
       tableLayoutPanel11.Name = "tableLayoutPanel11";
@@ -151,7 +154,7 @@ namespace LTP.Truck.Forms
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(551, 0);
+      label17.Location = new Point(396, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
       label17.Size = new Size(32, 62);
@@ -165,7 +168,7 @@ namespace LTP.Truck.Forms
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(903, 0);
+      label18.Location = new Point(748, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
       label18.Size = new Size(42, 62);
@@ -176,7 +179,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(586, 3);
+      ucTimeSearchFrom.Location = new Point(431, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 28;
@@ -184,7 +187,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchTo
       // 
       ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(948, 3);
+      ucTimeSearchTo.Location = new Point(793, 3);
       ucTimeSearchTo.Name = "ucTimeSearchTo";
       ucTimeSearchTo.Size = new Size(314, 56);
       ucTimeSearchTo.TabIndex = 29;
@@ -204,7 +207,7 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(1348, 3);
+      btnSearchHistorical.Location = new Point(1178, 3);
       btnSearchHistorical.Name = "btnSearchHistorical";
       btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
       btnSearchHistorical.Size = new Size(174, 55);
@@ -228,11 +231,11 @@ namespace LTP.Truck.Forms
       btnExport.ForeColor = Color.White;
       btnExport.Image = Properties.Resources.icon_excel;
       btnExport.ImageAlign = ContentAlignment.MiddleLeft;
-      btnExport.Location = new Point(1528, 4);
+      btnExport.Location = new Point(1538, 4);
       btnExport.Margin = new Padding(3, 3, 6, 3);
       btnExport.Name = "btnExport";
       btnExport.Padding = new Padding(10, 0, 0, 0);
-      btnExport.Size = new Size(191, 54);
+      btnExport.Size = new Size(181, 54);
       btnExport.TabIndex = 30;
       btnExport.Text = "        Xuất excel";
       btnExport.TextAlign = ContentAlignment.MiddleLeft;
@@ -248,7 +251,7 @@ namespace LTP.Truck.Forms
       cbbType.Items.AddRange(new object[] { "Chi tiết", "Nhóm theo biển số", "Nhóm theo Bên nhận", "Nhóm theo Nhóm chất thải" });
       cbbType.Location = new Point(3, 13);
       cbbType.Name = "cbbType";
-      cbbType.Size = new Size(525, 35);
+      cbbType.Size = new Size(370, 35);
       cbbType.TabIndex = 32;
       // 
       // btnTracking
@@ -277,6 +280,50 @@ namespace LTP.Truck.Forms
       btnTracking.UseVisualStyleBackColor = false;
       btnTracking.Click += btnTracking_Click;
       // 
+      // btnFilter
+      // 
+      btnFilter.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnFilter.BackColor = Color.FromArgb(64, 107, 177);
+      btnFilter.BackgroundColor = Color.FromArgb(64, 107, 177);
+      btnFilter.BorderColor = Color.PaleVioletRed;
+      btnFilter.BorderRadius = 5;
+      btnFilter.BorderSize = 0;
+      btnFilter.FlatAppearance.BorderSize = 0;
+      btnFilter.FlatStyle = FlatStyle.Flat;
+      btnFilter.ForeColor = Color.White;
+      btnFilter.Image = Properties.Resources.icon_filter;
+      btnFilter.Location = new Point(1113, 3);
+      btnFilter.Name = "btnFilter";
+      btnFilter.Size = new Size(54, 55);
+      btnFilter.TabIndex = 34;
+      btnFilter.TextColor = Color.White;
+      btnFilter.UseVisualStyleBackColor = false;
+      // 
+      // btnExportPDF
+      // 
+      btnExportPDF.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnExportPDF.BackColor = Color.DarkOrange;
+      btnExportPDF.BackgroundColor = Color.DarkOrange;
+      btnExportPDF.BorderColor = Color.PaleVioletRed;
+      btnExportPDF.BorderRadius = 5;
+      btnExportPDF.BorderSize = 0;
+      btnExportPDF.FlatAppearance.BorderSize = 0;
+      btnExportPDF.FlatStyle = FlatStyle.Flat;
+      btnExportPDF.Font = new Font("Roboto", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      btnExportPDF.ForeColor = Color.White;
+      btnExportPDF.Image = Properties.Resources.icon_pdf;
+      btnExportPDF.ImageAlign = ContentAlignment.MiddleLeft;
+      btnExportPDF.Location = new Point(1358, 4);
+      btnExportPDF.Margin = new Padding(3, 3, 6, 3);
+      btnExportPDF.Name = "btnExportPDF";
+      btnExportPDF.Padding = new Padding(10, 0, 0, 0);
+      btnExportPDF.Size = new Size(171, 54);
+      btnExportPDF.TabIndex = 35;
+      btnExportPDF.Text = "        Xuất PDF";
+      btnExportPDF.TextAlign = ContentAlignment.MiddleLeft;
+      btnExportPDF.TextColor = Color.White;
+      btnExportPDF.UseVisualStyleBackColor = false;
+      // 
       // label27
       // 
       label27.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -298,25 +345,6 @@ namespace LTP.Truck.Forms
       ucPage1.Name = "ucPage1";
       ucPage1.Size = new Size(1919, 54);
       ucPage1.TabIndex = 24;
-      // 
-      // btnFilter
-      // 
-      btnFilter.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnFilter.BackColor = Color.FromArgb(64, 107, 177);
-      btnFilter.BackgroundColor = Color.FromArgb(64, 107, 177);
-      btnFilter.BorderColor = Color.PaleVioletRed;
-      btnFilter.BorderRadius = 5;
-      btnFilter.BorderSize = 0;
-      btnFilter.FlatAppearance.BorderSize = 0;
-      btnFilter.FlatStyle = FlatStyle.Flat;
-      btnFilter.ForeColor = Color.White;
-      btnFilter.Image = Properties.Resources.icon_filter;
-      btnFilter.Location = new Point(1268, 3);
-      btnFilter.Name = "btnFilter";
-      btnFilter.Size = new Size(54, 55);
-      btnFilter.TabIndex = 34;
-      btnFilter.TextColor = Color.White;
-      btnFilter.UseVisualStyleBackColor = false;
       // 
       // FrmReportGoods
       // 
@@ -350,5 +378,6 @@ namespace LTP.Truck.Forms
     private ComboBox cbbType;
     private Custom.RJButton btnTracking;
     private Common.Custom.RJButton btnFilter;
+    private Custom.RJButton btnExportPDF;
   }
 }

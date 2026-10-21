@@ -768,7 +768,7 @@ namespace LTP.Truck.Forms
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(177, 236);
+      cbbProduct.Location = new Point(177, 235);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(650, 33);
       cbbProduct.TabIndex = 7;
@@ -918,7 +918,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 11);
+      cbbTare.Location = new Point(3, 10);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(344, 33);
       cbbTare.TabIndex = 8;
@@ -1078,7 +1078,7 @@ namespace LTP.Truck.Forms
       cbbDelivery.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbDelivery.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbDelivery.FormattingEnabled = true;
-      cbbDelivery.Location = new Point(177, 123);
+      cbbDelivery.Location = new Point(177, 124);
       cbbDelivery.Name = "cbbDelivery";
       cbbDelivery.Size = new Size(650, 33);
       cbbDelivery.TabIndex = 40;
@@ -1122,7 +1122,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(3, 10);
+      cbbProductGroup.Location = new Point(3, 11);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(250, 33);
       cbbProductGroup.TabIndex = 6;
@@ -1134,7 +1134,7 @@ namespace LTP.Truck.Forms
       cbbProductType.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductType.FormattingEnabled = true;
       cbbProductType.Items.AddRange(new object[] { "Tất cả", "Nguy hại", "Tái chế", "Không tái chế" });
-      cbbProductType.Location = new Point(402, 11);
+      cbbProductType.Location = new Point(402, 10);
       cbbProductType.Name = "cbbProductType";
       cbbProductType.Size = new Size(250, 33);
       cbbProductType.TabIndex = 20;

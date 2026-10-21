@@ -19,6 +19,7 @@ namespace LTP.Truck.Forms
   public partial class FrmReportGoods : Form
   {
     private const string PrintColumnName = "btnPrintLabel";
+    private const string SelectColumnName = "Selected";
     private bool _isLoadingPage;
     private bool _isPrintingLabel;
     private Guid? _filterProductGroupId;
@@ -37,6 +38,7 @@ namespace LTP.Truck.Forms
 
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       btnFilter.Click += btnFilter_Click;
+      btnExportPDF.Click += btnExportPDF_Click;
       ucPage1.PageChanged += ucPage1_PageChanged;
       Shown += FrmReportGoods_Shown;
       cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -80,6 +82,43 @@ namespace LTP.Truck.Forms
       dgv.ScrollBars = ScrollBars.Both;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
+      AddSelectionColumn(dgv);
+    }
+
+    private void AddSelectionColumn(DataGridView grid)
+    {
+      var column = new DataGridViewCheckBoxColumn
+      {
+        Name = SelectColumnName,
+        HeaderText = string.Empty,
+        Width = 60,
+        AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+        ReadOnly = true,
+        Frozen = true,
+        SortMode = DataGridViewColumnSortMode.NotSortable
+      };
+      var header = new CheckBoxColumnHeaderCell();
+      header.CheckedChanged += isChecked =>
+      {
+        foreach (DataGridViewRow row in grid.Rows)
+          row.Cells[column.Index].Value = isChecked;
+        grid.ClearSelection();
+        grid.CurrentCell = null;
+      };
+      column.HeaderCell = header;
+      grid.Columns.Insert(0, column);
+      grid.CellClick += (_, e) =>
+      {
+        if (e.RowIndex < 0 || e.ColumnIndex != column.Index)
+          return;
+
+        var cell = grid.Rows[e.RowIndex].Cells[column.Index];
+        cell.Value = !Convert.ToBoolean(cell.Value);
+        header.Checked = grid.Rows.Cast<DataGridViewRow>()
+          .All(row => Convert.ToBoolean(row.Cells[column.Index].Value));
+        grid.ClearSelection();
+        grid.CurrentCell = null;
+      };
     }
 
     private void InitializeLicensePlateGroups()
@@ -241,6 +280,9 @@ namespace LTP.Truck.Forms
       }
 
       dgv.DataSource = records;
+      ((CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell).Checked = false;
+      foreach (DataGridViewRow row in dgv.Rows)
+        row.Cells[SelectColumnName].Value = false;
       if (dgv.Columns.Contains(PrintColumnName))
         dgv.Columns.Remove(PrintColumnName);
       ApplyGridColumnFormatting(dgv);
@@ -317,7 +359,7 @@ namespace LTP.Truck.Forms
 
       foreach (DataGridViewColumn column in grid.Columns)
       {
-        if (column.Visible && column.Name != PrintColumnName)
+        if (column.Visible && column.Name != PrintColumnName && column.Name != SelectColumnName)
           column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
       }
 
@@ -683,6 +725,41 @@ namespace LTP.Truck.Forms
         (_licensePlateGroups.VerticalScroll.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
       foreach (Control control in _licensePlateGroups.Controls)
         control.Width = width;
+    }
+
+    private void btnExportPDF_Click(object? sender, EventArgs e)
+    {
+      if (!AppCore.Ins.CheckPermission("0050"))
+      {
+        using var popup = new PopupNoPermitRole();
+        popup.ShowDialog(this);
+        return;
+      }
+
+      var grids = cbbType.SelectedIndex is >= 1 and <= 3
+        ? _licensePlateGroups.Controls.Cast<Control>()
+          .SelectMany(panel => panel.Controls.OfType<DataGridView>())
+        : new[] { dgv }.AsEnumerable();
+      var selectedData = new List<RecordWeightDTO>();
+      foreach (var grid in grids)
+      {
+        grid.EndEdit();
+        selectedData.AddRange(grid.Rows.Cast<DataGridViewRow>()
+          .Where(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value))
+          .Select(row => row.DataBoundItem)
+          .OfType<RecordWeightDTO>());
+      }
+
+      if (selectedData.Count == 0)
+      {
+        using var popup = new PopupConfirm("Vui lòng chọn dữ liệu cần xuất !",
+          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+        return;
+      }
+
+      using var popupChooseTemplate = new PopupChooseTemplateReport(selectedData);
+      popupChooseTemplate.ShowDialog(this);
     }
 
     private async void btnExport_Click(object sender, EventArgs e)
