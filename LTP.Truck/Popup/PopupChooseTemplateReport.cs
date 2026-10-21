@@ -162,7 +162,8 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch HCP-CN.doc");
+        "Template_BBGN KNH Bosch HCP-CN.doc",
+        weightDivisor: 1000d);
     }
 
     private async void btnHcP_SH_Click(object sender, EventArgs e)
@@ -222,7 +223,8 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch HCP-SH.doc");
+        "Template_BBGN KNH Bosch HCP-SH.doc",
+        weightDivisor: 1000d);
     }
 
 
@@ -345,7 +347,8 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch TGA-CN.doc");
+        "Template_BBGN KNH Bosch TGA-CN.doc",
+        weightDivisor: 1000d);
     }
 
     private async void btnTGA_SH_Click(object sender, EventArgs e)
@@ -405,7 +408,8 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch TGA-SH.doc");
+        "Template_BBGN KNH Bosch TGA-SH.doc",
+        weightDivisor: 1000d);
     }
 
 
@@ -731,7 +735,8 @@ namespace LTP.Truck.Popup
     private async Task DownloadHcpSummaryReportAsync(
       List<RecordWeight> recordWeights,
       List<RecordTruck> recordTrucks,
-      string templateFileName = "Template_BBGN TỔNG HCP.doc")
+      string templateFileName = "Template_BBGN TỔNG HCP.doc",
+      double weightDivisor = 1d)
     {
       try
       {
@@ -779,7 +784,7 @@ namespace LTP.Truck.Popup
 
         var progress = new Progress<string>(SetExportStatus);
         var pdfPath = await RunWordExportAsync(() => ExportWordTemplateToPdf(
-          summariesByTag, vehicleReportEntries, templateFileName, progress));
+          summariesByTag, vehicleReportEntries, templateFileName, weightDivisor, progress));
         SetExportStatus("Xuất PDF hoàn tất.");
         var openReportFile = false;
         using (var popup = new PopupConfirm(
@@ -818,6 +823,7 @@ namespace LTP.Truck.Popup
       IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
       IReadOnlyList<(string Tag, string? LicensePlate)> vehicleReportEntries,
       string templateFileName,
+      double weightDivisor,
       IProgress<string>? progress = null)
     {
       var exportDate = DateTime.Now;
@@ -869,7 +875,8 @@ namespace LTP.Truck.Popup
           .Where(entry => templateWeightTags.Contains(entry.Key))
           .Sum(entry => entry.Value.Weight);
         ReplaceWordTexts(
-          document, summariesByTag, licensePlates, exportDate, totalWeight);
+          document, summariesByTag, licensePlates, exportDate, totalWeight,
+          weightDivisor);
 
         progress?.Report("Đang tạo file PDF...");
         document.ExportAsFixedFormat(pdfPath, wdExportFormatPdf);
@@ -938,7 +945,8 @@ namespace LTP.Truck.Popup
       Match match,
       IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
       double totalWeight = 0,
-      bool quantityOnly = false)
+      bool quantityOnly = false,
+      double weightDivisor = 1d)
     {
       var terms = GetReportTerms(match).ToList();
       var isQuantity = quantityOnly || terms.All(term =>
@@ -964,7 +972,7 @@ namespace LTP.Truck.Popup
 
       if (isQuantity)
         return !hasData && terms.Count == 1 ? "..." : value.ToString("0");
-      return !hasData ? "" : WeightFormatHelper.Format(value, 1);
+      return !hasData ? "" : WeightFormatHelper.Format(value / weightDivisor, 1);
     }
 
     private static (HashSet<string> Tags, HashSet<string> WeightTags)
@@ -1021,7 +1029,8 @@ namespace LTP.Truck.Popup
       IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
       IReadOnlyList<string> licensePlates,
       DateTime exportDate,
-      double totalWeight)
+      double totalWeight,
+      double weightDivisor)
     {
       const int wdFindContinue = 1;
       const int wdReplaceAll = 2;
@@ -1044,7 +1053,8 @@ namespace LTP.Truck.Popup
                 continue;
 
               storyReplacements[placeholder] = GetReportPlaceholderValue(
-                match, summariesByTag, totalWeight);
+                match, summariesByTag, totalWeight,
+                weightDivisor: weightDivisor);
             }
 
             foreach (Match match in LicensePlatePlaceholderRegex.Matches(storyText))

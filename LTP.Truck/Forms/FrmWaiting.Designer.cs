@@ -179,7 +179,7 @@ namespace LTP.Truck.Forms
       // 
       pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-      pictureBox1.Location = new Point(200, 381);
+      pictureBox1.Location = new Point(200, 377);
       pictureBox1.Margin = new Padding(200, 10, 200, 10);
       pictureBox1.Name = "pictureBox1";
       pictureBox1.Size = new Size(455, 110);
@@ -192,7 +192,7 @@ namespace LTP.Truck.Forms
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
       label2.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label2.Location = new Point(3, 574);
+      label2.Location = new Point(3, 578);
       label2.Name = "label2";
       label2.Size = new Size(849, 39);
       label2.TabIndex = 2;
@@ -203,10 +203,10 @@ namespace LTP.Truck.Forms
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Roboto", 45.25F, FontStyle.Bold);
-      lbTitle.Location = new Point(3, 501);
+      lbTitle.Font = new Font("Roboto", 50.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      lbTitle.Location = new Point(3, 497);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(849, 73);
+      lbTitle.Size = new Size(849, 81);
       lbTitle.TabIndex = 1;
       lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
       lbTitle.TextAlign = ContentAlignment.MiddleCenter;
