@@ -124,7 +124,7 @@ namespace LTP.Truck.MasterData
 
         if (!TryGetPositiveTareValue(out double tareValue))
         {
-          using var popupMsgAlarm = new PopupConfirm("Khối lượng bì phải là số lớn hơn 0 !",
+          using var popupMsgAlarm = new PopupConfirm("Khối lượng bì phải là số lớn hơn hoặc bằng 0 !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupMsgAlarm.ShowDialog(this);
           txtValueTare.Focus();
@@ -276,7 +276,7 @@ namespace LTP.Truck.MasterData
       return double.TryParse(normalizedValue, NumberStyles.AllowDecimalPoint,
           CultureInfo.InvariantCulture, out tareValue) &&
         double.IsFinite(tareValue) &&
-        tareValue > 0;
+        tareValue >= 0;
     }
   }
 }
