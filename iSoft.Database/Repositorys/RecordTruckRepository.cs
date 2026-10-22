@@ -127,6 +127,57 @@ namespace iSoft.Database.Repositorys
       return query;
     }
 
+    private IQueryable<RecordTruck> BuildReportQueryV2(
+      DateTime fromUtc,
+      DateTime toUtcExclusive,
+      string? searchKey,
+      int statusFilterIndex)
+    {
+      var query = Context.Set<RecordTruck>()
+        .AsNoTracking()
+        .Include(record => record.Client)
+        .Include(record => record.TypeGoods)
+          .ThenInclude(typeGoods => typeGoods.ProductGroup)
+        .Include(record => record.Warehouse)
+        .Include(record => record.User)
+        .Include(record => record.Station)
+        .Where(record => record.UpdatedAt >= fromUtc && record.UpdatedAt < toUtcExclusive);
+
+      query = statusFilterIndex switch
+      {
+        1 => query.Where(record =>
+          !record.DeletedFlag &&
+          (record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime01 ||
+           record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime01 ||
+           record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.WeightedTime02)),
+        2 => query.Where(record =>
+          !record.DeletedFlag && record.EnumTypeDataTruck == EnumData.EnumTypeDataTruck.DoneTime02),
+        3 => query.Where(record => record.DeletedFlag),
+        _ => query
+      };
+
+      if (!string.IsNullOrWhiteSpace(searchKey))
+      {
+        query = query.Where(record =>
+          (record.NoLabelAuto != null && EF.Functions.Collate(record.NoLabelAuto, SearchCollation).Contains(searchKey)) ||
+          (record.NoLabelManual != null && EF.Functions.Collate(record.NoLabelManual, SearchCollation).Contains(searchKey)) ||
+          (record.LicensePlate != null && EF.Functions.Collate(record.LicensePlate, SearchCollation).Contains(searchKey)) ||
+          (record.NameDriver != null && EF.Functions.Collate(record.NameDriver, SearchCollation).Contains(searchKey)) ||
+          (record.IdCard != null && EF.Functions.Collate(record.IdCard, SearchCollation).Contains(searchKey)) ||
+          (record.Note != null && EF.Functions.Collate(record.Note, SearchCollation).Contains(searchKey)) ||
+          (record.Client != null && record.Client.Name != null && EF.Functions.Collate(record.Client.Name, SearchCollation).Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.Name != null && EF.Functions.Collate(record.TypeGoods.Name, SearchCollation).Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.ProductGroup != null &&
+            record.TypeGoods.ProductGroup.Code != null && EF.Functions.Collate(record.TypeGoods.ProductGroup.Code, SearchCollation).Contains(searchKey)) ||
+          (record.TypeGoods != null && record.TypeGoods.ProductGroup != null &&
+            record.TypeGoods.ProductGroup.Name != null && EF.Functions.Collate(record.TypeGoods.ProductGroup.Name, SearchCollation).Contains(searchKey)) ||
+          (record.Warehouse != null && record.Warehouse.Name != null && EF.Functions.Collate(record.Warehouse.Name, SearchCollation).Contains(searchKey)) ||
+          (record.Station != null && record.Station.Name != null && EF.Functions.Collate(record.Station.Name, SearchCollation).Contains(searchKey)));
+      }
+
+      return query;
+    }
+
     public Task<List<RecordTruck>> GetFirstWeighingRecordsAsync()
     {
       return Context.Set<RecordTruck>()

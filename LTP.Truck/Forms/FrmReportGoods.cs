@@ -10,6 +10,7 @@ using LTP.Truck.Custom;
 using LTP.Truck.Popup;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
 using static Common.EnumData;
@@ -82,6 +83,7 @@ namespace LTP.Truck.Forms
       dgv.ScrollBars = ScrollBars.Both;
       dgv.RowTemplate.Height = 60;
       dgv.MultiSelect = false;
+      dgv.CellPainting += dgv_CellPainting;
       AddSelectionColumn(dgv);
     }
 
@@ -209,21 +211,34 @@ namespace LTP.Truck.Forms
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
         var pageNumber = ucPage1.CurrentPage;
         var pageSize = ucPage1.PageSize;
-        var (records, totalRecords) = await AppCore.Ins._recordWeightService.GetReportPageAsync(
+        var records = await AppCore.Ins._recordWeightService.GetReportAsync(
           fromUtc,
           toUtcExclusive,
           string.Empty,
-          pageNumber,
-          pageSize,
           _filterDataTypeIndex,
           _filterProductGroupId,
           _filterWasteType);
 
+        var trucks = await AppCore.Ins._recordTruckService.GetReportAsync(
+          fromUtc, toUtcExclusive, string.Empty, statusFilterIndex: 0);
+        if (_filterProductGroupId.HasValue)
+          trucks = trucks.Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value).ToList();
+        if (_filterWasteType.HasValue)
+          trucks = trucks.Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value).ToList();
+        trucks = _filterDataTypeIndex switch
+        {
+          2 => trucks.Where(record => record.DeletedFlag).ToList(),
+          0 => trucks,
+          _ => trucks.Where(record => !record.DeletedFlag).ToList(),
+        };
+        var totalRecords = records.Count + trucks.Count;
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
         var effectivePage = Math.Min(pageNumber, totalPages);
-        var recordsDto = DTOHelper.ConvertRecordWeightDTO(records)
-          .OrderBy(record => record.RecordWeight?.CreatedAt)
-          .ThenBy(record => record.RecordWeight?.Id)
+        var recordsDto = DTOHelper.ConvertCombinedHistoryDTO(records, trucks)
+          .OrderByDescending(record => record.SortAt)
+          .ThenBy(record => record.RecordWeight?.Id ?? record.RecordTruck?.Id)
+          .Skip((effectivePage - 1) * pageSize)
+          .Take(pageSize)
           .ToList();
         for (var index = 0; index < recordsDto.Count; index++)
           recordsDto[index].No = (effectivePage - 1) * pageSize + index + 1;
@@ -351,15 +366,20 @@ namespace LTP.Truck.Forms
       if (grid.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         grid.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
 
-      if (grid == dgv &&
-          grid.Columns.Contains(nameof(RecordWeightDTO.Source)))
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.Source)))
       {
-        grid.Columns[nameof(RecordWeightDTO.Source)].Visible = false;
+        var sourceColumn = grid.Columns[nameof(RecordWeightDTO.Source)];
+        sourceColumn.HeaderText = "Nguồn";
+        sourceColumn.Visible = true;
+        sourceColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+        sourceColumn.Width = 140;
+        sourceColumn.Resizable = DataGridViewTriState.False;
       }
 
       foreach (DataGridViewColumn column in grid.Columns)
       {
-        if (column.Visible && column.Name != PrintColumnName && column.Name != SelectColumnName)
+        if (column.Visible && column.Name != PrintColumnName && column.Name != SelectColumnName &&
+            column.Name != nameof(RecordWeightDTO.Source))
           column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
       }
 
@@ -431,7 +451,7 @@ namespace LTP.Truck.Forms
         StringComparer.CurrentCultureIgnoreCase))
       {
         var groupRecords = group.ToList();
-        var totalNetWeight = groupRecords.Sum(record => record.RecordWeight?.Net ?? 0.0);
+        var totalNetWeight = groupRecords.Sum(record => record.RecordWeight?.Net ?? record.RecordTruck?.NetTime01 ?? 0.0);
         var groupHeaderText =
           $"{group.Key} - Tổng khối lượng {WeightFormatHelper.Format(totalNetWeight, 2)} Kg";
         var groupPanel = new Panel
@@ -803,7 +823,24 @@ namespace LTP.Truck.Forms
           _filterProductGroupId,
           _filterWasteType);
 
-        if (exportRecords.Count == 0)
+        var trucks = await AppCore.Ins._recordTruckService.GetReportAsync(
+          fromDateTime.ToUniversalTime(), toDateTime.AddMinutes(1).ToUniversalTime(), string.Empty, statusFilterIndex: 0);
+        if (_filterProductGroupId.HasValue)
+          trucks = trucks.Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value).ToList();
+        if (_filterWasteType.HasValue)
+          trucks = trucks.Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value).ToList();
+        trucks = _filterDataTypeIndex switch
+        {
+          2 => trucks.Where(record => record.DeletedFlag).ToList(),
+          0 => trucks,
+          _ => trucks.Where(record => !record.DeletedFlag).ToList(),
+        };
+        var exportData = DTOHelper.ConvertCombinedHistoryDTO(exportRecords, trucks)
+          .OrderBy(record => record.SortAt)
+          .ThenBy(record => record.RecordWeight?.Id ?? record.RecordTruck?.Id)
+          .ToList();
+
+        if (exportData.Count == 0)
         {
           using var popup = new PopupConfirm(
             "Không có dữ liệu phù hợp với điều kiện lọc để xuất báo cáo.",
@@ -812,11 +849,6 @@ namespace LTP.Truck.Forms
           popup.ShowDialog(this);
           return;
         }
-
-        var exportData = DTOHelper.ConvertRecordWeightDTO(exportRecords)
-          .OrderBy(record => record.RecordWeight?.CreatedAt)
-          .ThenBy(record => record.RecordWeight?.Id)
-          .ToList();
 
         var exporterName = AppCore.Ins._userCurrent?.DisplayName;
         if (string.IsNullOrWhiteSpace(exporterName))
@@ -998,7 +1030,17 @@ namespace LTP.Truck.Forms
       const int firstDataRow = 10;
       for (var index = 0; index < records.Count; index++)
       {
-        var record = records[index].RecordWeight!;
+        var dto = records[index];
+        var truck = dto.RecordTruck;
+        var record = dto.RecordWeight ?? new RecordWeight
+        {
+          CreatedAt = dto.SortAt,
+          LicensePlate = truck?.LicensePlate,
+
+          Net = truck?.NetTime01 ?? 0,
+          Tare = truck?.Tare ?? 0,
+          User = truck?.User,
+        };
         var row = firstDataRow + index;
         var operatorName = record.User?.DisplayName;
         if (string.IsNullOrWhiteSpace(operatorName))
@@ -1010,11 +1052,11 @@ namespace LTP.Truck.Forms
         if (record.CreatedAt.HasValue)
           worksheet.Cell(row, 2).Value = record.CreatedAt.Value.AddHours(DTOHelper.utc);
         worksheet.Cell(row, 3).Value = record.LicensePlate ?? string.Empty;
-        worksheet.Cell(row, 4).Value = record.Product?.ProductGroup?.Name ?? string.Empty;
-        worksheet.Cell(row, 5).Value = record.Product?.Code ?? string.Empty;
-        worksheet.Cell(row, 6).Value = record.Product?.Name ?? string.Empty;
-        worksheet.Cell(row, 7).Value = record.CategoryTare?.Name ?? string.Empty;
-        worksheet.Cell(row, 8).Value = record.Net + record.Tare;
+        worksheet.Cell(row, 4).Value = dto.ProductGroup ?? string.Empty;
+        worksheet.Cell(row, 5).Value = record.Product?.Code ?? truck?.TypeGoods?.Code ?? string.Empty;
+        worksheet.Cell(row, 6).Value = dto.Product ?? string.Empty;
+        worksheet.Cell(row, 7).Value = dto.CategoryTare ?? string.Empty;
+        worksheet.Cell(row, 8).Value = truck == null ? record.Net + record.Tare : Math.Max(truck.NetTime01, truck.NetTime02);
         worksheet.Cell(row, 9).Value = record.Net;
         worksheet.Cell(row, 10).Value = record.Tare;
         worksheet.Cell(row, 11).Value = operatorName ?? string.Empty;
@@ -1382,6 +1424,65 @@ namespace LTP.Truck.Forms
       if (!string.IsNullOrWhiteSpace(record.User?.FullName))
         return record.User.FullName;
       return record.User?.Username ?? string.Empty;
+    }
+
+
+    private void dgv_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
+    {
+      if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+          dgv.Columns[e.ColumnIndex].DataPropertyName != nameof(RecordWeightDTO.Source) ||
+          dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item)
+      {
+        return;
+      }
+
+      var isTruck = item.RecordTruck != null;
+      var borderColor = isTruck
+        ? Color.FromArgb(30, 64, 175)
+        : Color.FromArgb(40, 167, 69);
+      var backColor = isTruck
+        ? Color.FromArgb(219, 234, 254)
+        : Color.FromArgb(220, 245, 228);
+
+      e.PaintBackground(e.CellBounds, true);
+      var badgeBounds = new Rectangle(
+        e.CellBounds.X + 8,
+        e.CellBounds.Y + 8,
+        Math.Max(1, e.CellBounds.Width - 16),
+        Math.Max(1, e.CellBounds.Height - 16));
+
+      using var path = GetRoundRectangle(badgeBounds, 20);
+      using var backgroundBrush = new SolidBrush(backColor);
+      using var borderPen = new Pen(borderColor);
+      e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+      e.Graphics.FillPath(backgroundBrush, path);
+      e.Graphics.DrawPath(borderPen, path);
+      TextRenderer.DrawText(
+        e.Graphics,
+        item.Source ?? string.Empty,
+        e.CellStyle.Font,
+        badgeBounds,
+        borderColor,
+        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+      e.Handled = true;
+    }
+
+    private static GraphicsPath GetRoundRectangle(Rectangle rectangle, int radius)
+    {
+      var path = new GraphicsPath();
+      var diameter = Math.Min(radius * 2, Math.Min(rectangle.Width, rectangle.Height));
+      if (diameter <= 0)
+      {
+        path.AddRectangle(rectangle);
+        return path;
+      }
+
+      path.AddArc(rectangle.X, rectangle.Y, diameter, diameter, 180, 90);
+      path.AddArc(rectangle.Right - diameter, rectangle.Y, diameter, diameter, 270, 90);
+      path.AddArc(rectangle.Right - diameter, rectangle.Bottom - diameter, diameter, diameter, 0, 90);
+      path.AddArc(rectangle.X, rectangle.Bottom - diameter, diameter, diameter, 90, 90);
+      path.CloseFigure();
+      return path;
     }
   }
 }

@@ -766,9 +766,9 @@ namespace LTP.Truck.Forms
       // 
       cbbProduct.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       cbbProduct.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbbProduct.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      cbbProduct.Font = new Font("Roboto", 16F);
       cbbProduct.FormattingEnabled = true;
-      cbbProduct.Location = new Point(177, 236);
+      cbbProduct.Location = new Point(177, 235);
       cbbProduct.Name = "cbbProduct";
       cbbProduct.Size = new Size(650, 33);
       cbbProduct.TabIndex = 7;
@@ -918,7 +918,7 @@ namespace LTP.Truck.Forms
       cbbTare.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbTare.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbTare.FormattingEnabled = true;
-      cbbTare.Location = new Point(3, 11);
+      cbbTare.Location = new Point(3, 10);
       cbbTare.Name = "cbbTare";
       cbbTare.Size = new Size(344, 33);
       cbbTare.TabIndex = 8;
@@ -1078,7 +1078,7 @@ namespace LTP.Truck.Forms
       cbbDelivery.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbDelivery.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbDelivery.FormattingEnabled = true;
-      cbbDelivery.Location = new Point(177, 123);
+      cbbDelivery.Location = new Point(177, 124);
       cbbDelivery.Name = "cbbDelivery";
       cbbDelivery.Size = new Size(650, 33);
       cbbDelivery.TabIndex = 40;
@@ -1122,7 +1122,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.DropDownStyle = ComboBoxStyle.DropDownList;
       cbbProductGroup.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductGroup.FormattingEnabled = true;
-      cbbProductGroup.Location = new Point(3, 10);
+      cbbProductGroup.Location = new Point(3, 11);
       cbbProductGroup.Name = "cbbProductGroup";
       cbbProductGroup.Size = new Size(250, 33);
       cbbProductGroup.TabIndex = 6;
@@ -1134,7 +1134,7 @@ namespace LTP.Truck.Forms
       cbbProductType.Font = new Font("Roboto", 16F, FontStyle.Regular, GraphicsUnit.Point, 0);
       cbbProductType.FormattingEnabled = true;
       cbbProductType.Items.AddRange(new object[] { "Tất cả", "Nguy hại", "Tái chế", "Không tái chế" });
-      cbbProductType.Location = new Point(402, 11);
+      cbbProductType.Location = new Point(402, 10);
       cbbProductType.Name = "cbbProductType";
       cbbProductType.Size = new Size(250, 33);
       cbbProductType.TabIndex = 20;
@@ -1388,7 +1388,7 @@ namespace LTP.Truck.Forms
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 165F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 175F));
       tableLayoutPanel11.Controls.Add(btnPrint, 11, 0);
       tableLayoutPanel11.Controls.Add(label9, 0, 0);
       tableLayoutPanel11.Controls.Add(txtSearchKey, 1, 0);
@@ -1421,7 +1421,7 @@ namespace LTP.Truck.Forms
       btnPrint.ForeColor = Color.White;
       btnPrint.Image = Properties.Resources.icon_label;
       btnPrint.ImageAlign = ContentAlignment.MiddleLeft;
-      btnPrint.Location = new Point(1447, 4);
+      btnPrint.Location = new Point(1442, 4);
       btnPrint.Name = "btnPrint";
       btnPrint.Padding = new Padding(10, 0, 0, 0);
       btnPrint.Size = new Size(159, 54);
@@ -1464,7 +1464,7 @@ namespace LTP.Truck.Forms
       txtSearchKey.PasswordChar = false;
       txtSearchKey.PlaceholderColor = Color.DarkGray;
       txtSearchKey.PlaceholderText = "";
-      txtSearchKey.Size = new Size(344, 38);
+      txtSearchKey.Size = new Size(339, 38);
       txtSearchKey.TabIndex = 18;
       txtSearchKey.Texts = "";
       txtSearchKey.UnderlinedStyle = false;
@@ -1475,7 +1475,7 @@ namespace LTP.Truck.Forms
       label17.AutoSize = true;
       label17.BackColor = Color.Transparent;
       label17.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label17.Location = new Point(467, 0);
+      label17.Location = new Point(462, 0);
       label17.Margin = new Padding(0);
       label17.Name = "label17";
       label17.Size = new Size(32, 62);
@@ -1489,7 +1489,7 @@ namespace LTP.Truck.Forms
       label18.AutoSize = true;
       label18.BackColor = Color.Transparent;
       label18.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label18.Location = new Point(819, 0);
+      label18.Location = new Point(814, 0);
       label18.Margin = new Padding(0);
       label18.Name = "label18";
       label18.Size = new Size(42, 62);
@@ -1500,7 +1500,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchFrom
       // 
       ucTimeSearchFrom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchFrom.Location = new Point(502, 3);
+      ucTimeSearchFrom.Location = new Point(497, 3);
       ucTimeSearchFrom.Name = "ucTimeSearchFrom";
       ucTimeSearchFrom.Size = new Size(314, 56);
       ucTimeSearchFrom.TabIndex = 28;
@@ -1508,7 +1508,7 @@ namespace LTP.Truck.Forms
       // ucTimeSearchTo
       // 
       ucTimeSearchTo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      ucTimeSearchTo.Location = new Point(864, 3);
+      ucTimeSearchTo.Location = new Point(859, 3);
       ucTimeSearchTo.Name = "ucTimeSearchTo";
       ucTimeSearchTo.Size = new Size(314, 56);
       ucTimeSearchTo.TabIndex = 29;
@@ -1528,7 +1528,7 @@ namespace LTP.Truck.Forms
       btnSearchHistorical.ForeColor = Color.White;
       btnSearchHistorical.Image = Properties.Resources.icon_search;
       btnSearchHistorical.ImageAlign = ContentAlignment.MiddleLeft;
-      btnSearchHistorical.Location = new Point(1267, 3);
+      btnSearchHistorical.Location = new Point(1262, 3);
       btnSearchHistorical.Name = "btnSearchHistorical";
       btnSearchHistorical.Padding = new Padding(15, 0, 0, 0);
       btnSearchHistorical.Size = new Size(174, 55);
@@ -1552,11 +1552,11 @@ namespace LTP.Truck.Forms
       btnExport.ForeColor = Color.White;
       btnExport.Image = Properties.Resources.icon_pdf;
       btnExport.ImageAlign = ContentAlignment.MiddleLeft;
-      btnExport.Location = new Point(1612, 4);
+      btnExport.Location = new Point(1607, 4);
       btnExport.Margin = new Padding(3, 3, 6, 3);
       btnExport.Name = "btnExport";
       btnExport.Padding = new Padding(10, 0, 0, 0);
-      btnExport.Size = new Size(161, 54);
+      btnExport.Size = new Size(166, 54);
       btnExport.TabIndex = 30;
       btnExport.Text = "        Xuất PDF";
       btnExport.TextAlign = ContentAlignment.MiddleLeft;
@@ -1576,7 +1576,7 @@ namespace LTP.Truck.Forms
       btnFilter.FlatStyle = FlatStyle.Flat;
       btnFilter.ForeColor = Color.White;
       btnFilter.Image = Properties.Resources.icon_filter;
-      btnFilter.Location = new Point(1187, 3);
+      btnFilter.Location = new Point(1182, 3);
       btnFilter.Name = "btnFilter";
       btnFilter.Size = new Size(54, 55);
       btnFilter.TabIndex = 33;
