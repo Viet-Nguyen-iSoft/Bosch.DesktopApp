@@ -1,5 +1,7 @@
-﻿using System;
+﻿using iSoft.Communication.Interface;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -17,16 +19,18 @@ namespace iSoft.Communication.Mode
     public ActiveWeighingStatus ActiveWeighingStatus { get; set; }
     public EnumValueWeightType EValueWeightType { get; set; }
 
+    public static SicsOutputData sicsOutputData { get; set; } = new SicsOutputData();
     public static SicsOutputData? Decode(string message)
     {
       try
       {
         if (string.IsNullOrEmpty(message)) return null;
-
-        SicsOutputData sicsOutputData = new SicsOutputData();
+        Debug.WriteLine("Data Src: " + message);
+        //SicsOutputData sicsOutputData = new SicsOutputData();
+        //sicsOutputData = new SicsOutputData();
         string[] parts = message.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        if (parts.Length < 4) return null;
+       // if (parts.Length < 2) return null;
         string key = parts[0].Replace("\r", "").Replace("\n", "");
 
         if (key == "S")
@@ -65,11 +69,61 @@ namespace iSoft.Communication.Mode
             sicsOutputData.Unit = UnitOfWeight.None;
           }
         }
-        else if (key == "TA")
+        else
         {
-          sicsOutputData.EValueWeightType = EnumValueWeightType.Tare;
-          sicsOutputData.TareWeight = double.Parse(parts[2]);
-        }  
+         
+
+          
+        }
+
+        Debug.WriteLine("Data: " + message);
+        if (key == "TA")
+        {
+          if (parts.Length>=3)
+          {
+            sicsOutputData.EValueWeightType = EnumValueWeightType.Tare;
+            sicsOutputData.TareWeight = double.Parse(parts[2]);
+          }
+         
+        }
+        else
+        {
+          if (!message.Contains("S"))
+          {
+            double T = 0.0;
+            if (double.TryParse(message, out T) == true)
+            {
+              sicsOutputData.EValueWeightType = EnumValueWeightType.Tare;
+              sicsOutputData.TareWeight = T;
+            }
+          }
+          
+        }
+        //else if (key == "TA")
+        //{
+        //  sicsOutputData.EValueWeightType = EnumValueWeightType.Tare;
+        //  sicsOutputData.TareWeight = double.Parse(parts[2]);
+        //}  
+
+        //if (message.Contains("TA"))
+        //{
+
+        //}
+        //if (parts[3].Contains("TA"))
+        //{
+        //  sicsOutputData.EValueWeightType = EnumValueWeightType.Tare;
+        //  sicsOutputData.TareWeight = double.Parse(parts[5]);
+        //}
+        //for (int i = 0; i < parts.Count(); i++)
+        //{
+        //  if (parts[i].Contains("TA"))
+        //  {
+        //    sicsOutputData.EValueWeightType = EnumValueWeightType.Tare;
+        //    sicsOutputData.TareWeight = double.Parse(parts[i+2]);
+
+        //    break;
+        //  }
+        //}
 
         return sicsOutputData;
       }

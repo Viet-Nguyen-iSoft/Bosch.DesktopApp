@@ -1,9 +1,11 @@
 ﻿using iSoft.Communication.Interface;
 using SuperSimpleTcp;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Text;
 using static iSoft.Communication.EnumCommunication;
 using static System.Net.Mime.MediaTypeNames;
+using DataReceivedEventArgs = SuperSimpleTcp.DataReceivedEventArgs;
 
 namespace iSoft.Communication.Communication
 {
@@ -128,12 +130,16 @@ namespace iSoft.Communication.Communication
     {
       try
       {
+
         _messageDataInput.Source = this.ConnectionId;
         _messageDataInput.MachineId = this.MachineId;
         _messageDataInput.DataAsString = Encoding.UTF8.GetString(e.Data);
         _messageDataInput.DataAsBytes = e.Data.ToArray();
         _messageDataInput.SourceDateTime = DateTime.Now;
         _messageDataInput.eModeCommunication = this.EModeCommunication;
+
+        //Debug.WriteLine("-----: " + _messageDataInput.DataAsString);
+        //if (_messageDataInput.DataAsString.Contains("S") || _messageDataInput.DataAsString.Contains("TA"))
         OnDataReceived(_messageDataInput, this.EModeCommunication);
       }
       catch (Exception)
