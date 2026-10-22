@@ -27,6 +27,10 @@ namespace LTP.Truck.Forms
       OwnerDraw = true,
       ShowAlways = true
     };
+    private readonly ToolTip _productToolTip = new()
+    {
+      ShowAlways = true
+    };
     private readonly Font _deleteReasonToolTipFont = new("Segoe UI", 14F);
     private string _deleteReasonToolTipText = string.Empty;
     private List<Product> _products = new();
@@ -54,6 +58,13 @@ namespace LTP.Truck.Forms
 
       cbbTare.SelectionChangeCommitted += cbbTare_SelectedValueChanged;
       cbbProductType.SelectionChangeCommitted += cbbProductType_SelectionChangeCommitted;
+      cbbProduct.DrawMode = DrawMode.OwnerDrawVariable;
+      cbbProduct.IntegralHeight = false;
+      cbbProduct.DropDownHeight = 420;
+      cbbProduct.DropDown += (_, _) => UpdateProductDropDownWidth();
+      cbbProduct.SelectedIndexChanged += (_, _) => UpdateProductToolTip();
+      cbbProduct.MeasureItem += cbbProduct_MeasureItem;
+      cbbProduct.DrawItem += cbbProduct_DrawItem;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
       btnFilter.Click += btnFilter_Click;
       btnCreate.Click += btnCreate_Click;
@@ -64,6 +75,7 @@ namespace LTP.Truck.Forms
       {
         _deleteReasonToolTip.Dispose();
         _deleteReasonToolTipFont.Dispose();
+        _productToolTip.Dispose();
       };
     }
 
@@ -566,6 +578,8 @@ namespace LTP.Truck.Forms
       cbbProduct.DisplayMember = nameof(Product.Name);
       cbbProduct.ValueMember = nameof(Product.Id);
       cbbProduct.DataSource = products;
+      UpdateProductDropDownWidth();
+      UpdateProductToolTip();
 
       if (!preserveSelection)
         return;
@@ -579,6 +593,78 @@ namespace LTP.Truck.Forms
       {
         cbbProduct.SelectedIndex = -1;
       }
+    }
+
+    private void UpdateProductDropDownWidth()
+    {
+      var widestItem = cbbProduct.Items
+        .Cast<object>()
+        .Select(item => cbbProduct.GetItemText(item))
+        .Where(text => !string.IsNullOrEmpty(text))
+        .Select(text => TextRenderer.MeasureText(text, cbbProduct.Font).Width)
+        .DefaultIfEmpty(cbbProduct.Width)
+        .Max();
+
+      var desiredWidth = widestItem + SystemInformation.VerticalScrollBarWidth + 16;
+      var screen = Screen.FromControl(cbbProduct).WorkingArea;
+      var productLeft = cbbProduct.PointToScreen(Point.Empty).X;
+      var availableWidth = Math.Max(cbbProduct.Width, screen.Right - productLeft - 16);
+      var maxWidth = Math.Min(900, availableWidth);
+      cbbProduct.DropDownWidth = Math.Min(Math.Max(cbbProduct.Width, desiredWidth), maxWidth);
+    }
+
+    private void cbbProduct_MeasureItem(object? sender, MeasureItemEventArgs e)
+    {
+      if (e.Index < 0 || e.Index >= cbbProduct.Items.Count)
+        return;
+
+      var text = cbbProduct.GetItemText(cbbProduct.Items[e.Index]);
+      var textWidth = Math.Max(100,
+        cbbProduct.DropDownWidth - SystemInformation.VerticalScrollBarWidth - 24);
+      var measured = TextRenderer.MeasureText(text, cbbProduct.Font,
+        new Size(textWidth, 0), TextFormatFlags.WordBreak | TextFormatFlags.NoPadding);
+      var lineHeight = TextRenderer.MeasureText("Ag", cbbProduct.Font).Height;
+      e.ItemHeight = Math.Min(Math.Max(lineHeight + 12, measured.Height + 12), lineHeight * 3 + 12);
+      e.ItemWidth = cbbProduct.DropDownWidth;
+    }
+
+    private void cbbProduct_DrawItem(object? sender, DrawItemEventArgs e)
+    {
+      if (e.Index < 0 || e.Index >= cbbProduct.Items.Count)
+        return;
+
+      var isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+      var isEditArea = (e.State & DrawItemState.ComboBoxEdit) == DrawItemState.ComboBoxEdit;
+      var backgroundColor = isSelected
+        ? SystemColors.Highlight
+        : isEditArea || e.Index % 2 == 0 ? Color.White : Color.FromArgb(242, 247, 252);
+      var foregroundColor = isSelected ? SystemColors.HighlightText : cbbProduct.ForeColor;
+
+      using var backgroundBrush = new SolidBrush(backgroundColor);
+      e.Graphics.FillRectangle(backgroundBrush, e.Bounds);
+
+      var textBounds = Rectangle.Inflate(e.Bounds, -8, -5);
+      var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix;
+      flags |= isEditArea ? TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine : TextFormatFlags.WordBreak;
+      TextRenderer.DrawText(e.Graphics, cbbProduct.GetItemText(cbbProduct.Items[e.Index]),
+        cbbProduct.Font, textBounds, foregroundColor, flags);
+
+      if (!isEditArea)
+      {
+        using var separatorPen = new Pen(Color.FromArgb(215, 225, 235));
+        e.Graphics.DrawLine(separatorPen, e.Bounds.Left, e.Bounds.Bottom - 1,
+          e.Bounds.Right, e.Bounds.Bottom - 1);
+      }
+
+      e.DrawFocusRectangle();
+    }
+
+    private void UpdateProductToolTip()
+    {
+      var text = cbbProduct.SelectedItem == null
+        ? string.Empty
+        : cbbProduct.GetItemText(cbbProduct.SelectedItem);
+      _productToolTip.SetToolTip(cbbProduct, text);
     }
 
     private EnumWasteType? GetSelectedWasteType() => cbbProductType.SelectedIndex switch
