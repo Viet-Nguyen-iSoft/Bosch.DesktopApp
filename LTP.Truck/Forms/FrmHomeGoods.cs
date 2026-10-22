@@ -127,8 +127,9 @@ namespace LTP.Truck.Forms
       dgv.EnableHeadersVisualStyles = false;
       dgv.ColumnHeadersHeight = 40;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-      dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+      dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
       dgv.RowTemplate.Height = 50;
+      dgv.RowTemplate.MinimumHeight = 50;
       dgv.MultiSelect = false;
       dgv.ShowCellToolTips = false;
       dgv.ReadOnly = true;
@@ -1143,6 +1144,24 @@ namespace LTP.Truck.Forms
           dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
       }
 
+      if (dgv.Columns.Contains(nameof(RecordWeightDTO.Product)))
+      {
+        var productColumn = dgv.Columns[nameof(RecordWeightDTO.Product)];
+        productColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        productColumn.MinimumWidth = 280;
+        productColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+        productColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      }
+
+      if (dgv.Columns.Contains(nameof(RecordWeightDTO.Delivery)))
+      {
+        var deliveryColumn = dgv.Columns[nameof(RecordWeightDTO.Delivery)];
+        deliveryColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        deliveryColumn.MinimumWidth = 180;
+        deliveryColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+        deliveryColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      }
+
       if (dgv.Columns.Contains(nameof(RecordWeightDTO.Source)))
       {
         var sourceColumn = dgv.Columns[nameof(RecordWeightDTO.Source)];
@@ -1302,6 +1321,32 @@ namespace LTP.Truck.Forms
 
     private void dgv_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
     {
+      if (e.RowIndex >= 0 && e.ColumnIndex >= 0 &&
+          dgv.Columns[e.ColumnIndex].Name == "btnDelete" &&
+          dgv.Rows[e.RowIndex].DataBoundItem is RecordWeightDTO deleteItem)
+      {
+        e.PaintBackground(e.CellBounds, true);
+
+        const int buttonHeight = 40;
+        var buttonBounds = new Rectangle(
+          e.CellBounds.X + 4,
+          e.CellBounds.Y + Math.Max(0, (e.CellBounds.Height - buttonHeight) / 2),
+          Math.Max(1, e.CellBounds.Width - 8),
+          Math.Min(buttonHeight, e.CellBounds.Height));
+        var canModify = CanModifyRecord(deleteItem);
+        var buttonText = !canModify
+          ? "Chỉ xem"
+          : IsDeleted(deleteItem) ? "Phục hồi" : "Xóa";
+        var buttonState = canModify
+          ? System.Windows.Forms.VisualStyles.PushButtonState.Normal
+          : System.Windows.Forms.VisualStyles.PushButtonState.Disabled;
+
+        ButtonRenderer.DrawButton(e.Graphics, buttonBounds, buttonText,
+          e.CellStyle.Font ?? dgv.Font, false, buttonState);
+        e.Handled = true;
+        return;
+      }
+
       if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
           dgv.Columns[e.ColumnIndex].DataPropertyName != nameof(RecordWeightDTO.Source) ||
           dgv.Rows[e.RowIndex].DataBoundItem is not RecordWeightDTO item)
@@ -1318,11 +1363,12 @@ namespace LTP.Truck.Forms
         : Color.FromArgb(220, 245, 228);
 
       e.PaintBackground(e.CellBounds, true);
+      const int badgeHeight = 36;
       var badgeBounds = new Rectangle(
         e.CellBounds.X + 8,
-        e.CellBounds.Y + 8,
+        e.CellBounds.Y + Math.Max(0, (e.CellBounds.Height - badgeHeight) / 2),
         Math.Max(1, e.CellBounds.Width - 16),
-        Math.Max(1, e.CellBounds.Height - 16));
+        Math.Min(badgeHeight, e.CellBounds.Height));
 
       using var path = GetRoundRectangle(badgeBounds, 20);
       using var backgroundBrush = new SolidBrush(backColor);
