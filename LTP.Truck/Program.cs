@@ -130,6 +130,7 @@ namespace LTP.Truck
             await EnsureTypeGoodsWasteColumnsAsync(db);
             await EnsureProductTagMappingReportColumnAsync(db);
             await EnsureAuditLogsTableAsync(db);
+            await EnsureDocumentDataTableAsync(db);
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
@@ -363,6 +364,37 @@ namespace LTP.Truck
             INDEX `IX_AuditLogs_OccurredAt` (`OccurredAt`),
             INDEX `IX_AuditLogs_Entity` (`EntityType`, `EntityId`),
             INDEX `IX_AuditLogs_User_OccurredAt` (`UserId`, `OccurredAt`)
+          ) CHARACTER SET=utf8mb4;";
+        await command.ExecuteNonQueryAsync();
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureDocumentDataTableAsync(MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using var command = db.Database.GetDbConnection().CreateCommand();
+        command.CommandText = @"
+          CREATE TABLE IF NOT EXISTS `DocumentDatas` (
+            `Id` char(36) NOT NULL,
+            `Date` datetime(6) NULL,
+            `Document` longtext NULL,
+            `Description` longtext NULL,
+            `CreatedAt` datetime(6) NULL,
+            `CreatedBy` char(36) NULL,
+            `UpdatedAt` datetime(6) NULL,
+            `UpdatedBy` char(36) NULL,
+            `DeletedFlag` tinyint(1) NOT NULL,
+            `EnableFlag` tinyint(1) NOT NULL,
+            `SyncFlag` tinyint(1) NOT NULL,
+            `IdSrc` char(36) NULL,
+            CONSTRAINT `PK_DocumentDatas` PRIMARY KEY (`Id`),
+            INDEX `IX_DocumentDatas_IdSrc` (`IdSrc`)
           ) CHARACTER SET=utf8mb4;";
         await command.ExecuteNonQueryAsync();
       }
