@@ -317,6 +317,25 @@ namespace iSoft.Database
       return rsDto;
     }
 
+    public static List<DocumentDataDTO> ConvertDocumentDataDTO(
+      List<DocumentData>? documents)
+    {
+      return documents?
+        .OrderByDescending(document => document.Date)
+        .ThenBy(document => document.Document)
+        .Select((document, index) => new DocumentDataDTO
+        {
+          DocumentData = document,
+          No = index + 1,
+          Date = document.Date?.AddHours(utc).ToString("dd-MM-yyyy") ?? string.Empty,
+          Document = document.Document,
+          Description = document.Description,
+          UpdatedAt = (document.UpdatedAt ?? document.CreatedAt)?.AddHours(utc)
+            .ToString("dd-MM-yyyy HH:mm:ss") ?? string.Empty,
+        })
+        .ToList() ?? new List<DocumentDataDTO>();
+    }
+
     public static List<ProductDTO>? ConvertProductDTO(List<Product>? products)
     {
       var rsDto = new List<ProductDTO>();

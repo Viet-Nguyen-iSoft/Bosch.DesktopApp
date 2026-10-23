@@ -67,6 +67,7 @@ namespace LTP.Truck.Controls
     public readonly ProductGroupService _productGroupService = new();
     public readonly ProductService _productService = new();
     public readonly DeliveryService _deliveryService = new();
+    public readonly DocumentDataService _documentDataService = new();
     public readonly AppConfigService _appConfigService = new();
     public readonly StationService _stationService = new();
     public readonly ConnectionService _connectionService = new();

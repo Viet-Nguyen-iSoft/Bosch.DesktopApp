@@ -95,7 +95,7 @@ namespace LTP.Truck.Forms
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
         btnUser, btnAuditLog, btnClient, btnTypeGoods, btnWarehouse, btnTareForTruck, btnTare,
-        btnGroupProduct, btnProduct, btnDelivery
+        btnGroupProduct, btnProduct, btnDelivery, btnDocument
       };
 
       foreach (Button button in menuButtons)
@@ -151,7 +151,7 @@ namespace LTP.Truck.Forms
     {
       return button == btnClient || button == btnTypeGoods || button == btnWarehouse
         || button == btnTareForTruck || button == btnTare || button == btnGroupProduct
-        || button == btnProduct || button == btnDelivery;
+        || button == btnProduct || button == btnDelivery || button == btnDocument;
     }
 
     private void SetMasterDataExpanded(bool expanded)
@@ -191,6 +191,7 @@ namespace LTP.Truck.Forms
          || button == btnTareForTruck
        : button == btnGroupProduct || button == btnProduct || button == btnTare
          || button == btnDelivery
+         || button == btnDocument
          || button == btnClient || button == btnWarehouse || button == btnTypeGoods
          || button == btnTareForTruck;
     }
@@ -265,6 +266,7 @@ namespace LTP.Truck.Forms
       this.btnGroupProduct.Click += BtnGroupProduct_Click;
       this.btnProduct.Click += BtnProduct_Click;
       this.btnDelivery.Click += BtnDelivery_Click;
+      this.btnDocument.Click += BtnDocument_Click;
       this.btnTareForTruck.Click += BtnTareForTruck_Click;
 
     }
@@ -414,6 +416,13 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       EnsureMenuExpanded();
       await ChangePage(EnumScreen.MD_Delivery);
+    }
+
+    private async void BtnDocument_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      EnsureMenuExpanded();
+      await ChangePage(EnumScreen.MD_Document);
     }
 
     private async void BtnGroupProduct_Click(object? sender, EventArgs e)
@@ -571,6 +580,10 @@ namespace LTP.Truck.Forms
             OpenChildForm(appModulSupport, FrmMasterData.Instance);
             await FrmMasterData.Instance.LoadData(EnumTypeMasterData.Delivery);
             break;
+          case EnumScreen.MD_Document:
+            OpenChildForm(appModulSupport, FrmMasterData.Instance);
+            await FrmMasterData.Instance.LoadData(EnumTypeMasterData.Document);
+            break;
           case EnumScreen.MD_TareForTruck:
             OpenChildForm(appModulSupport, FrmMasterData.Instance);
             await FrmMasterData.Instance.LoadData(EnumTypeMasterData.TareForTruck);
@@ -616,6 +629,7 @@ namespace LTP.Truck.Forms
         EnumScreen.MD_GroupProduct => "Trang chính > Master Data > Nhóm chất thải",
         EnumScreen.MD_Product => "Trang chính > Master Data > Chất thải",
         EnumScreen.MD_Delivery => "Trang chính > Master Data > Khách hàng giao",
+        EnumScreen.MD_Document => "Trang chính > Master Data > Chứng từ",
         EnumScreen.User => "Trang chính > Tài khoản",
         EnumScreen.AuditLog => "Trang chính > Audit Log",
         _ => "Trang chính"

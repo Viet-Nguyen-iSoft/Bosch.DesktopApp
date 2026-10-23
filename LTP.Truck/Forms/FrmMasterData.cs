@@ -42,6 +42,7 @@ namespace LTP.Truck.Forms
     private ProductGroupService _productGroupService { get; set; }
     private ProductService _productService { get; set; }
     private DeliveryService _deliveryService { get; set; }
+    private DocumentDataService _documentDataService { get; set; }
     public FrmMasterData()
     {
       InitializeComponent();
@@ -83,6 +84,7 @@ namespace LTP.Truck.Forms
       _productGroupService = new ProductGroupService();
       _productService = new ProductService();
       _deliveryService = new DeliveryService();
+      _documentDataService = new DocumentDataService();
     }
     #region Instance
     private static FrmMasterData _Instance = null;
@@ -225,6 +227,12 @@ namespace LTP.Truck.Forms
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var deliveryDtos = DTOHelper.ConvertDeliveryDTO(deliveries);
             SetDgv(enumTypeMaster, FilterBySearchKey(deliveryDtos, searchKey));
+            break;
+          case EnumTypeMasterData.Document:
+            var documents = await AppCore.Ins._documentDataService.GetAllAsync();
+            if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
+            var documentDtos = DTOHelper.ConvertDocumentDataDTO(documents);
+            SetDgv(enumTypeMaster, FilterBySearchKey(documentDtos, searchKey));
             break;
           default:
             break;
@@ -1065,6 +1073,28 @@ namespace LTP.Truck.Forms
         popupDelivery.OnSendSuccess += PopupDelivery_OnSendSuccess;
         popupDelivery.ShowDialog();
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Document)
+      {
+        var popupDocument = new PopupDocument();
+        popupDocument.OnSendSuccess += PopupDocument_OnSendSuccess;
+        popupDocument.ShowDialog();
+      }
+    }
+
+    private async void PopupDocument_OnSendSuccess(DocumentData document)
+    {
+      try
+      {
+        await LoadData(_enumTypeMasterDataCurrent);
+        MasterDataChangeNotifier.Notify<DocumentData>();
+        ShowSaveSuccess(document.UpdatedAt.HasValue
+          ? "Cập nhật thành công."
+          : "Thêm thành công.");
+      }
+      catch (Exception ex)
+      {
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private async void PopupDelivery_OnSendSuccess(Delivery delivery)
@@ -1574,6 +1604,28 @@ namespace LTP.Truck.Forms
           dgv.Columns[nameof(DeliveryDTO.UpdatedAt)].DefaultCellStyle.Alignment =
             DataGridViewContentAlignment.MiddleRight;
       }
+      else if (enumTypeMasterData == EnumTypeMasterData.Document)
+      {
+        var autoSizeColumns = new[]
+        {
+          nameof(DocumentDataDTO.No),
+          nameof(DocumentDataDTO.Date),
+          nameof(DocumentDataDTO.UpdatedAt),
+        };
+        foreach (var columnName in autoSizeColumns)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+        }
+
+        if (dgv.Columns.Contains(nameof(DocumentDataDTO.No)))
+          dgv.Columns[nameof(DocumentDataDTO.No)].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleCenter;
+
+        if (dgv.Columns.Contains(nameof(DocumentDataDTO.UpdatedAt)))
+          dgv.Columns[nameof(DocumentDataDTO.UpdatedAt)].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleRight;
+      }
     }
 
     private void EnsureActionColumns()
@@ -1775,6 +1827,22 @@ namespace LTP.Truck.Forms
           PopupDelivery popupDelivery = new PopupDelivery(data.Delivery);
           popupDelivery.OnSendSuccess += PopupDelivery_OnSendSuccess;
           popupDelivery.ShowDialog();
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Document)
+      {
+        var data = rowData as DocumentDataDTO;
+        if (data?.DocumentData != null)
+        {
+          var popupDocument = new PopupDocument(data.DocumentData);
+          popupDocument.OnSendSuccess += PopupDocument_OnSendSuccess;
+          popupDocument.ShowDialog();
         }
         else
         {
@@ -2042,6 +2110,24 @@ namespace LTP.Truck.Forms
           popupMsg.ShowDialog(this);
         }
       }
+      else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Document)
+      {
+        var data = rowData as DocumentDataDTO;
+        if (data?.DocumentData != null)
+        {
+          using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
+            EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.DocumentData);
+          popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
+          popupMsg.ShowDialog(this);
+          popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
+        }
+        else
+        {
+          using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popupMsg.ShowDialog(this);
+        }
+      }
 
       return Task.CompletedTask;
     }
@@ -2254,6 +2340,18 @@ namespace LTP.Truck.Forms
             await _apiJobsService.AddOrUpdateAsync(apiJob);
             await LoadData(_enumTypeMasterDataCurrent);
             MasterDataChangeNotifier.Notify<Delivery>();
+          }
+        }
+        else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Document)
+        {
+          var document = e.Obj as DocumentData;
+          if (document != null)
+          {
+            document.DeletedFlag = true;
+            document.UpdatedAt = DateTime.UtcNow;
+            await _documentDataService.AddOrUpdateAsync(document);
+            await LoadData(_enumTypeMasterDataCurrent);
+            MasterDataChangeNotifier.Notify<DocumentData>();
           }
         }
       }

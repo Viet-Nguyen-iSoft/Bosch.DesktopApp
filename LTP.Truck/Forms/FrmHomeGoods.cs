@@ -45,6 +45,7 @@ namespace LTP.Truck.Forms
     private int _productRefreshVersion;
     private int _tareRefreshVersion;
     private int _deliveryRefreshVersion;
+    private int _documentRefreshVersion;
     private bool _initialLoadStarted;
     private bool _waitingForWeightReset;
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
@@ -62,7 +63,7 @@ namespace LTP.Truck.Forms
       cbbProduct.IntegralHeight = false;
       cbbProduct.DropDownHeight = 420;
       cbbProduct.DropDown += (_, _) => UpdateProductDropDownWidth();
-      cbbProduct.SelectedIndexChanged += (_, _) => UpdateProductToolTip();
+      cbbProduct.SelectedIndexChanged += cbbProduct_SelectedIndexChanged;
       cbbProduct.MeasureItem += cbbProduct_MeasureItem;
       cbbProduct.DrawItem += cbbProduct_DrawItem;
       btnSearchHistorical.Click += btnSearchHistorical_Click;
@@ -214,6 +215,8 @@ namespace LTP.Truck.Forms
         Instance_OnChangeTare(sender, EventArgs.Empty);
       else if (entityType == typeof(Delivery))
         Instance_OnChangeDelivery(sender, EventArgs.Empty);
+      else if (entityType == typeof(DocumentData))
+        _ = UpdateSelectedProductDocumentAsync();
     }
 
     private async Task LoadLicensePlateSuggestionsAsync()
@@ -666,6 +669,45 @@ namespace LTP.Truck.Forms
         ? string.Empty
         : cbbProduct.GetItemText(cbbProduct.SelectedItem);
       _productToolTip.SetToolTip(cbbProduct, text);
+    }
+
+    private async void cbbProduct_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+      UpdateProductToolTip();
+      await UpdateSelectedProductDocumentAsync();
+    }
+
+    private async Task UpdateSelectedProductDocumentAsync()
+    {
+      var refreshVersion = ++_documentRefreshVersion;
+      if (cbbProduct.SelectedItem is not Product product ||
+          product.EnumWasteType != EnumWasteType.Hazardous)
+      {
+        txtDocument.Texts = string.Empty;
+        return;
+      }
+
+      txtDocument.Texts = string.Empty;
+      try
+      {
+        var today = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
+        var document = await AppCore.Ins._documentDataService.GetByDateAsync(today);
+        if (IsDisposed || Disposing || refreshVersion != _documentRefreshVersion)
+          return;
+
+        if (cbbProduct.SelectedItem is Product selectedProduct &&
+            selectedProduct.Id == product.Id &&
+            selectedProduct.EnumWasteType == EnumWasteType.Hazardous)
+        {
+          txtDocument.Texts = document?.Document ?? string.Empty;
+        }
+      }
+      catch (Exception ex)
+      {
+        if (refreshVersion == _documentRefreshVersion)
+          txtDocument.Texts = string.Empty;
+        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+      }
     }
 
     private EnumWasteType? GetSelectedWasteType() => cbbProductType.SelectedIndex switch
