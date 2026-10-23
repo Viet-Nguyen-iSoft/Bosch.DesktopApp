@@ -78,10 +78,11 @@ namespace LTP.Truck.Forms
       dgv.EnableHeadersVisualStyles = false;
       dgv.ColumnHeadersHeight = 50;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-      dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-      dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+      dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+      dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
       dgv.ScrollBars = ScrollBars.Both;
       dgv.RowTemplate.Height = 60;
+      dgv.RowTemplate.MinimumHeight = 60;
       dgv.MultiSelect = false;
       dgv.CellPainting += dgv_CellPainting;
       AddSelectionColumn(dgv);
@@ -363,6 +364,10 @@ namespace LTP.Truck.Forms
 
     private void ApplyGridColumnFormatting(DataGridView grid)
     {
+      grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+      grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+      grid.RowTemplate.MinimumHeight = 60;
+
       if (grid.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         grid.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
 
@@ -380,25 +385,47 @@ namespace LTP.Truck.Forms
       {
         if (column.Visible && column.Name != PrintColumnName && column.Name != SelectColumnName &&
             column.Name != nameof(RecordWeightDTO.Source))
-          column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+          column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
       }
 
-      var autoSizeColumns = new[]
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.No)))
+        grid.Columns[nameof(RecordWeightDTO.No)].AutoSizeMode =
+          DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.Datetime)))
+        grid.Columns[nameof(RecordWeightDTO.Datetime)].AutoSizeMode =
+          DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.Type)))
+        grid.Columns[nameof(RecordWeightDTO.Type)].AutoSizeMode =
+          DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.CategoryTare)))
+        grid.Columns[nameof(RecordWeightDTO.CategoryTare)].AutoSizeMode =
+          DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.LicensePlate)))
+        grid.Columns[nameof(RecordWeightDTO.LicensePlate)].AutoSizeMode =
+          DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.Product)))
       {
-        nameof(RecordWeightDTO.No),
-        nameof(RecordWeightDTO.Datetime),
-        nameof(RecordWeightDTO.Delivery),
-        nameof(RecordWeightDTO.LicensePlate),
-        nameof(RecordWeightDTO.ProductGroup),
-        nameof(RecordWeightDTO.CategoryTare),
-        nameof(RecordWeightDTO.Net),
-        nameof(RecordWeightDTO.Tare),
-        nameof(RecordWeightDTO.Gross)
-      };
-      foreach (var columnName in autoSizeColumns)
+        var productColumn = grid.Columns[nameof(RecordWeightDTO.Product)];
+        productColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        productColumn.FillWeight = 180;
+        productColumn.MinimumWidth = 240;
+        productColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+        productColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+      }
+
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.Delivery)))
       {
-        if (grid.Columns.Contains(columnName))
-          grid.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+        var deliveryColumn = grid.Columns[nameof(RecordWeightDTO.Delivery)];
+        deliveryColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        deliveryColumn.FillWeight = 140;
+        deliveryColumn.MinimumWidth = 180;
+        deliveryColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+        deliveryColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
       }
 
       var weightColumns = new[]
@@ -502,8 +529,10 @@ namespace LTP.Truck.Forms
           groupPanel.Tag = expanded;
           detailGrid.Visible = expanded;
           header.Text = expanded ? $"  ▼    {header.Tag}" : $"  ▶    {header.Tag}";
+          if (expanded)
+            detailGrid.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders);
           groupPanel.Height = expanded ? 54 + detailGrid.ColumnHeadersHeight +
-            detailGrid.RowTemplate.Height * groupRecords.Count + 2 : 54;
+            detailGrid.Rows.Cast<DataGridViewRow>().Sum(row => row.Height) + 2 : 54;
         }
 
         header.Click += ToggleGroup;
@@ -578,9 +607,8 @@ namespace LTP.Truck.Forms
         SelectionMode = DataGridViewSelectionMode.FullRowSelect,
       };
       grid.RowTemplate.Height = dgv.RowTemplate.Height;
+      grid.RowTemplate.MinimumHeight = dgv.RowTemplate.MinimumHeight;
       grid.DataSource = records;
-      foreach (DataGridViewRow row in grid.Rows)
-        row.Height = dgv.RowTemplate.Height;
       ApplyGridColumnFormatting(grid);
       foreach (DataGridViewColumn column in grid.Columns)
         column.ReadOnly = true;
@@ -708,25 +736,33 @@ namespace LTP.Truck.Forms
         selectedColumn.Width = 60;
       }
 
-      var autoSizeColumns = new[]
-      {
-        nameof(RecordWeightDTO.No),
-        nameof(RecordWeightDTO.Datetime),
-        nameof(RecordWeightDTO.Delivery),
-        nameof(RecordWeightDTO.LicensePlate),
-        nameof(RecordWeightDTO.ProductGroup),
-        nameof(RecordWeightDTO.CategoryTare),
-        nameof(RecordWeightDTO.Net),
-        nameof(RecordWeightDTO.Gross),
-        nameof(RecordWeightDTO.Tare),
-      };
+      var noColumn = FindGridColumn(grid, nameof(RecordWeightDTO.No));
+      if (noColumn != null)
+        noColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
 
-      foreach (var columnName in autoSizeColumns)
-      {
-        var column = FindGridColumn(grid, columnName);
-        if (column != null)
-          column.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-      }
+      var datetimeColumn = FindGridColumn(grid, nameof(RecordWeightDTO.Datetime));
+      if (datetimeColumn != null)
+        datetimeColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      var typeColumn = FindGridColumn(grid, nameof(RecordWeightDTO.Type));
+      if (typeColumn != null)
+        typeColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      var categoryTareColumn = FindGridColumn(grid, nameof(RecordWeightDTO.CategoryTare));
+      if (categoryTareColumn != null)
+        categoryTareColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      var licensePlateColumn = FindGridColumn(grid, nameof(RecordWeightDTO.LicensePlate));
+      if (licensePlateColumn != null)
+        licensePlateColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+
+      var productColumn = FindGridColumn(grid, nameof(RecordWeightDTO.Product));
+      if (productColumn != null)
+        productColumn.FillWeight = 180;
+
+      var deliveryColumn = FindGridColumn(grid, nameof(RecordWeightDTO.Delivery));
+      if (deliveryColumn != null)
+        deliveryColumn.FillWeight = 140;
     }
 
     private static DataGridViewColumn? FindGridColumn(DataGridView grid, string columnName)
@@ -1469,11 +1505,12 @@ namespace LTP.Truck.Forms
         : Color.FromArgb(220, 245, 228);
 
       e.PaintBackground(e.CellBounds, true);
+      const int badgeHeight = 36;
       var badgeBounds = new Rectangle(
         e.CellBounds.X + 8,
-        e.CellBounds.Y + 8,
+        e.CellBounds.Y + Math.Max(0, (e.CellBounds.Height - badgeHeight) / 2),
         Math.Max(1, e.CellBounds.Width - 16),
-        Math.Max(1, e.CellBounds.Height - 16));
+        Math.Min(badgeHeight, e.CellBounds.Height));
 
       using var path = GetRoundRectangle(badgeBounds, 20);
       using var backgroundBrush = new SolidBrush(backColor);
