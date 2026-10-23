@@ -163,7 +163,7 @@ namespace LTP.Truck.Popup
         recordWeights,
         recordTrucks,
         "Template_BBGN KNH Bosch HCP-CN.doc",
-        weightDivisor: 1000d,3);
+        weightDivisor: 1d,1);
     }
 
     private async void btnHcP_SH_Click(object sender, EventArgs e)
@@ -348,7 +348,7 @@ namespace LTP.Truck.Popup
         recordWeights,
         recordTrucks,
         "Template_BBGN KNH Bosch TGA-CN.doc",
-        weightDivisor: 1000d, 3);
+        weightDivisor: 1d, 1);
     }
 
     private async void btnTGA_SH_Click(object sender, EventArgs e)

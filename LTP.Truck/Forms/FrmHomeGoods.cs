@@ -145,8 +145,19 @@ namespace LTP.Truck.Forms
         Width = 50,
         AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
         ReadOnly = true,
-        Frozen = true
+        Frozen = true,
+        SortMode = DataGridViewColumnSortMode.NotSortable
       };
+      var selectAllHeader = new CheckBoxColumnHeaderCell();
+      selectAllHeader.CheckedChanged += isChecked =>
+      {
+        foreach (DataGridViewRow row in dgv.Rows)
+          row.Cells[selectColumn.Index].Value = isChecked;
+
+        dgv.ClearSelection();
+        dgv.CurrentCell = null;
+      };
+      selectColumn.HeaderCell = selectAllHeader;
       dgv.Columns.Insert(0, selectColumn);
       dgv.CellClick += dgv_CellClick;
       dgv.CellDoubleClick += dgv_CellDoubleClick;
@@ -1123,6 +1134,10 @@ namespace LTP.Truck.Forms
       }
 
       dgv.DataSource = records;
+      var selectAllHeader = (CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell;
+      selectAllHeader.Checked = false;
+      foreach (DataGridViewRow row in dgv.Rows)
+        row.Cells[SelectColumnName].Value = false;
 
       if (!dgv.Columns.Contains("btnDelete"))
       {
@@ -1535,6 +1550,84 @@ namespace LTP.Truck.Forms
 
       var checkBoxCell = (DataGridViewCheckBoxCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
       checkBoxCell.Value = !Convert.ToBoolean(checkBoxCell.Value);
+      var selectAllHeader = (CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell;
+      selectAllHeader.Checked = dgv.Rows
+        .Cast<DataGridViewRow>()
+        .All(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value));
+      dgv.ClearSelection();
+      dgv.CurrentCell = null;
+    }
+
+    private sealed class CheckBoxColumnHeaderCell : DataGridViewColumnHeaderCell
+    {
+      private bool _checked;
+
+      public event Action<bool>? CheckedChanged;
+
+      public bool Checked
+      {
+        get => _checked;
+        set
+        {
+          if (_checked == value) return;
+          _checked = value;
+          DataGridView?.InvalidateCell(this);
+        }
+      }
+
+      protected override void Paint(
+        Graphics graphics,
+        Rectangle clipBounds,
+        Rectangle cellBounds,
+        int rowIndex,
+        DataGridViewElementStates dataGridViewElementState,
+        object? value,
+        object? formattedValue,
+        string? errorText,
+        DataGridViewCellStyle cellStyle,
+        DataGridViewAdvancedBorderStyle advancedBorderStyle,
+        DataGridViewPaintParts paintParts)
+      {
+        base.Paint(
+          graphics,
+          clipBounds,
+          cellBounds,
+          rowIndex,
+          dataGridViewElementState,
+          value,
+          formattedValue,
+          errorText,
+          cellStyle,
+          advancedBorderStyle,
+          paintParts & ~DataGridViewPaintParts.ContentForeground);
+
+        var state = Checked
+          ? System.Windows.Forms.VisualStyles.CheckBoxState.CheckedNormal
+          : System.Windows.Forms.VisualStyles.CheckBoxState.UncheckedNormal;
+        var checkBoxSize = CheckBoxRenderer.GetGlyphSize(graphics, state);
+        var checkBoxLocation = new Point(
+          cellBounds.Left + (cellBounds.Width - checkBoxSize.Width) / 2,
+          cellBounds.Top + (cellBounds.Height - checkBoxSize.Height) / 2);
+        CheckBoxRenderer.DrawCheckBox(graphics, checkBoxLocation, state);
+      }
+
+      protected override void OnMouseClick(DataGridViewCellMouseEventArgs e)
+      {
+        if (e.Button == MouseButtons.Left)
+        {
+          Checked = !Checked;
+          CheckedChanged?.Invoke(Checked);
+        }
+
+        base.OnMouseClick(e);
+      }
+
+      public override object Clone()
+      {
+        var clone = (CheckBoxColumnHeaderCell)base.Clone();
+        clone._checked = _checked;
+        return clone;
+      }
     }
 
     private void dgv_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
