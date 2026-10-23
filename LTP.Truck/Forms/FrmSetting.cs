@@ -160,10 +160,6 @@ namespace LTP.Truck.Forms
       ElipseControl elipseControl09 = new ElipseControl();
       elipseControl09.CornerRadius = 20;
       elipseControl09.TargetControl = tableLayoutPanel25;
-
-      //ElipseControl elipseControl10 = new ElipseControl();
-      //elipseControl10.CornerRadius = 20;
-      //elipseControl10.TargetControl = tableLayoutPanel3;
     }
 
     private async void FrmSetting_Load(object? sender, EventArgs e)
@@ -213,6 +209,7 @@ namespace LTP.Truck.Forms
       {
         tableLayoutPanel16.Visible = true;
         tableLayoutPanel25.Visible = false;
+        tableLayoutPanel7.Visible = true;
 
         label18.Visible = false;
         cbbPrintLabel.Visible = false;
@@ -224,6 +221,7 @@ namespace LTP.Truck.Forms
       {
         tableLayoutPanel16.Visible = false;
         tableLayoutPanel25.Visible = true;
+        tableLayoutPanel7.Visible = false;
       }
     }
 

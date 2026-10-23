@@ -729,61 +729,6 @@ namespace LTP.Truck.Forms
       _ => null,
     };
 
-    private async void btnLoadLicensePlate_Click(object sender, EventArgs e)
-    {
-      using var buttonLock = ButtonExecutionScope.Enter(sender);
-      btnLoadLicensePlate.Enabled = false;
-      try
-      {
-        await ShowFirstWeighingRecordsAsync();
-      }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        if (!IsDisposed && !Disposing)
-        {
-          using var popupMsg = new PopupConfirm("Không thể tải danh sách phiếu cân lần 1. Vui lòng thử lại !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
-          popupMsg.ShowDialog();
-        }
-      }
-      finally
-      {
-        if (!IsDisposed && !Disposing)
-          btnLoadLicensePlate.Enabled = true;
-      }
-    }
-
-    private async Task ShowFirstWeighingRecordsAsync()
-    {
-      var filtered = await AppCore.Ins._recordTruckService.GetFirstWeighingRecordsAsync();
-      if (IsDisposed || Disposing)
-        return;
-
-      if (filtered.Count == 0)
-      {
-        using var popupMsg = new PopupConfirm("Không có dữ liệu cân lần 1 !",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
-        popupMsg.ShowDialog();
-        return;
-      }
-
-      using var popup = new PopupLoadMD();
-      var records = DTOHelper.ConvertRecordTruckDTO(filtered.ToList());
-      popup.SetData(records);
-      popup.OnSendData += (data, type) =>
-      {
-        if (data is iSoft.Database.DTO.RecordTruckDTO selectedRecord)
-        {
-          _recordTruckDTO = selectedRecord;
-          txtLicensePlate.Texts = selectedRecord.LicensePlate ?? string.Empty;
-          txtNameDriver.Texts = selectedRecord.NameDriver ?? string.Empty;
-          txtIdCard.Texts = selectedRecord.IdCard ?? string.Empty;
-        }
-      };
-      popup.ShowDialog(this);
-    }
-
     private void btnAddManual_Click(object? sender, EventArgs e)
     {
       if (!AppCore.Ins.CheckPermission("0050"))
@@ -1731,7 +1676,6 @@ namespace LTP.Truck.Forms
       cbbProductType.Enabled = canEdit;
       cbbProduct.Enabled = canEdit;
       cbbTare.Enabled = canEdit;
-      btnLoadLicensePlate.Enabled = canEdit;
       btnSaveData.Enabled = canEdit && !_waitingForWeightReset;
     }
 

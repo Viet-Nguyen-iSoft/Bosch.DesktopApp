@@ -1143,7 +1143,12 @@ namespace LTP.Truck.Forms
           "",
           statusFilterIndex: 2);
 
-        if (records.Count == 0 && truckRecords.Count == 0)
+        var documents = (await AppCore.Ins._documentDataService.GetAllAsync())
+          .Where(document => document.Date.HasValue)
+          .Where(document => document.Date!.Value.AddHours(DTOHelper.utc).Year == fromDateTime.Year)
+          .ToList();
+
+        if (records.Count == 0 && truckRecords.Count == 0 && documents.Count == 0)
         {
           using var popup = new PopupConfirm(
             "Không có dữ liệu phù hợp với điều kiện lọc để xuất tracking.",
@@ -1157,7 +1162,9 @@ namespace LTP.Truck.Forms
           templatePath,
           saveDialog.FileName,
           records,
-          fromDateTime.Year, truckRecords));
+          fromDateTime.Year,
+          truckRecords,
+          documents));
 
         var openExportedFile = false;
         using (var popup = new PopupConfirm(
@@ -1235,13 +1242,15 @@ namespace LTP.Truck.Forms
       string outputPath,
       IReadOnlyList<RecordWeight> records,
       int reportYear,
-      IReadOnlyList<RecordTruck> truckRecords)
+      IReadOnlyList<RecordTruck> truckRecords,
+      IReadOnlyList<DocumentData> documents)
     {
       if (records.Any(record => record.Product == null || !record.CreatedAt.HasValue))
         throw new InvalidOperationException("Có dữ liệu cân thiếu sản phẩm hoặc ngày cân.");
 
       using var workbook = new XLWorkbook(templatePath);
-      FillTrackingSheet(workbook.Worksheet("HW_HcP"), records, reportYear, truckRecords);
+      FillTrackingSheet(workbook.Worksheet("HW_HcP"), records, reportYear, truckRecords,
+        documents: documents, documentColumn: 1);
       FillTrackingSheet(workbook.Worksheet("Non HW_HcP"), records, reportYear, truckRecords,
         dateColumn: 1, firstDailyRow: 12);
       FillTrackingSheet(workbook.Worksheet("Domestic_HcP&TGA"), records, reportYear, truckRecords,
@@ -1260,7 +1269,9 @@ namespace LTP.Truck.Forms
       int year,
       IReadOnlyList<RecordTruck>? truckRecords = null,
       int dateColumn = 2,
-      int firstDailyRow = 13)
+      int firstDailyRow = 13,
+      IReadOnlyList<DocumentData>? documents = null,
+      int? documentColumn = null)
     {
       var groupedVehicles = string.Equals(sheet.Name, "Domestic_HcP&TGA", StringComparison.OrdinalIgnoreCase);
       var groupedVehicleMappings = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -1339,6 +1350,14 @@ namespace LTP.Truck.Forms
         .Select(group => group.First().LicensePlate!.Trim())
         .OrderBy(plate => plate, StringComparer.OrdinalIgnoreCase)
         .ToList());
+      var dailyDocuments = (documents ?? Array.Empty<DocumentData>())
+        .Where(document => document.Date.HasValue && !string.IsNullOrWhiteSpace(document.Document))
+        .GroupBy(document => document.Date!.Value.AddHours(DTOHelper.utc).Date)
+        .ToDictionary(
+          group => group.Key,
+          group => string.Join(", ", group
+            .Select(document => document.Document!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)));
       // The supplied template has a daily block followed by a total row for each month.
       var monthlyTotalRows = sheet.Column(1).CellsUsed()
         .Where(cell => cell.Address.RowNumber >= firstDailyRow &&
@@ -1360,6 +1379,9 @@ namespace LTP.Truck.Forms
         // Remove sample plates only from this sheet's vehicle columns.
         foreach (var column in vehicleColumns)
           sheet.Range(firstDayRow, column, totalRow - 1, column).Clear(XLClearOptions.Contents);
+        if (documentColumn.HasValue)
+          sheet.Range(firstDayRow, documentColumn.Value, totalRow - 1, documentColumn.Value)
+            .Clear(XLClearOptions.Contents);
         for (var day = 1; day <= days; day++)
         {
           var row = firstDayRow + day - 1;
@@ -1367,6 +1389,8 @@ namespace LTP.Truck.Forms
           // Write calendar dates without replacing borders, merges, grouping or row sizes.
           sheet.Cell(row, dateColumn).Value = date;
           sheet.Cell(row, dateColumn).Style.DateFormat.Format = "dd/MM/yyyy";
+          if (documentColumn.HasValue && dailyDocuments.TryGetValue(date, out var document))
+            sheet.Cell(row, documentColumn.Value).Value = document;
           if (!dailyWeights.TryGetValue(date, out var weights)) continue;
           foreach (var mapping in mappedColumns)
           {
