@@ -84,6 +84,7 @@ namespace LTP.Truck.Forms
       dgv.RowTemplate.Height = 60;
       dgv.RowTemplate.MinimumHeight = 60;
       dgv.MultiSelect = false;
+      DataGridViewPerformance.EnableDoubleBuffering(dgv);
       dgv.CellPainting += dgv_CellPainting;
       AddSelectionColumn(dgv);
     }
@@ -212,7 +213,7 @@ namespace LTP.Truck.Forms
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
         var pageNumber = ucPage1.CurrentPage;
         var pageSize = ucPage1.PageSize;
-        var records = await AppCore.Ins._recordWeightService.GetReportAsync(
+        var recordsTask = AppCore.Ins._recordWeightService.GetReportAsync(
           fromUtc,
           toUtcExclusive,
           string.Empty,
@@ -220,8 +221,11 @@ namespace LTP.Truck.Forms
           _filterProductGroupId,
           _filterWasteType);
 
-        var trucks = await AppCore.Ins._recordTruckService.GetReportAsync(
+        var trucksTask = AppCore.Ins._recordTruckService.GetReportAsync(
           fromUtc, toUtcExclusive, string.Empty, statusFilterIndex: 0);
+        await Task.WhenAll(recordsTask, trucksTask);
+        var records = await recordsTask;
+        var trucks = await trucksTask;
         if (_filterProductGroupId.HasValue)
           trucks = trucks.Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value).ToList();
         if (_filterWasteType.HasValue)
@@ -295,13 +299,24 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      dgv.DataSource = records;
-      ((CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell).Checked = false;
-      foreach (DataGridViewRow row in dgv.Rows)
-        row.Cells[SelectColumnName].Value = false;
-      if (dgv.Columns.Contains(PrintColumnName))
-        dgv.Columns.Remove(PrintColumnName);
-      ApplyGridColumnFormatting(dgv);
+      dgv.SuspendLayout();
+      var autoSizeRowsMode = dgv.AutoSizeRowsMode;
+      try
+      {
+        dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+        dgv.DataSource = records;
+        ((CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell).Checked = false;
+        foreach (DataGridViewRow row in dgv.Rows)
+          row.Cells[SelectColumnName].Value = false;
+        if (dgv.Columns.Contains(PrintColumnName))
+          dgv.Columns.Remove(PrintColumnName);
+        ApplyGridColumnFormatting(dgv, configureAutoSizeRows: false);
+      }
+      finally
+      {
+        dgv.AutoSizeRowsMode = autoSizeRowsMode;
+        dgv.ResumeLayout();
+      }
     }
 
     private void AddPrintColumn()
@@ -362,10 +377,13 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void ApplyGridColumnFormatting(DataGridView grid)
+    private void ApplyGridColumnFormatting(
+      DataGridView grid,
+      bool configureAutoSizeRows = true)
     {
       grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-      grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+      if (configureAutoSizeRows)
+        grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
       grid.RowTemplate.MinimumHeight = 60;
 
       if (grid.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
@@ -469,7 +487,12 @@ namespace LTP.Truck.Forms
       string emptyGroupName)
     {
       _licensePlateGroups.SuspendLayout();
-      _licensePlateGroups.Controls.Clear();
+      while (_licensePlateGroups.Controls.Count > 0)
+      {
+        var control = _licensePlateGroups.Controls[0];
+        _licensePlateGroups.Controls.RemoveAt(0);
+        control.Dispose();
+      }
 
       foreach (var group in records.GroupBy(
         record => string.IsNullOrWhiteSpace(groupKeySelector(record))
@@ -606,6 +629,7 @@ namespace LTP.Truck.Forms
         ScrollBars = ScrollBars.None,
         SelectionMode = DataGridViewSelectionMode.FullRowSelect,
       };
+      DataGridViewPerformance.EnableDoubleBuffering(grid);
       grid.RowTemplate.Height = dgv.RowTemplate.Height;
       grid.RowTemplate.MinimumHeight = dgv.RowTemplate.MinimumHeight;
       grid.DataSource = records;
@@ -1515,16 +1539,24 @@ namespace LTP.Truck.Forms
       using var path = GetRoundRectangle(badgeBounds, 20);
       using var backgroundBrush = new SolidBrush(backColor);
       using var borderPen = new Pen(borderColor);
-      e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-      e.Graphics.FillPath(backgroundBrush, path);
-      e.Graphics.DrawPath(borderPen, path);
-      TextRenderer.DrawText(
-        e.Graphics,
-        item.Source ?? string.Empty,
-        e.CellStyle.Font,
-        badgeBounds,
-        borderColor,
-        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+      var previousSmoothingMode = e.Graphics.SmoothingMode;
+      try
+      {
+        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+        e.Graphics.FillPath(backgroundBrush, path);
+        e.Graphics.DrawPath(borderPen, path);
+        TextRenderer.DrawText(
+          e.Graphics,
+          item.Source ?? string.Empty,
+          e.CellStyle.Font,
+          badgeBounds,
+          borderColor,
+          TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+      }
+      finally
+      {
+        e.Graphics.SmoothingMode = previousSmoothingMode;
+      }
       e.Handled = true;
     }
 

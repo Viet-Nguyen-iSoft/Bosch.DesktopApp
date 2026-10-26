@@ -137,6 +137,7 @@ namespace LTP.Truck.Forms
       dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
       dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 107, 177);
       dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+      DataGridViewPerformance.EnableDoubleBuffering(dgv);
 
       var selectColumn = new DataGridViewCheckBoxColumn
       {
@@ -1016,58 +1017,65 @@ namespace LTP.Truck.Forms
 
     private async Task LoadHistorical()
     {
-      var fromDateTime = ucTimeSearchFrom.Value;
-      var toDateTime = ucTimeSearchTo.Value;
-      if (fromDateTime > toDateTime)
+      try
       {
-        using var popup = new PopupConfirm("Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
-          EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-        popup.ShowDialog(this);
-        return;
+        var fromDateTime = ucTimeSearchFrom.Value;
+        var toDateTime = ucTimeSearchTo.Value;
+        if (fromDateTime > toDateTime)
+        {
+          using var popup = new PopupConfirm("Thời gian bắt đầu không được lớn hơn thời gian kết thúc.",
+            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+          popup.ShowDialog(this);
+          return;
+        }
+
+        // Records are saved in UTC; the search controls represent local date and time.
+        var fromUtc = fromDateTime.ToUniversalTime();
+        // Include records occurring anywhere within the selected ending minute.
+        var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
+        var searchKey = txtSearchKey.Texts.Trim();
+        var goodsTask = AppCore.Ins._recordWeightService.GetReportAsync(
+          fromUtc, toUtcExclusive, searchKey, _filterDataTypeIndex);
+        var truckTask = AppCore.Ins._recordTruckService.GetReportAsync(
+          fromUtc, toUtcExclusive, searchKey, statusFilterIndex: 0);
+        await Task.WhenAll(goodsTask, truckTask);
+
+        var records = await goodsTask;
+        var truckRecords = await truckTask;
+
+        if (_filterProductGroupId.HasValue)
+        {
+          records = records
+            .Where(record => record.Product?.ProductGroupId == _filterProductGroupId.Value)
+            .ToList();
+          truckRecords = truckRecords
+            .Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value)
+            .ToList();
+        }
+
+        if (_filterWasteType.HasValue)
+        {
+          records = records
+            .Where(record => record.Product?.EnumWasteType == _filterWasteType.Value)
+            .ToList();
+          truckRecords = truckRecords
+            .Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value)
+            .ToList();
+        }
+
+        truckRecords = _filterDataTypeIndex switch
+        {
+          2 => truckRecords.Where(record => record.DeletedFlag).ToList(),
+          0 => truckRecords,
+          _ => truckRecords.Where(record => !record.DeletedFlag).ToList(),
+        };
+
+        SetDgvHistorical(DTOHelper.ConvertCombinedHistoryDTO(records, truckRecords));
       }
-
-      // Records are saved in UTC; the search controls represent local date and time.
-      var fromUtc = fromDateTime.ToUniversalTime();
-      // Include records occurring anywhere within the selected ending minute.
-      var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
-      var searchKey = txtSearchKey.Texts.Trim();
-      var goodsTask = AppCore.Ins._recordWeightService.GetReportAsync(
-        fromUtc, toUtcExclusive, searchKey, _filterDataTypeIndex);
-      var truckTask = AppCore.Ins._recordTruckService.GetReportAsync(
-        fromUtc, toUtcExclusive, searchKey, statusFilterIndex: 0);
-      await Task.WhenAll(goodsTask, truckTask);
-
-      var records = await goodsTask;
-      var truckRecords = await truckTask;
-
-      if (_filterProductGroupId.HasValue)
+      catch (Exception ex)
       {
-        records = records
-          .Where(record => record.Product?.ProductGroupId == _filterProductGroupId.Value)
-          .ToList();
-        truckRecords = truckRecords
-          .Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value)
-          .ToList();
+
       }
-
-      if (_filterWasteType.HasValue)
-      {
-        records = records
-          .Where(record => record.Product?.EnumWasteType == _filterWasteType.Value)
-          .ToList();
-        truckRecords = truckRecords
-          .Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value)
-          .ToList();
-      }
-
-      truckRecords = _filterDataTypeIndex switch
-      {
-        2 => truckRecords.Where(record => record.DeletedFlag).ToList(),
-        0 => truckRecords,
-        _ => truckRecords.Where(record => !record.DeletedFlag).ToList(),
-      };
-
-      SetDgvHistorical(DTOHelper.ConvertCombinedHistoryDTO(records, truckRecords));
     }
 
     private void SetDgvHistorical(List<RecordWeightDTO> records)
@@ -1078,128 +1086,129 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      dgv.DataSource = records;
-      var selectAllHeader = (CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell;
-      selectAllHeader.Checked = false;
-      foreach (DataGridViewRow row in dgv.Rows)
-        row.Cells[SelectColumnName].Value = false;
-
-      if (!dgv.Columns.Contains("btnDelete"))
+      dgv.SuspendLayout();
+      try
       {
-        dgv.Columns.Add(new DataGridViewButtonColumn
-        {
-          Name = "btnDelete",
-          HeaderText = string.Empty,
-          UseColumnTextForButtonValue = false,
-          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-          Width = 120,
-          Resizable = DataGridViewTriState.False,
-          SortMode = DataGridViewColumnSortMode.NotSortable,
-        });
-      }
-      dgv.Columns["btnDelete"].DisplayIndex = dgv.Columns.Count - 1;
+        dgv.DataSource = records;
+        var selectAllHeader = (CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell;
+        selectAllHeader.Checked = false;
+        foreach (DataGridViewRow row in dgv.Rows)
+          row.Cells[SelectColumnName].Value = false;
 
-      foreach (DataGridViewRow row in dgv.Rows)
-      {
-        if (row.DataBoundItem is not RecordWeightDTO item)
-          continue;
-
-        if (IsDeleted(item))
+        if (!dgv.Columns.Contains("btnDelete"))
         {
-          row.DefaultCellStyle.BackColor = Color.Tomato;
-          row.DefaultCellStyle.SelectionBackColor = Color.Tomato;
+          dgv.Columns.Add(new DataGridViewButtonColumn
+          {
+            Name = "btnDelete",
+            HeaderText = string.Empty,
+            UseColumnTextForButtonValue = false,
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+            Width = 120,
+            Resizable = DataGridViewTriState.False,
+            SortMode = DataGridViewColumnSortMode.NotSortable,
+          });
         }
-        else
+        dgv.Columns["btnDelete"].DisplayIndex = dgv.Columns.Count - 1;
+
+        foreach (DataGridViewRow row in dgv.Rows)
         {
-          row.DefaultCellStyle.BackColor = Color.Empty;
-          row.DefaultCellStyle.SelectionBackColor = Color.Empty;
+          if (row.DataBoundItem is not RecordWeightDTO item)
+            continue;
+
+          if (IsDeleted(item))
+          {
+            row.DefaultCellStyle.BackColor = Color.Tomato;
+            row.DefaultCellStyle.SelectionBackColor = Color.Tomato;
+          }
+          else
+          {
+            row.DefaultCellStyle.BackColor = Color.Empty;
+            row.DefaultCellStyle.SelectionBackColor = Color.Empty;
+          }
+        }
+
+        dgv.ClearSelection();
+        dgv.CurrentCell = null;
+
+        if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
+          dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
+        if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordTruck)))
+          dgv.Columns[nameof(RecordWeightDTO.RecordTruck)].Visible = false;
+        if (dgv.Columns.Contains(nameof(RecordWeightDTO.SortAt)))
+          dgv.Columns[nameof(RecordWeightDTO.SortAt)].Visible = false;
+
+        var autoSizeColumns = new[]
+        {
+          nameof(RecordWeightDTO.No),
+          nameof(RecordWeightDTO.Datetime),
+          nameof(RecordWeightDTO.Source),
+          nameof(RecordWeightDTO.LicensePlate),
+          nameof(RecordWeightDTO.ProductGroup),
+          nameof(RecordWeightDTO.CategoryTare),
+          nameof(RecordWeightDTO.Net),
+          nameof(RecordWeightDTO.Tare),
+          nameof(RecordWeightDTO.Gross),
+          nameof(RecordWeightDTO.NameDriver),
+          nameof(RecordWeightDTO.Type),
+        };
+        foreach (var columnName in autoSizeColumns)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+        }
+
+        if (dgv.Columns.Contains(nameof(RecordWeightDTO.Product)))
+        {
+          var productColumn = dgv.Columns[nameof(RecordWeightDTO.Product)];
+          productColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+          productColumn.MinimumWidth = 280;
+          productColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+          productColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        }
+
+        if (dgv.Columns.Contains(nameof(RecordWeightDTO.Delivery)))
+        {
+          var deliveryColumn = dgv.Columns[nameof(RecordWeightDTO.Delivery)];
+          deliveryColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+          deliveryColumn.MinimumWidth = 180;
+          deliveryColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+          deliveryColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        }
+
+        if (dgv.Columns.Contains(nameof(RecordWeightDTO.Source)))
+        {
+          var sourceColumn = dgv.Columns[nameof(RecordWeightDTO.Source)];
+          sourceColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+          sourceColumn.Width = 140;
+          sourceColumn.Resizable = DataGridViewTriState.False;
+        }
+
+        var weightColumns = new[]
+        {
+          nameof(RecordWeightDTO.Net),
+          nameof(RecordWeightDTO.Tare),
+          nameof(RecordWeightDTO.Gross),
+        };
+        foreach (var columnName in weightColumns)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+        }
+
+        var weightColumnsAlignment = new[]
+        {
+          nameof(RecordWeightDTO.No),
+          nameof(RecordWeightDTO.ProductGroup),
+        };
+        foreach (var columnName in weightColumnsAlignment)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
       }
-
-      dgv.ClearSelection();
-      dgv.CurrentCell = null;
-
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
-        dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordTruck)))
-        dgv.Columns[nameof(RecordWeightDTO.RecordTruck)].Visible = false;
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.SortAt)))
-        dgv.Columns[nameof(RecordWeightDTO.SortAt)].Visible = false;
-
-      var autoSizeColumns = new[]
+      finally
       {
-        nameof(RecordWeightDTO.No),
-        nameof(RecordWeightDTO.Datetime),
-        nameof(RecordWeightDTO.Source),
-        nameof(RecordWeightDTO.LicensePlate),
-        nameof(RecordWeightDTO.ProductGroup),
-        nameof(RecordWeightDTO.CategoryTare),
-        nameof(RecordWeightDTO.Net),
-        nameof(RecordWeightDTO.Tare),
-        nameof(RecordWeightDTO.Gross),
-        nameof(RecordWeightDTO.NameDriver),
-        nameof(RecordWeightDTO.Type),
-      };
-      foreach (var columnName in autoSizeColumns)
-      {
-        if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-      }
-
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.Product)))
-      {
-        var productColumn = dgv.Columns[nameof(RecordWeightDTO.Product)];
-        productColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-        productColumn.MinimumWidth = 280;
-        productColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-        productColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      }
-
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.Delivery)))
-      {
-        var deliveryColumn = dgv.Columns[nameof(RecordWeightDTO.Delivery)];
-        deliveryColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-        deliveryColumn.MinimumWidth = 180;
-        deliveryColumn.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-        deliveryColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-      }
-
-      if (dgv.Columns.Contains(nameof(RecordWeightDTO.Source)))
-      {
-        var sourceColumn = dgv.Columns[nameof(RecordWeightDTO.Source)];
-        sourceColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-        sourceColumn.Width = 140;
-        sourceColumn.Resizable = DataGridViewTriState.False;
-      }
-
-      var weightColumns = new[]
-      {
-        nameof(RecordWeightDTO.Net),
-        nameof(RecordWeightDTO.Tare),
-        nameof(RecordWeightDTO.Gross),
-      };
-      foreach (var columnName in weightColumns)
-      {
-        if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-      }
-
-      //if (dgv.Columns.Contains(nameof(RecordWeightDTO.No)))
-      //  dgv.Columns[nameof(RecordWeightDTO.No)].DefaultCellStyle.Alignment =
-      //    DataGridViewContentAlignment.MiddleCenter;
-      //if (dgv.Columns.Contains(nameof(RecordWeightDTO.ProductGroup)))
-      //  dgv.Columns[nameof(RecordWeightDTO.No)].DefaultCellStyle.Alignment =
-      //    DataGridViewContentAlignment.MiddleCenter;
-
-      var weightColumnsAlignment = new[]
-     {
-        nameof(RecordWeightDTO.No),
-        nameof(RecordWeightDTO.ProductGroup),
-      };
-      foreach (var columnName in weightColumnsAlignment)
-      {
-        if (dgv.Columns.Contains(columnName))
-          dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        dgv.ResumeLayout();
       }
     }
 
@@ -1375,16 +1384,24 @@ namespace LTP.Truck.Forms
       using var path = GetRoundRectangle(badgeBounds, 20);
       using var backgroundBrush = new SolidBrush(backColor);
       using var borderPen = new Pen(borderColor);
-      e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-      e.Graphics.FillPath(backgroundBrush, path);
-      e.Graphics.DrawPath(borderPen, path);
-      TextRenderer.DrawText(
-        e.Graphics,
-        item.Source ?? string.Empty,
-        e.CellStyle.Font,
-        badgeBounds,
-        borderColor,
-        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+      var previousSmoothingMode = e.Graphics.SmoothingMode;
+      try
+      {
+        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+        e.Graphics.FillPath(backgroundBrush, path);
+        e.Graphics.DrawPath(borderPen, path);
+        TextRenderer.DrawText(
+          e.Graphics,
+          item.Source ?? string.Empty,
+          e.CellStyle.Font,
+          badgeBounds,
+          borderColor,
+          TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+      }
+      finally
+      {
+        e.Graphics.SmoothingMode = previousSmoothingMode;
+      }
       e.Handled = true;
     }
 
