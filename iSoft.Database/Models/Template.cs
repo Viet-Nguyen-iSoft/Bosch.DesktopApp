@@ -5,6 +5,7 @@ namespace iSoft.Database.Models
     public string? Name { get; set; }
     public string? SerialCode { get; set; }
     public string? TemplateFile { get; set; }
+    public string? PathLocal { get; set; }
     public int Order { get; set; }
     public bool IsBBGN { get; set; }
   }

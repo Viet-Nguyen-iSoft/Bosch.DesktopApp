@@ -32,6 +32,7 @@ namespace LTP.Truck
 
       User,
       AuditLog,
+      Template,
 
       OpChooseModeFunction,
       OpTypePO,

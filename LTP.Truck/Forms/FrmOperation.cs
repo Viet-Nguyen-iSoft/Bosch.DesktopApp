@@ -46,6 +46,7 @@ namespace LTP.Truck.Forms
       this.btnReportGoods.Click += btnReportGoods_Click;
       this.btnUser.Click += BtnUser_Click;
       this.btnAuditLog.Click += BtnAuditLog_Click;
+      this.btnTemplate.Click += BtnTemplate_Click;
       this.ucLogin.Click += UcLogin_Click;
     }
 
@@ -94,7 +95,7 @@ namespace LTP.Truck.Forms
       Button[] menuButtons =
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
-        btnUser, btnAuditLog, btnClient, btnTypeGoods, btnWarehouse, btnTareForTruck, btnTare,
+        btnUser, btnAuditLog, btnTemplate, btnClient, btnTypeGoods, btnWarehouse, btnTareForTruck, btnTare,
         btnGroupProduct, btnProduct, btnDelivery, btnDocument
       };
 
@@ -114,7 +115,7 @@ namespace LTP.Truck.Forms
       return new[]
       {
         btnHomeTruck, btnHomeGoods, btnReportTruck, btnReportGoods, btnSetting, btnMasterData,
-        btnUser, btnAuditLog
+        btnUser, btnAuditLog, btnTemplate
       };
     }
 
@@ -596,6 +597,10 @@ namespace LTP.Truck.Forms
             OpenChildForm(appModulSupport, FrmAuditLog.Instance);
             await FrmAuditLog.Instance.LoadData();
             break;
+          case EnumScreen.Template:
+            OpenChildForm(appModulSupport, FrmTemplate.Instance);
+            await FrmTemplate.Instance.LoadData();
+            break;
         }
 
         ShowPagePath(appModulSupport);
@@ -632,6 +637,7 @@ namespace LTP.Truck.Forms
         EnumScreen.MD_Document => "Trang chính > Master Data > Chứng từ",
         EnumScreen.User => "Trang chính > Tài khoản",
         EnumScreen.AuditLog => "Trang chính > Audit Log",
+        EnumScreen.Template => "Trang chính > Template",
         _ => "Trang chính"
       };
     }
@@ -795,6 +801,12 @@ namespace LTP.Truck.Forms
 
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       await ChangePage(EnumScreen.AuditLog);
+    }
+
+    private async void BtnTemplate_Click(object? sender, EventArgs e)
+    {
+      using var buttonLock = ButtonExecutionScope.Enter(sender);
+      await ChangePage(EnumScreen.Template);
     }
   }
 }

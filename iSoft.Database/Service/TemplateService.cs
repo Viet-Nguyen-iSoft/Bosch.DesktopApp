@@ -14,5 +14,19 @@ namespace iSoft.Database.Service
       return await repository.GetAllAsync(isContainDelete)
         .ConfigureAwait(false);
     }
+
+    public async Task UpdatePathLocalAsync(Guid id, string pathLocal)
+    {
+      ArgumentException.ThrowIfNullOrWhiteSpace(pathLocal);
+
+      await using var context = new MySqlDbContext();
+      var template = await context.Templates!.FindAsync(id)
+        .ConfigureAwait(false)
+        ?? throw new InvalidOperationException(
+          "Không tìm thấy template để cập nhật đường dẫn local.");
+
+      template.PathLocal = pathLocal;
+      await context.SaveChangesAsync().ConfigureAwait(false);
+    }
   }
 }

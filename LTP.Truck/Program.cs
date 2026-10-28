@@ -426,6 +426,7 @@ namespace LTP.Truck
             `Name` longtext NULL,
             `SerialCode` longtext NULL,
             `TemplateFile` longtext NULL,
+            `PathLocal` longtext NULL,
             `Order` int NOT NULL,
             `IsBBGN` tinyint(1) NOT NULL,
             `CreatedAt` datetime(6) NULL,
@@ -440,6 +441,26 @@ namespace LTP.Truck
               (`IsBBGN`, `DeletedFlag`, `Order`)
           ) CHARACTER SET=utf8mb4;";
         await command.ExecuteNonQueryAsync();
+
+        await using var checkColumnCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        checkColumnCommand.CommandText = @"
+          SELECT COUNT(*)
+          FROM INFORMATION_SCHEMA.COLUMNS
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'Templates'
+            AND COLUMN_NAME = 'PathLocal';";
+        var columnCount = Convert.ToInt32(
+          await checkColumnCommand.ExecuteScalarAsync());
+        if (columnCount == 0)
+        {
+          await using var addColumnCommand =
+            db.Database.GetDbConnection().CreateCommand();
+          addColumnCommand.CommandText = @"
+            ALTER TABLE `Templates`
+            ADD COLUMN `PathLocal` longtext NULL AFTER `TemplateFile`;";
+          await addColumnCommand.ExecuteNonQueryAsync();
+        }
       }
       finally
       {
