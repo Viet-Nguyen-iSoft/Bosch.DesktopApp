@@ -1420,12 +1420,12 @@ namespace LTP.Truck.Forms
       {
         var autoSizeColumns = new[]
         {
-          nameof(TypeGoodsDTO.No),
-          nameof(TypeGoodsDTO.Code),
-          nameof(TypeGoodsDTO.Group),
-          nameof(TypeGoodsDTO.WasteType),
-          nameof(TypeGoodsDTO.TagMappingReport),
-          nameof(TypeGoodsDTO.UpdatedAt),
+          nameof(ProductDTO.No),
+          nameof(ProductDTO.Code),
+          nameof(ProductDTO.Group),
+          nameof(ProductDTO.WasteType),
+          nameof(ProductDTO.TagMappingReport),
+          nameof(ProductDTO.UpdatedAt),
         };
         foreach (var columnName in autoSizeColumns)
         {
@@ -1435,8 +1435,8 @@ namespace LTP.Truck.Forms
 
         var alignmentMiddleCenterColumns = new[]
         {
-            nameof(TypeGoodsDTO.No),
-            nameof(TypeGoodsDTO.UpdatedAt),
+            nameof(ProductDTO.No),
+            nameof(ProductDTO.UpdatedAt),
           };
         foreach (var columnName in alignmentMiddleCenterColumns)
         {
@@ -1705,10 +1705,10 @@ namespace LTP.Truck.Forms
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
       {
-        var data = rowData as TypeGoodsDTO;
-        if (data?.TypeGoods != null)
+        var data = rowData as ProductDTO;
+        if (data?.Product != null)
         {
-          PopupTypeGoods popupTypeGoods = new PopupTypeGoods(data.TypeGoods);
+          PopupTypeGoods popupTypeGoods = new PopupTypeGoods(data.Product);
           popupTypeGoods.OnSendSuccess += PopupUpdateTypeGoods_OnSendSuccess;
           popupTypeGoods.ShowDialog();
         }
@@ -1962,11 +1962,11 @@ namespace LTP.Truck.Forms
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
       {
-        var data = rowData as TypeGoodsDTO;
-        if (data?.TypeGoods != null)
+        var data = rowData as ProductDTO;
+        if (data?.Product != null)
         {
           using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
-           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.TypeGoods);
+           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Product);
           popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
           popupMsg.ShowDialog(this);
           popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
