@@ -63,20 +63,6 @@ namespace ApiSyncData
       SyncAsync<ListDatumWarehouse, Warehouse>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
 
-    public static Task<MasterDataChangedEventArgs?> SyncTypeGoodsAsync(TypeGoodsAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumTypeGoods, Product>(response.Data?.ListData, response.Data?.TotalRecord,
-        (s, l) =>
-        {
-          l.Name = s.Name;
-          l.Code = s.SerialCode;
-          l.Description = s.Description;
-          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck;
-        }, token,
-        initializeAdded: product =>
-          product.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
-        filterLocals: query => query.Where(product =>
-          product.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Truck));
-
     public static Task<MasterDataChangedEventArgs?> SyncProductGroupsAsync(ProductGroupAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumProductGroup, ProductGroup>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
@@ -160,6 +146,16 @@ namespace ApiSyncData
     public static Task<MasterDataChangedEventArgs?> SyncProductsAsync(ProductAPI response, CancellationToken token = default)
     {
       var groups = new Dictionary<Guid, Guid>();
+      var allRows = response.Data?.ListData;
+      if (allRows == null || response.Data?.TotalRecord != allRows.Count)
+      {
+        throw new InvalidOperationException(
+          "ProductFood: cần ListData đầy đủ và TotalRecord khớp.");
+      }
+
+      var rows = allRows
+        .Where(product => product.IsDelete != true)
+        .ToList();
 
       static Guid? GetProductGroupId(ListDatumProduct product)
       {
@@ -175,9 +171,15 @@ namespace ApiSyncData
         return parsed;
       }
 
-      return SyncAsync<ListDatumProduct, Product>(response.Data?.ListData, response.Data?.TotalRecord,
+      return SyncAsync<ListDatumProduct, Product>(rows, rows?.Count,
         (s, l) =>
         {
+          if (s.TypeWeight is not (1 or 2))
+          {
+            throw new InvalidOperationException(
+              $"Product {s.Id}: TypeWeight phải bằng 1 hoặc 2.");
+          }
+
           Guid? groupId = GetProductGroupId(s);
           Guid? localGroupId = null;
           if (groupId.HasValue)
@@ -186,7 +188,8 @@ namespace ApiSyncData
           l.Code = s.SerialCode;
           l.Description = s.Description;
           l.ProductGroupId = localGroupId;
-          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good;
+          l.EnumTypeData =
+            (iSoft.Database.EnumData.EnumTypeDataLocation)s.TypeWeight.Value;
           if (s.WasteType.HasValue &&
               Enum.IsDefined(typeof(iSoft.Database.EnumData.EnumWasteType), s.WasteType.Value))
           {
@@ -204,10 +207,8 @@ namespace ApiSyncData
           Guid? groupId = GetProductGroupId(s);
           return !groupId.HasValue || groups.ContainsKey(groupId.Value);
         },
-        initializeAdded: product =>
-          product.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good,
         filterLocals: query => query.Where(product =>
-          product.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Good));
+          product.EnumTypeData != iSoft.Database.EnumData.EnumTypeDataLocation.All));
     }
 
     private static async Task<MasterDataChangedEventArgs?> SyncAsync<TSource, TEntity>(

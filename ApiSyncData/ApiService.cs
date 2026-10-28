@@ -445,47 +445,6 @@ namespace ApiSyncData
         nameField: "LicensePlateCode");
     }
 
-    public async Task<TypeGoodsAPI> TypeGoods(bool isContainDelete = false)
-    {
-      try
-      {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
-
-        var apiUrl =
-          $"{baseAPI.TrimEnd('/')}/v1/TypeGoods/get-list-simplify?IsDeleted={isContainDelete}";
-
-        using var httpClient = new HttpClient();
-
-        // Giống cấu hình Authorization trong Postman:
-        // API Key, Key = X-API-KEY, Add to = Header
-        httpClient.DefaultRequestHeaders.Add(
-            "X-API-KEY",
-            apiKey.Trim());
-
-        using var response = await httpClient.GetAsync(apiUrl);
-
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-          throw new HttpRequestException(
-              $"TypeGoods. " +
-              $"URL: {apiUrl}. " +
-              $"HTTP {(int)response.StatusCode} " +
-              $"({response.ReasonPhrase}). " +
-              $"Response: {responseContent}");
-        }
-
-        return JsonConvert.DeserializeObject<TypeGoodsAPI>(responseContent);
-      }
-      catch (Exception)
-      {
-        throw;
-      }
-    }
-
     public async Task<ProductGroupAPI> ProductGroup(bool isContainDelete = false)
     {
       try

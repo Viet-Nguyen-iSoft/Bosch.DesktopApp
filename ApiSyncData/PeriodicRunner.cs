@@ -12,7 +12,6 @@ namespace ApiSyncData
     // Dữ liệu của lần đồng bộ thành công gần nhất; null trước lần đầu thành công.
     public static Resp.StationAPI? Stations { get; private set; }
     public static Resp.WarehouseAPI? Warehouses { get; private set; }
-    public static Resp.TypeGoodsAPI? TypeGoods { get; private set; }
     public static Resp.ProductGroupAPI? ProductGroups { get; private set; }
     public static Resp.ProductAPI? Products { get; private set; }
     public static Resp.CategoryTareAPI? CategoryTares { get; private set; }
@@ -71,11 +70,10 @@ namespace ApiSyncData
         value => Stations = value, cancellationToken);
       var warehouses = LoadAndSyncAsync(api.Warehouse(), MasterDataSyncService.SyncWarehousesAsync,
         value => Warehouses = value, cancellationToken);
-      var typeGoods = LoadAndSyncAsync(api.TypeGoods(), MasterDataSyncService.SyncTypeGoodsAsync,
-        value => TypeGoods = value, cancellationToken);
       var productGroups = LoadAndSyncAsync(api.ProductGroup(), MasterDataSyncService.SyncProductGroupsAsync,
         value => ProductGroups = value, cancellationToken);
-      var products = SyncProductsAfterGroupsAsync(api.Product(), productGroups, cancellationToken);
+      var products = SyncProductsAfterGroupsAsync(
+        api.Product(isContainDelete: true), productGroups, cancellationToken);
       var categoryTares = LoadAndSyncAsync(
         api.CategoryTare(isContainDelete: true, cancellationToken),
         MasterDataSyncService.SyncCategoryTaresAsync,
@@ -95,7 +93,7 @@ namespace ApiSyncData
         value => Documents = value,
         cancellationToken);
 
-      await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
+      await Task.WhenAll(stations, warehouses, productGroups,
         products, categoryTares, clientDeliveries, users, documents).ConfigureAwait(false);
 
       try

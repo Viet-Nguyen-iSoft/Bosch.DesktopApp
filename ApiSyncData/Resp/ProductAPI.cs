@@ -29,6 +29,7 @@ namespace ApiSyncData.Resp
     public string? Description { get; set; }
     public string? ProductGroupId { get; set; }
     public int? WasteType { get; set; }
+    public int? TypeWeight { get; set; }
     public ItemProductGroup? ItemProductGroup { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
