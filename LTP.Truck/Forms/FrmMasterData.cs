@@ -1135,17 +1135,9 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        var deliveryUpsertRequest = new DeliveryUpsertRequest
-        {
-          Id = delivery.IdSrc ?? delivery.Id,
-          Name = delivery.Name ?? string.Empty,
-          OfficeAddress = delivery.OfficeAddress,
-          PhoneForOfficeAddress = delivery.PhoneForOfficeAddress,
-          AgentAddress = delivery.AgentAddress,
-          PhoneForAgentAddress = delivery.PhoneForAgentAddress,
-          Description = delivery.Description,
-          DeletedFlag = delivery.DeletedFlag,
-        };
+        var deliveryUpsertRequest = CreateClientUpsertRequest(
+          delivery,
+          EnumTypeDataLocation.Good);
 
         var apiJob = new ApiJobs
         {
@@ -1363,7 +1355,9 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        var clientUpsertRequest = CreateClientUpsertRequest(client);
+        var clientUpsertRequest = CreateClientUpsertRequest(
+          client,
+          EnumTypeDataLocation.Truck);
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -1383,19 +1377,20 @@ namespace LTP.Truck.Forms
     }
 
     private static ClientUpsertRequest CreateClientUpsertRequest(
-      ClientDelivery client)
+      ClientDelivery client,
+      EnumTypeDataLocation clientType)
     {
       return new ClientUpsertRequest
       {
         Id = client.IdSrc ?? client.Id,
-        ClientType = (int)EnumTypeDataLocation.Truck,
+        ClientType = (int)clientType,
         Name = client.Name ?? string.Empty,
         OfficeAddress = client.OfficeAddress,
         PhoneForOfficeAddress = client.PhoneForOfficeAddress,
         AgentAddress = client.AgentAddress,
         PhoneForAgentAddress = client.PhoneForAgentAddress,
         Description = client.Description,
-        IsDefaultDelivery = client.IsDefaultDelivery,
+        UpdatedAt = client.UpdatedAt ?? client.CreatedAt ?? DateTime.UtcNow,
         DeletedFlag = client.DeletedFlag,
       };
     }
@@ -1887,7 +1882,9 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        var clientUpsertRequest = CreateClientUpsertRequest(client);
+        var clientUpsertRequest = CreateClientUpsertRequest(
+          client,
+          EnumTypeDataLocation.Truck);
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -2113,7 +2110,9 @@ namespace LTP.Truck.Forms
             await _clientDeliveryService.AddOrUpdateAsync(
               client, EnumTypeDataLocation.Truck);
 
-            var clientUpsertRequest = CreateClientUpsertRequest(client);
+            var clientUpsertRequest = CreateClientUpsertRequest(
+              client,
+              EnumTypeDataLocation.Truck);
 
             ApiJobs apiJobs = new ApiJobs();
             apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -2268,17 +2267,9 @@ namespace LTP.Truck.Forms
             await _clientDeliveryService.AddOrUpdateAsync(
               delivery, EnumTypeDataLocation.Good);
 
-            var deliveryUpsertRequest = new DeliveryUpsertRequest
-            {
-              Id = delivery.IdSrc ?? delivery.Id,
-              Name = delivery.Name ?? string.Empty,
-              OfficeAddress = delivery.OfficeAddress,
-              PhoneForOfficeAddress = delivery.PhoneForOfficeAddress,
-              AgentAddress = delivery.AgentAddress,
-              PhoneForAgentAddress = delivery.PhoneForAgentAddress,
-              Description = delivery.Description,
-              DeletedFlag = true,
-            };
+            var deliveryUpsertRequest = CreateClientUpsertRequest(
+              delivery,
+              EnumTypeDataLocation.Good);
 
             var apiJob = new ApiJobs
             {

@@ -83,10 +83,12 @@ namespace LTP.Truck.Services
               }
               break;
             case EnumTypeAPI.MD_Delivery:
-              var deliveryUpsertRequest = JsonHelper.FromJson<DeliveryUpsertRequest>(apiJob.Json ?? string.Empty);
+              var deliveryUpsertRequest = JsonHelper.FromJson<ClientUpsertRequest>(apiJob.Json ?? string.Empty);
               if (deliveryUpsertRequest != null)
               {
-                await api.UpsertDeliveryAsync(deliveryUpsertRequest);
+                // Tương thích cả job Delivery cũ chưa có ClientType trong JSON.
+                deliveryUpsertRequest.ClientType = 2;
+                await api.UpsertClientAsync(deliveryUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_User:

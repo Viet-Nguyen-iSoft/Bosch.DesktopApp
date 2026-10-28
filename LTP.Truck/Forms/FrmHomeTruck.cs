@@ -446,7 +446,7 @@ namespace LTP.Truck.Forms
               AgentAddress = client.AgentAddress,
               PhoneForAgentAddress = client.PhoneForAgentAddress,
               Description = client.Description,
-              IsDefaultDelivery = client.IsDefaultDelivery,
+              UpdatedAt = client.UpdatedAt ?? client.CreatedAt ?? DateTime.UtcNow,
               DeletedFlag = client.DeletedFlag,
             });
             await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);

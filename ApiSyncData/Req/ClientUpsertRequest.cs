@@ -10,7 +10,7 @@ namespace ApiSyncData.Req
     public string? AgentAddress { get; set; }
     public string? PhoneForAgentAddress { get; set; }
     public string? Description { get; set; }
-    public bool IsDefaultDelivery { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public bool DeletedFlag { get; set; }
   }
 }

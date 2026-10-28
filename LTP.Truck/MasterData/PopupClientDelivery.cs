@@ -80,20 +80,27 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        var items = await _clientDeliveryService.GetAllAsync(
-          _enumTypeData, isContainDelete: true);
-        var duplicateName = items.Any(item =>
-          !item.DeletedFlag &&
-          item.Id != _clientDeliveryUpdate?.Id &&
-          string.Equals(item.Name?.Trim(), name,
-            StringComparison.CurrentCultureIgnoreCase));
-        if (duplicateName)
+        var originalName = _clientDeliveryUpdate?.Name?.Trim();
+        var isNameChanged = _clientDeliveryUpdate == null ||
+          !string.Equals(originalName, name,
+            StringComparison.CurrentCultureIgnoreCase);
+        if (isNameChanged)
         {
-          ShowWarning(_enumTypeData == EnumTypeDataLocation.Truck
-            ? "Tên khách hàng đã tồn tại !"
-            : "Tên công ty đã tồn tại !");
-          txtCompanyName.Focus();
-          return;
+          var items = await _clientDeliveryService.GetAllAsync(
+            _enumTypeData, isContainDelete: true);
+          var duplicateName = items.Any(item =>
+            !item.DeletedFlag &&
+            !IsSameRecord(item, _clientDeliveryUpdate) &&
+            string.Equals(item.Name?.Trim(), name,
+              StringComparison.CurrentCultureIgnoreCase));
+          if (duplicateName)
+          {
+            ShowWarning(_enumTypeData == EnumTypeDataLocation.Truck
+              ? "Tên khách hàng đã tồn tại !"
+              : "Tên công ty đã tồn tại !");
+            txtCompanyName.Focus();
+            return;
+          }
         }
 
         var itemToSave = _clientDeliveryUpdate ?? new ClientDelivery
@@ -123,6 +130,29 @@ namespace LTP.Truck.MasterData
           ? "Thêm thất bại !"
           : "Cập nhật thất bại !");
       }
+    }
+
+    private static bool IsSameRecord(
+      ClientDelivery item,
+      ClientDelivery? current)
+    {
+      if (current == null)
+        return false;
+
+      if (item.Id != Guid.Empty && item.Id == current.Id)
+        return true;
+
+      if (item.IdSrc.HasValue && item.IdSrc != Guid.Empty &&
+          current.IdSrc.HasValue && current.IdSrc != Guid.Empty &&
+          item.IdSrc == current.IdSrc)
+      {
+        return true;
+      }
+
+      return item.IdSrc.HasValue && item.IdSrc != Guid.Empty &&
+          item.IdSrc == current.Id ||
+        current.IdSrc.HasValue && current.IdSrc != Guid.Empty &&
+          current.IdSrc == item.Id;
     }
 
     private void ShowWarning(string message)

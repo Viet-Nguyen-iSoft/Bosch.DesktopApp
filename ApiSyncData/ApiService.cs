@@ -388,6 +388,14 @@ namespace ApiSyncData
       try
       {
         ArgumentNullException.ThrowIfNull(client);
+        if (client.ClientType is not (1 or 2))
+        {
+          throw new ArgumentOutOfRangeException(
+            nameof(client),
+            client.ClientType,
+            "ClientType chỉ nhận giá trị 1 (Khách hàng) hoặc 2 (Khách hàng giao).");
+        }
+
         var additionalFields = new Dictionary<string, string>
         {
           ["ClientType"] = client.ClientType.ToString(),
@@ -397,8 +405,7 @@ namespace ApiSyncData
           ["AgentAddress"] = client.AgentAddress?.Trim() ?? string.Empty,
           ["PhoneForAgentAddress"] =
             client.PhoneForAgentAddress?.Trim() ?? string.Empty,
-          ["IsDefaultDelivery"] =
-            client.IsDefaultDelivery.ToString().ToLowerInvariant(),
+          ["UpdatedAt"] = (client.UpdatedAt ?? DateTime.UtcNow).ToString("O"),
         };
 
         return PostUpsertMultiLangAsync(
@@ -410,64 +417,13 @@ namespace ApiSyncData
           client.DeletedFlag,
           lang,
           cancellationToken,
-          additionalFields);
+          additionalFields,
+          includeEmptyDescription: true);
       }
       catch (Exception)
       {
         throw;
       }
-    }
-
-    public async Task<string> UpsertDeliveryAsync(
-      Req.DeliveryUpsertRequest delivery,
-      string lang = "vi",
-      CancellationToken cancellationToken = default)
-    {
-      ArgumentNullException.ThrowIfNull(delivery);
-      ArgumentException.ThrowIfNullOrWhiteSpace(delivery.Name);
-      ArgumentException.ThrowIfNullOrWhiteSpace(lang);
-
-      if (delivery.Id == Guid.Empty)
-        throw new ArgumentException("Delivery Id không được là Guid.Empty.", nameof(delivery));
-
-      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
-        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
-      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
-        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
-      string apiUrl =
-        $"{baseAPI.TrimEnd('/')}/v1/ClientGoods/upsert-multi-lang?lang={Uri.EscapeDataString(lang.Trim())}";
-
-      using var httpClient = new HttpClient();
-      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
-
-      using var formData = new MultipartFormDataContent
-      {
-        { new StringContent(delivery.Id?.ToString() ?? string.Empty), "Id" },
-        { new StringContent(delivery.Name.Trim()), "Name" },
-        { new StringContent(delivery.OfficeAddress?.Trim() ?? string.Empty), "OfficeAddress" },
-        { new StringContent(delivery.PhoneForOfficeAddress?.Trim() ?? string.Empty), "PhoneForOfficeAddress" },
-        { new StringContent(delivery.AgentAddress?.Trim() ?? string.Empty), "AgentAddress" },
-        { new StringContent(delivery.PhoneForAgentAddress?.Trim() ?? string.Empty), "PhoneForAgentAddress" },
-        { new StringContent(delivery.Description?.Trim() ?? string.Empty), "Description" },
-        { new StringContent(delivery.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag" },
-      };
-
-      using var response = await httpClient.PostAsync(
-        apiUrl,
-        formData,
-        cancellationToken).ConfigureAwait(false);
-      string responseContent = await response.Content
-        .ReadAsStringAsync(cancellationToken)
-        .ConfigureAwait(false);
-
-      if (!response.IsSuccessStatusCode)
-      {
-        throw new HttpRequestException(
-          $"UpsertDelivery. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
-          $"({response.ReasonPhrase}). Response: {responseContent}");
-      }
-
-      return responseContent;
     }
 
     public Task<string> UpsertLicensePlateAsync(
@@ -1088,7 +1044,8 @@ namespace ApiSyncData
       string? lang,
       CancellationToken cancellationToken,
       IReadOnlyDictionary<string, string>? additionalFields = null,
-      string nameField = "Name")
+      string nameField = "Name",
+      bool includeEmptyDescription = false)
     {
       try
       {
@@ -1119,7 +1076,9 @@ namespace ApiSyncData
         if (!string.IsNullOrWhiteSpace(code))
           formData.Add(new StringContent(code.Trim()), "SerialCode");
 
-        if (!string.IsNullOrWhiteSpace(description))
+        if (includeEmptyDescription)
+          formData.Add(new StringContent(description?.Trim() ?? string.Empty), "Description");
+        else if (!string.IsNullOrWhiteSpace(description))
           formData.Add(new StringContent(description.Trim()), "Description");
         else
           formData.Add(new StringContent("Description"), "DeleteFields");
