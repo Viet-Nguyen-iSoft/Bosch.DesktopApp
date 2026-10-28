@@ -1245,25 +1245,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        var categoryTareUpsertRequest = new CategoryTareUpsertRequest
-        {
-          Id = obj.IdSrc ?? obj.Id,
-          SerialCode = obj.Code ?? string.Empty,
-          Name = obj.Name ?? string.Empty,
-          WeightTare = obj.Value.HasValue ? Convert.ToDecimal(obj.Value.Value) : null,
-          Description = obj.Description ?? string.Empty,
-          DeletedFlag = obj.DeletedFlag,
-        };
-
-        var apiJobs = new ApiJobs
-        {
-          Json = JsonHelper.ToJson(categoryTareUpsertRequest),
-          EnumStatusAPI = EnumStatusAPI.Created,
-          EnumTypeAPI = EnumTypeAPI.MD_Tare,
-          CreatedAt = DateTime.UtcNow,
-        };
-
-        await _apiJobsService.AddOrUpdateAsync(apiJobs);
+        await QueueTareUpsertAsync(obj);
         await LoadData(_enumTypeMasterDataCurrent);
         MasterDataChangeNotifier.Notify<Tare>();
         ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
@@ -1278,6 +1260,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
+        await QueueTareUpsertAsync(obj);
         await LoadData(_enumTypeMasterDataCurrent);
         MasterDataChangeNotifier.Notify<Tare>();
         ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
@@ -1286,6 +1269,35 @@ namespace LTP.Truck.Forms
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
+    }
+
+    private async Task QueueTareUpsertAsync(Tare tare)
+    {
+      if (tare.EnumTypeData is not EnumTypeDataLocation.Truck and
+          not EnumTypeDataLocation.Good)
+      {
+        throw new InvalidOperationException("Loại Tare phải là Truck hoặc Good.");
+      }
+
+      var request = new CategoryTareUpsertRequest
+      {
+        Id = tare.IdSrc ?? tare.Id,
+        SerialCode = tare.Code ?? string.Empty,
+        Name = tare.Name ?? string.Empty,
+        WeightTare = tare.Value.HasValue ? Convert.ToDecimal(tare.Value.Value) : null,
+        TypeTare = (int)tare.EnumTypeData,
+        Description = tare.Description ?? string.Empty,
+        DeletedFlag = tare.DeletedFlag,
+      };
+      var apiJob = new ApiJobs
+      {
+        Json = JsonHelper.ToJson(request),
+        EnumStatusAPI = EnumStatusAPI.Created,
+        EnumTypeAPI = EnumTypeAPI.MD_Tare,
+        CreatedAt = DateTime.UtcNow,
+      };
+
+      await _apiJobsService.AddOrUpdateAsync(apiJob);
     }
 
     private async void PopupTypeGoods_OnSendSuccess(TypeGoods obj)
@@ -2251,27 +2263,7 @@ namespace LTP.Truck.Forms
             await _tareService.AddOrUpdateAsync(
               categoryTare, EnumTypeDataLocation.Good);
 
-            var categoryTareUpsertRequest = new CategoryTareUpsertRequest
-            {
-              Id = categoryTare.IdSrc ?? categoryTare.Id,
-              SerialCode = categoryTare.Code ?? string.Empty,
-              Name = categoryTare.Name ?? string.Empty,
-              WeightTare = categoryTare.Value.HasValue
-                ? Convert.ToDecimal(categoryTare.Value.Value)
-                : null,
-              Description = categoryTare.Description ?? string.Empty,
-              DeletedFlag = true,
-            };
-
-            var apiJobs = new ApiJobs
-            {
-              Json = JsonHelper.ToJson(categoryTareUpsertRequest),
-              EnumStatusAPI = EnumStatusAPI.Created,
-              EnumTypeAPI = EnumTypeAPI.MD_Tare,
-              CreatedAt = DateTime.UtcNow,
-            };
-
-            await _apiJobsService.AddOrUpdateAsync(apiJobs);
+            await QueueTareUpsertAsync(categoryTare);
             await LoadData(_enumTypeMasterDataCurrent);
             MasterDataChangeNotifier.Notify<Tare>();
           }
@@ -2285,6 +2277,7 @@ namespace LTP.Truck.Forms
             tareTruck.UpdatedAt = DateTime.UtcNow;
             await _tareService.AddOrUpdateAsync(
               tareTruck, EnumTypeDataLocation.Truck);
+            await QueueTareUpsertAsync(tareTruck);
             await LoadData(_enumTypeMasterDataCurrent);
             MasterDataChangeNotifier.Notify<Tare>();
           }

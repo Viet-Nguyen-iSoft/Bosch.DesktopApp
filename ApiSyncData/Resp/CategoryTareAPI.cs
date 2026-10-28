@@ -19,6 +19,7 @@ namespace ApiSyncData.Resp
     public string? SerialCode { get; set; }
     public string? Description { get; set; }
     public double? WeightTare { get; set; }
+    public int? TypeTare { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool? IsDelete { get; set; }

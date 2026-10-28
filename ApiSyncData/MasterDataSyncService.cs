@@ -10,18 +10,50 @@ namespace ApiSyncData
   {
     private static readonly SemaphoreSlim SyncLock = new(1, 1);
 
-    public static Task<MasterDataChangedEventArgs?> SyncCategoryTaresAsync(CategoryTareAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumCategoryTare, Tare>(response.Data?.ListData, response.Data?.TotalRecord,
+    public static Task<MasterDataChangedEventArgs?> SyncCategoryTaresAsync(
+      CategoryTareAPI response,
+      CancellationToken token = default)
+    {
+      var rows = response.Data?.ListData
+        ?? throw new InvalidOperationException(
+          "CategoryTare: response không có Data.ListData.");
+      if (response.Data.TotalRecord != rows.Count)
+      {
+        throw new InvalidOperationException(
+          "CategoryTare: TotalRecord không khớp với số phần tử ListData.");
+      }
+
+      var ids = new HashSet<Guid>();
+      foreach (var row in rows)
+      {
+        if (!row.Id.HasValue || row.Id == Guid.Empty || !ids.Add(row.Id.Value))
+        {
+          throw new InvalidOperationException(
+            "CategoryTare: Id thiếu, không hợp lệ hoặc trùng lặp.");
+        }
+        if (row.TypeTare != (int)iSoft.Database.EnumData.EnumTypeDataLocation.Truck &&
+            row.TypeTare != (int)iSoft.Database.EnumData.EnumTypeDataLocation.Good)
+        {
+          throw new InvalidOperationException(
+            $"CategoryTare {row.Id}: TypeTare phải bằng 1 hoặc 2.");
+        }
+      }
+
+      // API trả cả bản ghi xóa khi IsDeleted=true. Dùng tập active làm snapshot
+      // để ServerSnapshot áp dụng xóa mềm cho các Id đã bị server xóa.
+      var activeRows = rows.Where(row => row.IsDelete != true).ToList();
+      return SyncAsync<ListDatumCategoryTare, Tare>(activeRows, activeRows.Count,
         (s, l) =>
         {
           l.Name = s.Name;
           l.Code = s.SerialCode;
           l.Description = s.Description;
           l.Value = s.WeightTare;
-          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good;
+          l.EnumTypeData = (iSoft.Database.EnumData.EnumTypeDataLocation)s.TypeTare!.Value;
         }, token,
         filterLocals: query => query.Where(tare =>
-          tare.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Good));
+          tare.EnumTypeData != iSoft.Database.EnumData.EnumTypeDataLocation.All));
+    }
 
     public static Task<MasterDataChangedEventArgs?> SyncStationsAsync(StationAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumStation, Station>(response.Data?.ListData, response.Data?.TotalRecord,

@@ -6,7 +6,9 @@ namespace ApiSyncData.Req
     public string Name { get; set; } = string.Empty;
     public string? SerialCode { get; set; }
     public decimal? WeightTare { get; set; }
+    // Mặc định Good để tương thích các ApiJobs cũ chưa lưu trường TypeTare.
+    public int TypeTare { get; set; } = 2;
     public string? Description { get; set; }
-    public bool DeletedFlag { get; set; }
+    public bool? DeletedFlag { get; set; }
   }
 }

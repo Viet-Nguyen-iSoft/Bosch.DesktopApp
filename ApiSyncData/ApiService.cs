@@ -248,32 +248,68 @@ namespace ApiSyncData
       return responseContent;
     }
 
-    public Task<string> UpsertCategoryTareAsync(
+    public async Task<string> UpsertCategoryTareAsync(
       Req.CategoryTareUpsertRequest categoryTare,
       string lang = "vi",
       CancellationToken cancellationToken = default)
     {
       ArgumentNullException.ThrowIfNull(categoryTare);
+      ArgumentException.ThrowIfNullOrWhiteSpace(categoryTare.Name);
+      ArgumentException.ThrowIfNullOrWhiteSpace(lang);
 
-      Dictionary<string, string>? additionalFields = null;
-      if (categoryTare.WeightTare.HasValue)
+      if (!categoryTare.Id.HasValue || categoryTare.Id == Guid.Empty)
+        throw new ArgumentException("CategoryTare Id là bắt buộc và không được là Guid.Empty.", nameof(categoryTare));
+      if (categoryTare.TypeTare is not 1 and not 2)
+        throw new ArgumentOutOfRangeException(
+          nameof(categoryTare), "TypeTare phải bằng 1 (Truck) hoặc 2 (Good).");
+      if (!categoryTare.WeightTare.HasValue || categoryTare.WeightTare.Value < 0)
+        throw new ArgumentOutOfRangeException(
+          nameof(categoryTare), "WeightTare phải có giá trị lớn hơn hoặc bằng 0.");
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+      string apiUrl = $"{baseAPI.TrimEnd('/')}/v1/CategoryTare/upsert-multi-lang";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+      using var formData = new MultipartFormDataContent
       {
-        additionalFields = new Dictionary<string, string>
+        { new StringContent(categoryTare.SerialCode?.Trim() ?? string.Empty), "SerialCode" },
+        { new StringContent(categoryTare.Name.Trim()), "Name" },
+        { new StringContent(categoryTare.Description?.Trim() ?? string.Empty), "Description" },
         {
-          ["WeightTare"] = categoryTare.WeightTare.Value.ToString(CultureInfo.InvariantCulture)
-        };
+          new StringContent(categoryTare.WeightTare.Value.ToString(CultureInfo.InvariantCulture)),
+          "WeightTare"
+        },
+        { new StringContent(categoryTare.Id.Value.ToString()), "Id" },
+        {
+          new StringContent(categoryTare.TypeTare.ToString(CultureInfo.InvariantCulture)),
+          "TypeTare"
+        },
+        {
+          new StringContent((categoryTare.DeletedFlag ?? false).ToString().ToLowerInvariant()),
+          "DeletedFlag"
+        },
+        { new StringContent(lang.Trim()), "lang" }
+      };
+
+      using var response = await httpClient.PostAsync(apiUrl, formData, cancellationToken)
+        .ConfigureAwait(false);
+      string responseContent = await response.Content.ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"UpsertCategoryTare. URL: {apiUrl}. " +
+          $"HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). " +
+          $"Response: {responseContent}");
       }
 
-      return PostUpsertMultiLangAsync(
-        "CategoryTare",
-        categoryTare.Id,
-        categoryTare.Name,
-        categoryTare.SerialCode,
-        categoryTare.Description,
-        categoryTare.DeletedFlag,
-        lang,
-        cancellationToken,
-        additionalFields);
+      return responseContent;
     }
 
     public Task<string> UpsertTypeGoodsAsync(
@@ -560,7 +596,9 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<CategoryTareAPI> CategoryTare(bool isContainDelete = false)
+    public async Task<CategoryTareAPI> CategoryTare(
+      bool isContainDelete = true,
+      CancellationToken cancellationToken = default)
     {
       try
       {
@@ -578,10 +616,10 @@ namespace ApiSyncData
             "X-API-KEY",
             apiKey.Trim());
 
-        using var response = await httpClient.GetAsync(apiUrl);
+        using var response = await httpClient.GetAsync(apiUrl, cancellationToken);
 
         var responseContent =
-            await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync(cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -593,7 +631,9 @@ namespace ApiSyncData
               $"Response: {responseContent}");
         }
 
-        return JsonConvert.DeserializeObject<CategoryTareAPI>(responseContent);
+        return JsonConvert.DeserializeObject<CategoryTareAPI>(responseContent)
+          ?? throw new InvalidOperationException(
+            "CategoryTare API trả về dữ liệu không hợp lệ.");
       }
       catch (Exception)
       {

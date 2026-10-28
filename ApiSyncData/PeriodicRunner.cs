@@ -76,7 +76,9 @@ namespace ApiSyncData
       var productGroups = LoadAndSyncAsync(api.ProductGroup(), MasterDataSyncService.SyncProductGroupsAsync,
         value => ProductGroups = value, cancellationToken);
       var products = SyncProductsAfterGroupsAsync(api.Product(), productGroups, cancellationToken);
-      var categoryTares = LoadAndSyncAsync(api.CategoryTare(), MasterDataSyncService.SyncCategoryTaresAsync,
+      var categoryTares = LoadAndSyncAsync(
+        api.CategoryTare(isContainDelete: true, cancellationToken),
+        MasterDataSyncService.SyncCategoryTaresAsync,
         value => CategoryTares = value, cancellationToken);
 
       var clients = LoadAndSyncAsync(api.Client(), MasterDataSyncService.SyncClientsAsync,
