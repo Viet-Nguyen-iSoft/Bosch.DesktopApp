@@ -151,7 +151,7 @@ namespace iSoft.Database
       return result;
     }
 
-    public static List<ClientDTO>? ConvertClientDTO(List<Client>? clients)
+    public static List<ClientDTO>? ConvertClientDTO(List<ClientDelivery>? clients)
     {
       var rsDto = new List<ClientDTO>();
       if (clients?.Count()>0)
@@ -292,7 +292,7 @@ namespace iSoft.Database
       return rsDto;
     }
 
-    public static List<DeliveryDTO>? ConvertDeliveryDTO(List<Delivery>? deliveries)
+    public static List<DeliveryDTO>? ConvertDeliveryDTO(List<ClientDelivery>? deliveries)
     {
       var rsDto = new List<DeliveryDTO>();
       if (deliveries?.Count > 0)

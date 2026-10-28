@@ -48,12 +48,12 @@ namespace LTP.Truck.Popup
       if (items == null)
         throw new ArgumentNullException(nameof(items));
 
-      if (typeof(T) == typeof(Client))
+      if (typeof(T) == typeof(ClientDelivery))
       {
         _enumTypeData = EnumTypeData.Client;
         btnAdd.Visible = true;
 
-        var dto = DTOHelper.ConvertClientDTO(items as List<Client>);
+        var dto = DTOHelper.ConvertClientDTO(items as List<ClientDelivery>);
         ConfigureSearch(dto);
         dgv.DataSource = dto;
 

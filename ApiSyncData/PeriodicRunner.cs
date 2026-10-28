@@ -81,10 +81,14 @@ namespace ApiSyncData
         MasterDataSyncService.SyncCategoryTaresAsync,
         value => CategoryTares = value, cancellationToken);
 
-      var clients = LoadAndSyncAsync(api.Client(), MasterDataSyncService.SyncClientsAsync,
+      var clients = LoadAndSyncAsync(
+        api.Client(isContainDelete: false, cancellationToken),
+        MasterDataSyncService.SyncClientsAsync,
         value => Clients = value, cancellationToken);
 
-      var deliveries = LoadAndSyncAsync(api.Delivery(), MasterDataSyncService.SyncDeliveriesAsync,
+      var deliveries = LoadAndSyncAsync(
+        api.Delivery(isContainDelete: false, cancellationToken),
+        MasterDataSyncService.SyncDeliveriesAsync,
         value => Deliveries = value, cancellationToken);
 
       var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,

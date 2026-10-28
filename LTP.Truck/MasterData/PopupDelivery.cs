@@ -4,15 +4,16 @@ using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using static Common.EnumData;
 using static LTP.Truck.EnumData;
+using static iSoft.Database.EnumData;
 
 namespace LTP.Truck.MasterData
 {
   public partial class PopupDelivery : Form
   {
-    public event Action<Delivery>? OnSendSuccess;
+    public event Action<ClientDelivery>? OnSendSuccess;
 
-    private readonly DeliveryService _deliveryService = new();
-    private Delivery? _deliveryUpdate;
+    private readonly ClientDeliveryService _clientDeliveryService = new();
+    private ClientDelivery? _deliveryUpdate;
     private EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
 
     public PopupDelivery()
@@ -22,7 +23,7 @@ namespace LTP.Truck.MasterData
       btnClose.Click += (_, _) => Close();
     }
 
-    public PopupDelivery(Delivery delivery) : this()
+    public PopupDelivery(ClientDelivery delivery) : this()
     {
       _deliveryUpdate = delivery;
       _enumTypePopup = EnumTypePopup.Update;
@@ -48,7 +49,8 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        var deliveries = await _deliveryService.GetAllAsync(IsContainDelete: true);
+        var deliveries = await _clientDeliveryService.GetAllAsync(
+          EnumTypeDataLocation.Good, isContainDelete: true);
         var duplicateName = deliveries.Any(delivery =>
           !delivery.DeletedFlag &&
           delivery.Id != _deliveryUpdate?.Id &&
@@ -61,9 +63,10 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        var deliveryToSave = _deliveryUpdate ?? new Delivery
+        var deliveryToSave = _deliveryUpdate ?? new ClientDelivery
         {
           CreatedAt = DateTime.UtcNow,
+          EnumTypeData = EnumTypeDataLocation.Good,
         };
         deliveryToSave.Name = deliveryName;
         deliveryToSave.OfficeAddress = txtOfficeAddress.Texts.Trim();
@@ -74,7 +77,9 @@ namespace LTP.Truck.MasterData
         if (_enumTypePopup == EnumTypePopup.Update)
           deliveryToSave.UpdatedAt = DateTime.UtcNow;
 
-        var result = await _deliveryService.AddOrUpdateAsync(deliveryToSave);
+        deliveryToSave.EnumTypeData = EnumTypeDataLocation.Good;
+        var result = await _clientDeliveryService.AddOrUpdateAsync(
+          deliveryToSave, EnumTypeDataLocation.Good);
         Close();
         OnSendSuccess?.Invoke(result);
       }

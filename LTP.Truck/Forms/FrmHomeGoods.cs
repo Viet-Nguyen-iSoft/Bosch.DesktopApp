@@ -36,7 +36,7 @@ namespace LTP.Truck.Forms
     private List<Product> _products = new();
     private List<ProductGroup> _productGroups = new();
     private List<Tare> _categoryTares = new();
-    private List<Delivery> _deliveries = new();
+    private List<ClientDelivery> _deliveries = new();
     private bool _isViewingHistoricalDetail;
     private Guid? _filterProductGroupId;
     private EnumWasteType? _filterWasteType;
@@ -225,7 +225,7 @@ namespace LTP.Truck.Forms
         Instance_OnChangeProduct(sender, EventArgs.Empty);
       else if (entityType == typeof(Tare))
         Instance_OnChangeTare(sender, EventArgs.Empty);
-      else if (entityType == typeof(Delivery))
+      else if (entityType == typeof(ClientDelivery))
         Instance_OnChangeDelivery(sender, EventArgs.Empty);
       else if (entityType == typeof(DocumentData))
         _ = UpdateSelectedProductDocumentAsync();
@@ -377,11 +377,12 @@ namespace LTP.Truck.Forms
 
       try
       {
-        var deliveries = await AppCore.Ins._deliveryService.GetAllAsync();
+        var deliveries = await AppCore.Ins._clientDeliveryService.GetAllAsync(
+          iSoft.Database.EnumData.EnumTypeDataLocation.Good);
         if (IsDisposed || Disposing || refreshVersion != _deliveryRefreshVersion)
           return;
 
-        var selectedDeliveryId = (cbbDelivery.SelectedItem as Delivery)?.Id;
+        var selectedDeliveryId = (cbbDelivery.SelectedItem as ClientDelivery)?.Id;
         var selectedDeliveryIndex = deliveries.FindIndex(delivery => delivery.Id == selectedDeliveryId);
 
         SetDelivery(deliveries);
@@ -465,7 +466,8 @@ namespace LTP.Truck.Forms
       var productGroupsTask = AppCore.Ins._productGroupService.GetAllAsync();
       var categoryTaresTask = AppCore.Ins._tareService
         .GetAllAsync(EnumTypeDataLocation.Good);
-      var deliveriesTask = AppCore.Ins._deliveryService.GetAllAsync();
+      var deliveriesTask = AppCore.Ins._clientDeliveryService.GetAllAsync(
+        iSoft.Database.EnumData.EnumTypeDataLocation.Good);
 
       await Task.WhenAll(productsTask, productGroupsTask, categoryTaresTask, deliveriesTask);
 
@@ -524,7 +526,7 @@ namespace LTP.Truck.Forms
       cbbTare.DataSource = categoryTares;
     }
 
-    private void SetDelivery(List<Delivery> deliveries)
+    private void SetDelivery(List<ClientDelivery> deliveries)
     {
       if (InvokeRequired)
       {
@@ -533,8 +535,8 @@ namespace LTP.Truck.Forms
       }
 
       _deliveries = deliveries;
-      cbbDelivery.DisplayMember = nameof(Delivery.Name);
-      cbbDelivery.ValueMember = nameof(Delivery.Id);
+      cbbDelivery.DisplayMember = nameof(ClientDelivery.Name);
+      cbbDelivery.ValueMember = nameof(ClientDelivery.Id);
       cbbDelivery.DataSource = deliveries;
     }
 
@@ -881,7 +883,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      if (cbbDelivery.SelectedItem is not Delivery selectedDelivery)
+      if (cbbDelivery.SelectedItem is not ClientDelivery selectedDelivery)
       {
         using var popupMsg = new PopupConfirm("Vui lòng chọn bên giao hàng !",
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);

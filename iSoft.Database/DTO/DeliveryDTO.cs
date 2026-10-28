@@ -6,7 +6,7 @@ namespace iSoft.Database.DTO
   public class DeliveryDTO
   {
     [Browsable(false)]
-    public Delivery? Delivery { get; set; }
+    public ClientDelivery? Delivery { get; set; }
 
     [DisplayName("Stt")]
     public int? No { get; set; }

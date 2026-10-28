@@ -21,6 +21,7 @@ namespace iSoft.Database.Models
     public EnumTypeDataLocation EnumTypeData { get; set; }
 
     #region Mapping
+    public ICollection<RecordTruck> RecordTrucks { get; set; } = new List<RecordTruck>();
     public ICollection<RecordWeight> RecordWeights { get; set; } = new List<RecordWeight>();
     #endregion
   }

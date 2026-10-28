@@ -14,15 +14,16 @@ using System.Windows.Forms;
 using TestConnectPrinter;
 using static Common.EnumData;
 using static LTP.Truck.EnumData;
+using static iSoft.Database.EnumData;
 
 namespace LTP.Truck.MasterData
 {
   public partial class PopupClient : Form
   {
-    public event Action<Client>? OnSendSuccess;
+    public event Action<ClientDelivery>? OnSendSuccess;
 
-    private ClientService _clientService { get; set; }
-    private Client _clientUpdate { get; set; }
+    private ClientDeliveryService _clientDeliveryService { get; set; }
+    private ClientDelivery _clientUpdate { get; set; }
     private EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     public PopupClient()
     {
@@ -32,7 +33,7 @@ namespace LTP.Truck.MasterData
       this.btnClose.Click += BtnClose_Click;
     }
 
-    public PopupClient(Client client) : this()
+    public PopupClient(ClientDelivery client) : this()
     {
       _clientUpdate = client;
       _enumTypePopup = EnumTypePopup.Update;
@@ -43,10 +44,10 @@ namespace LTP.Truck.MasterData
 
     private void PopupAddClient_Load(object? sender, EventArgs e)
     {
-      _clientService = new ClientService();
+      _clientDeliveryService = new ClientDeliveryService();
     }
 
-    private void LoadDataUpdate(Client client)
+    private void LoadDataUpdate(ClientDelivery client)
     {
       if (this.InvokeRequired)
       {
@@ -84,7 +85,8 @@ namespace LTP.Truck.MasterData
         if (_enumTypePopup == EnumTypePopup.Add)
         {
           string clientName = txtName.Texts.Trim();
-          var clients = await _clientService.GetAllAsync(IsContainDelete: true);
+          var clients = await _clientDeliveryService.GetAllAsync(
+            EnumTypeDataLocation.Truck, isContainDelete: true);
           bool isDuplicateName = clients.Any(client =>
             !client.DeletedFlag &&
             string.Equals(client.Name?.Trim(), clientName,
@@ -99,11 +101,13 @@ namespace LTP.Truck.MasterData
             return;
           }
 
-          Client client = new Client();
+          ClientDelivery client = new ClientDelivery();
           client.Name = clientName;
           client.Description = txtDescription.Texts.Trim();
+          client.EnumTypeData = EnumTypeDataLocation.Truck;
           client.CreatedAt = DateTime.UtcNow;
-          var rs = await _clientService.AddOrUpdateAsync(client);
+          var rs = await _clientDeliveryService.AddOrUpdateAsync(
+            client, EnumTypeDataLocation.Truck);
 
           this.Close();
           OnSendSuccess?.Invoke(rs);
@@ -113,7 +117,9 @@ namespace LTP.Truck.MasterData
           _clientUpdate.Name = txtName.Texts.Trim();
           _clientUpdate.Description = txtDescription.Texts.Trim();
           _clientUpdate.UpdatedAt = DateTime.UtcNow;
-          var rs = await _clientService.AddOrUpdateAsync(_clientUpdate);
+          _clientUpdate.EnumTypeData = EnumTypeDataLocation.Truck;
+          var rs = await _clientDeliveryService.AddOrUpdateAsync(
+            _clientUpdate, EnumTypeDataLocation.Truck);
 
           this.Close();
           OnSendSuccess?.Invoke(rs);

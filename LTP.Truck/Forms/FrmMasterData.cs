@@ -30,12 +30,11 @@ namespace LTP.Truck.Forms
     private bool _isLoadingWasteTypeFilter;
     private int _loadDataVersion;
     private ApiJobsService _apiJobsService { get; set; }
-    private ClientService _clientService { get; set; }
+    private ClientDeliveryService _clientDeliveryService { get; set; }
     private WarehouseService _warehouseService { get; set; }
     private TareService _tareService { get; set; }
     private ProductGroupService _productGroupService { get; set; }
     private ProductService _productService { get; set; }
-    private DeliveryService _deliveryService { get; set; }
     private DocumentDataService _documentDataService { get; set; }
     public FrmMasterData()
     {
@@ -70,12 +69,11 @@ namespace LTP.Truck.Forms
     private void RegisterService()
     {
       _apiJobsService = new ApiJobsService();
-      _clientService = new ClientService();
+      _clientDeliveryService = new ClientDeliveryService();
       _warehouseService = new WarehouseService();
       _tareService = new TareService();
       _productGroupService = new ProductGroupService();
       _productService = new ProductService();
-      _deliveryService = new DeliveryService();
       _documentDataService = new DocumentDataService();
     }
     #region Instance
@@ -141,7 +139,8 @@ namespace LTP.Truck.Forms
         switch (enumTypeMaster)
         {
           case EnumTypeMasterData.Client:
-            var rsClient = await AppCore.Ins._clientService.GetAllAsync();
+            var rsClient = await AppCore.Ins._clientDeliveryService.GetAllAsync(
+              EnumTypeDataLocation.Truck);
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoClient = DTOHelper.ConvertClientDTO(rsClient);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoClient, searchKey));
@@ -223,7 +222,8 @@ namespace LTP.Truck.Forms
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoProduct, searchKey));
             break;
           case EnumTypeMasterData.Delivery:
-            var deliveries = await AppCore.Ins._deliveryService.GetAllAsync();
+            var deliveries = await AppCore.Ins._clientDeliveryService.GetAllAsync(
+              EnumTypeDataLocation.Good);
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var deliveryDtos = DTOHelper.ConvertDeliveryDTO(deliveries);
             SetDgv(enumTypeMaster, FilterBySearchKey(deliveryDtos, searchKey));
@@ -1131,7 +1131,7 @@ namespace LTP.Truck.Forms
       await _apiJobsService.AddOrUpdateAsync(apiJob);
     }
 
-    private async void PopupDelivery_OnSendSuccess(Delivery delivery)
+    private async void PopupDelivery_OnSendSuccess(ClientDelivery delivery)
     {
       try
       {
@@ -1157,7 +1157,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJob);
         await LoadData(_enumTypeMasterDataCurrent);
-        MasterDataChangeNotifier.Notify<Delivery>();
+        MasterDataChangeNotifier.Notify<ClientDelivery>();
         ShowSaveSuccess(delivery.UpdatedAt.HasValue
           ? "Cập nhật thành công."
           : "Thêm thành công.");
@@ -1359,7 +1359,7 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void PopupAddClient_OnSendAddSuccess(Client client)
+    private async void PopupAddClient_OnSendAddSuccess(ClientDelivery client)
     {
       try
       {
@@ -1882,7 +1882,7 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void PopupUpdateClient_OnSendAddSuccess(Client client)
+    private async void PopupUpdateClient_OnSendAddSuccess(ClientDelivery client)
     {
       try
       {
@@ -2109,11 +2109,12 @@ namespace LTP.Truck.Forms
       {
         if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
         {
-          var client = e.Obj as Client;
+          var client = e.Obj as ClientDelivery;
           if (client != null)
           {
             client.DeletedFlag = true;
-            await _clientService.AddOrUpdateAsync(client);
+            await _clientDeliveryService.AddOrUpdateAsync(
+              client, EnumTypeDataLocation.Truck);
 
             ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
             clientUpsertRequest.Id = client.IdSrc != null ? client.IdSrc : client.Id;
@@ -2266,12 +2267,13 @@ namespace LTP.Truck.Forms
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
         {
-          var delivery = e.Obj as Delivery;
+          var delivery = e.Obj as ClientDelivery;
           if (delivery != null)
           {
             delivery.DeletedFlag = true;
             delivery.UpdatedAt = DateTime.UtcNow;
-            await _deliveryService.AddOrUpdateAsync(delivery);
+            await _clientDeliveryService.AddOrUpdateAsync(
+              delivery, EnumTypeDataLocation.Good);
 
             var deliveryUpsertRequest = new DeliveryUpsertRequest
             {
@@ -2295,7 +2297,7 @@ namespace LTP.Truck.Forms
 
             await _apiJobsService.AddOrUpdateAsync(apiJob);
             await LoadData(_enumTypeMasterDataCurrent);
-            MasterDataChangeNotifier.Notify<Delivery>();
+            MasterDataChangeNotifier.Notify<ClientDelivery>();
           }
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Document)

@@ -35,7 +35,7 @@ namespace iSoft.Database.Models
 
     #region Mapping
     public Guid? ClientId { get; set; }
-    public Client? Client { get; set; }
+    public ClientDelivery? Client { get; set; }
 
     public Guid? TypeGoodsId { get; set; }
     public Product? TypeGoods { get; set; }

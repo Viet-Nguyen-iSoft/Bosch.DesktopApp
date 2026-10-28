@@ -71,7 +71,9 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        var items = await AppCore.Ins._clientService.GetAllAsync(IsContainDelete: false);
+        var items = await AppCore.Ins._clientDeliveryService.GetAllAsync(
+          iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
+          isContainDelete: false);
         using var popup = new PopupLoadMD();
         popup.SetData(items);
         popup.OnSendData += (value, type) =>

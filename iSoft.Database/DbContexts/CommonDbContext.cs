@@ -36,12 +36,11 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<Product>? Products { get; set; }
     public virtual DbSet<Tare>? Tares { get; set; }
     public virtual DbSet<Warehouse>? Warehouses { get; set; }
-    public virtual DbSet<Client>? Clients { get; set; }
+    public virtual DbSet<ClientDelivery>? ClientDeliveries { get; set; }
     public virtual DbSet<RecordTruck>? RecordTrucks { get; set; }
     public virtual DbSet<RecordWeight>? RecordWeights { get; set; }
     public virtual DbSet<LicensePlate>? LicensePlates { get; set; }
     public virtual DbSet<ApiJobs>? ApiJobs { get; set; }
-    public virtual DbSet<Delivery>? Deliveries { get; set; }
     public virtual DbSet<User>? Users { get; set; }
     public virtual DbSet<Role>? Roles { get; set; }
     public virtual DbSet<DocumentData>? DocumentDatas { get; set; }
@@ -114,6 +113,28 @@ namespace iSoft.Database.DbContexts
         .HasOne(record => record.CategoryTare)
         .WithMany(tare => tare.RecordWeights)
         .HasForeignKey(record => record.CategoryTareId);
+
+      modelBuilder.Entity<RecordTruck>()
+        .HasOne(record => record.Client)
+        .WithMany(client => client.RecordTrucks)
+        .HasForeignKey(record => record.ClientId);
+
+      modelBuilder.Entity<RecordWeight>()
+        .HasOne(record => record.Delivery)
+        .WithMany(delivery => delivery.RecordWeights)
+        .HasForeignKey(record => record.DeliveryId);
+
+      modelBuilder.Entity<ClientDelivery>()
+        .Property(clientDelivery => clientDelivery.EnumTypeData)
+        .HasConversion<int>();
+
+      modelBuilder.Entity<ClientDelivery>()
+        .HasIndex(clientDelivery => new
+        {
+          clientDelivery.EnumTypeData,
+          clientDelivery.DeletedFlag
+        })
+        .HasDatabaseName("IX_ClientDeliveries_EnumTypeData_DeletedFlag");
 
       modelBuilder.Entity<Tare>()
         .HasIndex(tare => new { tare.EnumTypeData, tare.DeletedFlag })

@@ -82,11 +82,20 @@ namespace ApiSyncData
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
 
     public static Task<MasterDataChangedEventArgs?> SyncClientsAsync(ClientAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumClient, Client>(response.Data?.ListData, response.Data?.TotalRecord,
-        (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
+      SyncAsync<ListDatumClient, ClientDelivery>(response.Data?.ListData, response.Data?.TotalRecord,
+        (s, l) =>
+        {
+          l.Name = s.Name;
+          l.Description = s.Description;
+          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck;
+        }, token,
+        initializeAdded: item =>
+          item.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
+        filterLocals: query => query.Where(item =>
+          item.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Truck));
 
     public static Task<MasterDataChangedEventArgs?> SyncDeliveriesAsync(DeliveryAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumDelivery, Delivery>(response.Data?.ListData, response.Data?.TotalRecord,
+      SyncAsync<ListDatumDelivery, ClientDelivery>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) =>
         {
           l.Name = s.Name;
@@ -95,7 +104,12 @@ namespace ApiSyncData
           l.AgentAddress = s.AgentAddress;
           l.PhoneForAgentAddress = s.PhoneForAgentAddress;
           l.Description = s.Description;
-        }, token);
+          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good;
+        }, token,
+        initializeAdded: item =>
+          item.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good,
+        filterLocals: query => query.Where(item =>
+          item.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Good));
 
     public static Task<MasterDataChangedEventArgs?> SyncUsersAsync(UserAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumUser, User>(response.Data?.ListData, response.Data?.TotalRecord,

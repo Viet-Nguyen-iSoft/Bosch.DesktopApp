@@ -6,7 +6,7 @@ namespace iSoft.Database.DTO
   public class ClientDTO
   {
     [Browsable(false)]
-    public Client? Client { get; set; }
+    public ClientDelivery? Client { get; set; }
 
 
     [DisplayName("Stt")]

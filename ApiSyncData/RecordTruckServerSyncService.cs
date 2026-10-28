@@ -193,7 +193,7 @@ namespace ApiSyncData
       CancellationToken token)
     {
       return new ReferenceIds(
-        await LoadLocalIdsAsync<Client>(db, rows.Select(row => row.ClientId), token)
+        await LoadLocalIdsAsync<ClientDelivery>(db, rows.Select(row => row.ClientId), token)
           .ConfigureAwait(false),
         await LoadLocalIdsAsync<Product>(db, rows.Select(row => row.TypeGoodsId), token)
           .ConfigureAwait(false),

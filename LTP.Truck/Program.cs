@@ -38,7 +38,11 @@ namespace LTP.Truck
         //var c = SecurityHelper.EncodePassword("VietNguyen", "Hsf@2026");
         //var d = SecurityHelper.EncodePassword("VietNguyen", "Hsf@2026");
         ApplicationConfiguration.Initialize();
-        InitDb().GetAwaiter().GetResult();
+        if (!InitDb().GetAwaiter().GetResult())
+        {
+          throw new InvalidOperationException(
+            "Khởi tạo hoặc nâng cấp cơ sở dữ liệu thất bại. Xem file log để biết chi tiết.");
+        }
         AppCore.Ins.Init();
       }
       catch (Exception ex)
@@ -125,6 +129,9 @@ namespace LTP.Truck
           try
           {
             await db.Database.EnsureCreatedAsync();
+            // Các service hiện tại chỉ đọc bảng hợp nhất. Tạo và chuyển dữ liệu
+            // bảng này trước để một migration độc lập khác không thể chặn nó.
+            await EnsureClientDeliveryTableAndMigrateAsync(db);
             await EnsureUserPasswordPolicyColumnsAsync(db);
             await EnsureAppConfigPrintColumnsAsync(db);
             await EnsureRecordWeightReasonDeleteColumnAsync(db);
@@ -255,6 +262,7 @@ namespace LTP.Truck
             HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
             if (db.Database.CurrentTransaction != null)
               await db.Database.RollbackTransactionAsync();
+            return false;
           }
           return true;
         }
@@ -416,7 +424,7 @@ namespace LTP.Truck
         {
           createCommand.CommandText = @"
             CREATE TABLE IF NOT EXISTS `Tares` (
-              `Id` char(36) NOT NULL,
+              `Id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
               `Code` longtext NULL,
               `Name` longtext NULL,
               `Description` longtext NULL,
@@ -469,6 +477,17 @@ namespace LTP.Truck
           await dropCommand.ExecuteNonQueryAsync();
         }
 
+        // Pomelo lưu Guid dạng char(36)/ascii. Nếu bảng được tạo bởi bản cũ
+        // với utf8mb4 thì MySQL từ chối tạo FK vì hai cột không tương thích.
+        await using (var normalizeId = db.Database.GetDbConnection().CreateCommand())
+        {
+          normalizeId.CommandText = @"
+            ALTER TABLE `Tares`
+            MODIFY COLUMN `Id`
+              char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;";
+          await normalizeId.ExecuteNonQueryAsync();
+        }
+
         await using var addForeignKey = db.Database.GetDbConnection().CreateCommand();
         addForeignKey.CommandText = @"
           ALTER TABLE `RecordWeights`
@@ -511,6 +530,193 @@ namespace LTP.Truck
                `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`
         FROM `{escapedTableName}`;";
       await copyCommand.ExecuteNonQueryAsync();
+    }
+
+    private static async Task EnsureClientDeliveryTableAndMigrateAsync(
+      MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using (var createCommand = db.Database.GetDbConnection().CreateCommand())
+        {
+          createCommand.CommandText = @"
+            CREATE TABLE IF NOT EXISTS `ClientDeliveries` (
+              `Id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+              `Name` longtext NULL,
+              `OfficeAddress` longtext NULL,
+              `PhoneForOfficeAddress` longtext NULL,
+              `AgentAddress` longtext NULL,
+              `PhoneForAgentAddress` longtext NULL,
+              `Description` longtext NULL,
+              `EnumTypeData` int NOT NULL,
+              `CreatedAt` datetime(6) NULL,
+              `CreatedBy` char(36) NULL,
+              `UpdatedAt` datetime(6) NULL,
+              `UpdatedBy` char(36) NULL,
+              `DeletedFlag` tinyint(1) NOT NULL,
+              `EnableFlag` tinyint(1) NOT NULL,
+              `SyncFlag` tinyint(1) NOT NULL,
+              `IdSrc` char(36) NULL,
+              CONSTRAINT `PK_ClientDeliveries` PRIMARY KEY (`Id`),
+              INDEX `IX_ClientDeliveries_IdSrc` (`IdSrc`),
+              INDEX `IX_ClientDeliveries_EnumTypeData_DeletedFlag`
+                (`EnumTypeData`, `DeletedFlag`)
+            ) CHARACTER SET=utf8mb4;";
+          await createCommand.ExecuteNonQueryAsync();
+        }
+
+        await CopyLegacyClientDeliveriesAsync(
+          db, "Clients", EnumTypeDataLocation.Truck);
+        await CopyLegacyClientDeliveriesAsync(
+          db, "Deliveries", EnumTypeDataLocation.Good);
+
+        await NormalizeClientDeliveryIdAsync(db);
+
+        await EnsureClientDeliveryForeignKeyAsync(
+          db, "RecordTrucks", "ClientId",
+          "FK_RecordTrucks_ClientDeliveries_ClientId");
+        await EnsureClientDeliveryForeignKeyAsync(
+          db, "RecordWeights", "DeliveryId",
+          "FK_RecordWeights_ClientDeliveries_DeliveryId");
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task NormalizeClientDeliveryIdAsync(MySqlDbContext db)
+    {
+      await using var referencedCommand = db.Database.GetDbConnection().CreateCommand();
+      referencedCommand.CommandText = @"
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND REFERENCED_TABLE_NAME = 'ClientDeliveries'
+          AND REFERENCED_COLUMN_NAME = 'Id';";
+      int referenceCount = Convert.ToInt32(
+        await referencedCommand.ExecuteScalarAsync());
+      if (referenceCount > 0)
+        return;
+
+      await using var normalizeCommand = db.Database.GetDbConnection().CreateCommand();
+      normalizeCommand.CommandText = @"
+        ALTER TABLE `ClientDeliveries`
+        MODIFY COLUMN `Id`
+          char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;";
+      await normalizeCommand.ExecuteNonQueryAsync();
+    }
+
+    private static async Task CopyLegacyClientDeliveriesAsync(
+      MySqlDbContext db,
+      string tableName,
+      EnumTypeDataLocation enumTypeData)
+    {
+      await using var existsCommand = db.Database.GetDbConnection().CreateCommand();
+      existsCommand.CommandText = @"
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @tableName;";
+      var tableParameter = existsCommand.CreateParameter();
+      tableParameter.ParameterName = "@tableName";
+      tableParameter.Value = tableName;
+      existsCommand.Parameters.Add(tableParameter);
+      if (Convert.ToInt32(await existsCommand.ExecuteScalarAsync()) == 0)
+        return;
+
+      string escapedTableName = tableName.Replace("`", "``", StringComparison.Ordinal);
+      string addressColumns = enumTypeData == EnumTypeDataLocation.Good
+        ? "`OfficeAddress`, `PhoneForOfficeAddress`, `AgentAddress`, `PhoneForAgentAddress`"
+        : "NULL, NULL, NULL, NULL";
+
+      await using (var copyCommand = db.Database.GetDbConnection().CreateCommand())
+      {
+        copyCommand.CommandText = $@"
+          INSERT IGNORE INTO `ClientDeliveries`
+            (`Id`, `Name`, `OfficeAddress`, `PhoneForOfficeAddress`,
+             `AgentAddress`, `PhoneForAgentAddress`, `Description`, `EnumTypeData`,
+             `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
+             `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`)
+          SELECT `Id`, `Name`, {addressColumns}, `Description`, {(int)enumTypeData},
+                 `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
+                 `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`
+          FROM `{escapedTableName}`;";
+        await copyCommand.ExecuteNonQueryAsync();
+      }
+
+      await using var validateCommand = db.Database.GetDbConnection().CreateCommand();
+      validateCommand.CommandText = $@"
+        SELECT COUNT(*)
+        FROM `{escapedTableName}` legacy
+        LEFT JOIN `ClientDeliveries` merged
+          ON merged.`Id` = legacy.`Id`
+         AND merged.`EnumTypeData` = {(int)enumTypeData}
+        WHERE merged.`Id` IS NULL;";
+      int missingCount = Convert.ToInt32(await validateCommand.ExecuteScalarAsync());
+      if (missingCount > 0)
+      {
+        throw new InvalidOperationException(
+          $"Không thể chuyển đầy đủ {missingCount} bản ghi từ {tableName} " +
+          "sang ClientDeliveries. Có thể Id bị trùng giữa Clients và Deliveries.");
+      }
+    }
+
+    private static async Task EnsureClientDeliveryForeignKeyAsync(
+      MySqlDbContext db,
+      string tableName,
+      string columnName,
+      string constraintName)
+    {
+      var foreignKeys = new List<(string Name, string ReferencedTable)>();
+      await using (var findCommand = db.Database.GetDbConnection().CreateCommand())
+      {
+        findCommand.CommandText = @"
+          SELECT CONSTRAINT_NAME, REFERENCED_TABLE_NAME
+          FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = @tableName
+            AND COLUMN_NAME = @columnName
+            AND REFERENCED_TABLE_NAME IS NOT NULL;";
+        var tableParameter = findCommand.CreateParameter();
+        tableParameter.ParameterName = "@tableName";
+        tableParameter.Value = tableName;
+        findCommand.Parameters.Add(tableParameter);
+        var columnParameter = findCommand.CreateParameter();
+        columnParameter.ParameterName = "@columnName";
+        columnParameter.Value = columnName;
+        findCommand.Parameters.Add(columnParameter);
+
+        await using var reader = await findCommand.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+          foreignKeys.Add((reader.GetString(0), reader.GetString(1)));
+      }
+
+      if (foreignKeys.Count == 1 && string.Equals(
+            foreignKeys[0].ReferencedTable, "ClientDeliveries",
+            StringComparison.OrdinalIgnoreCase))
+        return;
+
+      foreach (var foreignKey in foreignKeys)
+      {
+        string escapedForeignKey = foreignKey.Name.Replace(
+          "`", "``", StringComparison.Ordinal);
+        string escapedTable = tableName.Replace("`", "``", StringComparison.Ordinal);
+        await using var dropCommand = db.Database.GetDbConnection().CreateCommand();
+        dropCommand.CommandText =
+          $"ALTER TABLE `{escapedTable}` DROP FOREIGN KEY `{escapedForeignKey}`;";
+        await dropCommand.ExecuteNonQueryAsync();
+      }
+
+      string safeTableName = tableName.Replace("`", "``", StringComparison.Ordinal);
+      string safeColumnName = columnName.Replace("`", "``", StringComparison.Ordinal);
+      string safeConstraintName = constraintName.Replace("`", "``", StringComparison.Ordinal);
+      await using var addCommand = db.Database.GetDbConnection().CreateCommand();
+      addCommand.CommandText = $@"
+        ALTER TABLE `{safeTableName}`
+        ADD CONSTRAINT `{safeConstraintName}`
+        FOREIGN KEY (`{safeColumnName}`) REFERENCES `ClientDeliveries` (`Id`);";
+      await addCommand.ExecuteNonQueryAsync();
     }
 
     private static async Task EnsureTypeGoodsWasteColumnsAsync(

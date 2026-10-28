@@ -340,7 +340,9 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        var clients = await AppCore.Ins._clientService.GetAllAsync(IsContainDelete: false);
+        var clients = await AppCore.Ins._clientDeliveryService.GetAllAsync(
+          iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
+          isContainDelete: false);
         using var popupLoadMD = new PopupLoadMD();
         popupLoadMD.SetData(clients);
         popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
@@ -431,7 +433,7 @@ namespace LTP.Truck.Forms
 
         switch (type)
         {
-          case Common.EnumData.EnumTypeData.Client when value is Client client:
+          case Common.EnumData.EnumTypeData.Client when value is ClientDelivery client:
             apiJob.EnumTypeAPI = EnumTypeAPI.MD_Client;
             apiJob.Json = JsonHelper.ToJson(new ClientUpsertRequest
             {
@@ -441,7 +443,8 @@ namespace LTP.Truck.Forms
               DeletedFlag = client.DeletedFlag,
             });
             await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
-            popupLoadMD.SetData(await AppCore.Ins._clientService.GetAllAsync(false));
+            popupLoadMD.SetData(await AppCore.Ins._clientDeliveryService.GetAllAsync(
+              iSoft.Database.EnumData.EnumTypeDataLocation.Truck, false));
             break;
           case Common.EnumData.EnumTypeData.TypeGoods when value is Product typeGoods:
             apiJob.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
