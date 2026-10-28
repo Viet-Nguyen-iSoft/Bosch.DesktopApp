@@ -181,6 +181,7 @@ namespace HelperManager
       MD_Delivery,
       MD_User,
       MD_Document,
+      MD_Template,
     }
 
     public enum EnumStatusAPI

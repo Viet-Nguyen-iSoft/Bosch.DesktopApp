@@ -1,9 +1,11 @@
+using ApiSyncData.Req;
 using Common;
 using HelperManager;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using static Common.EnumData;
+using static HelperManager.EnumData;
 
 namespace LTP.Truck.MasterData
 {
@@ -96,6 +98,24 @@ namespace LTP.Truck.MasterData
         await _templateService.UpdatePathLocalAsync(_template.Id, fullPath);
         _template.PathLocal = fullPath;
 
+        var upsertRequest = new TemplateUpsertRequest
+        {
+          Id = _template.Id,
+          Name = _template.Name,
+          SerialCode = _template.SerialCode,
+          IsBBGN = _template.IsBBGN,
+          TemplateFilePath = fullPath,
+        };
+        await new ApiJobsService().AddOrUpdateAsync(new ApiJobs
+        {
+          Id = Guid.NewGuid(),
+          Json = JsonHelper.ToJson(upsertRequest),
+          Description = $"Đồng bộ file template {_template.Name}",
+          EnumTypeAPI = EnumTypeAPI.MD_Template,
+          EnumStatusAPI = EnumStatusAPI.Created,
+          CreatedAt = DateTime.UtcNow,
+        });
+
         DialogResult = DialogResult.OK;
         Close();
       }
@@ -105,7 +125,7 @@ namespace LTP.Truck.MasterData
           ex,
           Path.Combine(AppContext.BaseDirectory, "Logs"));
         using var errorPopup = new PopupConfirm(
-          "Không thể lưu đường dẫn file template !",
+          "Không thể lưu hoặc tạo yêu cầu đồng bộ file template !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         errorPopup.ShowDialog(this);

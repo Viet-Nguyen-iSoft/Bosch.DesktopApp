@@ -704,6 +704,76 @@ namespace ApiSyncData
           "TemplateFile API trả về dữ liệu không hợp lệ.");
     }
 
+    public async Task<string> UpsertTemplateAsync(
+      TemplateUpsertRequest template,
+      string lang = "vi",
+      CancellationToken cancellationToken = default)
+    {
+      ArgumentNullException.ThrowIfNull(template);
+      if (template.Id == Guid.Empty)
+        throw new ArgumentException(
+          "Template Id không được là Guid.Empty.", nameof(template));
+      if (string.IsNullOrWhiteSpace(template.TemplateFilePath) ||
+          !File.Exists(template.TemplateFilePath))
+      {
+        throw new FileNotFoundException(
+          "Không tìm thấy file template local để upload.",
+          template.TemplateFilePath);
+      }
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException(
+          "Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException(
+          "Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/TemplateFile/upsert-multi-lang" +
+        $"?lang={Uri.EscapeDataString(lang)}";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+      using var formData = new MultipartFormDataContent();
+      formData.Add(new StringContent(template.Id.ToString()), "Id");
+      formData.Add(new StringContent(template.Name ?? string.Empty), "Name");
+      formData.Add(
+        new StringContent(template.SerialCode ?? string.Empty),
+        "SerialCode");
+      formData.Add(
+        new StringContent(template.IsBBGN.ToString().ToLowerInvariant()),
+        "isBBGN");
+
+      await using var fileStream = new FileStream(
+        template.TemplateFilePath,
+        FileMode.Open,
+        FileAccess.Read,
+        FileShare.Read);
+      using var fileContent = new StreamContent(fileStream);
+      fileContent.Headers.ContentType =
+        new MediaTypeHeaderValue("application/octet-stream");
+      formData.Add(
+        fileContent,
+        "TemplateFile",
+        Path.GetFileName(template.TemplateFilePath));
+
+      using var response = await httpClient.PostAsync(
+        apiUrl,
+        formData,
+        cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"UpsertTemplate. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
+      }
+
+      return responseContent;
+    }
+
     public async Task<string> RemoveRole(
       Guid userId,
       IEnumerable<string> phanQuyenCodes,

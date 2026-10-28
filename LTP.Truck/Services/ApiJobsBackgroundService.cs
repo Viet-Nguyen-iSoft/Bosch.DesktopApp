@@ -114,6 +114,18 @@ namespace LTP.Truck.Services
                   .ConfigureAwait(false);
               }
               break;
+            case EnumTypeAPI.MD_Template:
+              var templateUpsertRequest =
+                JsonHelper.FromJson<TemplateUpsertRequest>(
+                  apiJob.Json ?? string.Empty);
+              if (templateUpsertRequest != null)
+              {
+                await api.UpsertTemplateAsync(
+                  templateUpsertRequest,
+                  cancellationToken: cancellationToken)
+                  .ConfigureAwait(false);
+              }
+              break;
           }
 
           apiJob.EnumStatusAPI = EnumStatusAPI.Success;
