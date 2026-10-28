@@ -1,18 +1,17 @@
-using System.Diagnostics;
 using Common;
 using HelperManager;
 using iSoft.Database.DTO;
-using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
+using LTP.Truck.MasterData;
 using static Common.EnumData;
 
 namespace LTP.Truck.Forms
 {
   public partial class FrmTemplate : Form
   {
-    private const string EditButtonColumnName = "btnEdit";
+    private const string DetailButtonColumnName = "btnDetail";
     private readonly TemplateService _templateService = new();
     private int _loadVersion;
 
@@ -72,7 +71,7 @@ namespace LTP.Truck.Forms
           No = index + 1,
           SerialCode = template.SerialCode,
           Name = template.Name,
-          TemplateFile = template.TemplateFile,
+          PathLocal = template.PathLocal,
           Order = template.Order,
           Type = template.IsBBGN ? "BBGN" : "Khác",
           UpdatedAt = FormatDateTime(template.UpdatedAt),
@@ -110,7 +109,7 @@ namespace LTP.Truck.Forms
 
       dgv.DataSource = null;
       dgv.DataSource = templates;
-      EnsureEditColumn();
+      EnsureDetailColumn();
 
       if (dgv.Columns.Contains(nameof(TemplateDTO.Template)))
         dgv.Columns[nameof(TemplateDTO.Template)].Visible = false;
@@ -151,15 +150,15 @@ namespace LTP.Truck.Forms
       dgv.CurrentCell = null;
     }
 
-    private void EnsureEditColumn()
+    private void EnsureDetailColumn()
     {
-      if (!dgv.Columns.Contains(EditButtonColumnName))
+      if (!dgv.Columns.Contains(DetailButtonColumnName))
       {
         dgv.Columns.Add(new DataGridViewButtonColumn
         {
-          Name = EditButtonColumnName,
+          Name = DetailButtonColumnName,
           HeaderText = string.Empty,
-          Text = "Chỉnh sửa",
+          Text = "Chi tiết",
           UseColumnTextForButtonValue = true,
           AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
           Width = 130,
@@ -168,7 +167,7 @@ namespace LTP.Truck.Forms
         });
       }
 
-      dgv.Columns[EditButtonColumnName].DisplayIndex = dgv.Columns.Count - 1;
+      dgv.Columns[DetailButtonColumnName].DisplayIndex = dgv.Columns.Count - 1;
     }
 
     private async void btnSearch_Click(object? sender, EventArgs e)
@@ -182,112 +181,17 @@ namespace LTP.Truck.Forms
       DataGridViewCellEventArgs e)
     {
       if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
-          dgv.Columns[e.ColumnIndex].Name != EditButtonColumnName ||
+          dgv.Columns[e.ColumnIndex].Name != DetailButtonColumnName ||
           dgv.Rows[e.RowIndex].DataBoundItem is not TemplateDTO row ||
           row.Template == null)
       {
         return;
       }
 
-      await OpenTemplateForEditingAsync(row.Template);
-    }
-
-    private async Task OpenTemplateForEditingAsync(Template template)
-    {
-      try
-      {
-        string? filePath = FindLocalTemplateFile(template);
-        if (filePath == null)
-        {
-          using var openFileDialog = new OpenFileDialog
-          {
-            Title = $"Chọn file local cho {template.Name}",
-            Filter =
-              "Template (*.doc;*.docx;*.xlsx)|*.doc;*.docx;*.xlsx|" +
-              "Tất cả file (*.*)|*.*",
-            CheckFileExists = true,
-            Multiselect = false,
-          };
-          if (openFileDialog.ShowDialog(this) != DialogResult.OK)
-            return;
-
-          filePath = openFileDialog.FileName;
-        }
-
-        string fullPath = Path.GetFullPath(filePath);
-        if (!string.Equals(
-          template.PathLocal,
-          fullPath,
-          StringComparison.OrdinalIgnoreCase))
-        {
-          await _templateService.UpdatePathLocalAsync(template.Id, fullPath);
-          template.PathLocal = fullPath;
-        }
-
-        Process.Start(new ProcessStartInfo(fullPath)
-        {
-          UseShellExecute = true,
-        });
-      }
-      catch (Exception ex)
-      {
-        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        using var popup = new PopupConfirm(
-          "Không thể mở file template để chỉnh sửa !",
-          EnumTypeMsg.MessageManualClose,
-          EnumImageMsg.Warning);
-        popup.ShowDialog(this);
-      }
-    }
-
-    private static string? FindLocalTemplateFile(Template template)
-    {
-      if (!string.IsNullOrWhiteSpace(template.PathLocal) &&
-          File.Exists(template.PathLocal))
-      {
-        return template.PathLocal;
-      }
-
-      string templateFolder = Path.Combine(AppContext.BaseDirectory, "Template");
-      if (!Directory.Exists(templateFolder))
-        return null;
-
-      var fileNames = new List<string?>
-      {
-        template.TemplateFile,
-      };
-
-      foreach (string value in new[] { template.Name, template.SerialCode }
-        .Where(value => !string.IsNullOrWhiteSpace(value))
-        .Select(value => value!.Trim()))
-      {
-        fileNames.Add(value);
-        fileNames.Add($"Template_{value}");
-      }
-
-      string[] extensions = { string.Empty, ".doc", ".docx", ".xlsx" };
-      foreach (string? fileName in fileNames)
-      {
-        if (string.IsNullOrWhiteSpace(fileName))
-          continue;
-
-        foreach (string extension in extensions)
-        {
-          string candidateName = Path.HasExtension(fileName)
-            ? fileName
-            : fileName + extension;
-          string candidatePath = Path.Combine(
-            templateFolder,
-            Path.GetFileName(candidateName));
-          if (File.Exists(candidatePath))
-            return candidatePath;
-
-          if (Path.HasExtension(fileName))
-            break;
-        }
-      }
-
-      return null;
+      using var popup = new PopupTemplate(row.Template);
+      popup.ShowDialog(this);
+      if (popup.DialogResult == DialogResult.OK)
+        await LoadData();
     }
 
     private static string? FormatDateTime(DateTime? value)

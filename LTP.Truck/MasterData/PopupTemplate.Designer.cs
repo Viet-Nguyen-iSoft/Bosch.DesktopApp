@@ -37,22 +37,22 @@
       tableLayoutPanel4 = new TableLayoutPanel();
       label3 = new Label();
       label5 = new Label();
-      txtNameFile = new Common.Custom.RJTextBox();
       txtDescription = new Common.Custom.RJTextBox();
       label4 = new Label();
       txtName = new Common.Custom.RJTextBox();
+      tableLayoutPanel6 = new TableLayoutPanel();
+      btnUpfile = new Common.Custom.RJButton();
+      txtNameFile = new Common.Custom.RJTextBox();
       lbTitle = new Label();
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
-      tableLayoutPanel6 = new TableLayoutPanel();
-      btnUpfile = new Common.Custom.RJButton();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel1.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
-      tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
+      tableLayoutPanel2.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -74,7 +74,7 @@
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel3.Size = new Size(800, 450);
+      tableLayoutPanel3.Size = new Size(1179, 368);
       tableLayoutPanel3.TabIndex = 7;
       // 
       // tableLayoutPanel5
@@ -96,7 +96,7 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-      tableLayoutPanel5.Size = new Size(784, 309);
+      tableLayoutPanel5.Size = new Size(1163, 227);
       tableLayoutPanel5.TabIndex = 8;
       // 
       // tableLayoutPanel1
@@ -107,12 +107,12 @@
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel1.Controls.Add(label15, 1, 0);
       tableLayoutPanel1.Controls.Add(label8, 0, 0);
-      tableLayoutPanel1.Location = new Point(0, 103);
+      tableLayoutPanel1.Location = new Point(0, 75);
       tableLayoutPanel1.Margin = new Padding(0);
       tableLayoutPanel1.Name = "tableLayoutPanel1";
       tableLayoutPanel1.RowCount = 1;
       tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel1.Size = new Size(170, 103);
+      tableLayoutPanel1.Size = new Size(170, 75);
       tableLayoutPanel1.TabIndex = 38;
       // 
       // label15
@@ -125,7 +125,7 @@
       label15.Location = new Point(41, 0);
       label15.Margin = new Padding(0);
       label15.Name = "label15";
-      label15.Size = new Size(129, 103);
+      label15.Size = new Size(129, 75);
       label15.TabIndex = 4;
       label15.Text = "*";
       label15.TextAlign = ContentAlignment.MiddleLeft;
@@ -139,7 +139,7 @@
       label8.Location = new Point(0, 0);
       label8.Margin = new Padding(0);
       label8.Name = "label8";
-      label8.Size = new Size(41, 103);
+      label8.Size = new Size(41, 75);
       label8.TabIndex = 3;
       label8.Text = "File";
       label8.TextAlign = ContentAlignment.MiddleLeft;
@@ -157,7 +157,7 @@
       tableLayoutPanel4.Name = "tableLayoutPanel4";
       tableLayoutPanel4.RowCount = 1;
       tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel4.Size = new Size(170, 103);
+      tableLayoutPanel4.Size = new Size(170, 75);
       tableLayoutPanel4.TabIndex = 39;
       // 
       // label3
@@ -170,7 +170,7 @@
       label3.Location = new Point(152, 0);
       label3.Margin = new Padding(0);
       label3.Name = "label3";
-      label3.Size = new Size(18, 103);
+      label3.Size = new Size(18, 75);
       label3.TabIndex = 4;
       label3.Text = "*";
       label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -184,33 +184,10 @@
       label5.Location = new Point(0, 0);
       label5.Margin = new Padding(0);
       label5.Name = "label5";
-      label5.Size = new Size(152, 103);
+      label5.Size = new Size(152, 75);
       label5.TabIndex = 3;
       label5.Text = "Tên file template";
       label5.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // txtNameFile
-      // 
-      txtNameFile.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      txtNameFile.BackColor = SystemColors.Window;
-      txtNameFile.BorderColor = Color.Black;
-      txtNameFile.BorderFocusColor = Color.HotPink;
-      txtNameFile.BorderRadius = 5;
-      txtNameFile.BorderSize = 2;
-      txtNameFile.Font = new Font("Roboto", 14F);
-      txtNameFile.ForeColor = Color.FromArgb(64, 64, 64);
-      txtNameFile.Location = new Point(4, 29);
-      txtNameFile.Margin = new Padding(4);
-      txtNameFile.Multiline = false;
-      txtNameFile.Name = "txtNameFile";
-      txtNameFile.Padding = new Padding(10, 7, 10, 7);
-      txtNameFile.PasswordChar = false;
-      txtNameFile.PlaceholderColor = Color.DarkGray;
-      txtNameFile.PlaceholderText = "";
-      txtNameFile.Size = new Size(496, 38);
-      txtNameFile.TabIndex = 8;
-      txtNameFile.Texts = "";
-      txtNameFile.UnderlinedStyle = false;
       // 
       // txtDescription
       // 
@@ -222,7 +199,7 @@
       txtDescription.BorderSize = 2;
       txtDescription.Font = new Font("Roboto", 14F);
       txtDescription.ForeColor = Color.FromArgb(64, 64, 64);
-      txtDescription.Location = new Point(174, 238);
+      txtDescription.Location = new Point(174, 169);
       txtDescription.Margin = new Padding(4);
       txtDescription.Multiline = false;
       txtDescription.Name = "txtDescription";
@@ -230,7 +207,7 @@
       txtDescription.PasswordChar = false;
       txtDescription.PlaceholderColor = Color.DarkGray;
       txtDescription.PlaceholderText = "";
-      txtDescription.Size = new Size(606, 38);
+      txtDescription.Size = new Size(985, 38);
       txtDescription.TabIndex = 4;
       txtDescription.Texts = "";
       txtDescription.UnderlinedStyle = false;
@@ -241,10 +218,10 @@
       label4.AutoSize = true;
       label4.BackColor = Color.Transparent;
       label4.Font = new Font("Roboto", 14F);
-      label4.Location = new Point(0, 206);
+      label4.Location = new Point(0, 150);
       label4.Margin = new Padding(0);
       label4.Name = "label4";
-      label4.Size = new Size(170, 103);
+      label4.Size = new Size(170, 77);
       label4.TabIndex = 2;
       label4.Text = "Mô tả";
       label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -259,7 +236,7 @@
       txtName.BorderSize = 2;
       txtName.Font = new Font("Roboto", 14F);
       txtName.ForeColor = Color.FromArgb(64, 64, 64);
-      txtName.Location = new Point(174, 32);
+      txtName.Location = new Point(174, 18);
       txtName.Margin = new Padding(4);
       txtName.Multiline = false;
       txtName.Name = "txtName";
@@ -267,10 +244,69 @@
       txtName.PasswordChar = false;
       txtName.PlaceholderColor = Color.DarkGray;
       txtName.PlaceholderText = "";
-      txtName.Size = new Size(606, 38);
+      txtName.Size = new Size(985, 38);
       txtName.TabIndex = 3;
       txtName.Texts = "";
       txtName.UnderlinedStyle = false;
+      // 
+      // tableLayoutPanel6
+      // 
+      tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel6.ColumnCount = 2;
+      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel6.Controls.Add(btnUpfile, 1, 0);
+      tableLayoutPanel6.Controls.Add(txtNameFile, 0, 0);
+      tableLayoutPanel6.Location = new Point(173, 78);
+      tableLayoutPanel6.Name = "tableLayoutPanel6";
+      tableLayoutPanel6.RowCount = 1;
+      tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel6.Size = new Size(987, 69);
+      tableLayoutPanel6.TabIndex = 40;
+      // 
+      // btnUpfile
+      // 
+      btnUpfile.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      btnUpfile.BackColor = Color.FromArgb(51, 108, 181);
+      btnUpfile.BackgroundColor = Color.FromArgb(51, 108, 181);
+      btnUpfile.BorderColor = Color.PaleVioletRed;
+      btnUpfile.BorderRadius = 4;
+      btnUpfile.BorderSize = 0;
+      btnUpfile.FlatAppearance.BorderSize = 0;
+      btnUpfile.FlatStyle = FlatStyle.Flat;
+      btnUpfile.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnUpfile.ForeColor = Color.White;
+      btnUpfile.ImageAlign = ContentAlignment.MiddleLeft;
+      btnUpfile.Location = new Point(886, 7);
+      btnUpfile.Name = "btnUpfile";
+      btnUpfile.Size = new Size(98, 54);
+      btnUpfile.TabIndex = 9;
+      btnUpfile.Text = "Tải file";
+      btnUpfile.TextColor = Color.White;
+      btnUpfile.UseVisualStyleBackColor = false;
+      // 
+      // txtNameFile
+      // 
+      txtNameFile.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+      txtNameFile.BackColor = SystemColors.Window;
+      txtNameFile.BorderColor = Color.Black;
+      txtNameFile.BorderFocusColor = Color.HotPink;
+      txtNameFile.BorderRadius = 5;
+      txtNameFile.BorderSize = 2;
+      txtNameFile.Font = new Font("Roboto", 14F);
+      txtNameFile.ForeColor = Color.FromArgb(64, 64, 64);
+      txtNameFile.Location = new Point(4, 15);
+      txtNameFile.Margin = new Padding(4);
+      txtNameFile.Multiline = false;
+      txtNameFile.Name = "txtNameFile";
+      txtNameFile.Padding = new Padding(10, 7, 10, 7);
+      txtNameFile.PasswordChar = false;
+      txtNameFile.PlaceholderColor = Color.DarkGray;
+      txtNameFile.PlaceholderText = "";
+      txtNameFile.Size = new Size(875, 38);
+      txtNameFile.TabIndex = 8;
+      txtNameFile.Texts = "";
+      txtNameFile.UnderlinedStyle = false;
       // 
       // lbTitle
       // 
@@ -281,9 +317,9 @@
       lbTitle.Location = new Point(5, 5);
       lbTitle.Margin = new Padding(0);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(790, 60);
+      lbTitle.Size = new Size(1169, 60);
       lbTitle.TabIndex = 0;
-      lbTitle.Text = "Template";
+      lbTitle.Text = "Thông tin template";
       lbTitle.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // tableLayoutPanel2
@@ -295,12 +331,12 @@
       tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
       tableLayoutPanel2.Controls.Add(btnConfirm, 1, 0);
       tableLayoutPanel2.Controls.Add(btnClose, 2, 0);
-      tableLayoutPanel2.Location = new Point(5, 380);
+      tableLayoutPanel2.Location = new Point(5, 298);
       tableLayoutPanel2.Margin = new Padding(0);
       tableLayoutPanel2.Name = "tableLayoutPanel2";
       tableLayoutPanel2.RowCount = 1;
       tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel2.Size = new Size(790, 60);
+      tableLayoutPanel2.Size = new Size(1169, 60);
       tableLayoutPanel2.TabIndex = 5;
       // 
       // btnConfirm
@@ -317,7 +353,7 @@
       btnConfirm.ForeColor = Color.White;
       btnConfirm.Image = (Image)resources.GetObject("btnConfirm.Image");
       btnConfirm.ImageAlign = ContentAlignment.MiddleLeft;
-      btnConfirm.Location = new Point(433, 3);
+      btnConfirm.Location = new Point(812, 3);
       btnConfirm.Name = "btnConfirm";
       btnConfirm.Padding = new Padding(10, 0, 0, 0);
       btnConfirm.Size = new Size(174, 54);
@@ -340,7 +376,7 @@
       btnClose.ForeColor = Color.White;
       btnClose.Image = (Image)resources.GetObject("btnClose.Image");
       btnClose.ImageAlign = ContentAlignment.MiddleLeft;
-      btnClose.Location = new Point(613, 3);
+      btnClose.Location = new Point(992, 3);
       btnClose.Name = "btnClose";
       btnClose.Padding = new Padding(10, 0, 0, 0);
       btnClose.Size = new Size(174, 54);
@@ -349,47 +385,11 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // tableLayoutPanel6
-      // 
-      tableLayoutPanel6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tableLayoutPanel6.ColumnCount = 2;
-      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle());
-      tableLayoutPanel6.Controls.Add(btnUpfile, 1, 0);
-      tableLayoutPanel6.Controls.Add(txtNameFile, 0, 0);
-      tableLayoutPanel6.Location = new Point(173, 106);
-      tableLayoutPanel6.Name = "tableLayoutPanel6";
-      tableLayoutPanel6.RowCount = 1;
-      tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel6.Size = new Size(608, 97);
-      tableLayoutPanel6.TabIndex = 40;
-      // 
-      // btnUpfile
-      // 
-      btnUpfile.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-      btnUpfile.BackColor = Color.FromArgb(51, 108, 181);
-      btnUpfile.BackgroundColor = Color.FromArgb(51, 108, 181);
-      btnUpfile.BorderColor = Color.PaleVioletRed;
-      btnUpfile.BorderRadius = 4;
-      btnUpfile.BorderSize = 0;
-      btnUpfile.FlatAppearance.BorderSize = 0;
-      btnUpfile.FlatStyle = FlatStyle.Flat;
-      btnUpfile.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      btnUpfile.ForeColor = Color.White;
-      btnUpfile.ImageAlign = ContentAlignment.MiddleLeft;
-      btnUpfile.Location = new Point(507, 21);
-      btnUpfile.Name = "btnUpfile";
-      btnUpfile.Size = new Size(98, 54);
-      btnUpfile.TabIndex = 9;
-      btnUpfile.Text = "Tải file";
-      btnUpfile.TextColor = Color.White;
-      btnUpfile.UseVisualStyleBackColor = false;
-      // 
       // PopupTemplate
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(800, 450);
+      ClientSize = new Size(1179, 368);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
       Name = "PopupTemplate";
@@ -402,8 +402,8 @@
       tableLayoutPanel1.PerformLayout();
       tableLayoutPanel4.ResumeLayout(false);
       tableLayoutPanel4.PerformLayout();
-      tableLayoutPanel2.ResumeLayout(false);
       tableLayoutPanel6.ResumeLayout(false);
+      tableLayoutPanel2.ResumeLayout(false);
       ResumeLayout(false);
     }
 

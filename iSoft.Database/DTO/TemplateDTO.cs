@@ -17,8 +17,8 @@ namespace iSoft.Database.DTO
     [DisplayName("Tên template")]
     public string? Name { get; set; }
 
-    [DisplayName("File template")]
-    public string? TemplateFile { get; set; }
+    [DisplayName("Đường dẫn local")]
+    public string? PathLocal { get; set; }
 
     [DisplayName("Thứ tự")]
     public int Order { get; set; }
