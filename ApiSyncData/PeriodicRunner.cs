@@ -1,4 +1,5 @@
 using iSoft.Database.Models;
+using iSoft.Database.Service;
 
 namespace ApiSyncData
 {
@@ -85,11 +86,7 @@ namespace ApiSyncData
       var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
         value => Users = value, cancellationToken);
 
-      var templates = LoadAndSyncAsync(
-        api.Templates(cancellationToken),
-        MasterDataSyncService.SyncTemplatesAsync,
-        value => Templates = value,
-        cancellationToken);
+      var templates = SyncTemplatesAsync(api, cancellationToken);
 
       var dtNow = DateTime.UtcNow.Date;
       var dateTo = dtNow.AddYears(10);
@@ -187,6 +184,131 @@ namespace ApiSyncData
       if (deliveryChanges != null)
         NotifyEntityChanged(deliveryChanges);
     }
+
+    private static async Task SyncTemplatesAsync(
+      ApiService api,
+      CancellationToken token)
+    {
+      var response = await api.Templates(token).ConfigureAwait(false);
+      token.ThrowIfCancellationRequested();
+
+      var rows = response.Data?.ListData;
+      ServerSnapshot.Validate(rows, response.Data?.TotalRecord);
+
+      var templateService = new TemplateService();
+      var locals = await templateService.GetAllAsync(isContainDelete: true)
+        .ConfigureAwait(false);
+      var localsById = locals.ToDictionary(template => template.Id);
+      var rowsToDownload = rows!
+        .Where(row => TemplateNeedsDownload(
+          row,
+          localsById.GetValueOrDefault(row.Id!.Value)))
+        .ToList();
+
+      string destinationFolder = Path.Combine(
+        AppContext.BaseDirectory,
+        "TemplateFile");
+      var downloads = new List<(Resp.ListDatumTemplate Row, string Path, bool Exists)>();
+      foreach (var row in rowsToDownload)
+      {
+        token.ThrowIfCancellationRequested();
+        bool exists = localsById.ContainsKey(row.Id!.Value);
+        string path = await api.DownloadTemplateAsync(
+          row.Id.Value,
+          row.Name,
+          row.TemplateFile,
+          destinationFolder,
+          token).ConfigureAwait(false);
+        downloads.Add((row, path, exists));
+      }
+
+      // Cập nhật đường dẫn cho bản ghi đã có trước khi ghi nhận snapshot mới.
+      // Nếu bước này lỗi, UpdatedAt cũ vẫn còn để lượt sau tải lại.
+      foreach (var download in downloads.Where(item => item.Exists))
+      {
+        await templateService.UpdatePathLocalAsync(
+          download.Row.Id!.Value,
+          download.Path).ConfigureAwait(false);
+      }
+
+      var changes = await MasterDataSyncService.SyncTemplatesAsync(response, token)
+        .ConfigureAwait(false);
+
+      // Bản ghi mới chỉ tồn tại sau khi snapshot đã được insert.
+      foreach (var download in downloads.Where(item => !item.Exists))
+      {
+        await templateService.UpdatePathLocalAsync(
+          download.Row.Id!.Value,
+          download.Path).ConfigureAwait(false);
+      }
+
+      Templates = response;
+      if (changes != null)
+      {
+        NotifyEntityChanged(changes);
+      }
+      else if (downloads.Count > 0)
+      {
+        var downloadedIds = downloads
+          .Select(item => item.Row.Id!.Value)
+          .Distinct()
+          .ToList();
+        NotifyEntityChanged(new MasterDataChangedEventArgs(
+          typeof(Template),
+          Array.Empty<Guid>(),
+          downloadedIds,
+          Array.Empty<Guid>(),
+          downloadedIds.Count));
+      }
+    }
+
+    private static bool TemplateNeedsDownload(
+      Resp.ListDatumTemplate source,
+      Template? local)
+    {
+      if (local == null || string.IsNullOrWhiteSpace(local.PathLocal) ||
+          !File.Exists(local.PathLocal))
+      {
+        return true;
+      }
+
+      string expectedFileName = ApiService.ResolveDownloadFileName(
+        source.Name,
+        responseFileName: null,
+        serverFileName: source.TemplateFile,
+        id: source.Id!.Value);
+      if (!string.Equals(
+        Path.GetFileName(local.PathLocal),
+        expectedFileName,
+        StringComparison.OrdinalIgnoreCase))
+      {
+        return true;
+      }
+
+      if (!string.Equals(
+        local.TemplateFile,
+        source.TemplateFile,
+        StringComparison.Ordinal))
+      {
+        return true;
+      }
+
+      if (local.UpdatedAt.HasValue != source.UpdatedAt.HasValue)
+        return true;
+      if (!local.UpdatedAt.HasValue)
+        return false;
+
+      DateTime localUpdatedAt = ToUtc(local.UpdatedAt.Value);
+      DateTime serverUpdatedAt = ToUtc(source.UpdatedAt!.Value);
+      return Math.Abs((localUpdatedAt - serverUpdatedAt).TotalMilliseconds) >= 1;
+    }
+
+    private static DateTime ToUtc(DateTime value) => value.Kind switch
+    {
+      DateTimeKind.Utc => value,
+      DateTimeKind.Local => value.ToUniversalTime(),
+      _ => DateTime.SpecifyKind(value, DateTimeKind.Utc),
+    };
 
     private static async Task SyncProductsAfterGroupsAsync(
       Task<Resp.ProductAPI> request, Task groupsSync, CancellationToken token)

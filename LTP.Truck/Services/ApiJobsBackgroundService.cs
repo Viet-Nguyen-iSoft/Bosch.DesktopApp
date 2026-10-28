@@ -60,7 +60,8 @@ namespace LTP.Truck.Services
               {
                 // Tương thích job Loại hàng cũ chưa có TypeWeight.
                 typeGoodsUpsertRequest.TypeWeight = 1;
-                await api.UpsertProductAsync(typeGoodsUpsertRequest);
+                if (typeGoodsUpsertRequest.WasteType != 0)
+                  await api.UpsertProductAsync(typeGoodsUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_Tare:
@@ -84,7 +85,8 @@ namespace LTP.Truck.Services
                 // Tương thích job Chất thải cũ chưa có TypeWeight.
                 if (productUpsertRequest.TypeWeight == 0)
                   productUpsertRequest.TypeWeight = 2;
-                await api.UpsertProductAsync(productUpsertRequest);
+                if (productUpsertRequest.WasteType != 0)
+                  await api.UpsertProductAsync(productUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_Delivery:
@@ -120,7 +122,7 @@ namespace LTP.Truck.Services
                   apiJob.Json ?? string.Empty);
               if (templateUpsertRequest != null)
               {
-                await api.UpsertTemplateAsync(
+                var rs = await api.UpsertTemplateAsync(
                   templateUpsertRequest,
                   cancellationToken: cancellationToken)
                   .ConfigureAwait(false);

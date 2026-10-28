@@ -43,7 +43,9 @@ namespace LTP.Truck.MasterData
       btnConfirm.Text = "       Lưu";
 
       txtName.Texts = _template.Name ?? string.Empty;
-      txtNameFile.Texts = _template.PathLocal ?? string.Empty;
+      txtNameFile.Texts = string.IsNullOrWhiteSpace(_template.PathLocal)
+        ? string.Empty
+        : Path.GetFileName(_template.PathLocal);
       txtDescription.Texts = _template.TemplateFile ?? string.Empty;
 
       txtName.Enabled = false;
@@ -74,7 +76,7 @@ namespace LTP.Truck.MasterData
         return;
 
       _selectedPath = Path.GetFullPath(openFileDialog.FileName);
-      txtNameFile.Texts = _selectedPath;
+      txtNameFile.Texts = Path.GetFileName(_selectedPath);
     }
 
     private async void btnConfirm_Click(object? sender, EventArgs e)

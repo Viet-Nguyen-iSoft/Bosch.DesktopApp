@@ -356,6 +356,18 @@ namespace ApiSyncData
           nameof(product), product.TypeWeight,
           "TypeWeight chỉ nhận giá trị 1 (Loại hàng) hoặc 2 (Chất thải).");
       }
+      if (product.WasteType < 0 || product.WasteType > 3)
+      {
+        throw new ArgumentOutOfRangeException(
+          nameof(product), product.WasteType,
+          "WasteType chỉ nhận giá trị 1, 2, 3 hoặc 0 khi không có dữ liệu.");
+      }
+      if (product.WasteType == 0)
+      {
+        // Dữ liệu local cũ chưa phân loại chất thải: bỏ qua toàn bộ upsert,
+        // không gửi request không hợp lệ lên ProductFood API.
+        return string.Empty;
+      }
 
       string baseApi = Environment.GetEnvironmentVariable("URL_API")
         ?? throw new InvalidOperationException(
@@ -374,7 +386,6 @@ namespace ApiSyncData
         { new StringContent(product.SerialCode?.Trim() ?? string.Empty), "SerialCode" },
         { new StringContent(product.Name.Trim()), "Name" },
         { new StringContent(product.ProductGroupId?.ToString() ?? string.Empty), "ProductGroupId" },
-        { new StringContent(product.WasteType.ToString()), "WasteType" },
         { new StringContent(product.TagNameProductGoods?.Trim() ?? string.Empty), "TagNameProductGoods" },
         { new StringContent(product.Description?.Trim() ?? string.Empty), "Description" },
         { new StringContent(lang.Trim()), "lang" },
@@ -382,6 +393,11 @@ namespace ApiSyncData
         { new StringContent((product.UpdatedAt ?? DateTime.UtcNow).ToString("O")), "UpdatedAt" },
         { new StringContent(product.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag" },
       };
+
+      formData.Add(
+        new StringContent(
+          product.WasteType.ToString(CultureInfo.InvariantCulture)),
+        "WasteType");
 
       if (product.Id.HasValue)
         formData.Add(new StringContent(product.Id.Value.ToString()), "Id");
@@ -772,6 +788,148 @@ namespace ApiSyncData
       }
 
       return responseContent;
+    }
+
+    public async Task<string> DownloadTemplateAsync(
+      Guid id,
+      string? templateName,
+      string? serverFileName,
+      string destinationFolder,
+      CancellationToken cancellationToken = default)
+    {
+      if (id == Guid.Empty)
+        throw new ArgumentException(
+          "Template Id không được là Guid.Empty.", nameof(id));
+      ArgumentException.ThrowIfNullOrWhiteSpace(destinationFolder);
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException(
+          "Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException(
+          "Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/TemplateFile/download-bbgn" +
+        $"?Id={Uri.EscapeDataString(id.ToString())}";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+      using var response = await httpClient.GetAsync(
+        apiUrl,
+        HttpCompletionOption.ResponseHeadersRead,
+        cancellationToken).ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        string responseContent = await response.Content
+          .ReadAsStringAsync(cancellationToken)
+          .ConfigureAwait(false);
+        throw new HttpRequestException(
+          $"DownloadTemplate. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
+      }
+
+      string? responseFileName =
+        response.Content.Headers.ContentDisposition?.FileNameStar ??
+        response.Content.Headers.ContentDisposition?.FileName;
+      string fileName = ResolveDownloadFileName(
+        templateName,
+        responseFileName,
+        serverFileName,
+        id);
+
+      Directory.CreateDirectory(destinationFolder);
+      string destinationPath = Path.Combine(destinationFolder, fileName);
+      string temporaryPath = Path.Combine(
+        destinationFolder,
+        $".{Guid.NewGuid():N}.download");
+
+      try
+      {
+        await using (var sourceStream = await response.Content
+          .ReadAsStreamAsync(cancellationToken)
+          .ConfigureAwait(false))
+        await using (var destinationStream = new FileStream(
+          temporaryPath,
+          FileMode.CreateNew,
+          FileAccess.Write,
+          FileShare.None,
+          bufferSize: 81920,
+          useAsync: true))
+        {
+          await sourceStream.CopyToAsync(destinationStream, cancellationToken)
+            .ConfigureAwait(false);
+        }
+
+        File.Move(temporaryPath, destinationPath, overwrite: true);
+        return Path.GetFullPath(destinationPath);
+      }
+      finally
+      {
+        if (File.Exists(temporaryPath))
+          File.Delete(temporaryPath);
+      }
+    }
+
+    internal static string ResolveDownloadFileName(
+      string? templateName,
+      string? responseFileName,
+      string? serverFileName,
+      Guid id)
+    {
+      string? originalFileName = responseFileName?.Trim().Trim('"');
+      if (!string.IsNullOrWhiteSpace(originalFileName))
+      {
+        try
+        {
+          originalFileName = Uri.UnescapeDataString(originalFileName);
+        }
+        catch (UriFormatException)
+        {
+          // Giữ nguyên tên Content-Disposition nếu server không encode chuẩn.
+        }
+      }
+
+      if (string.IsNullOrWhiteSpace(originalFileName))
+        originalFileName = serverFileName;
+
+      string extension = string.IsNullOrWhiteSpace(originalFileName)
+        ? string.Empty
+        : Path.GetExtension(Path.GetFileName(originalFileName));
+      if (string.IsNullOrWhiteSpace(extension) &&
+          !string.IsNullOrWhiteSpace(serverFileName))
+      {
+        extension = Path.GetExtension(Path.GetFileName(serverFileName));
+      }
+      string baseName = SanitizeDownloadFileName(templateName);
+      if (string.IsNullOrWhiteSpace(baseName))
+        baseName = $"Template_{id:N}";
+
+      string fileName = Path.HasExtension(baseName)
+        ? baseName
+        : baseName + extension;
+
+      fileName = Path.GetFileName(fileName);
+      if (string.IsNullOrWhiteSpace(fileName) ||
+          fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+      {
+        throw new InvalidDataException(
+          "Tên file template tải về không hợp lệ.");
+      }
+
+      return fileName;
+    }
+
+    private static string SanitizeDownloadFileName(string? value)
+    {
+      if (string.IsNullOrWhiteSpace(value))
+        return string.Empty;
+
+      var invalidCharacters = Path.GetInvalidFileNameChars().ToHashSet();
+      string sanitized = new string(value.Trim()
+        .Select(character => invalidCharacters.Contains(character) ? '_' : character)
+        .ToArray());
+      return sanitized.TrimEnd(' ', '.');
     }
 
     public async Task<string> RemoveRole(

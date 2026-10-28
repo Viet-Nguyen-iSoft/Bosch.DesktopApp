@@ -54,6 +54,7 @@ namespace LTP.Truck.Forms
       btnUser = new RJButton();
       btnSetting = new RJButton();
       btnAuditLog = new RJButton();
+      btnTemplate = new RJButton();
       tableLayoutPanel7 = new TableLayoutPanel();
       lbVersion = new Label();
       pictureBox1 = new PictureBox();
@@ -69,7 +70,6 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
-      btnTemplate = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -594,6 +594,30 @@ namespace LTP.Truck.Forms
       btnAuditLog.TextColor = Color.Black;
       btnAuditLog.UseVisualStyleBackColor = false;
       // 
+      // btnTemplate
+      // 
+      btnTemplate.BackColor = Color.Silver;
+      btnTemplate.BackgroundColor = Color.Silver;
+      btnTemplate.BorderColor = Color.PaleVioletRed;
+      btnTemplate.BorderRadius = 5;
+      btnTemplate.BorderSize = 0;
+      btnTemplate.Dock = DockStyle.Top;
+      btnTemplate.FlatAppearance.BorderSize = 0;
+      btnTemplate.FlatStyle = FlatStyle.Flat;
+      btnTemplate.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnTemplate.ForeColor = Color.Black;
+      btnTemplate.Image = Properties.Resources.templates;
+      btnTemplate.ImageAlign = ContentAlignment.MiddleLeft;
+      btnTemplate.Location = new Point(3, 900);
+      btnTemplate.Name = "btnTemplate";
+      btnTemplate.Padding = new Padding(15, 0, 0, 0);
+      btnTemplate.Size = new Size(242, 60);
+      btnTemplate.TabIndex = 54;
+      btnTemplate.Text = "        TEMPLATE";
+      btnTemplate.TextAlign = ContentAlignment.MiddleLeft;
+      btnTemplate.TextColor = Color.Black;
+      btnTemplate.UseVisualStyleBackColor = false;
+      // 
       // tableLayoutPanel7
       // 
       tableLayoutPanel7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -808,30 +832,6 @@ namespace LTP.Truck.Forms
       lbTime.TabIndex = 2;
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
-      // 
-      // btnTemplate
-      // 
-      btnTemplate.BackColor = Color.Silver;
-      btnTemplate.BackgroundColor = Color.Silver;
-      btnTemplate.BorderColor = Color.PaleVioletRed;
-      btnTemplate.BorderRadius = 5;
-      btnTemplate.BorderSize = 0;
-      btnTemplate.Dock = DockStyle.Top;
-      btnTemplate.FlatAppearance.BorderSize = 0;
-      btnTemplate.FlatStyle = FlatStyle.Flat;
-      btnTemplate.Font = new Font("Roboto", 14F, FontStyle.Bold);
-      btnTemplate.ForeColor = Color.Black;
-      btnTemplate.Image = Properties.Resources.management;
-      btnTemplate.ImageAlign = ContentAlignment.MiddleLeft;
-      btnTemplate.Location = new Point(3, 900);
-      btnTemplate.Name = "btnTemplate";
-      btnTemplate.Padding = new Padding(15, 0, 0, 0);
-      btnTemplate.Size = new Size(242, 60);
-      btnTemplate.TabIndex = 54;
-      btnTemplate.Text = "        TEMPLATE";
-      btnTemplate.TextAlign = ContentAlignment.MiddleLeft;
-      btnTemplate.TextColor = Color.Black;
-      btnTemplate.UseVisualStyleBackColor = false;
       // 
       // FrmOperation
       // 
