@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace iSoft.Database.Models
 {
@@ -15,7 +10,7 @@ namespace iSoft.Database.Models
 
 
     [DisplayName("Ngày tạo")]
-    public DateTime? CreatedAt { get; set; } 
+    public DateTime? CreatedAt { get; set; }
     [DisplayName("Tạo bởi")]
     public Guid? CreatedBy { get; set; }
 
@@ -35,8 +30,6 @@ namespace iSoft.Database.Models
     public bool EnableFlag { get; set; }
 
     [Browsable(false)]
-    public bool SyncFlag { get; set; } = false ;
-    [Browsable(false)]
-    public Guid? IdSrc { get; set; }
+    public bool SyncFlag { get; set; } = false;
   }
 }

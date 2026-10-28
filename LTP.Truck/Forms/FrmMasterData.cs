@@ -1113,7 +1113,7 @@ namespace LTP.Truck.Forms
 
       var request = new DocumentUpsertRequest
       {
-        Id = document.IdSrc ?? document.Id,
+        Id = document.Id,
         DocumentDate = document.Date.Value,
         Name = document.Document ?? string.Empty,
         Description = document.Description,
@@ -1190,17 +1190,20 @@ namespace LTP.Truck.Forms
       {
         var productGroup = (await _productGroupService.GetAllAsync(true))
           .FirstOrDefault(item => item.Id == product.ProductGroupId.Value);
-        productGroupId = productGroup?.IdSrc ?? product.ProductGroupId;
+        productGroupId = productGroup?.Id ?? product.ProductGroupId;
       }
 
       return new ProductUpsertRequest
       {
-        Id = product.IdSrc ?? product.Id,
+        Id = product.Id,
         SerialCode = product.Code ?? string.Empty,
         Name = product.Name ?? string.Empty,
         Description = product.Description,
         ProductGroupId = productGroupId,
         WasteType = (int)product.EnumWasteType,
+        TagNameProductGoods = product.TagMappingReport,
+        TypeWeight = (int)product.EnumTypeData,
+        UpdatedAt = product.UpdatedAt ?? product.CreatedAt ?? DateTime.UtcNow,
         DeletedFlag = product.DeletedFlag,
       };
     }
@@ -1211,7 +1214,7 @@ namespace LTP.Truck.Forms
       {
         var productGroupUpsertRequest = new ProductGroupUpsertRequest
         {
-          Id = obj.IdSrc ?? obj.Id,
+          Id = obj.Id,
           SerialCode = obj.Code ?? string.Empty,
           Name = obj.Name ?? string.Empty,
           Description = obj.Description ?? string.Empty,
@@ -1277,7 +1280,7 @@ namespace LTP.Truck.Forms
 
       var request = new CategoryTareUpsertRequest
       {
-        Id = tare.IdSrc ?? tare.Id,
+        Id = tare.Id,
         SerialCode = tare.Code ?? string.Empty,
         Name = tare.Name ?? string.Empty,
         WeightTare = tare.Value.HasValue ? Convert.ToDecimal(tare.Value.Value) : null,
@@ -1300,12 +1303,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        TypeGoodsUpsertRequest typeGoodsUpsertRequest = new TypeGoodsUpsertRequest();
-        typeGoodsUpsertRequest.Id = obj.Id;
-        typeGoodsUpsertRequest.SerialCode = obj?.Code ?? string.Empty;
-        typeGoodsUpsertRequest.Name = obj?.Name ?? string.Empty;
-        typeGoodsUpsertRequest.Description = obj?.Description ?? string.Empty;
-        typeGoodsUpsertRequest.DeletedFlag = false;
+        var typeGoodsUpsertRequest = await CreateProductUpsertRequestAsync(obj);
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(typeGoodsUpsertRequest);
@@ -1382,7 +1380,7 @@ namespace LTP.Truck.Forms
     {
       return new ClientUpsertRequest
       {
-        Id = client.IdSrc ?? client.Id,
+        Id = client.Id,
         ClientType = (int)clientType,
         Name = client.Name ?? string.Empty,
         OfficeAddress = client.OfficeAddress,
@@ -1827,12 +1825,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        TypeGoodsUpsertRequest typeGoodsUpsertRequest = new TypeGoodsUpsertRequest();
-        typeGoodsUpsertRequest.Id = obj.Id;
-        typeGoodsUpsertRequest.SerialCode = obj?.Code ?? string.Empty;
-        typeGoodsUpsertRequest.Name = obj?.Name ?? string.Empty;
-        typeGoodsUpsertRequest.Description = obj?.Description ?? string.Empty;
-        typeGoodsUpsertRequest.DeletedFlag = false;
+        var typeGoodsUpsertRequest = await CreateProductUpsertRequestAsync(obj);
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(typeGoodsUpsertRequest);
@@ -2134,7 +2127,7 @@ namespace LTP.Truck.Forms
             await _warehouseService.AddOrUpdateAsync(warehouse);
 
             WarehouseUpsertRequest warehouseUpsertRequest = new WarehouseUpsertRequest();
-            warehouseUpsertRequest.Id = warehouse.IdSrc != null ? warehouse.IdSrc : warehouse.Id;
+            warehouseUpsertRequest.Id = warehouse.Id;
             warehouseUpsertRequest.Name = warehouse?.Name ?? string.Empty;
             warehouseUpsertRequest.Description = warehouse?.Description ?? string.Empty;
             warehouseUpsertRequest.DeletedFlag = warehouse?.DeletedFlag ?? false;
@@ -2156,18 +2149,15 @@ namespace LTP.Truck.Forms
           if (typeGoods != null)
           {
             typeGoods.DeletedFlag = true;
+            typeGoods.UpdatedAt = DateTime.UtcNow;
             await _productService.AddOrUpdateAsync(
               typeGoods, EnumTypeDataLocation.Truck);
 
-            WarehouseUpsertRequest warehouseUpsertRequest = new WarehouseUpsertRequest();
-            warehouseUpsertRequest.Id = typeGoods.IdSrc != null ? typeGoods.IdSrc : typeGoods.Id;
-            warehouseUpsertRequest.SerialCode = typeGoods?.Code ?? string.Empty;
-            warehouseUpsertRequest.Name = typeGoods?.Name ?? string.Empty;
-            warehouseUpsertRequest.Description = typeGoods?.Description ?? string.Empty;
-            warehouseUpsertRequest.DeletedFlag = typeGoods?.DeletedFlag ?? false;
+            var typeGoodsUpsertRequest =
+              await CreateProductUpsertRequestAsync(typeGoods);
 
             ApiJobs apiJobs = new ApiJobs();
-            apiJobs.Json = JsonHelper.ToJson(warehouseUpsertRequest);
+            apiJobs.Json = JsonHelper.ToJson(typeGoodsUpsertRequest);
             apiJobs.EnumStatusAPI = EnumStatusAPI.Created;
             apiJobs.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
             apiJobs.CreatedAt = DateTime.UtcNow;
@@ -2215,7 +2205,7 @@ namespace LTP.Truck.Forms
 
             var productGroupUpsertRequest = new ProductGroupUpsertRequest
             {
-              Id = productGroup.IdSrc ?? productGroup.Id,
+              Id = productGroup.Id,
               SerialCode = productGroup.Code ?? string.Empty,
               Name = productGroup.Name ?? string.Empty,
               Description = productGroup.Description ?? string.Empty,

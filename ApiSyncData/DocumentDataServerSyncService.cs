@@ -42,19 +42,16 @@ namespace ApiSyncData
       {
         await using var db = new MySqlDbContext();
         var localRows = await db.Set<DocumentData>()
-          .Where(document =>
-            sourceIds.Contains(document.Id) ||
-            (document.IdSrc.HasValue && sourceIds.Contains(document.IdSrc.Value)))
+          .Where(document => sourceIds.Contains(document.Id))
           .ToListAsync(token)
           .ConfigureAwait(false);
         var locals = new Dictionary<Guid, DocumentData>();
         foreach (var local in localRows)
         {
-          var sourceId = NormalizeId(local.IdSrc) ?? local.Id;
-          if (!locals.TryAdd(sourceId, local))
+          if (!locals.TryAdd(local.Id, local))
           {
             throw new InvalidOperationException(
-              $"Document: nhiều bản ghi local cùng liên kết server Id {sourceId}.");
+              $"Document: trùng local Id {local.Id}.");
           }
         }
 
@@ -66,14 +63,12 @@ namespace ApiSyncData
           {
             local = new DocumentData
             {
-              Id = sourceId,
-              IdSrc = sourceId
+              Id = sourceId
             };
             db.Set<DocumentData>().Add(local);
             locals.Add(sourceId, local);
           }
 
-          local.IdSrc = sourceId;
           local.Document = source.Name;
           local.Date = NormalizeTimestamp(source.DocumentDate);
           local.Description = source.Description;

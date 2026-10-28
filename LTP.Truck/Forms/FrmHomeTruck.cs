@@ -438,7 +438,7 @@ namespace LTP.Truck.Forms
             apiJob.EnumTypeAPI = EnumTypeAPI.MD_Client;
             apiJob.Json = JsonHelper.ToJson(new ClientUpsertRequest
             {
-              Id = client.IdSrc ?? client.Id,
+              Id = client.Id,
               ClientType = (int)iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
               Name = client.Name ?? string.Empty,
               OfficeAddress = client.OfficeAddress,
@@ -454,13 +454,27 @@ namespace LTP.Truck.Forms
               iSoft.Database.EnumData.EnumTypeDataLocation.Truck, false));
             break;
           case Common.EnumData.EnumTypeData.TypeGoods when value is Product typeGoods:
-            apiJob.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
-            apiJob.Json = JsonHelper.ToJson(new TypeGoodsUpsertRequest
+            Guid? productGroupId = typeGoods.ProductGroupId;
+            if (productGroupId.HasValue)
             {
-              Id = typeGoods.IdSrc ?? typeGoods.Id,
+              var productGroup = (await AppCore.Ins._productGroupService
+                .GetAllAsync(true))
+                .FirstOrDefault(item => item.Id == productGroupId.Value);
+              productGroupId = productGroup?.Id ?? productGroupId;
+            }
+
+            apiJob.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
+            apiJob.Json = JsonHelper.ToJson(new ProductUpsertRequest
+            {
+              Id = typeGoods.Id,
               SerialCode = typeGoods.Code ?? string.Empty,
               Name = typeGoods.Name ?? string.Empty,
               Description = typeGoods.Description,
+              ProductGroupId = productGroupId,
+              WasteType = (int)typeGoods.EnumWasteType,
+              TagNameProductGoods = typeGoods.TagMappingReport,
+              TypeWeight = (int)iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
+              UpdatedAt = typeGoods.UpdatedAt ?? typeGoods.CreatedAt ?? DateTime.UtcNow,
               DeletedFlag = typeGoods.DeletedFlag,
             });
             await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
@@ -472,7 +486,7 @@ namespace LTP.Truck.Forms
             apiJob.EnumTypeAPI = EnumTypeAPI.MD_WareHouse;
             apiJob.Json = JsonHelper.ToJson(new WarehouseUpsertRequest
             {
-              Id = warehouse.IdSrc ?? warehouse.Id,
+              Id = warehouse.Id,
               Name = warehouse.Name ?? string.Empty,
               Description = warehouse.Description,
               DeletedFlag = warehouse.DeletedFlag,

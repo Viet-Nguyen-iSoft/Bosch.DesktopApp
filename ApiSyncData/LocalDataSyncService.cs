@@ -97,7 +97,6 @@ namespace ApiSyncData
 
           if (await MarkAsSynchronizedAsync(
             record.Id,
-            payload.Id,
             record.UpdatedAt,
             cancellationToken).ConfigureAwait(false))
           {
@@ -183,18 +182,6 @@ namespace ApiSyncData
         .ToListAsync(cancellationToken)
         .ConfigureAwait(false);
 
-      var hasNewSourceIds = false;
-      foreach (var record in records.Where(record =>
-        !record.IdSrc.HasValue || record.IdSrc == Guid.Empty))
-      {
-        record.IdSrc = Guid.NewGuid();
-        hasNewSourceIds = true;
-      }
-
-      // Lưu GUID trước khi gọi API để các lần retry luôn dùng cùng một Id.
-      if (hasNewSourceIds)
-        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
       return records;
     }
 
@@ -267,26 +254,8 @@ namespace ApiSyncData
       };
     }
 
-    private static Guid? GetSourceId(
-      string entityName,
-      Guid localId,
-      Guid? localForeignKey,
-      BaseModel? relatedEntity,
-      string relationName)
-    {
-      if (!localForeignKey.HasValue)
-        return null;
-
-      if (relatedEntity?.IdSrc is Guid sourceId && sourceId != Guid.Empty)
-        return sourceId;
-
-      throw new InvalidOperationException(
-        $"{entityName} local Id {localId}: {relationName} chưa có IdSrc để đồng bộ.");
-    }
-
     private static async Task<bool> MarkAsSynchronizedAsync(
       Guid localId,
-      Guid sourceId,
       DateTime? expectedUpdatedAt,
       CancellationToken cancellationToken)
     {
@@ -295,7 +264,6 @@ namespace ApiSyncData
         .SingleOrDefaultAsync(record => record.Id == localId, cancellationToken)
         .ConfigureAwait(false);
 
-      //if (current == null || current.SyncFlag || current.IdSrc != sourceId)
       if (current == null || current.SyncFlag)
           return false;
 

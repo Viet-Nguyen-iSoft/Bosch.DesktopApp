@@ -8,6 +8,9 @@ namespace ApiSyncData.Req
     public string? Description { get; set; }
     public Guid? ProductGroupId { get; set; }
     public int WasteType { get; set; }
+    public string? TagNameProductGoods { get; set; }
+    public int TypeWeight { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public bool DeletedFlag { get; set; }
   }
 }

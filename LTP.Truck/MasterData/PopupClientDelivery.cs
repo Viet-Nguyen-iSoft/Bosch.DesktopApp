@@ -139,20 +139,7 @@ namespace LTP.Truck.MasterData
       if (current == null)
         return false;
 
-      if (item.Id != Guid.Empty && item.Id == current.Id)
-        return true;
-
-      if (item.IdSrc.HasValue && item.IdSrc != Guid.Empty &&
-          current.IdSrc.HasValue && current.IdSrc != Guid.Empty &&
-          item.IdSrc == current.IdSrc)
-      {
-        return true;
-      }
-
-      return item.IdSrc.HasValue && item.IdSrc != Guid.Empty &&
-          item.IdSrc == current.Id ||
-        current.IdSrc.HasValue && current.IdSrc != Guid.Empty &&
-          current.IdSrc == item.Id;
+      return item.Id != Guid.Empty && item.Id == current.Id;
     }
 
     private void ShowWarning(string message)

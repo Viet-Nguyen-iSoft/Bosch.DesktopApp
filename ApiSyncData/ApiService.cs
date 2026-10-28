@@ -317,24 +317,6 @@ namespace ApiSyncData
       return responseContent;
     }
 
-    public Task<string> UpsertTypeGoodsAsync(
-      Req.TypeGoodsUpsertRequest typeGoods,
-      string lang = "vi",
-      CancellationToken cancellationToken = default)
-    {
-      ArgumentNullException.ThrowIfNull(typeGoods);
-
-      return PostUpsertMultiLangAsync(
-        "TypeGoods",
-        typeGoods.Id,
-        typeGoods.Name,
-        typeGoods.SerialCode,
-        typeGoods.Description,
-        typeGoods.DeletedFlag,
-        lang,
-        cancellationToken);
-    }
-
     public Task<string> UpsertProductGroupAsync(
       Req.ProductGroupUpsertRequest productGroup,
       string lang = "vi",
@@ -353,31 +335,67 @@ namespace ApiSyncData
         cancellationToken);
     }
 
-    public Task<string> UpsertProductAsync(
+    public async Task<string> UpsertProductAsync(
       Req.ProductUpsertRequest product,
       string lang = "vi",
       CancellationToken cancellationToken = default)
     {
       ArgumentNullException.ThrowIfNull(product);
+      ArgumentException.ThrowIfNullOrWhiteSpace(product.Name);
+      ArgumentException.ThrowIfNullOrWhiteSpace(lang);
 
-      var additionalFields = new Dictionary<string, string>
+      if (product.Id == Guid.Empty)
+        throw new ArgumentException("Product Id không được là Guid.Empty.", nameof(product));
+      if (product.TypeWeight is not (1 or 2))
       {
-        ["WasteType"] = product.WasteType.ToString(),
+        throw new ArgumentOutOfRangeException(
+          nameof(product), product.TypeWeight,
+          "TypeWeight chỉ nhận giá trị 1 (Loại hàng) hoặc 2 (Chất thải).");
+      }
+
+      string baseApi = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException(
+          "Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException(
+          "Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseApi.TrimEnd('/')}/v1/ProductFood/upsert-multi-lang";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+      using var formData = new MultipartFormDataContent
+      {
+        { new StringContent(product.SerialCode?.Trim() ?? string.Empty), "SerialCode" },
+        { new StringContent(product.Name.Trim()), "Name" },
+        { new StringContent(product.ProductGroupId?.ToString() ?? string.Empty), "ProductGroupId" },
+        { new StringContent(product.WasteType.ToString()), "WasteType" },
+        { new StringContent(product.TagNameProductGoods?.Trim() ?? string.Empty), "TagNameProductGoods" },
+        { new StringContent(product.Description?.Trim() ?? string.Empty), "Description" },
+        { new StringContent(lang.Trim()), "lang" },
+        { new StringContent(product.TypeWeight.ToString()), "TypeWeight" },
+        { new StringContent((product.UpdatedAt ?? DateTime.UtcNow).ToString("O")), "UpdatedAt" },
+        { new StringContent(product.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag" },
       };
 
-      if (product.ProductGroupId.HasValue)
-        additionalFields["ProductGroupId"] = product.ProductGroupId.Value.ToString();
+      if (product.Id.HasValue)
+        formData.Add(new StringContent(product.Id.Value.ToString()), "Id");
 
-      return PostUpsertMultiLangAsync(
-        "ProductFood",
-        product.Id,
-        product.Name,
-        product.SerialCode,
-        product.Description,
-        product.DeletedFlag,
-        lang,
-        cancellationToken,
-        additionalFields);
+      using var response = await httpClient.PostAsync(
+        apiUrl, formData, cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"UpsertProductFood. URL: {apiUrl}. " +
+          $"HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). " +
+          $"Response: {responseContent}");
+      }
+
+      return responseContent;
     }
 
     public Task<string> UpsertClientAsync(

@@ -25,12 +25,7 @@ namespace ApiSyncData
       where TSource : IServerRecord
       where TEntity : BaseModel, new()
     {
-      var linked = locals.Where(x => x.IdSrc.HasValue && x.IdSrc != Guid.Empty).ToList();
-      var byId = linked.ToDictionary(x => x.IdSrc!.Value);
-      var unlinkedByLocalId = locals
-        .Where(x => !x.IdSrc.HasValue || x.IdSrc == Guid.Empty)
-        .Where(x => x.Id != Guid.Empty)
-        .ToDictionary(x => x.Id);
+      var byId = locals.ToDictionary(x => x.Id);
       var ids = snapshotIds?.ToHashSet() ?? new HashSet<Guid>();
       var added = new List<TEntity>();
       foreach (var row in rows)
@@ -40,16 +35,8 @@ namespace ApiSyncData
         ids.Add(id);
         if (!byId.TryGetValue(id, out var local))
         {
-          // Dữ liệu cũ có thể đã dùng Id từ server làm khóa chính nhưng chưa gắn IdSrc.
-          // Nhận lại bản ghi đó để update, tránh insert trùng khóa chính.
-          if (unlinkedByLocalId.Remove(id, out local))
-            local.IdSrc = id;
-          else
-          {
-            // Bản ghi được tạo từ server dùng luôn server Id làm khóa chính local.
-            local = new TEntity { Id = id, IdSrc = id };
-            added.Add(local);
-          }
+          local = new TEntity { Id = id };
+          added.Add(local);
           byId.Add(id, local);
         }
         map(row, local);
@@ -58,11 +45,12 @@ namespace ApiSyncData
         local.CreatedAt = NormalizeTimestamp(row.CreatedAt);
         local.UpdatedAt = NormalizeTimestamp(row.UpdatedAt);
         local.DeletedFlag = false;
+        local.SyncFlag = true;
       }
-      foreach (var local in linked)
+      foreach (var local in locals)
       {
         token.ThrowIfCancellationRequested();
-        if (!ids.Contains(local.IdSrc!.Value) && !local.DeletedFlag)
+        if (local.SyncFlag && !ids.Contains(local.Id) && !local.DeletedFlag)
         {
           local.DeletedFlag = true;
           local.UpdatedAt = DateTime.UtcNow;

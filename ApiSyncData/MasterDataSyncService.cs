@@ -199,8 +199,8 @@ namespace ApiSyncData
         async db =>
         {
           groups = await db.Set<ProductGroup>()
-            .Where(x => x.IdSrc.HasValue && x.IdSrc != Guid.Empty && !x.DeletedFlag)
-            .ToDictionaryAsync(x => x.IdSrc!.Value, x => x.Id, token).ConfigureAwait(false);
+            .Where(x => !x.DeletedFlag)
+            .ToDictionaryAsync(x => x.Id, x => x.Id, token).ConfigureAwait(false);
         },
         s =>
         {
@@ -232,7 +232,7 @@ namespace ApiSyncData
         if (filterLocals != null)
           localQuery = filterLocals(localQuery);
         var locals = await localQuery
-          .Where(x => (x.IdSrc.HasValue && x.IdSrc != Guid.Empty) || sourceIds.Contains(x.Id))
+          .Where(x => x.SyncFlag || sourceIds.Contains(x.Id))
           .ToListAsync(token).ConfigureAwait(false);
         var rowsToSync = shouldSync == null
           ? rows!

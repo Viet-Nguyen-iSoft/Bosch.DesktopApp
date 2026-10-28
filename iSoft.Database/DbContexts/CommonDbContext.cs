@@ -51,13 +51,6 @@ namespace iSoft.Database.DbContexts
       base.OnModelCreating(modelBuilder);
       modelBuilder.ConfigureDateTimeProperties("datetime(6)");
 
-      foreach (var entityType in modelBuilder.Model.GetEntityTypes()
-        .Where(entityType => typeof(BaseModel).IsAssignableFrom(entityType.ClrType)))
-      {
-        modelBuilder.Entity(entityType.ClrType)
-          .HasIndex(nameof(BaseModel.IdSrc));
-      }
-
       modelBuilder.Entity<RecordTruck>()
         .Property(record => record.LicensePlate)
         .HasMaxLength(20);

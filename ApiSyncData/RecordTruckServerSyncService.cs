@@ -41,19 +41,16 @@ namespace ApiSyncData
         var references = await LoadReferencesAsync(db, rows, token)
           .ConfigureAwait(false);
         var localRows = await db.Set<RecordTruck>()
-          .Where(record =>
-            sourceIds.Contains(record.Id) ||
-            (record.IdSrc.HasValue && sourceIds.Contains(record.IdSrc.Value)))
+          .Where(record => sourceIds.Contains(record.Id))
           .ToListAsync(token)
           .ConfigureAwait(false);
         var locals = new Dictionary<Guid, RecordTruck>();
         foreach (var localRow in localRows)
         {
-          var sourceId = NormalizeId(localRow.IdSrc) ?? localRow.Id;
-          if (!locals.TryAdd(sourceId, localRow))
+          if (!locals.TryAdd(localRow.Id, localRow))
           {
             throw new InvalidOperationException(
-              $"RecordTruckFromServer: nhiều bản ghi local cùng liên kết server Id {sourceId}.");
+              $"RecordTruckFromServer: trùng local Id {localRow.Id}.");
           }
         }
 
@@ -66,7 +63,6 @@ namespace ApiSyncData
             local = new RecordTruck
             {
               Id = sourceId,
-              IdSrc = sourceId,
               SyncFlag = true
             };
             db.Set<RecordTruck>().Add(local);
@@ -147,7 +143,6 @@ namespace ApiSyncData
       target.DeletedFlag = source.IsDelete == true;
       target.EnableFlag = source.IsDelete != true;
       target.SyncFlag = true;
-      target.IdSrc = source.Id;
       target.Note = source.Document;
       target.NameDriver = source.NameDriver;
       target.IdCard = source.IdCard;
@@ -221,19 +216,14 @@ namespace ApiSyncData
 
       var entities = await db.Set<TEntity>()
         .AsNoTracking()
-        .Where(entity =>
-          (entity.IdSrc.HasValue && ids.Contains(entity.IdSrc.Value)) ||
-          ids.Contains(entity.Id))
-        .Select(entity => new { entity.Id, entity.IdSrc })
+        .Where(entity => ids.Contains(entity.Id))
+        .Select(entity => entity.Id)
         .ToListAsync(token)
         .ConfigureAwait(false);
 
       var result = new Dictionary<Guid, Guid>();
-      foreach (var entity in entities)
-      {
-        var sourceId = NormalizeId(entity.IdSrc) ?? entity.Id;
-        result.TryAdd(sourceId, entity.Id);
-      }
+      foreach (var id in entities)
+        result.TryAdd(id, id);
 
       return result;
     }

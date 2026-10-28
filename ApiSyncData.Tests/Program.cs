@@ -5,27 +5,25 @@ using iSoft.Database.Models;
 var retainedId = Guid.NewGuid();
 var missingId = Guid.NewGuid();
 var newId = Guid.NewGuid();
-var retainedLocalId = Guid.NewGuid();
-var retained = new Local { Id = retainedLocalId, IdSrc = retainedId, DeletedFlag = true, Code = "LOCAL", Name = "old" };
-var missing = new Local { IdSrc = missingId };
+var retained = new Local { Id = retainedId, SyncFlag = true, DeletedFlag = true, Code = "LOCAL", Name = "old" };
+var missing = new Local { Id = missingId, SyncFlag = true };
 var localOnly = new Local { Name = "local only" };
-var emptyId = new Local { IdSrc = Guid.Empty };
-var locals = new List<Local> { retained, missing, localOnly, emptyId };
+var locals = new List<Local> { retained, missing, localOnly };
 var rows = new List<Source> { new() { Id = retainedId, Name = "updated" }, new() { Id = newId, Name = "new" } };
 ServerSnapshot.Validate(rows, 2);
 var added = ServerSnapshot.Apply(rows, locals, (s, l) => l.Name = s.Name, default);
-Check(added.Count == 1 && added[0].Id == newId && added[0].IdSrc == newId,
+Check(added.Count == 1 && added[0].Id == newId && added[0].SyncFlag,
   "insert uses server Id as local Id");
-Check(retained.Id == retainedLocalId && retained.Code == "LOCAL" && retained.Name == "updated", "update preserves local fields");
+Check(retained.Id == retainedId && retained.Code == "LOCAL" && retained.Name == "updated", "update preserves local fields");
 Check(!retained.DeletedFlag, "restore active record");
 Check(missing.DeletedFlag, "soft delete missing record");
-Check(!localOnly.DeletedFlag && !emptyId.DeletedFlag, "preserve unlinked local records");
+Check(!localOnly.DeletedFlag, "preserve unsynchronized local records");
 var matchingPrimaryId = Guid.NewGuid();
 var existingByPrimaryId = new Local { Id = matchingPrimaryId, Name = "old primary" };
 var primaryIdRows = new List<Source> { new() { Id = matchingPrimaryId, Name = "updated primary" } };
 var primaryIdAdded = ServerSnapshot.Apply(primaryIdRows, new List<Local> { existingByPrimaryId },
   (s, l) => l.Name = s.Name, default);
-Check(primaryIdAdded.Count == 0 && existingByPrimaryId.IdSrc == matchingPrimaryId &&
+Check(primaryIdAdded.Count == 0 && existingByPrimaryId.SyncFlag &&
   existingByPrimaryId.Name == "updated primary", "update matching primary Id instead of insert");
 locals.AddRange(added);
 var deletedAt = missing.UpdatedAt;
@@ -33,7 +31,7 @@ Check(ServerSnapshot.Apply(rows, locals, (s, l) => l.Name = s.Name, default).Cou
   "repeated sync does not insert duplicates");
 Check(missing.UpdatedAt == deletedAt, "repeated delete preserves timestamp");
 var skippedId = Guid.NewGuid();
-var skipped = new Local { IdSrc = skippedId, Name = "unchanged" };
+var skipped = new Local { Id = skippedId, SyncFlag = true, Name = "unchanged" };
 ServerSnapshot.Apply(new List<Source>(), new List<Local> { skipped },
   (s, l) => l.Name = s.Name, default, new[] { skippedId });
 Check(!skipped.DeletedFlag && skipped.Name == "unchanged", "skipped record remains unchanged");
@@ -53,7 +51,7 @@ try
   throw new Exception("Cancellation was ignored");
 }
 catch (OperationCanceledException) { }
-Console.WriteLine("PASS: insert, update by IdSrc/Id, restore, soft delete, skipped record, local field preservation, repeat sync, empty snapshot, invalid snapshots, cancellation.");
+Console.WriteLine("PASS: single Id insert/update, restore, soft delete, skipped record, local field preservation, repeat sync, empty snapshot, invalid snapshots, cancellation.");
 
 static void Check(bool condition, string name)
 {

@@ -205,20 +205,12 @@ namespace LTP.Truck.Popup
           if (addedCodes.Count > 0)
           {
             var api = new ApiSyncData.ApiService();
-            var remoteUserId = _user.IdSrc.GetValueOrDefault();
-            if (remoteUserId == Guid.Empty)
-              remoteUserId = _user.Id;
-
-            await api.AssignRole(remoteUserId, addedCodes);
+            await api.AssignRole(_user.Id, addedCodes);
           }
           if (removedCodes.Count > 0)
           {
             var api = new ApiSyncData.ApiService();
-            var remoteUserId = _user.IdSrc.GetValueOrDefault();
-            if (remoteUserId == Guid.Empty)
-              remoteUserId = _user.Id;
-
-            await api.RemoveRole(remoteUserId, removedCodes);
+            await api.RemoveRole(_user.Id, removedCodes);
           }
         }  
           

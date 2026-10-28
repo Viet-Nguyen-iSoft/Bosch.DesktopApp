@@ -429,7 +429,7 @@ namespace LTP.Truck.Forms
     {
       var userUpsertRequest = new UserUpsertRequest
       {
-        // User mới chưa có IdSrc: không gửi Id để API tự tạo như payload web.
+        // Dùng chung một Id giữa local và server.
         Id = user.Id,
         TranslateFormDatas = new List<UserTranslateFormData>
         {

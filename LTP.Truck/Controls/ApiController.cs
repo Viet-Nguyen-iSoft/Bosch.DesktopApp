@@ -33,20 +33,6 @@ namespace LTP.Truck.Controls
       }
     }
 
-    public async Task<string> TypeGoods(TypeGoodsUpsertRequest typeGoodsUpsertRequest)
-    {
-      try
-      {
-        var api = new ApiService();
-        return await api.UpsertTypeGoodsAsync(typeGoodsUpsertRequest);
-      }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        throw;
-      }
-    }
-
     public async Task<string> ProductGroup(ProductGroupUpsertRequest productGroupUpsertRequest)
     {
       try

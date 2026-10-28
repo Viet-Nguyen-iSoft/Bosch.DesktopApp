@@ -403,9 +403,7 @@ namespace LTP.Truck
             `DeletedFlag` tinyint(1) NOT NULL,
             `EnableFlag` tinyint(1) NOT NULL,
             `SyncFlag` tinyint(1) NOT NULL,
-            `IdSrc` char(36) NULL,
-            CONSTRAINT `PK_DocumentDatas` PRIMARY KEY (`Id`),
-            INDEX `IX_DocumentDatas_IdSrc` (`IdSrc`)
+            CONSTRAINT `PK_DocumentDatas` PRIMARY KEY (`Id`)
           ) CHARACTER SET=utf8mb4;";
         await command.ExecuteNonQueryAsync();
       }
@@ -437,9 +435,7 @@ namespace LTP.Truck
               `DeletedFlag` tinyint(1) NOT NULL,
               `EnableFlag` tinyint(1) NOT NULL,
               `SyncFlag` tinyint(1) NOT NULL,
-              `IdSrc` char(36) NULL,
               CONSTRAINT `PK_Tares` PRIMARY KEY (`Id`),
-              INDEX `IX_Tares_IdSrc` (`IdSrc`),
               INDEX `IX_Tares_EnumTypeData_DeletedFlag` (`EnumTypeData`, `DeletedFlag`)
             ) CHARACTER SET=utf8mb4;";
           await createCommand.ExecuteNonQueryAsync();
@@ -524,10 +520,10 @@ namespace LTP.Truck
         INSERT IGNORE INTO `Tares`
           (`Id`, `Code`, `Name`, `Description`, `Value`, `EnumTypeData`,
            `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
-           `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`)
+           `DeletedFlag`, `EnableFlag`, `SyncFlag`)
         SELECT `Id`, `Code`, `Name`, `Description`, `Value`, {location},
                `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
-               `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`
+               `DeletedFlag`, `EnableFlag`, `SyncFlag`
         FROM `{escapedTableName}`;";
       await copyCommand.ExecuteNonQueryAsync();
     }
@@ -558,9 +554,7 @@ namespace LTP.Truck
               `DeletedFlag` tinyint(1) NOT NULL,
               `EnableFlag` tinyint(1) NOT NULL,
               `SyncFlag` tinyint(1) NOT NULL,
-              `IdSrc` char(36) NULL,
               CONSTRAINT `PK_ClientDeliveries` PRIMARY KEY (`Id`),
-              INDEX `IX_ClientDeliveries_IdSrc` (`IdSrc`),
               INDEX `IX_ClientDeliveries_EnumTypeData_DeletedFlag`
                 (`EnumTypeData`, `DeletedFlag`)
             ) CHARACTER SET=utf8mb4;";
@@ -660,10 +654,10 @@ namespace LTP.Truck
             (`Id`, `Name`, `OfficeAddress`, `PhoneForOfficeAddress`,
              `AgentAddress`, `PhoneForAgentAddress`, `Description`, `EnumTypeData`,
              `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
-             `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`)
+             `DeletedFlag`, `EnableFlag`, `SyncFlag`)
           SELECT `Id`, `Name`, {addressColumns}, `Description`, {(int)enumTypeData},
                  `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
-                 `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`
+                 `DeletedFlag`, `EnableFlag`, `SyncFlag`
           FROM `{escapedTableName}`;";
         await copyCommand.ExecuteNonQueryAsync();
       }
@@ -857,11 +851,11 @@ namespace LTP.Truck
               (`Id`, `Code`, `Name`, `Description`, `EnumWasteType`,
                `TagMappingReport`, `EnumTypeData`, `ProductGroupId`,
                `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
-               `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`)
+               `DeletedFlag`, `EnableFlag`, `SyncFlag`)
             SELECT `Id`, `Code`, `Name`, `Description`, `EnumWasteType`,
                    `TagMappingReport`, 1, `ProductGroupId`,
                    `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
-                   `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`
+                   `DeletedFlag`, `EnableFlag`, `SyncFlag`
             FROM `TypeGoods`;";
           await copyTypeGoods.ExecuteNonQueryAsync();
         }

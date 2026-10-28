@@ -55,10 +55,12 @@ namespace LTP.Truck.Services
               }
               break;
             case EnumTypeAPI.MD_TypeGoods:
-              var typeGoodsUpsertRequest = JsonHelper.FromJson<TypeGoodsUpsertRequest>(apiJob.Json ?? string.Empty);
+              var typeGoodsUpsertRequest = JsonHelper.FromJson<ProductUpsertRequest>(apiJob.Json ?? string.Empty);
               if (typeGoodsUpsertRequest != null)
               {
-                var rs = await api.UpsertTypeGoodsAsync(typeGoodsUpsertRequest);
+                // Tương thích job Loại hàng cũ chưa có TypeWeight.
+                typeGoodsUpsertRequest.TypeWeight = 1;
+                await api.UpsertProductAsync(typeGoodsUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_Tare:
@@ -79,6 +81,9 @@ namespace LTP.Truck.Services
               var productUpsertRequest = JsonHelper.FromJson<ProductUpsertRequest>(apiJob.Json ?? string.Empty);
               if (productUpsertRequest != null)
               {
+                // Tương thích job Chất thải cũ chưa có TypeWeight.
+                if (productUpsertRequest.TypeWeight == 0)
+                  productUpsertRequest.TypeWeight = 2;
                 await api.UpsertProductAsync(productUpsertRequest);
               }
               break;
