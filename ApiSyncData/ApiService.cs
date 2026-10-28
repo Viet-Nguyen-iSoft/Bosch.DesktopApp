@@ -893,21 +893,23 @@ namespace ApiSyncData
       if (string.IsNullOrWhiteSpace(originalFileName))
         originalFileName = serverFileName;
 
-      string extension = string.IsNullOrWhiteSpace(originalFileName)
-        ? string.Empty
-        : Path.GetExtension(Path.GetFileName(originalFileName));
-      if (string.IsNullOrWhiteSpace(extension) &&
-          !string.IsNullOrWhiteSpace(serverFileName))
+      // Giữ nguyên tên file gốc mà server trả về. Chỉ dùng tên template làm
+      // phương án dự phòng khi response và dữ liệu TemplateFile đều không có tên.
+      string fileName = SanitizeDownloadFileName(
+        Path.GetFileName(originalFileName ?? string.Empty));
+      if (string.IsNullOrWhiteSpace(fileName))
       {
-        extension = Path.GetExtension(Path.GetFileName(serverFileName));
-      }
-      string baseName = SanitizeDownloadFileName(templateName);
-      if (string.IsNullOrWhiteSpace(baseName))
-        baseName = $"Template_{id:N}";
+        string extension = string.IsNullOrWhiteSpace(serverFileName)
+          ? string.Empty
+          : Path.GetExtension(Path.GetFileName(serverFileName));
+        string baseName = SanitizeDownloadFileName(templateName);
+        if (string.IsNullOrWhiteSpace(baseName))
+          baseName = $"Template_{id:N}";
 
-      string fileName = Path.HasExtension(baseName)
-        ? baseName
-        : baseName + extension;
+        fileName = Path.HasExtension(baseName)
+          ? baseName
+          : baseName + extension;
+      }
 
       fileName = Path.GetFileName(fileName);
       if (string.IsNullOrWhiteSpace(fileName) ||
