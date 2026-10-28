@@ -69,6 +69,7 @@ namespace LTP.Truck.Forms
       ucStatusConnectServer = new LTP.Truck.UserControls.UcStatusConnect();
       ucStatusConnectWeight = new LTP.Truck.UserControls.UcStatusConnect();
       lbTime = new Label();
+      btnTemplate = new RJButton();
       tableLayoutPanel1.SuspendLayout();
       panelMenu.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
@@ -185,6 +186,7 @@ namespace LTP.Truck.Forms
       flowLayoutPanel1.Controls.Add(btnUser);
       flowLayoutPanel1.Controls.Add(btnSetting);
       flowLayoutPanel1.Controls.Add(btnAuditLog);
+      flowLayoutPanel1.Controls.Add(btnTemplate);
       flowLayoutPanel1.Location = new Point(0, 0);
       flowLayoutPanel1.Margin = new Padding(0);
       flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -807,6 +809,30 @@ namespace LTP.Truck.Forms
       lbTime.Text = "...";
       lbTime.TextAlign = ContentAlignment.MiddleCenter;
       // 
+      // btnTemplate
+      // 
+      btnTemplate.BackColor = Color.Silver;
+      btnTemplate.BackgroundColor = Color.Silver;
+      btnTemplate.BorderColor = Color.PaleVioletRed;
+      btnTemplate.BorderRadius = 5;
+      btnTemplate.BorderSize = 0;
+      btnTemplate.Dock = DockStyle.Top;
+      btnTemplate.FlatAppearance.BorderSize = 0;
+      btnTemplate.FlatStyle = FlatStyle.Flat;
+      btnTemplate.Font = new Font("Roboto", 14F, FontStyle.Bold);
+      btnTemplate.ForeColor = Color.Black;
+      btnTemplate.Image = Properties.Resources.management;
+      btnTemplate.ImageAlign = ContentAlignment.MiddleLeft;
+      btnTemplate.Location = new Point(3, 900);
+      btnTemplate.Name = "btnTemplate";
+      btnTemplate.Padding = new Padding(15, 0, 0, 0);
+      btnTemplate.Size = new Size(242, 60);
+      btnTemplate.TabIndex = 54;
+      btnTemplate.Text = "        TEMPLATE";
+      btnTemplate.TextAlign = ContentAlignment.MiddleLeft;
+      btnTemplate.TextColor = Color.Black;
+      btnTemplate.UseVisualStyleBackColor = false;
+      // 
       // FrmOperation
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -873,5 +899,6 @@ namespace LTP.Truck.Forms
     private RJButton btnUser;
     private RJButton btnSetting;
     private RJButton btnAuditLog;
+    private RJButton btnTemplate;
   }
 }

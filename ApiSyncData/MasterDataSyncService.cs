@@ -162,6 +162,22 @@ namespace ApiSyncData
       CancellationToken token = default) =>
       DocumentDataServerSyncService.SyncAsync(response, token);
 
+    public static Task<MasterDataChangedEventArgs?> SyncTemplatesAsync(
+      TemplateAPI response,
+      CancellationToken token = default) =>
+      SyncAsync<ListDatumTemplate, Template>(
+        response.Data?.ListData,
+        response.Data?.TotalRecord,
+        (source, local) =>
+        {
+          local.Name = source.Name;
+          local.SerialCode = source.SerialCode;
+          local.TemplateFile = source.TemplateFile;
+          local.Order = source.Order;
+          local.IsBBGN = source.IsBBGN;
+        },
+        token);
+
     public static Task<MasterDataChangedEventArgs?> SyncProductsAsync(ProductAPI response, CancellationToken token = default)
     {
       var groups = new Dictionary<Guid, Guid>();

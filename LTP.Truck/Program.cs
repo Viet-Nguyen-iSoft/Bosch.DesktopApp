@@ -141,6 +141,7 @@ namespace LTP.Truck
             await EnsureAuditLogsTableAsync(db);
             await EnsureDocumentDataTableAsync(db);
             await EnsureTareTableAndMigrateAsync(db);
+            await EnsureTemplateTableAsync(db);
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
@@ -404,6 +405,39 @@ namespace LTP.Truck
             `EnableFlag` tinyint(1) NOT NULL,
             `SyncFlag` tinyint(1) NOT NULL,
             CONSTRAINT `PK_DocumentDatas` PRIMARY KEY (`Id`)
+          ) CHARACTER SET=utf8mb4;";
+        await command.ExecuteNonQueryAsync();
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureTemplateTableAsync(MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using var command = db.Database.GetDbConnection().CreateCommand();
+        command.CommandText = @"
+          CREATE TABLE IF NOT EXISTS `Templates` (
+            `Id` char(36) NOT NULL,
+            `Name` longtext NULL,
+            `SerialCode` longtext NULL,
+            `TemplateFile` longtext NULL,
+            `Order` int NOT NULL,
+            `IsBBGN` tinyint(1) NOT NULL,
+            `CreatedAt` datetime(6) NULL,
+            `CreatedBy` char(36) NULL,
+            `UpdatedAt` datetime(6) NULL,
+            `UpdatedBy` char(36) NULL,
+            `DeletedFlag` tinyint(1) NOT NULL,
+            `EnableFlag` tinyint(1) NOT NULL,
+            `SyncFlag` tinyint(1) NOT NULL,
+            CONSTRAINT `PK_Templates` PRIMARY KEY (`Id`),
+            INDEX `IX_Templates_IsBBGN_DeletedFlag_Order`
+              (`IsBBGN`, `DeletedFlag`, `Order`)
           ) CHARACTER SET=utf8mb4;";
         await command.ExecuteNonQueryAsync();
       }

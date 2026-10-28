@@ -672,6 +672,38 @@ namespace ApiSyncData
       }
     }
 
+    public async Task<TemplateAPI> Templates(
+      CancellationToken cancellationToken = default)
+    {
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException(
+          "Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException(
+          "Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/TemplateFile/get-list-simplify";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+      using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+        .ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"TemplateFile. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
+      }
+
+      return JsonConvert.DeserializeObject<TemplateAPI>(responseContent)
+        ?? throw new InvalidOperationException(
+          "TemplateFile API trả về dữ liệu không hợp lệ.");
+    }
+
     public async Task<string> RemoveRole(
       Guid userId,
       IEnumerable<string> phanQuyenCodes,

@@ -19,6 +19,7 @@ namespace ApiSyncData
     public static Resp.DeliveryAPI? Deliveries { get; private set; }
     public static Resp.UserAPI? Users { get; private set; }
     public static Resp.DocumentAPI? Documents { get; private set; }
+    public static Resp.TemplateAPI? Templates { get; private set; }
 
     public static void SetServerAvailabilityCheck(Func<bool> serverAvailabilityCheck)
     {
@@ -84,6 +85,12 @@ namespace ApiSyncData
       var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
         value => Users = value, cancellationToken);
 
+      var templates = LoadAndSyncAsync(
+        api.Templates(cancellationToken),
+        MasterDataSyncService.SyncTemplatesAsync,
+        value => Templates = value,
+        cancellationToken);
+
       var dtNow = DateTime.UtcNow.Date;
       var dateTo = dtNow.AddYears(10);
       var dateFrom = dtNow.AddYears(-10);
@@ -94,7 +101,8 @@ namespace ApiSyncData
         cancellationToken);
 
       await Task.WhenAll(stations, warehouses, productGroups,
-        products, categoryTares, clientDeliveries, users, documents).ConfigureAwait(false);
+        products, categoryTares, clientDeliveries, users, templates, documents)
+        .ConfigureAwait(false);
 
       try
       {
