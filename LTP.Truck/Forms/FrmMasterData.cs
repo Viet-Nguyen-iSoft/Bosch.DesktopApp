@@ -37,8 +37,7 @@ namespace LTP.Truck.Forms
     private ClientService _clientService { get; set; }
     private WarehouseService _warehouseService { get; set; }
     private TypeGoodsService _typeGoodsService { get; set; }
-    private CategoryTareService _categoryTareService { get; set; }
-    private TareTruckService _tareTruckService { get; set; }
+    private TareService _tareService { get; set; }
     private ProductGroupService _productGroupService { get; set; }
     private ProductService _productService { get; set; }
     private DeliveryService _deliveryService { get; set; }
@@ -79,8 +78,7 @@ namespace LTP.Truck.Forms
       _clientService = new ClientService();
       _warehouseService = new WarehouseService();
       _typeGoodsService = new TypeGoodsService();
-      _categoryTareService = new CategoryTareService();
-      _tareTruckService = new TareTruckService();
+      _tareService = new TareService();
       _productGroupService = new ProductGroupService();
       _productService = new ProductService();
       _deliveryService = new DeliveryService();
@@ -173,13 +171,15 @@ namespace LTP.Truck.Forms
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoWarehouse, searchKey));
             break;
           case EnumTypeMasterData.Tare:
-            var rsTare = await AppCore.Ins._categoryTareService.GetAllAsync();
+            var rsTare = await AppCore.Ins._tareService
+              .GetAllAsync(EnumTypeDataLocation.Good);
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoTare = DTOHelper.ConvertCategoryTareDTO(rsTare);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoTare, searchKey));
             break;
           case EnumTypeMasterData.TareForTruck:
-            var rsTareTruck = await _tareTruckService.GetAllAsync();
+            var rsTareTruck = await _tareService
+              .GetAllAsync(EnumTypeDataLocation.Truck);
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             var dtoTareTruck = DTOHelper.ConvertTareTruckDTO(rsTareTruck);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoTareTruck, searchKey));
@@ -771,7 +771,8 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var existingTares = await _categoryTareService.GetAllAsync(IsContainDelete: true);
+      var existingTares = await _tareService.GetAllAsync(
+        EnumTypeDataLocation.Good, isContainDelete: true);
       var taresByName = existingTares
         .Where(item => !string.IsNullOrWhiteSpace(item.Name))
         .GroupBy(item => item.Name!.Trim(), StringComparer.OrdinalIgnoreCase)
@@ -812,7 +813,7 @@ namespace LTP.Truck.Forms
         }
 
         var isNew = !taresByName.TryGetValue(name, out var categoryTare);
-        categoryTare ??= new CategoryTare
+        categoryTare ??= new Tare
         {
           CreatedAt = DateTime.UtcNow,
           EnableFlag = true,
@@ -828,7 +829,8 @@ namespace LTP.Truck.Forms
 
         try
         {
-          var savedTare = await _categoryTareService.AddOrUpdateAsync(categoryTare);
+          var savedTare = await _tareService.AddOrUpdateAsync(
+            categoryTare, EnumTypeDataLocation.Good);
           taresByName[name] = savedTare;
           importedCount++;
           if (isNew)
@@ -844,7 +846,7 @@ namespace LTP.Truck.Forms
       }
 
       await LoadData(EnumTypeMasterData.Tare);
-      MasterDataChangeNotifier.Notify<CategoryTare>();
+      MasterDataChangeNotifier.Notify<Tare>();
 
       var message =
         $"Import Tare hoàn tất.\r\n" +
@@ -880,7 +882,8 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var existingTares = await _tareTruckService.GetAllAsync(IsContainDelete: true);
+      var existingTares = await _tareService.GetAllAsync(
+        EnumTypeDataLocation.Truck, isContainDelete: true);
       var taresByName = existingTares
         .Where(item => !string.IsNullOrWhiteSpace(item.Name))
         .GroupBy(item => item.Name!.Trim(), StringComparer.OrdinalIgnoreCase)
@@ -921,7 +924,7 @@ namespace LTP.Truck.Forms
         }
 
         var isNew = !taresByName.TryGetValue(name, out var tareTruck);
-        tareTruck ??= new TareTruck
+        tareTruck ??= new Tare
         {
           CreatedAt = DateTime.UtcNow,
           EnableFlag = true,
@@ -937,7 +940,8 @@ namespace LTP.Truck.Forms
 
         try
         {
-          var savedTare = await _tareTruckService.AddOrUpdateAsync(tareTruck);
+          var savedTare = await _tareService.AddOrUpdateAsync(
+            tareTruck, EnumTypeDataLocation.Truck);
           taresByName[name] = savedTare;
           importedCount++;
           if (isNew)
@@ -953,7 +957,7 @@ namespace LTP.Truck.Forms
       }
 
       await LoadData(EnumTypeMasterData.TareForTruck);
-      MasterDataChangeNotifier.Notify<TareTruck>();
+      MasterDataChangeNotifier.Notify<Tare>();
 
       var message =
         $"Import Tare xe tải hoàn tất.\r\n" +
@@ -1237,7 +1241,7 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void PopupTypeTare_OnSendSuccess(CategoryTare obj)
+    private async void PopupTypeTare_OnSendSuccess(Tare obj)
     {
       try
       {
@@ -1261,7 +1265,7 @@ namespace LTP.Truck.Forms
 
         await _apiJobsService.AddOrUpdateAsync(apiJobs);
         await LoadData(_enumTypeMasterDataCurrent);
-        MasterDataChangeNotifier.Notify<CategoryTare>();
+        MasterDataChangeNotifier.Notify<Tare>();
         ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
@@ -1270,12 +1274,12 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private async void PopupTareTruck_OnSendSuccess(TareTruck obj)
+    private async void PopupTareTruck_OnSendSuccess(Tare obj)
     {
       try
       {
         await LoadData(_enumTypeMasterDataCurrent);
-        MasterDataChangeNotifier.Notify<TareTruck>();
+        MasterDataChangeNotifier.Notify<Tare>();
         ShowSaveSuccess(obj.UpdatedAt.HasValue ? "Cập nhật thành công." : "Thêm thành công.");
       }
       catch (Exception ex)
@@ -2240,11 +2244,12 @@ namespace LTP.Truck.Forms
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Tare)
         {
-          var categoryTare = e.Obj as CategoryTare;
+          var categoryTare = e.Obj as Tare;
           if (categoryTare != null)
           {
             categoryTare.DeletedFlag = true;
-            await _categoryTareService.AddOrUpdateAsync(categoryTare);
+            await _tareService.AddOrUpdateAsync(
+              categoryTare, EnumTypeDataLocation.Good);
 
             var categoryTareUpsertRequest = new CategoryTareUpsertRequest
             {
@@ -2268,19 +2273,20 @@ namespace LTP.Truck.Forms
 
             await _apiJobsService.AddOrUpdateAsync(apiJobs);
             await LoadData(_enumTypeMasterDataCurrent);
-            MasterDataChangeNotifier.Notify<CategoryTare>();
+            MasterDataChangeNotifier.Notify<Tare>();
           }
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TareForTruck)
         {
-          var tareTruck = e.Obj as TareTruck;
+          var tareTruck = e.Obj as Tare;
           if (tareTruck != null)
           {
             tareTruck.DeletedFlag = true;
             tareTruck.UpdatedAt = DateTime.UtcNow;
-            await _tareTruckService.AddOrUpdateAsync(tareTruck);
+            await _tareService.AddOrUpdateAsync(
+              tareTruck, EnumTypeDataLocation.Truck);
             await LoadData(_enumTypeMasterDataCurrent);
-            MasterDataChangeNotifier.Notify<TareTruck>();
+            MasterDataChangeNotifier.Notify<Tare>();
           }
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.GroupProduct)

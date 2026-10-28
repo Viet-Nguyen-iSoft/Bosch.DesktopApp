@@ -5,6 +5,7 @@ using LTP.Truck.Controls;
 using LTP.Truck.SecurityPassword;
 using LTP.Truck.Services;
 using Microsoft.EntityFrameworkCore;
+using static iSoft.Database.EnumData;
 
 namespace LTP.Truck
 {
@@ -131,6 +132,7 @@ namespace LTP.Truck
             await EnsureProductTagMappingReportColumnAsync(db);
             await EnsureAuditLogsTableAsync(db);
             await EnsureDocumentDataTableAsync(db);
+            await EnsureTareTableAndMigrateAsync(db);
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
@@ -402,6 +404,112 @@ namespace LTP.Truck
       {
         await db.Database.CloseConnectionAsync();
       }
+    }
+
+    private static async Task EnsureTareTableAndMigrateAsync(MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using (var createCommand = db.Database.GetDbConnection().CreateCommand())
+        {
+          createCommand.CommandText = @"
+            CREATE TABLE IF NOT EXISTS `Tares` (
+              `Id` char(36) NOT NULL,
+              `Code` longtext NULL,
+              `Name` longtext NULL,
+              `Description` longtext NULL,
+              `Value` double NULL DEFAULT 0,
+              `EnumTypeData` int NOT NULL,
+              `CreatedAt` datetime(6) NULL,
+              `CreatedBy` char(36) NULL,
+              `UpdatedAt` datetime(6) NULL,
+              `UpdatedBy` char(36) NULL,
+              `DeletedFlag` tinyint(1) NOT NULL,
+              `EnableFlag` tinyint(1) NOT NULL,
+              `SyncFlag` tinyint(1) NOT NULL,
+              `IdSrc` char(36) NULL,
+              CONSTRAINT `PK_Tares` PRIMARY KEY (`Id`),
+              INDEX `IX_Tares_IdSrc` (`IdSrc`),
+              INDEX `IX_Tares_EnumTypeData_DeletedFlag` (`EnumTypeData`, `DeletedFlag`)
+            ) CHARACTER SET=utf8mb4;";
+          await createCommand.ExecuteNonQueryAsync();
+        }
+
+        await CopyLegacyTaresAsync(db, "CategoryTares", (int)EnumTypeDataLocation.Good);
+        await CopyLegacyTaresAsync(db, "TareTrucks", (int)EnumTypeDataLocation.Truck);
+
+        var foreignKeys = new List<(string Name, string ReferencedTable)>();
+        await using (var findForeignKeys = db.Database.GetDbConnection().CreateCommand())
+        {
+          findForeignKeys.CommandText = @"
+            SELECT CONSTRAINT_NAME, REFERENCED_TABLE_NAME
+            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'RecordWeights'
+              AND COLUMN_NAME = 'CategoryTareId'
+              AND REFERENCED_TABLE_NAME IS NOT NULL;";
+          await using var reader = await findForeignKeys.ExecuteReaderAsync();
+          while (await reader.ReadAsync())
+            foreignKeys.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        if (foreignKeys.Count == 1 && string.Equals(
+              foreignKeys[0].ReferencedTable, "Tares",
+              StringComparison.OrdinalIgnoreCase))
+          return;
+
+        foreach (var foreignKey in foreignKeys)
+        {
+          string escapedName = foreignKey.Name.Replace("`", "``", StringComparison.Ordinal);
+          await using var dropCommand = db.Database.GetDbConnection().CreateCommand();
+          dropCommand.CommandText =
+            $"ALTER TABLE `RecordWeights` DROP FOREIGN KEY `{escapedName}`;";
+          await dropCommand.ExecuteNonQueryAsync();
+        }
+
+        await using var addForeignKey = db.Database.GetDbConnection().CreateCommand();
+        addForeignKey.CommandText = @"
+          ALTER TABLE `RecordWeights`
+          ADD CONSTRAINT `FK_RecordWeights_Tares_CategoryTareId`
+          FOREIGN KEY (`CategoryTareId`) REFERENCES `Tares` (`Id`);";
+        await addForeignKey.ExecuteNonQueryAsync();
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task CopyLegacyTaresAsync(
+      MySqlDbContext db,
+      string tableName,
+      int location)
+    {
+      await using var existsCommand = db.Database.GetDbConnection().CreateCommand();
+      existsCommand.CommandText = @"
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @tableName;";
+      var parameter = existsCommand.CreateParameter();
+      parameter.ParameterName = "@tableName";
+      parameter.Value = tableName;
+      existsCommand.Parameters.Add(parameter);
+      if (Convert.ToInt32(await existsCommand.ExecuteScalarAsync()) == 0)
+        return;
+
+      string escapedTableName = tableName.Replace("`", "``", StringComparison.Ordinal);
+      await using var copyCommand = db.Database.GetDbConnection().CreateCommand();
+      copyCommand.CommandText = $@"
+        INSERT IGNORE INTO `Tares`
+          (`Id`, `Code`, `Name`, `Description`, `Value`, `EnumTypeData`,
+           `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
+           `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`)
+        SELECT `Id`, `Code`, `Name`, `Description`, `Value`, {location},
+               `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
+               `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`
+        FROM `{escapedTableName}`;";
+      await copyCommand.ExecuteNonQueryAsync();
     }
 
     private static async Task EnsureTypeGoodsWasteColumnsAsync(

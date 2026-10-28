@@ -6,7 +6,7 @@ namespace iSoft.Database.DTO
   public class TareTruckDTO
   {
     [Browsable(false)]
-    public TareTruck? TareTruck { get; set; }
+    public Tare? TareTruck { get; set; }
 
     [DisplayName("Stt")]
     public int? No { get; set; }

@@ -14,7 +14,7 @@ namespace LTP.Truck.Popup
   {
     public event Action<RecordTruck>? OnSendSuccess;
 
-    private readonly TareTruckService _tareTruckService = new();
+    private readonly TareService _tareService = new();
     private Guid? _clientId;
     private Guid? _typeGoodsId;
     private Guid? _warehouseId;
@@ -41,10 +41,11 @@ namespace LTP.Truck.Popup
     {
       try
       {
-        var tareTrucks = await _tareTruckService.GetAllAsync(IsContainDelete: false);
-        tareTrucks.Insert(0, new TareTruck { Name = "Không có", Value = 0 });
-        cbbTareForTruck.DisplayMember = nameof(TareTruck.Name);
-        cbbTareForTruck.ValueMember = nameof(TareTruck.Id);
+        var tareTrucks = await _tareService.GetAllAsync(
+          EnumTypeDataLocation.Truck, isContainDelete: false);
+        tareTrucks.Insert(0, new Tare { Name = "Không có", Value = 0 });
+        cbbTareForTruck.DisplayMember = nameof(Tare.Name);
+        cbbTareForTruck.ValueMember = nameof(Tare.Id);
         cbbTareForTruck.DataSource = tareTrucks;
         cbbTareForTruck.SelectedIndex = 0;
       }
@@ -137,7 +138,7 @@ namespace LTP.Truck.Popup
 
     private void CbbTareForTruck_Format(object? sender, ListControlConvertEventArgs e)
     {
-      if (e.ListItem is not TareTruck tareTruck)
+      if (e.ListItem is not Tare tareTruck)
         return;
 
       e.Value = $"{tareTruck.Name} - {WeightFormatHelper.Format(tareTruck.Value ?? 0)} Kg";
@@ -150,7 +151,7 @@ namespace LTP.Truck.Popup
 
     private void UpdateTareForTruckValue()
     {
-      var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
+      var selectedTare = cbbTareForTruck.SelectedItem as Tare;
       var tareValue = selectedTare?.Id == Guid.Empty
         ? 0
         : (selectedTare?.Value ?? 0) * (double)numericUpDownNumberTare.Value;
@@ -196,7 +197,7 @@ namespace LTP.Truck.Popup
       }
 
       var now = DateTime.UtcNow;
-      var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
+      var selectedTare = cbbTareForTruck.SelectedItem as Tare;
       var record = new RecordTruck
       {
         NetTime01 = weight01,

@@ -221,7 +221,7 @@ namespace iSoft.Database
       return rsDto;
     }
 
-    public static List<CategoryTareDTO>? ConvertCategoryTareDTO(List<CategoryTare>? categoryTares)
+    public static List<CategoryTareDTO>? ConvertCategoryTareDTO(List<Tare>? categoryTares)
     {
       var rsDto = new List<CategoryTareDTO>();
       if (categoryTares?.Count() > 0)
@@ -245,7 +245,7 @@ namespace iSoft.Database
       return rsDto;
     }
 
-    public static List<TareTruckDTO>? ConvertTareTruckDTO(List<TareTruck>? tareTrucks)
+    public static List<TareTruckDTO>? ConvertTareTruckDTO(List<Tare>? tareTrucks)
     {
       var rsDto = new List<TareTruckDTO>();
       if (tareTrucks?.Count() > 0)

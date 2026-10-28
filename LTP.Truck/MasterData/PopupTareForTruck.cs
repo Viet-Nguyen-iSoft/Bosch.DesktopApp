@@ -4,16 +4,17 @@ using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using System.Globalization;
 using static Common.EnumData;
+using static iSoft.Database.EnumData;
 using static LTP.Truck.EnumData;
 
 namespace LTP.Truck.MasterData
 {
   public partial class PopupTareForTruck : Form
   {
-    public event Action<TareTruck>? OnSendSuccess;
+    public event Action<Tare>? OnSendSuccess;
 
-    private readonly TareTruckService _tareTruckService = new();
-    private readonly TareTruck? _tareTruckUpdate;
+    private readonly TareService _tareService = new();
+    private readonly Tare? _tareTruckUpdate;
     private readonly EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
 
     public PopupTareForTruck()
@@ -25,7 +26,7 @@ namespace LTP.Truck.MasterData
       txtValueTare._TextChanged += TxtValueTare_TextChanged;
     }
 
-    public PopupTareForTruck(TareTruck tareTruck) : this()
+    public PopupTareForTruck(Tare tareTruck) : this()
     {
       _tareTruckUpdate = tareTruck;
       _enumTypePopup = EnumTypePopup.Update;
@@ -60,10 +61,10 @@ namespace LTP.Truck.MasterData
           return;
         }
 
-        TareTruck tareTruck;
+        Tare tareTruck;
         if (_enumTypePopup == EnumTypePopup.Add)
         {
-          tareTruck = new TareTruck
+          tareTruck = new Tare
           {
             Name = txtName.Texts.Trim(),
             Value = tareValue,
@@ -80,7 +81,8 @@ namespace LTP.Truck.MasterData
           tareTruck.UpdatedAt = DateTime.UtcNow;
         }
 
-        var result = await _tareTruckService.AddOrUpdateAsync(tareTruck);
+        var result = await _tareService.AddOrUpdateAsync(
+          tareTruck, EnumTypeDataLocation.Truck);
         Close();
         OnSendSuccess?.Invoke(result);
       }

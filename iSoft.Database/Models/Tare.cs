@@ -18,7 +18,7 @@ namespace iSoft.Database.Models
 
 
     #region Mapping
-    
+    public ICollection<RecordWeight>? RecordWeights { get; set; }
     #endregion
   }
 }

@@ -16,7 +16,7 @@ namespace LTP.Truck.Forms
   {
     public event Action<RecordTruck>? OnSendSuccess;
 
-    private readonly TareTruckService _tareTruckService = new();
+    private readonly TareService _tareService = new();
     private Guid? _clientId;
     private Guid? _typeGoodsId;
     private Guid? _warehouseId;
@@ -50,11 +50,12 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        var items = await _tareTruckService.GetAllAsync(IsContainDelete: false);
+        var items = await _tareService.GetAllAsync(
+          EnumTypeDataLocation.Truck, isContainDelete: false);
         items = items.OrderBy(item => item.Name ?? string.Empty).ToList();
-        items.Insert(0, new TareTruck { Id = Guid.Empty, Name = "Không có", Value = 0 });
-        cbbTareForTruck.DisplayMember = nameof(TareTruck.Name);
-        cbbTareForTruck.ValueMember = nameof(TareTruck.Id);
+        items.Insert(0, new Tare { Id = Guid.Empty, Name = "Không có", Value = 0 });
+        cbbTareForTruck.DisplayMember = nameof(Tare.Name);
+        cbbTareForTruck.ValueMember = nameof(Tare.Id);
         cbbTareForTruck.DataSource = items;
         cbbTareForTruck.SelectedIndex = 0;
       }
@@ -142,13 +143,13 @@ namespace LTP.Truck.Forms
 
     private void CbbTareForTruck_Format(object? sender, ListControlConvertEventArgs e)
     {
-      if (e.ListItem is TareTruck tareTruck)
+      if (e.ListItem is Tare tareTruck)
         e.Value = $"{tareTruck.Name} - {WeightFormatHelper.Format(tareTruck.Value ?? 0)} Kg";
     }
 
     private void UpdateTareForTruckValue()
     {
-      var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
+      var selectedTare = cbbTareForTruck.SelectedItem as Tare;
       var value = selectedTare?.Id == Guid.Empty
         ? 0
         : (selectedTare?.Value ?? 0) * (double)numericUpDownNumberTare.Value;
@@ -199,7 +200,7 @@ namespace LTP.Truck.Forms
       double grossWeight = netWeight + tare;
 
       var now = DateTime.UtcNow;
-      var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
+      var selectedTare = cbbTareForTruck.SelectedItem as Tare;
       OnSendSuccess?.Invoke(new RecordTruck
       {
         NetTime01 = netWeight,

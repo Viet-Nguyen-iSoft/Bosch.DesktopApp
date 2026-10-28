@@ -72,9 +72,9 @@ namespace iSoft.Database
 
     public enum EnumTypeDataLocation
     {
-      All,
-      Truck,
-      Good,
+      All = 0,
+      Truck = 1,
+      Good = 2,
     }
   }
 }

@@ -11,8 +11,17 @@ namespace ApiSyncData
     private static readonly SemaphoreSlim SyncLock = new(1, 1);
 
     public static Task<MasterDataChangedEventArgs?> SyncCategoryTaresAsync(CategoryTareAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumCategoryTare, CategoryTare>(response.Data?.ListData, response.Data?.TotalRecord,
-        (s, l) => { l.Name = s.Name; l.Code = s.SerialCode; l.Description = s.Description; l.Value = s.WeightTare; }, token);
+      SyncAsync<ListDatumCategoryTare, Tare>(response.Data?.ListData, response.Data?.TotalRecord,
+        (s, l) =>
+        {
+          l.Name = s.Name;
+          l.Code = s.SerialCode;
+          l.Description = s.Description;
+          l.Value = s.WeightTare;
+          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good;
+        }, token,
+        filterLocals: query => query.Where(tare =>
+          tare.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Good));
 
     public static Task<MasterDataChangedEventArgs?> SyncStationsAsync(StationAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumStation, Station>(response.Data?.ListData, response.Data?.TotalRecord,
@@ -120,7 +129,8 @@ namespace ApiSyncData
       List<TSource>? rows, int? total, Action<TSource, TEntity> map,
       CancellationToken token, Func<MySqlDbContext, Task>? prepare = null,
       Func<TSource, bool>? shouldSync = null,
-      Action<TEntity>? initializeAdded = null)
+      Action<TEntity>? initializeAdded = null,
+      Func<IQueryable<TEntity>, IQueryable<TEntity>>? filterLocals = null)
       where TSource : IServerRecord
       where TEntity : BaseModel, new()
     {
@@ -132,7 +142,10 @@ namespace ApiSyncData
         if (prepare != null)
           await prepare(db).ConfigureAwait(false);
         var sourceIds = rows!.Select(row => row.Id!.Value).ToList();
-        var locals = await db.Set<TEntity>()
+        var localQuery = db.Set<TEntity>().AsQueryable();
+        if (filterLocals != null)
+          localQuery = filterLocals(localQuery);
+        var locals = await localQuery
           .Where(x => (x.IdSrc.HasValue && x.IdSrc != Guid.Empty) || sourceIds.Contains(x.Id))
           .ToListAsync(token).ConfigureAwait(false);
         var rowsToSync = shouldSync == null

@@ -40,7 +40,7 @@ namespace LTP.Truck.Forms
     private bool _initialLoadStarted;
     private bool _isLoadingRecordFromLicensePlate;
     private bool _isViewingHistoricalDetail;
-    private readonly TareTruckService _tareTruckService = new();
+    private readonly TareService _tareService = new();
     private static string FormatWeight(double value)
     {
       return WeightFormatHelper.Format(value);
@@ -201,20 +201,21 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        Guid selectedId = (cbbTareForTruck.SelectedItem as TareTruck)?.Id ?? Guid.Empty;
-        var tareTrucks = await _tareTruckService.GetAllAsync(IsContainDelete: false);
+        Guid selectedId = (cbbTareForTruck.SelectedItem as Tare)?.Id ?? Guid.Empty;
+        var tareTrucks = await _tareService.GetAllAsync(
+          EnumTypeDataLocation.Truck, isContainDelete: false);
         var items = tareTrucks
           .OrderBy(tareTruck => tareTruck.Name ?? string.Empty)
           .ToList();
-        items.Insert(0, new TareTruck
+        items.Insert(0, new Tare
         {
           Id = Guid.Empty,
           Name = "Không có",
           Value = 0,
         });
 
-        cbbTareForTruck.DisplayMember = nameof(TareTruck.Name);
-        cbbTareForTruck.ValueMember = nameof(TareTruck.Id);
+        cbbTareForTruck.DisplayMember = nameof(Tare.Name);
+        cbbTareForTruck.ValueMember = nameof(Tare.Id);
         cbbTareForTruck.DataSource = items;
 
         int selectedIndex = items.FindIndex(tareTruck => tareTruck.Id == selectedId);
@@ -223,12 +224,12 @@ namespace LTP.Truck.Forms
       catch (Exception ex)
       {
         LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-        cbbTareForTruck.DataSource = new List<TareTruck>
+        cbbTareForTruck.DataSource = new List<Tare>
         {
           new() { Id = Guid.Empty, Name = "Không có", Value = 0 },
         };
-        cbbTareForTruck.DisplayMember = nameof(TareTruck.Name);
-        cbbTareForTruck.ValueMember = nameof(TareTruck.Id);
+        cbbTareForTruck.DisplayMember = nameof(Tare.Name);
+        cbbTareForTruck.ValueMember = nameof(Tare.Id);
         cbbTareForTruck.SelectedIndex = 0;
       }
     }
@@ -240,7 +241,7 @@ namespace LTP.Truck.Forms
 
     private void CbbTareForTruck_Format(object? sender, ListControlConvertEventArgs e)
     {
-      if (e.ListItem is not TareTruck tareTruck)
+      if (e.ListItem is not Tare tareTruck)
         return;
 
       e.Value = $"{tareTruck.Name} - {WeightFormatHelper.Format(tareTruck.Value ?? 0)} Kg";
@@ -253,7 +254,7 @@ namespace LTP.Truck.Forms
 
     private void UpdateTareForTruckValue()
     {
-      var selectedTare = cbbTareForTruck.SelectedItem as TareTruck;
+      var selectedTare = cbbTareForTruck.SelectedItem as Tare;
       var tareValue = selectedTare?.Id == Guid.Empty
         ? 0
         : (selectedTare?.Value ?? 0) * (double)numericUpDownNumberTare.Value;
@@ -267,7 +268,7 @@ namespace LTP.Truck.Forms
       {
         for (int index = 0; index < cbbTareForTruck.Items.Count; index++)
         {
-          if (cbbTareForTruck.Items[index] is TareTruck tareTruck &&
+          if (cbbTareForTruck.Items[index] is Tare tareTruck &&
               string.Equals(tareTruck.Name, recordTruck.NameTareForTruck,
                 StringComparison.CurrentCultureIgnoreCase))
           {
@@ -301,12 +302,12 @@ namespace LTP.Truck.Forms
 
     private string? GetTareForTruckName()
     {
-      return (cbbTareForTruck.SelectedItem as TareTruck)?.Name;
+      return (cbbTareForTruck.SelectedItem as Tare)?.Name;
     }
 
     private async void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
     {
-      if (entityType != typeof(TareTruck) || IsDisposed || Disposing)
+      if (entityType != typeof(Tare) || IsDisposed || Disposing)
         return;
 
       await LoadTareForTruckAsync();

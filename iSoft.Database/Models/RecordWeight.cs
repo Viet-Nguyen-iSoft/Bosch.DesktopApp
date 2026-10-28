@@ -31,7 +31,7 @@ namespace iSoft.Database.Models
     public Product Product { get; set; } = null!;
 
     public Guid? CategoryTareId { get; set; }
-    public CategoryTare CategoryTare { get; set; } = null!;
+    public Tare CategoryTare { get; set; } = null!;
 
     public Guid? DeliveryId { get; set; }
     public Delivery Delivery { get; set; } = null!;

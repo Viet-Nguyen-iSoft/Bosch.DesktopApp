@@ -11,7 +11,7 @@ namespace iSoft.Database.DTO
   public class CategoryTareDTO
   {
     [Browsable(false)]
-    public CategoryTare? CategoryTare { get; set; }
+    public Tare? CategoryTare { get; set; }
 
 
     [DisplayName("Stt")]

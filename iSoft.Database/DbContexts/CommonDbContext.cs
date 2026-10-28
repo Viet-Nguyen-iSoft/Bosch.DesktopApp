@@ -34,7 +34,7 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<AuditLog>? AuditLogs { get; set; }
     public virtual DbSet<ProductGroup>? ProductGroups { get; set; }
     public virtual DbSet<Product>? Products { get; set; }
-    public virtual DbSet<CategoryTare>? CategoryTares { get; set; }
+    public virtual DbSet<Tare>? Tares { get; set; }
     public virtual DbSet<Warehouse>? Warehouses { get; set; }
     public virtual DbSet<TypeGoods>? TypeGoods { get; set; }
     public virtual DbSet<Client>? Clients { get; set; }
@@ -45,7 +45,6 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<Delivery>? Deliveries { get; set; }
     public virtual DbSet<User>? Users { get; set; }
     public virtual DbSet<Role>? Roles { get; set; }
-    public virtual DbSet<TareTruck>? TareTrucks { get; set; }
     public virtual DbSet<DocumentData>? DocumentDatas { get; set; }
 
 
@@ -111,6 +110,15 @@ namespace iSoft.Database.DbContexts
       modelBuilder.Entity<RecordWeight>()
         .HasIndex(record => new { record.RecordTruckId, record.DeletedFlag })
         .HasDatabaseName("IX_RecordWeights_Truck_Deleted");
+
+      modelBuilder.Entity<RecordWeight>()
+        .HasOne(record => record.CategoryTare)
+        .WithMany(tare => tare.RecordWeights)
+        .HasForeignKey(record => record.CategoryTareId);
+
+      modelBuilder.Entity<Tare>()
+        .HasIndex(tare => new { tare.EnumTypeData, tare.DeletedFlag })
+        .HasDatabaseName("IX_Tares_EnumTypeData_DeletedFlag");
 
       modelBuilder.Entity<RecordWeight>()
         .HasIndex(record => new { record.SyncFlag, record.CreatedAt })

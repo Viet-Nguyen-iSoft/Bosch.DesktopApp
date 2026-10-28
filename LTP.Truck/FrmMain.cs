@@ -204,7 +204,7 @@ namespace LTP.Truck
       {
         OnChangeProduct?.Invoke(this, e);
       }
-      else if (e.EntityType == typeof(CategoryTare))
+      else if (e.EntityType == typeof(Tare))
       {
         OnChangeTare?.Invoke(this, e);
       }

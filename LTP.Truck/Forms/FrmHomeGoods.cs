@@ -35,7 +35,7 @@ namespace LTP.Truck.Forms
     private string _deleteReasonToolTipText = string.Empty;
     private List<Product> _products = new();
     private List<ProductGroup> _productGroups = new();
-    private List<CategoryTare> _categoryTares = new();
+    private List<Tare> _categoryTares = new();
     private List<Delivery> _deliveries = new();
     private bool _isViewingHistoricalDetail;
     private Guid? _filterProductGroupId;
@@ -50,7 +50,7 @@ namespace LTP.Truck.Forms
     private bool _waitingForWeightReset;
     private DataWeightInterface _msgDataWeight { get; set; } = new DataWeightInterface();
     private RecordTruckDTO _recordTruckDTO { get; set; }
-    private CategoryTare? _categoryTare { get; set; }
+    private Tare? _categoryTare { get; set; }
     public FrmHomeGoods()
     {
       InitializeComponent();
@@ -223,7 +223,7 @@ namespace LTP.Truck.Forms
         Instance_OnChangeProductGroup(sender, EventArgs.Empty);
       else if (entityType == typeof(Product))
         Instance_OnChangeProduct(sender, EventArgs.Empty);
-      else if (entityType == typeof(CategoryTare))
+      else if (entityType == typeof(Tare))
         Instance_OnChangeTare(sender, EventArgs.Empty);
       else if (entityType == typeof(Delivery))
         Instance_OnChangeDelivery(sender, EventArgs.Empty);
@@ -348,11 +348,12 @@ namespace LTP.Truck.Forms
 
       try
       {
-        var categoryTares = await AppCore.Ins._categoryTareService.GetAllAsync();
+        var categoryTares = await AppCore.Ins._tareService
+          .GetAllAsync(EnumTypeDataLocation.Good);
         if (IsDisposed || Disposing || refreshVersion != _tareRefreshVersion)
           return;
 
-        var selectedTareId = (cbbTare.SelectedItem as CategoryTare)?.Id;
+        var selectedTareId = (cbbTare.SelectedItem as Tare)?.Id;
         var selectedTareIndex = categoryTares.FindIndex(tare => tare.Id == selectedTareId);
 
         SetTare(categoryTares);
@@ -460,7 +461,8 @@ namespace LTP.Truck.Forms
     {
       var productsTask = AppCore.Ins._productService.GetAllAsync();
       var productGroupsTask = AppCore.Ins._productGroupService.GetAllAsync();
-      var categoryTaresTask = AppCore.Ins._categoryTareService.GetAllAsync();
+      var categoryTaresTask = AppCore.Ins._tareService
+        .GetAllAsync(EnumTypeDataLocation.Good);
       var deliveriesTask = AppCore.Ins._deliveryService.GetAllAsync();
 
       await Task.WhenAll(productsTask, productGroupsTask, categoryTaresTask, deliveriesTask);
@@ -503,7 +505,7 @@ namespace LTP.Truck.Forms
       cbbProductGroup.ValueMember = nameof(ProductGroup.Id);
       cbbProductGroup.DataSource = productGroups;
     }
-    private void SetTare(List<CategoryTare> categoryTares)
+    private void SetTare(List<Tare> categoryTares)
     {
       if (this.InvokeRequired)
       {
@@ -515,8 +517,8 @@ namespace LTP.Truck.Forms
       }
 
       _categoryTares = categoryTares;
-      cbbTare.DisplayMember = nameof(CategoryTare.Name);
-      cbbTare.ValueMember = nameof(CategoryTare.Id);
+      cbbTare.DisplayMember = nameof(Tare.Name);
+      cbbTare.ValueMember = nameof(Tare.Id);
       cbbTare.DataSource = categoryTares;
     }
 
@@ -536,7 +538,7 @@ namespace LTP.Truck.Forms
 
     private void cbbTare_SelectedValueChanged(object? sender, EventArgs e)
     {
-      _categoryTare = cbbTare.SelectedItem as CategoryTare;
+      _categoryTare = cbbTare.SelectedItem as Tare;
       if (_categoryTare?.Value is double tareValue)
       {
         lbTare.Text = WeightFormatHelper.Format(tareValue, 2);
@@ -868,7 +870,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      if (cbbTare.SelectedItem is not CategoryTare selectedTare)
+      if (cbbTare.SelectedItem is not Tare selectedTare)
       {
         using var popupMsg = new PopupConfirm("Vui lòng chọn Tare !",
           EnumTypeMsg.MessageManualClose, EnumImageMsg.Information);
@@ -1649,7 +1651,7 @@ namespace LTP.Truck.Forms
         cbbTare,
         recordWeight.CategoryTare,
         recordWeight.CategoryTareId);
-      _categoryTare = cbbTare.SelectedItem as CategoryTare;
+      _categoryTare = cbbTare.SelectedItem as Tare;
       lbTare.Text = WeightFormatHelper.Format(recordWeight.Tare, 2);
 
       ucItemGross.Value = WeightFormatHelper.Format(
