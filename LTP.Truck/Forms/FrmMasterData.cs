@@ -1363,11 +1363,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
-        clientUpsertRequest.Id = client.Id;
-        clientUpsertRequest.Name = client?.Name ?? string.Empty;
-        clientUpsertRequest.Description = client?.Description ?? string.Empty;
-        clientUpsertRequest.DeletedFlag = false;
+        var clientUpsertRequest = CreateClientUpsertRequest(client);
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -1384,6 +1380,24 @@ namespace LTP.Truck.Forms
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
+    }
+
+    private static ClientUpsertRequest CreateClientUpsertRequest(
+      ClientDelivery client)
+    {
+      return new ClientUpsertRequest
+      {
+        Id = client.IdSrc ?? client.Id,
+        ClientType = (int)EnumTypeDataLocation.Truck,
+        Name = client.Name ?? string.Empty,
+        OfficeAddress = client.OfficeAddress,
+        PhoneForOfficeAddress = client.PhoneForOfficeAddress,
+        AgentAddress = client.AgentAddress,
+        PhoneForAgentAddress = client.PhoneForAgentAddress,
+        Description = client.Description,
+        IsDefaultDelivery = client.IsDefaultDelivery,
+        DeletedFlag = client.DeletedFlag,
+      };
     }
 
     public void SetDgv<T>(EnumTypeMasterData enumTypeMasterData, List<T>? values)
@@ -1873,11 +1887,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
-        clientUpsertRequest.Id = client.Id;
-        clientUpsertRequest.Name = client?.Name ?? string.Empty;
-        clientUpsertRequest.Description = client?.Description ?? string.Empty;
-        clientUpsertRequest.DeletedFlag = false;
+        var clientUpsertRequest = CreateClientUpsertRequest(client);
 
         ApiJobs apiJobs = new ApiJobs();
         apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -2103,11 +2113,7 @@ namespace LTP.Truck.Forms
             await _clientDeliveryService.AddOrUpdateAsync(
               client, EnumTypeDataLocation.Truck);
 
-            ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
-            clientUpsertRequest.Id = client.IdSrc != null ? client.IdSrc : client.Id;
-            clientUpsertRequest.Name = client?.Name ?? string.Empty;
-            clientUpsertRequest.Description = client?.Description ?? string.Empty;
-            clientUpsertRequest.DeletedFlag = client?.DeletedFlag ?? false;
+            var clientUpsertRequest = CreateClientUpsertRequest(client);
 
             ApiJobs apiJobs = new ApiJobs();
             apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);

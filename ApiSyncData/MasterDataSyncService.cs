@@ -81,18 +81,41 @@ namespace ApiSyncData
       SyncAsync<ListDatumProductGroup, ProductGroup>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
 
-    public static Task<MasterDataChangedEventArgs?> SyncClientsAsync(ClientAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumClient, ClientDelivery>(response.Data?.ListData, response.Data?.TotalRecord,
+    public static Task<MasterDataChangedEventArgs?> SyncClientsAsync(
+      ClientAPI response,
+      CancellationToken token = default)
+    {
+      var rows = response.Data?.ListData;
+      bool isUnifiedResponse = rows?.Any(row =>
+        row.ClientType == (int)iSoft.Database.EnumData.EnumTypeDataLocation.Good) == true;
+
+      return SyncAsync<ListDatumClient, ClientDelivery>(
+        rows, response.Data?.TotalRecord,
         (s, l) =>
         {
+          var enumTypeData = (iSoft.Database.EnumData.EnumTypeDataLocation)
+            (s.ClientType ?? (int)iSoft.Database.EnumData.EnumTypeDataLocation.Truck);
+          if (enumTypeData is not iSoft.Database.EnumData.EnumTypeDataLocation.Truck and
+              not iSoft.Database.EnumData.EnumTypeDataLocation.Good)
+          {
+            throw new InvalidOperationException(
+              $"Client {s.Id}: ClientType phải bằng 1 hoặc 2.");
+          }
+
           l.Name = s.Name;
+          l.OfficeAddress = s.OfficeAddress;
+          l.PhoneForOfficeAddress = s.PhoneForOfficeAddress;
+          l.AgentAddress = s.AgentAddress;
+          l.PhoneForAgentAddress = s.PhoneForAgentAddress;
           l.Description = s.Description;
-          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck;
+          l.IsDefaultDelivery = s.IsDefaultDelivery == true;
+          l.EnumTypeData = enumTypeData;
         }, token,
-        initializeAdded: item =>
-          item.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
         filterLocals: query => query.Where(item =>
-          item.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Truck));
+          isUnifiedResponse
+            ? item.EnumTypeData != iSoft.Database.EnumData.EnumTypeDataLocation.All
+            : item.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Truck));
+    }
 
     public static Task<MasterDataChangedEventArgs?> SyncDeliveriesAsync(DeliveryAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumDelivery, ClientDelivery>(response.Data?.ListData, response.Data?.TotalRecord,
@@ -104,6 +127,7 @@ namespace ApiSyncData
           l.AgentAddress = s.AgentAddress;
           l.PhoneForAgentAddress = s.PhoneForAgentAddress;
           l.Description = s.Description;
+          l.IsDefaultDelivery = s.IsDefaultDelivery == true;
           l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good;
         }, token,
         initializeAdded: item =>

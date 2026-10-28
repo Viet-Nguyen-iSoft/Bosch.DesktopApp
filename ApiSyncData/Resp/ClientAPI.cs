@@ -15,8 +15,15 @@ namespace ApiSyncData.Resp
   public class ListDatumClient : IServerRecord
   {
     public Guid? Id { get; set; }
+    public int? ClientType { get; set; }
     public string? Name { get; set; }
+    public string? OfficeAddress { get; set; }
+    public string? PhoneForOfficeAddress { get; set; }
+    public string? AgentAddress { get; set; }
+    public string? PhoneForAgentAddress { get; set; }
     public string? Description { get; set; }
+    public bool? IsDefaultDelivery { get; set; }
+    public int? CreateFrom { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool? IsDelete { get; set; }

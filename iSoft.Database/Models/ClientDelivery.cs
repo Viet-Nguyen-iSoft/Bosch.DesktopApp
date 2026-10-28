@@ -17,6 +17,7 @@ namespace iSoft.Database.Models
     public string? AgentAddress { get; set; }
     public string? PhoneForAgentAddress { get; set; }
     public string? Description { get; set; }
+    public bool IsDefaultDelivery { get; set; }
 
     public EnumTypeDataLocation EnumTypeData { get; set; }
 

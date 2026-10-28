@@ -388,7 +388,18 @@ namespace ApiSyncData
       try
       {
         ArgumentNullException.ThrowIfNull(client);
-        Dictionary<string, string>? additionalFields = null;
+        var additionalFields = new Dictionary<string, string>
+        {
+          ["ClientType"] = client.ClientType.ToString(),
+          ["OfficeAddress"] = client.OfficeAddress?.Trim() ?? string.Empty,
+          ["PhoneForOfficeAddress"] =
+            client.PhoneForOfficeAddress?.Trim() ?? string.Empty,
+          ["AgentAddress"] = client.AgentAddress?.Trim() ?? string.Empty,
+          ["PhoneForAgentAddress"] =
+            client.PhoneForAgentAddress?.Trim() ?? string.Empty,
+          ["IsDefaultDelivery"] =
+            client.IsDefaultDelivery.ToString().ToLowerInvariant(),
+        };
 
         return PostUpsertMultiLangAsync(
           "Client",

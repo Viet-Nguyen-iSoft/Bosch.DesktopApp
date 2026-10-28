@@ -81,15 +81,7 @@ namespace ApiSyncData
         MasterDataSyncService.SyncCategoryTaresAsync,
         value => CategoryTares = value, cancellationToken);
 
-      var clients = LoadAndSyncAsync(
-        api.Client(isContainDelete: false, cancellationToken),
-        MasterDataSyncService.SyncClientsAsync,
-        value => Clients = value, cancellationToken);
-
-      var deliveries = LoadAndSyncAsync(
-        api.Delivery(isContainDelete: false, cancellationToken),
-        MasterDataSyncService.SyncDeliveriesAsync,
-        value => Deliveries = value, cancellationToken);
+      var clientDeliveries = SyncClientDeliveriesAsync(api, cancellationToken);
 
       var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
         value => Users = value, cancellationToken);
@@ -104,7 +96,7 @@ namespace ApiSyncData
         cancellationToken);
 
       await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
-        products, categoryTares, clients, deliveries, users, documents).ConfigureAwait(false);
+        products, categoryTares, clientDeliveries, users, documents).ConfigureAwait(false);
 
       try
       {
@@ -154,6 +146,40 @@ namespace ApiSyncData
           System.Diagnostics.Trace.TraceError(ex.ToString());
         }
       }
+    }
+
+    private static async Task SyncClientDeliveriesAsync(
+      ApiService api,
+      CancellationToken token)
+    {
+      var clients = await api.Client(isContainDelete: false, token)
+        .ConfigureAwait(false);
+      token.ThrowIfCancellationRequested();
+
+      var clientChanges = await MasterDataSyncService.SyncClientsAsync(clients, token)
+        .ConfigureAwait(false);
+      Clients = clients;
+      if (clientChanges != null)
+        NotifyEntityChanged(clientChanges);
+
+      bool hasUnifiedDeliveries = clients.Data?.ListData?.Any(row =>
+        row.ClientType == (int)iSoft.Database.EnumData.EnumTypeDataLocation.Good) == true;
+      if (hasUnifiedDeliveries)
+      {
+        Deliveries = null;
+        return;
+      }
+
+      // Tương thích server cũ: Client chỉ trả loại 1, nhóm loại 2 vẫn lấy
+      // từ endpoint ClientGoods như trước đây.
+      var deliveries = await api.Delivery(isContainDelete: false, token)
+        .ConfigureAwait(false);
+      token.ThrowIfCancellationRequested();
+      var deliveryChanges = await MasterDataSyncService
+        .SyncDeliveriesAsync(deliveries, token).ConfigureAwait(false);
+      Deliveries = deliveries;
+      if (deliveryChanges != null)
+        NotifyEntityChanged(deliveryChanges);
     }
 
     private static async Task SyncProductsAfterGroupsAsync(

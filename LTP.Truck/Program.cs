@@ -549,6 +549,7 @@ namespace LTP.Truck
               `AgentAddress` longtext NULL,
               `PhoneForAgentAddress` longtext NULL,
               `Description` longtext NULL,
+              `IsDefaultDelivery` tinyint(1) NOT NULL DEFAULT 0,
               `EnumTypeData` int NOT NULL,
               `CreatedAt` datetime(6) NULL,
               `CreatedBy` char(36) NULL,
@@ -565,6 +566,8 @@ namespace LTP.Truck
             ) CHARACTER SET=utf8mb4;";
           await createCommand.ExecuteNonQueryAsync();
         }
+
+        await EnsureClientDeliveryColumnsAsync(db);
 
         await CopyLegacyClientDeliveriesAsync(
           db, "Clients", EnumTypeDataLocation.Truck);
@@ -606,6 +609,26 @@ namespace LTP.Truck
         MODIFY COLUMN `Id`
           char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;";
       await normalizeCommand.ExecuteNonQueryAsync();
+    }
+
+    private static async Task EnsureClientDeliveryColumnsAsync(MySqlDbContext db)
+    {
+      await using var existsCommand = db.Database.GetDbConnection().CreateCommand();
+      existsCommand.CommandText = @"
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'ClientDeliveries'
+          AND COLUMN_NAME = 'IsDefaultDelivery';";
+      if (Convert.ToInt32(await existsCommand.ExecuteScalarAsync()) > 0)
+        return;
+
+      await using var addCommand = db.Database.GetDbConnection().CreateCommand();
+      addCommand.CommandText = @"
+        ALTER TABLE `ClientDeliveries`
+        ADD COLUMN `IsDefaultDelivery` tinyint(1) NOT NULL DEFAULT 0
+        AFTER `Description`;";
+      await addCommand.ExecuteNonQueryAsync();
     }
 
     private static async Task CopyLegacyClientDeliveriesAsync(

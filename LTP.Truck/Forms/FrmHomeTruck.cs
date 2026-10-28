@@ -439,8 +439,14 @@ namespace LTP.Truck.Forms
             apiJob.Json = JsonHelper.ToJson(new ClientUpsertRequest
             {
               Id = client.IdSrc ?? client.Id,
+              ClientType = (int)iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
               Name = client.Name ?? string.Empty,
+              OfficeAddress = client.OfficeAddress,
+              PhoneForOfficeAddress = client.PhoneForOfficeAddress,
+              AgentAddress = client.AgentAddress,
+              PhoneForAgentAddress = client.PhoneForAgentAddress,
               Description = client.Description,
+              IsDefaultDelivery = client.IsDefaultDelivery,
               DeletedFlag = client.DeletedFlag,
             });
             await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
