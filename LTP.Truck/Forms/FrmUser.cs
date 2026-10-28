@@ -427,6 +427,10 @@ namespace LTP.Truck.Forms
 
     private static async Task QueueUserUpsertJobAsync(User user)
     {
+      // ISOFT (hiển thị i-Soft) là tài khoản quản trị chỉ tồn tại ở local.
+      if (PasswordPolicy.IsBuiltInAccount(user.Username))
+        return;
+
       var userUpsertRequest = new UserUpsertRequest
       {
         // Dùng chung một Id giữa local và server.

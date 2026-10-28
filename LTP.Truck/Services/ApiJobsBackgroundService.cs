@@ -100,7 +100,9 @@ namespace LTP.Truck.Services
               var userUpsertRequest = JsonHelper.FromJson<UserUpsertRequest>(apiJob.Json ?? string.Empty);
               if (userUpsertRequest != null)
               {
-                await api.UpsertUserAsync(userUpsertRequest);
+                // Bỏ qua cả các job ISOFT cũ đã nằm trong hàng đợi.
+                if (!PasswordPolicy.IsBuiltInAccount(userUpsertRequest.Username))
+                  await api.UpsertUserAsync(userUpsertRequest);
               }
               break;
             case EnumTypeAPI.MD_Document:

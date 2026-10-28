@@ -121,8 +121,24 @@ namespace ApiSyncData
         filterLocals: query => query.Where(item =>
           item.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Good));
 
-    public static Task<MasterDataChangedEventArgs?> SyncUsersAsync(UserAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumUser, User>(response.Data?.ListData, response.Data?.TotalRecord,
+    public static Task<MasterDataChangedEventArgs?> SyncUsersAsync(
+      UserAPI response,
+      CancellationToken token = default)
+    {
+      var rows = response.Data?.ListData;
+      if (rows == null || response.Data?.TotalRecord != rows.Count)
+      {
+        throw new InvalidOperationException(
+          "User: cần ListData đầy đủ và TotalRecord khớp.");
+      }
+
+      // ISOFT (hiển thị i-Soft) là tài khoản quản trị cục bộ: không nhận dữ liệu
+      // từ server và cũng không để snapshot server xóa/ghi đè tài khoản này.
+      var syncRows = rows
+        .Where(row => !HelperManager.PasswordPolicy.IsBuiltInAccount(row.Username))
+        .ToList();
+
+      return SyncAsync<ListDatumUser, User>(syncRows, syncRows.Count,
         (s, l) =>
         {
           l.DisplayName = s.DisplayName;
@@ -136,7 +152,10 @@ namespace ApiSyncData
           l.EnableFlag = s?.EnableFlag??false;
           l.Role = JsonConvert.SerializeObject(s.Permission ?? new List<string>());
         }, token,
-        initializeAdded: user => user.CreatedAt = DateTime.UtcNow);
+        initializeAdded: user => user.CreatedAt = DateTime.UtcNow,
+        filterLocals: query => query.Where(user =>
+          user.Username != HelperManager.PasswordPolicy.BuiltInAccount));
+    }
 
     public static Task<MasterDataChangedEventArgs?> SyncDocumentsAsync(
       DocumentAPI response,
@@ -187,6 +206,7 @@ namespace ApiSyncData
           l.Name = s.Name;
           l.Code = s.SerialCode;
           l.Description = s.Description;
+          l.TagMappingReport = s.TagNameProductGoods;
           l.ProductGroupId = localGroupId;
           l.EnumTypeData =
             (iSoft.Database.EnumData.EnumTypeDataLocation)s.TypeWeight.Value;

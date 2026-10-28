@@ -19,6 +19,10 @@ namespace ApiSyncData
       {
         ArgumentNullException.ThrowIfNull(user);
 
+        // ISOFT (hiển thị i-Soft) là tài khoản quản trị cục bộ, không đồng bộ.
+        if (HelperManager.PasswordPolicy.IsBuiltInAccount(user.Username))
+          return string.Empty;
+
         if (user.Id == Guid.Empty)
           throw new ArgumentException("User Id không được là Guid.Empty.", nameof(user));
 

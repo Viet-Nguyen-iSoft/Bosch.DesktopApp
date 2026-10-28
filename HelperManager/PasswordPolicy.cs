@@ -10,6 +10,20 @@ namespace HelperManager
     public const int MaximumFailedLoginAttempts = 8;
     public const int PasswordLifetimeMonths = 6;
 
+    public static bool IsBuiltInAccount(string? username)
+    {
+      if (string.IsNullOrWhiteSpace(username))
+        return false;
+
+      var normalizedUsername = new string(username
+        .Where(char.IsLetterOrDigit)
+        .ToArray());
+      return string.Equals(
+        normalizedUsername,
+        BuiltInAccount,
+        StringComparison.OrdinalIgnoreCase);
+    }
+
     private static readonly string[] ConsecutiveSequences =
     {
       "0123456789", "9876543210",
