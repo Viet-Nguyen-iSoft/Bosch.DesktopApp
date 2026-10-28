@@ -142,7 +142,7 @@ namespace LTP.Truck.Forms
             var rsClient = await AppCore.Ins._clientDeliveryService.GetAllAsync(
               EnumTypeDataLocation.Truck);
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
-            var dtoClient = DTOHelper.ConvertClientDTO(rsClient);
+            var dtoClient = DTOHelper.ConvertDeliveryDTO(rsClient);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoClient, searchKey));
             break;
           case EnumTypeMasterData.TypeGoods:
@@ -1035,7 +1035,7 @@ namespace LTP.Truck.Forms
 
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
       {
-        PopupClient popupAddClient = new PopupClient();
+        var popupAddClient = new PopupClientDelivery(EnumTypeDataLocation.Truck);
         popupAddClient.OnSendSuccess += PopupAddClient_OnSendAddSuccess;
         popupAddClient.ShowDialog();
       }
@@ -1077,7 +1077,7 @@ namespace LTP.Truck.Forms
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
       {
-        PopupDelivery popupDelivery = new PopupDelivery();
+        var popupDelivery = new PopupClientDelivery(EnumTypeDataLocation.Good);
         popupDelivery.OnSendSuccess += PopupDelivery_OnSendSuccess;
         popupDelivery.ShowDialog();
       }
@@ -1392,12 +1392,13 @@ namespace LTP.Truck.Forms
       dgv.DataSource = values;
       EnsureActionColumns();
 
-      if (enumTypeMasterData == EnumTypeMasterData.Client)
+      if (enumTypeMasterData is EnumTypeMasterData.Client or
+          EnumTypeMasterData.Delivery)
       {
         var autoSizeColumns = new[]
          {
-            nameof(ClientDTO.No),
-            nameof(ClientDTO.UpdatedAt),
+            nameof(DeliveryDTO.No),
+            nameof(DeliveryDTO.UpdatedAt),
           };
         foreach (var columnName in autoSizeColumns)
         {
@@ -1556,22 +1557,6 @@ namespace LTP.Truck.Forms
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
       }
-      else if (enumTypeMasterData == EnumTypeMasterData.Delivery) 
-      {
-        var autoSizeColumns = new[]
-        {
-          nameof(DeliveryDTO.No),
-          nameof(DeliveryDTO.UpdatedAt),
-        };
-        foreach (var columnName in autoSizeColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
-          {
-            dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-          } 
-        }
-      }
       else if (enumTypeMasterData == EnumTypeMasterData.Document)
       {
         var autoSizeColumns = new[]
@@ -1680,10 +1665,11 @@ namespace LTP.Truck.Forms
 
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
       {
-        var data = rowData as ClientDTO;
-        if (data?.Client != null)
+        var data = rowData as DeliveryDTO;
+        if (data?.ClientDelivery != null)
         {
-          PopupClient popupUpdateClient = new PopupClient(data.Client);
+          var popupUpdateClient = new PopupClientDelivery(
+            data.ClientDelivery, EnumTypeDataLocation.Truck);
           popupUpdateClient.OnSendSuccess += PopupUpdateClient_OnSendAddSuccess;
           popupUpdateClient.ShowDialog();
         }
@@ -1793,9 +1779,10 @@ namespace LTP.Truck.Forms
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
       {
         var data = rowData as DeliveryDTO;
-        if (data?.Delivery != null)
+        if (data?.ClientDelivery != null)
         {
-          PopupDelivery popupDelivery = new PopupDelivery(data.Delivery);
+          var popupDelivery = new PopupClientDelivery(
+            data.ClientDelivery, EnumTypeDataLocation.Good);
           popupDelivery.OnSendSuccess += PopupDelivery_OnSendSuccess;
           popupDelivery.ShowDialog();
         }
@@ -1939,11 +1926,11 @@ namespace LTP.Truck.Forms
 
       if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Client)
       {
-        var data = rowData as ClientDTO;
-        if (data?.Client != null)
+        var data = rowData as DeliveryDTO;
+        if (data?.ClientDelivery != null)
         {
           using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
-           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Client);
+           EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.ClientDelivery);
           popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
           popupMsg.ShowDialog(this);
           popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;
@@ -2066,10 +2053,10 @@ namespace LTP.Truck.Forms
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Delivery)
       {
         var data = rowData as DeliveryDTO;
-        if (data?.Delivery != null)
+        if (data?.ClientDelivery != null)
         {
           using var popupMsg = new PopupConfirm("Bạn có chắc chắn xóa dữ liệu này !",
-            EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.Delivery);
+            EnumTypeMsg.Confirm, EnumImageMsg.Warning, data.ClientDelivery);
           popupMsg.OnSendConfirm += PopupMsg_OnSendConfirm;
           popupMsg.ShowDialog(this);
           popupMsg.OnSendConfirm -= PopupMsg_OnSendConfirm;

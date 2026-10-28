@@ -398,7 +398,8 @@ namespace LTP.Truck.Forms
       switch (type)
       {
         case Common.EnumData.EnumTypeData.Client:
-          var popupClient = new PopupClient();
+          var popupClient = new PopupClientDelivery(
+            iSoft.Database.EnumData.EnumTypeDataLocation.Truck);
           popupClient.OnSendSuccess += client =>
             PopupLoadMD_OnAddSuccess(popupLoadMD, client, type);
           popupClient.ShowDialog(popupLoadMD);
@@ -495,12 +496,12 @@ namespace LTP.Truck.Forms
       switch (arg2)
       {
         case Common.EnumData.EnumTypeData.Client:
-          var rsClient = arg1 as ClientDTO;
+          var rsClient = arg1 as DeliveryDTO;
           SetData(txtClient, rsClient?.Name ?? string.Empty);
 
           if (rsClient != null)
           {
-            _recordTruck.ClientId = rsClient?.Client?.Id;
+            _recordTruck.ClientId = rsClient.ClientDelivery?.Id;
           }
           break;
         case Common.EnumData.EnumTypeData.TypeGoods:

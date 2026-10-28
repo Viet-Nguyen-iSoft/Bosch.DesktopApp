@@ -78,9 +78,9 @@ namespace LTP.Truck.Forms
         popup.SetData(items);
         popup.OnSendData += (value, type) =>
         {
-          if (type == EnumTypeData.Client && value is ClientDTO dto)
+          if (type == EnumTypeData.Client && value is DeliveryDTO dto)
           {
-            _clientId = dto.Client?.Id;
+            _clientId = dto.ClientDelivery?.Id;
             txtClient.Texts = dto.Name ?? string.Empty;
           }
         };

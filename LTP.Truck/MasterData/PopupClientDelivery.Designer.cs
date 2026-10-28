@@ -1,6 +1,6 @@
 ﻿namespace LTP.Truck.MasterData
 {
-  partial class PopupDelivery
+  partial class PopupClientDelivery
   {
     /// <summary>
     /// Required designer variable.
@@ -28,10 +28,9 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupDelivery));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PopupClientDelivery));
       tableLayoutPanel3 = new TableLayoutPanel();
       tableLayoutPanel5 = new TableLayoutPanel();
-      label1 = new Label();
       txtOfficeAddress = new Common.Custom.RJTextBox();
       txtPhoneForAgentAddress = new Common.Custom.RJTextBox();
       label6 = new Label();
@@ -47,9 +46,13 @@
       tableLayoutPanel2 = new TableLayoutPanel();
       btnConfirm = new Common.Custom.RJButton();
       btnClose = new Common.Custom.RJButton();
+      tableLayoutPanel4 = new TableLayoutPanel();
+      label3 = new Label();
+      label2 = new Label();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel5.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanel4.SuspendLayout();
       SuspendLayout();
       // 
       // tableLayoutPanel3
@@ -80,7 +83,7 @@
       tableLayoutPanel5.ColumnCount = 2;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-      tableLayoutPanel5.Controls.Add(label1, 0, 0);
+      tableLayoutPanel5.Controls.Add(tableLayoutPanel4, 0, 0);
       tableLayoutPanel5.Controls.Add(txtOfficeAddress, 1, 1);
       tableLayoutPanel5.Controls.Add(txtPhoneForAgentAddress, 1, 4);
       tableLayoutPanel5.Controls.Add(label6, 0, 4);
@@ -103,20 +106,6 @@
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
       tableLayoutPanel5.Size = new Size(959, 397);
       tableLayoutPanel5.TabIndex = 8;
-      // 
-      // label1
-      // 
-      label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      label1.AutoSize = true;
-      label1.BackColor = Color.Transparent;
-      label1.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
-      label1.Location = new Point(0, 0);
-      label1.Margin = new Padding(0);
-      label1.Name = "label1";
-      label1.Size = new Size(200, 66);
-      label1.TabIndex = 43;
-      label1.Text = "Tên công ty";
-      label1.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // txtOfficeAddress
       // 
@@ -403,20 +392,67 @@
       btnClose.TextColor = Color.White;
       btnClose.UseVisualStyleBackColor = false;
       // 
-      // PopupDelivery
+      // tableLayoutPanel4
+      // 
+      tableLayoutPanel4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tableLayoutPanel4.ColumnCount = 2;
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle());
+      tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel4.Controls.Add(label3, 1, 0);
+      tableLayoutPanel4.Controls.Add(label2, 0, 0);
+      tableLayoutPanel4.Location = new Point(0, 0);
+      tableLayoutPanel4.Margin = new Padding(0);
+      tableLayoutPanel4.Name = "tableLayoutPanel4";
+      tableLayoutPanel4.RowCount = 1;
+      tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel4.Size = new Size(200, 66);
+      tableLayoutPanel4.TabIndex = 43;
+      // 
+      // label3
+      // 
+      label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label3.AutoSize = true;
+      label3.BackColor = Color.Transparent;
+      label3.Font = new Font("Roboto", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+      label3.ForeColor = Color.Red;
+      label3.Location = new Point(109, 0);
+      label3.Margin = new Padding(0);
+      label3.Name = "label3";
+      label3.Size = new Size(91, 66);
+      label3.TabIndex = 4;
+      label3.Text = "*";
+      label3.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // label2
+      // 
+      label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      label2.AutoSize = true;
+      label2.BackColor = Color.Transparent;
+      label2.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Location = new Point(0, 0);
+      label2.Margin = new Padding(0);
+      label2.Name = "label2";
+      label2.Size = new Size(109, 66);
+      label2.TabIndex = 3;
+      label2.Text = "Tên công ty";
+      label2.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // PopupClientDelivery
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(975, 538);
       ControlBox = false;
       Controls.Add(tableLayoutPanel3);
-      Name = "PopupDelivery";
+      Name = "PopupClientDelivery";
       StartPosition = FormStartPosition.CenterParent;
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel3.PerformLayout();
       tableLayoutPanel5.ResumeLayout(false);
       tableLayoutPanel5.PerformLayout();
       tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanel4.ResumeLayout(false);
+      tableLayoutPanel4.PerformLayout();
       ResumeLayout(false);
     }
 
@@ -438,7 +474,9 @@
     private Common.Custom.RJButton btnClose;
     private Common.Custom.RJTextBox txtOfficeAddress;
     private Common.Custom.RJTextBox txtPhoneForAgentAddress;
-    private Label label1;
     private Common.Custom.RJTextBox txtCompanyName;
+    private TableLayoutPanel tableLayoutPanel4;
+    private Label label3;
+    private Label label2;
   }
 }

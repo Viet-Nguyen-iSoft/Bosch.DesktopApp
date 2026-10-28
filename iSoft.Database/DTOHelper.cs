@@ -151,28 +151,6 @@ namespace iSoft.Database
       return result;
     }
 
-    public static List<ClientDTO>? ConvertClientDTO(List<ClientDelivery>? clients)
-    {
-      var rsDto = new List<ClientDTO>();
-      if (clients?.Count()>0)
-      {
-        clients = clients.OrderBy(e => e.Name).ToList();
-        rsDto = clients
-          .Select((e, index) => new ClientDTO
-          {
-            Client = e,
-            No = index + 1,
-            Name = e.Name,
-            Description = e.Description,
-            UpdatedAt = e?.UpdatedAt != null ? (((DateTime)e?.UpdatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? "") :
-                                              (((DateTime)e?.CreatedAt).AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss") ?? ""),
-          })
-          .OrderBy(e => e.Name)
-          .ToList();
-      }  
-      return rsDto;
-    }
-
     public static List<TypeGoodsDTO>? ConvertTypeGoodsDTO(List<Product>? typeGoods)
     {
       var rsDto = new List<TypeGoodsDTO>();
@@ -301,7 +279,7 @@ namespace iSoft.Database
           .OrderBy(delivery => delivery.Name)
           .Select((delivery, index) => new DeliveryDTO
           {
-            Delivery = delivery,
+            ClientDelivery = delivery,
             No = index + 1,
             Name = delivery.Name,
             OfficeAddress = delivery.OfficeAddress,

@@ -53,7 +53,7 @@ namespace LTP.Truck.Popup
         _enumTypeData = EnumTypeData.Client;
         btnAdd.Visible = true;
 
-        var dto = DTOHelper.ConvertClientDTO(items as List<ClientDelivery>);
+        var dto = DTOHelper.ConvertDeliveryDTO(items as List<ClientDelivery>);
         ConfigureSearch(dto);
         dgv.DataSource = dto;
 
