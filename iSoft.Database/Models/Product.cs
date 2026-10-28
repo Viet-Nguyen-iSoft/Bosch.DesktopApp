@@ -18,11 +18,14 @@ namespace iSoft.Database.Models
 
     public string? TagMappingReport { get; set; }
 
+    public EnumTypeDataLocation EnumTypeData { get; set; }
+
     #region Mapping
     public Guid? ProductGroupId { get; set; }
     public ProductGroup? ProductGroup { get; set; }
 
     public ICollection<RecordWeight>? RecordWeights { get; set; }
+    public ICollection<RecordTruck> RecordTrucks { get; set; } = new List<RecordTruck>();
     #endregion
   }
 

@@ -358,7 +358,9 @@ namespace LTP.Truck.Forms
       using var buttonLock = ButtonExecutionScope.Enter(sender);
       try
       {
-        var typeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync(IsContainDelete: false);
+        var typeGoods = await AppCore.Ins._productService.GetAllAsync(
+          iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
+          isContainDelete: false);
         using var popupLoadMD = new PopupLoadMD();
         popupLoadMD.SetData(typeGoods);
         popupLoadMD.OnSendData += PopupLoadMD_OnSendData;
@@ -441,7 +443,7 @@ namespace LTP.Truck.Forms
             await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
             popupLoadMD.SetData(await AppCore.Ins._clientService.GetAllAsync(false));
             break;
-          case Common.EnumData.EnumTypeData.TypeGoods when value is TypeGoods typeGoods:
+          case Common.EnumData.EnumTypeData.TypeGoods when value is Product typeGoods:
             apiJob.EnumTypeAPI = EnumTypeAPI.MD_TypeGoods;
             apiJob.Json = JsonHelper.ToJson(new TypeGoodsUpsertRequest
             {
@@ -452,7 +454,9 @@ namespace LTP.Truck.Forms
               DeletedFlag = typeGoods.DeletedFlag,
             });
             await AppCore.Ins._apiJobsService.AddOrUpdateAsync(apiJob);
-            popupLoadMD.SetData(await AppCore.Ins._typeGoodsService.GetAllAsync(false));
+            popupLoadMD.SetData(await AppCore.Ins._productService.GetAllAsync(
+              iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
+              isContainDelete: false));
             break;
           case Common.EnumData.EnumTypeData.Warehouse when value is Warehouse warehouse:
             apiJob.EnumTypeAPI = EnumTypeAPI.MD_WareHouse;

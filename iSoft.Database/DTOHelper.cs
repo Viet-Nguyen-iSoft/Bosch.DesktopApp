@@ -173,7 +173,7 @@ namespace iSoft.Database
       return rsDto;
     }
 
-    public static List<TypeGoodsDTO>? ConvertTypeGoodsDTO(List<TypeGoods>? typeGoods)
+    public static List<TypeGoodsDTO>? ConvertTypeGoodsDTO(List<Product>? typeGoods)
     {
       var rsDto = new List<TypeGoodsDTO>();
       if (typeGoods?.Count() > 0)

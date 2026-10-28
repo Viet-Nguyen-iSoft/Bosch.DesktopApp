@@ -130,6 +130,7 @@ namespace LTP.Truck
             await EnsureRecordWeightReasonDeleteColumnAsync(db);
             await EnsureTypeGoodsWasteColumnsAsync(db);
             await EnsureProductTagMappingReportColumnAsync(db);
+            await EnsureProductTableAndMigrateTypeGoodsAsync(db);
             await EnsureAuditLogsTableAsync(db);
             await EnsureDocumentDataTableAsync(db);
             await EnsureTareTableAndMigrateAsync(db);
@@ -518,6 +519,16 @@ namespace LTP.Truck
       await db.Database.OpenConnectionAsync();
       try
       {
+        await using (var tableCommand = db.Database.GetDbConnection().CreateCommand())
+        {
+          tableCommand.CommandText = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'TypeGoods';";
+          if (Convert.ToInt32(await tableCommand.ExecuteScalarAsync()) == 0)
+            return;
+        }
+
         var columns = new Dictionary<string, string>
         {
           ["EnumWasteType"] = "int NOT NULL DEFAULT 0",
@@ -549,6 +560,133 @@ namespace LTP.Truck
           addCommand.CommandText =
             $"ALTER TABLE `TypeGoods` ADD COLUMN `{column.Key}` {column.Value};";
           await addCommand.ExecuteNonQueryAsync();
+        }
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureProductTableAndMigrateTypeGoodsAsync(
+      MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        async Task<bool> ColumnExistsAsync(string tableName, string columnName)
+        {
+          await using var command = db.Database.GetDbConnection().CreateCommand();
+          command.CommandText = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = @tableName
+              AND COLUMN_NAME = @columnName;";
+          var tableParameter = command.CreateParameter();
+          tableParameter.ParameterName = "@tableName";
+          tableParameter.Value = tableName;
+          command.Parameters.Add(tableParameter);
+          var columnParameter = command.CreateParameter();
+          columnParameter.ParameterName = "@columnName";
+          columnParameter.Value = columnName;
+          command.Parameters.Add(columnParameter);
+          return Convert.ToInt32(await command.ExecuteScalarAsync()) > 0;
+        }
+
+        if (!await ColumnExistsAsync("Products", "EnumTypeData"))
+        {
+          await using var addTypeColumn = db.Database.GetDbConnection().CreateCommand();
+          addTypeColumn.CommandText = @"
+            ALTER TABLE `Products`
+            ADD COLUMN `EnumTypeData` int NOT NULL DEFAULT 2;";
+          await addTypeColumn.ExecuteNonQueryAsync();
+        }
+
+        await using (var normalizeProducts = db.Database.GetDbConnection().CreateCommand())
+        {
+          normalizeProducts.CommandText = @"
+            UPDATE `Products`
+            SET `EnumTypeData` = 2
+            WHERE `EnumTypeData` = 0;";
+          await normalizeProducts.ExecuteNonQueryAsync();
+        }
+
+        await using var legacyTableExists = db.Database.GetDbConnection().CreateCommand();
+        legacyTableExists.CommandText = @"
+          SELECT COUNT(*)
+          FROM INFORMATION_SCHEMA.TABLES
+          WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'TypeGoods';";
+        bool hasLegacyTypeGoods =
+          Convert.ToInt32(await legacyTableExists.ExecuteScalarAsync()) > 0;
+
+        if (hasLegacyTypeGoods)
+        {
+          await using var copyTypeGoods = db.Database.GetDbConnection().CreateCommand();
+          copyTypeGoods.CommandText = @"
+            INSERT IGNORE INTO `Products`
+              (`Id`, `Code`, `Name`, `Description`, `EnumWasteType`,
+               `TagMappingReport`, `EnumTypeData`, `ProductGroupId`,
+               `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
+               `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`)
+            SELECT `Id`, `Code`, `Name`, `Description`, `EnumWasteType`,
+                   `TagMappingReport`, 1, `ProductGroupId`,
+                   `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
+                   `DeletedFlag`, `EnableFlag`, `SyncFlag`, `IdSrc`
+            FROM `TypeGoods`;";
+          await copyTypeGoods.ExecuteNonQueryAsync();
+        }
+
+        var foreignKeys = new List<(string Name, string ReferencedTable)>();
+        await using (var findForeignKeys = db.Database.GetDbConnection().CreateCommand())
+        {
+          findForeignKeys.CommandText = @"
+            SELECT CONSTRAINT_NAME, REFERENCED_TABLE_NAME
+            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'RecordTrucks'
+              AND COLUMN_NAME = 'TypeGoodsId'
+              AND REFERENCED_TABLE_NAME IS NOT NULL;";
+          await using var reader = await findForeignKeys.ExecuteReaderAsync();
+          while (await reader.ReadAsync())
+            foreignKeys.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        if (foreignKeys.Count != 1 || !string.Equals(
+              foreignKeys[0].ReferencedTable, "Products",
+              StringComparison.OrdinalIgnoreCase))
+        {
+          foreach (var foreignKey in foreignKeys)
+          {
+            string escapedName = foreignKey.Name.Replace("`", "``", StringComparison.Ordinal);
+            await using var dropCommand = db.Database.GetDbConnection().CreateCommand();
+            dropCommand.CommandText =
+              $"ALTER TABLE `RecordTrucks` DROP FOREIGN KEY `{escapedName}`;";
+            await dropCommand.ExecuteNonQueryAsync();
+          }
+
+          await using var addForeignKey = db.Database.GetDbConnection().CreateCommand();
+          addForeignKey.CommandText = @"
+            ALTER TABLE `RecordTrucks`
+            ADD CONSTRAINT `FK_RecordTrucks_Products_TypeGoodsId`
+            FOREIGN KEY (`TypeGoodsId`) REFERENCES `Products` (`Id`);";
+          await addForeignKey.ExecuteNonQueryAsync();
+        }
+
+        await using var indexExists = db.Database.GetDbConnection().CreateCommand();
+        indexExists.CommandText = @"
+          SELECT COUNT(*)
+          FROM INFORMATION_SCHEMA.STATISTICS
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'Products'
+            AND INDEX_NAME = 'IX_Products_EnumTypeData_DeletedFlag';";
+        if (Convert.ToInt32(await indexExists.ExecuteScalarAsync()) == 0)
+        {
+          await using var createIndex = db.Database.GetDbConnection().CreateCommand();
+          createIndex.CommandText = @"
+            CREATE INDEX `IX_Products_EnumTypeData_DeletedFlag`
+            ON `Products` (`EnumTypeData`, `DeletedFlag`);";
+          await createIndex.ExecuteNonQueryAsync();
         }
       }
       finally

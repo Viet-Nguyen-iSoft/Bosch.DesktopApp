@@ -116,7 +116,8 @@ namespace LTP.Truck.MasterData
         if (_enumTypePopup == EnumTypePopup.Add)
         {
           string productName = txtName.Texts.Trim();
-          var products = await _productService.GetAllAsync(IsContainDelete: true);
+          var products = await _productService.GetAllAsync(
+            EnumTypeDataLocation.Good, isContainDelete: true);
           bool isDuplicateProduct = products.Any(item =>
             !item.DeletedFlag &&
             item.ProductGroupId == selectedProductGroup.Id &&
@@ -148,7 +149,8 @@ namespace LTP.Truck.MasterData
         product.ProductGroupId = selectedProductGroup.Id;
         product.EnumWasteType = selectedWasteType;
 
-        var result = await _productService.AddOrUpdateAsync(product);
+        var result = await _productService.AddOrUpdateAsync(
+          product, EnumTypeDataLocation.Good);
 
         Close();
         OnSendSuccess?.Invoke(result);

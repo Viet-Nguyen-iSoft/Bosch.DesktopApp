@@ -11,7 +11,7 @@ namespace iSoft.Database.DTO
   public class TypeGoodsDTO
   {
     [Browsable(false)]
-    public TypeGoods? TypeGoods { get; set; }
+    public Product? TypeGoods { get; set; }
 
 
     [DisplayName("Stt")]
@@ -28,12 +28,12 @@ namespace iSoft.Database.DTO
     [DisplayName("Tên")]
     public string? Name { get; set; }
 
-    [DisplayName("Tag mapping báo cáo")]
-    public string? TagMappingReport { get; set; }
-
     [DisplayName("Mô tả")]
     public string? Description { get; set; }
     [DisplayName("Cập nhật")]
     public string? UpdatedAt { get; set; }
+
+    [DisplayName("Tag mapping báo cáo")]
+    public string? TagMappingReport { get; set; }
   }
 }

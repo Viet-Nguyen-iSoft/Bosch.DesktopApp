@@ -10,13 +10,9 @@ using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.MasterData;
 using LTP.Truck.Popup;
-using LTP.Truck.UserControls;
-using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 using static iSoft.Database.EnumData;
@@ -33,10 +29,9 @@ namespace LTP.Truck.Forms
     private bool _isLoadingProductGroupFilter;
     private bool _isLoadingWasteTypeFilter;
     private int _loadDataVersion;
-    private ApiJobsService _apiJobsService { get; set; } 
+    private ApiJobsService _apiJobsService { get; set; }
     private ClientService _clientService { get; set; }
     private WarehouseService _warehouseService { get; set; }
-    private TypeGoodsService _typeGoodsService { get; set; }
     private TareService _tareService { get; set; }
     private ProductGroupService _productGroupService { get; set; }
     private ProductService _productService { get; set; }
@@ -77,7 +72,6 @@ namespace LTP.Truck.Forms
       _apiJobsService = new ApiJobsService();
       _clientService = new ClientService();
       _warehouseService = new WarehouseService();
-      _typeGoodsService = new TypeGoodsService();
       _tareService = new TareService();
       _productGroupService = new ProductGroupService();
       _productService = new ProductService();
@@ -111,7 +105,10 @@ namespace LTP.Truck.Forms
       dgv.ColumnHeadersHeight = 50;
       dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+      dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+      dgv.RowsDefaultCellStyle.WrapMode = DataGridViewTriState.True;
       dgv.RowTemplate.Height = 60;
+      dgv.RowTemplate.MinimumHeight = 60;
       dgv.BorderStyle = BorderStyle.None;
       dgv.MultiSelect = false;
       dgv.DefaultCellStyle.SelectionBackColor = dgv.DefaultCellStyle.BackColor;
@@ -150,7 +147,8 @@ namespace LTP.Truck.Forms
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoClient, searchKey));
             break;
           case EnumTypeMasterData.TypeGoods:
-            var rsTypeGoods = await AppCore.Ins._typeGoodsService.GetAllAsync();
+            var rsTypeGoods = await AppCore.Ins._productService.GetAllAsync(
+              EnumTypeDataLocation.Truck);
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             EnumWasteType? typeGoodsWasteType =
               (cbbType.SelectedItem as WasteTypeFilterItem)?.Value;
@@ -161,7 +159,8 @@ namespace LTP.Truck.Forms
                   typeGoods.EnumWasteType == typeGoodsWasteType.Value)
                 .ToList();
             }
-            var dtoTypeGoods = DTOHelper.ConvertTypeGoodsDTO(rsTypeGoods);
+            //var dtoTypeGoods = DTOHelper.ConvertTypeGoodsDTO(rsTypeGoods);
+            var dtoTypeGoods = DTOHelper.ConvertProductDTO(rsTypeGoods);
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoTypeGoods, searchKey));
             break;
           case EnumTypeMasterData.Warehouse:
@@ -191,7 +190,8 @@ namespace LTP.Truck.Forms
             SetDgv(enumTypeMaster, FilterBySearchKey(dtoGroupProduct, searchKey));
             break;
           case EnumTypeMasterData.Product:
-            var rsProduct = await AppCore.Ins._productService.GetAllAsync();
+            var rsProduct = await AppCore.Ins._productService.GetAllAsync(
+              EnumTypeDataLocation.Good);
             if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;
             Guid? productGroupId = (cbbFilter.SelectedItem as ProductGroupFilterItem)?.Id;
             if (productGroupId.HasValue)
@@ -439,7 +439,8 @@ namespace LTP.Truck.Forms
           return;
         }
 
-        var existingTypeGoods = await _typeGoodsService.GetAllAsync(IsContainDelete: true);
+        var existingTypeGoods = await _productService.GetAllAsync(
+          EnumTypeDataLocation.Truck, isContainDelete: true);
         var typeGoodsByNameAndWasteType = existingTypeGoods
           .Where(item => item.ProductGroupId == hcpProductGroup.Id &&
             !string.IsNullOrWhiteSpace(item.Name))
@@ -482,13 +483,13 @@ namespace LTP.Truck.Forms
             continue;
           }
 
-          TypeGoods? typeGoods = null;
+          Product? typeGoods = null;
           typeGoodsByNameAndWasteType.TryGetValue(
             BuildImportKey(hcpProductGroup.Id, name, wasteType),
             out typeGoods);
 
           var isNew = typeGoods == null;
-          typeGoods ??= new TypeGoods
+          typeGoods ??= new Product
           {
             CreatedAt = DateTime.UtcNow,
             EnableFlag = true,
@@ -507,7 +508,8 @@ namespace LTP.Truck.Forms
 
           try
           {
-            var savedTypeGoods = await _typeGoodsService.AddOrUpdateAsync(typeGoods);
+            var savedTypeGoods = await _productService.AddOrUpdateAsync(
+              typeGoods, EnumTypeDataLocation.Truck);
             typeGoodsByNameAndWasteType[
               BuildImportKey(hcpProductGroup.Id, name, wasteType)] =
               savedTypeGoods;
@@ -525,7 +527,7 @@ namespace LTP.Truck.Forms
         }
 
         await LoadData(EnumTypeMasterData.TypeGoods);
-        MasterDataChangeNotifier.Notify<TypeGoods>();
+        MasterDataChangeNotifier.Notify<Product>();
 
         var message =
           $"Import hoàn tất.\r\n" +
@@ -624,7 +626,8 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var existingProducts = await _productService.GetAllAsync(IsContainDelete: true);
+      var existingProducts = await _productService.GetAllAsync(
+        EnumTypeDataLocation.Good, isContainDelete: true);
       var productsByGroupNameAndWasteType = existingProducts
         .Where(item => item.ProductGroupId.HasValue &&
           !string.IsNullOrWhiteSpace(item.Name))
@@ -694,7 +697,8 @@ namespace LTP.Truck.Forms
 
           try
           {
-            var savedProduct = await _productService.AddOrUpdateAsync(product);
+            var savedProduct = await _productService.AddOrUpdateAsync(
+              product, EnumTypeDataLocation.Good);
             productsByGroupNameAndWasteType[
               BuildImportKey(productGroup.Id, name, wasteType)] =
               savedProduct;
@@ -1037,13 +1041,13 @@ namespace LTP.Truck.Forms
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Warehouse)
       {
-        PopupWarehouse  popupWarehouse = new PopupWarehouse();
+        PopupWarehouse popupWarehouse = new PopupWarehouse();
         popupWarehouse.OnSendSuccess += PopupWarehouse_OnSendSuccess;
         popupWarehouse.ShowDialog();
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
       {
-        PopupTypeGoods  popupTypeGoods = new PopupTypeGoods();
+        PopupTypeGoods popupTypeGoods = new PopupTypeGoods();
         popupTypeGoods.OnSendSuccess += PopupTypeGoods_OnSendSuccess;
         popupTypeGoods.ShowDialog();
       }
@@ -1300,11 +1304,11 @@ namespace LTP.Truck.Forms
       await _apiJobsService.AddOrUpdateAsync(apiJob);
     }
 
-    private async void PopupTypeGoods_OnSendSuccess(TypeGoods obj)
+    private async void PopupTypeGoods_OnSendSuccess(Product obj)
     {
       try
       {
-        TypeGoodsUpsertRequest  typeGoodsUpsertRequest = new TypeGoodsUpsertRequest();
+        TypeGoodsUpsertRequest typeGoodsUpsertRequest = new TypeGoodsUpsertRequest();
         typeGoodsUpsertRequest.Id = obj.Id;
         typeGoodsUpsertRequest.SerialCode = obj?.Code ?? string.Empty;
         typeGoodsUpsertRequest.Name = obj?.Name ?? string.Empty;
@@ -1332,7 +1336,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
-        WarehouseUpsertRequest  warehouseUpsertRequest = new WarehouseUpsertRequest();
+        WarehouseUpsertRequest warehouseUpsertRequest = new WarehouseUpsertRequest();
         warehouseUpsertRequest.Id = obj.Id;
         warehouseUpsertRequest.Name = obj?.Name ?? string.Empty;
         warehouseUpsertRequest.Description = obj?.Description ?? string.Empty;
@@ -1361,7 +1365,7 @@ namespace LTP.Truck.Forms
       {
         ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
         clientUpsertRequest.Id = client.Id;
-        clientUpsertRequest.Name = client?.Name??string.Empty;
+        clientUpsertRequest.Name = client?.Name ?? string.Empty;
         clientUpsertRequest.Description = client?.Description ?? string.Empty;
         clientUpsertRequest.DeletedFlag = false;
 
@@ -1398,27 +1402,10 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
+          {
             dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-        }
-
-        var alignmentMiddleCenterColumns = new[]
-        {
-            nameof(ClientDTO.No),
-          };
-        foreach (var columnName in alignmentMiddleCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-        }
-
-        var alignmentRightCenterColumns = new[]
-        {
-          nameof(ClientDTO.UpdatedAt),
-        };
-        foreach (var columnName in alignmentRightCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+          }  
         }
       }
       else if (enumTypeMasterData == EnumTypeMasterData.TypeGoods)
@@ -1427,6 +1414,9 @@ namespace LTP.Truck.Forms
         {
           nameof(TypeGoodsDTO.No),
           nameof(TypeGoodsDTO.Code),
+          nameof(TypeGoodsDTO.Group),
+          nameof(TypeGoodsDTO.WasteType),
+          nameof(TypeGoodsDTO.TagMappingReport),
           nameof(TypeGoodsDTO.UpdatedAt),
         };
         foreach (var columnName in autoSizeColumns)
@@ -1438,21 +1428,12 @@ namespace LTP.Truck.Forms
         var alignmentMiddleCenterColumns = new[]
         {
             nameof(TypeGoodsDTO.No),
+            nameof(TypeGoodsDTO.UpdatedAt),
           };
         foreach (var columnName in alignmentMiddleCenterColumns)
         {
           if (dgv.Columns.Contains(columnName))
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-        }
-
-        var alignmentRightCenterColumns = new[]
-        {
-          nameof(TypeGoodsDTO.UpdatedAt),
-        };
-        foreach (var columnName in alignmentRightCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
       }
       else if (enumTypeMasterData == EnumTypeMasterData.Warehouse)
@@ -1465,27 +1446,10 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
+          {
             dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-        }
-
-        var alignmentMiddleCenterColumns = new[]
-        {
-          nameof(WareHouseDTO.No),
-        };
-        foreach (var columnName in alignmentMiddleCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-        }
-
-        var alignmentRightCenterColumns = new[]
-        {
-          nameof(WareHouseDTO.UpdatedAt),
-        };
-        foreach (var columnName in alignmentRightCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+          }  
         }
       }
       else if (enumTypeMasterData == EnumTypeMasterData.Tare)
@@ -1506,6 +1470,7 @@ namespace LTP.Truck.Forms
         var alignmentMiddleCenterColumns = new[]
         {
           nameof(CategoryTareDTO.No),
+          nameof(CategoryTareDTO.UpdatedAt),
         };
         foreach (var columnName in alignmentMiddleCenterColumns)
         {
@@ -1513,16 +1478,9 @@ namespace LTP.Truck.Forms
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
-        var alignmentRightCenterColumns = new[]
-        {
-          nameof(CategoryTareDTO.Value),
-          nameof(CategoryTareDTO.UpdatedAt),
-        };
-        foreach (var columnName in alignmentRightCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-        }
+        if (dgv.Columns.Contains(nameof(TareTruckDTO.Value)))
+          dgv.Columns[nameof(TareTruckDTO.Value)].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleRight;
       }
       else if (enumTypeMasterData == EnumTypeMasterData.TareForTruck)
       {
@@ -1538,20 +1496,20 @@ namespace LTP.Truck.Forms
             dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
-        if (dgv.Columns.Contains(nameof(TareTruckDTO.No)))
-          dgv.Columns[nameof(TareTruckDTO.No)].DefaultCellStyle.Alignment =
-            DataGridViewContentAlignment.MiddleCenter;
-
-        var alignmentRightCenterColumns = new[]
+        var alignmentMiddleCenterColumns = new[]
         {
-          nameof(TareTruckDTO.Value),
+          nameof(TareTruckDTO.No),
           nameof(TareTruckDTO.UpdatedAt),
         };
-        foreach (var columnName in alignmentRightCenterColumns)
+        foreach (var columnName in alignmentMiddleCenterColumns)
         {
           if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
+
+        if (dgv.Columns.Contains(nameof(TareTruckDTO.Value)))
+          dgv.Columns[nameof(TareTruckDTO.Value)].DefaultCellStyle.Alignment =
+            DataGridViewContentAlignment.MiddleRight;
       }
       else if (enumTypeMasterData == EnumTypeMasterData.GroupProduct)
       {
@@ -1563,27 +1521,10 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
+          {
             dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-        }
-
-        var alignmentMiddleCenterColumns = new[]
-        {
-          nameof(ProductGroupDTO.No),
-        };
-        foreach (var columnName in alignmentMiddleCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-        }
-
-        var alignmentRightCenterColumns = new[]
-        {
-          nameof(ProductGroupDTO.UpdatedAt),
-        };
-        foreach (var columnName in alignmentRightCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+          }  
         }
       }
       else if (enumTypeMasterData == EnumTypeMasterData.Product)
@@ -1592,12 +1533,11 @@ namespace LTP.Truck.Forms
         {
           nameof(ProductDTO.No),
           nameof(ProductDTO.UpdatedAt),
-          nameof(ProductDTO.Group),
           nameof(ProductDTO.Code),
-          nameof(ProductDTO.WasteType),
+          nameof(ProductDTO.Group),
           nameof(ProductDTO.TagMappingReport),
           nameof(ProductDTO.Description),
-          //nameof(ProductDTO.Name),
+          nameof(ProductDTO.WasteType),
         };
         foreach (var columnName in autoSizeColumns)
         {
@@ -1608,24 +1548,15 @@ namespace LTP.Truck.Forms
         var alignmentMiddleCenterColumns = new[]
         {
           nameof(ProductDTO.No),
+          nameof(ProductDTO.UpdatedAt),
         };
         foreach (var columnName in alignmentMiddleCenterColumns)
         {
           if (dgv.Columns.Contains(columnName))
             dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
-
-        var alignmentRightCenterColumns = new[]
-        {
-          nameof(ProductDTO.UpdatedAt),
-        };
-        foreach (var columnName in alignmentRightCenterColumns)
-        {
-          if (dgv.Columns.Contains(columnName))
-            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-        }
       }
-      else if (enumTypeMasterData == EnumTypeMasterData.Delivery)
+      else if (enumTypeMasterData == EnumTypeMasterData.Delivery) 
       {
         var autoSizeColumns = new[]
         {
@@ -1635,16 +1566,11 @@ namespace LTP.Truck.Forms
         foreach (var columnName in autoSizeColumns)
         {
           if (dgv.Columns.Contains(columnName))
+          {
             dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+          } 
         }
-
-        if (dgv.Columns.Contains(nameof(DeliveryDTO.No)))
-          dgv.Columns[nameof(DeliveryDTO.No)].DefaultCellStyle.Alignment =
-            DataGridViewContentAlignment.MiddleCenter;
-
-        if (dgv.Columns.Contains(nameof(DeliveryDTO.UpdatedAt)))
-          dgv.Columns[nameof(DeliveryDTO.UpdatedAt)].DefaultCellStyle.Alignment =
-            DataGridViewContentAlignment.MiddleRight;
       }
       else if (enumTypeMasterData == EnumTypeMasterData.Document)
       {
@@ -1660,13 +1586,16 @@ namespace LTP.Truck.Forms
             dgv.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
 
-        if (dgv.Columns.Contains(nameof(DocumentDataDTO.No)))
-          dgv.Columns[nameof(DocumentDataDTO.No)].DefaultCellStyle.Alignment =
-            DataGridViewContentAlignment.MiddleCenter;
-
-        if (dgv.Columns.Contains(nameof(DocumentDataDTO.UpdatedAt)))
-          dgv.Columns[nameof(DocumentDataDTO.UpdatedAt)].DefaultCellStyle.Alignment =
-            DataGridViewContentAlignment.MiddleRight;
+        var alignmentMiddleCenterColumns = new[]
+        {
+          nameof(DocumentDataDTO.No),
+          nameof(DocumentDataDTO.UpdatedAt),
+        };
+        foreach (var columnName in alignmentMiddleCenterColumns)
+        {
+          if (dgv.Columns.Contains(columnName))
+            dgv.Columns[columnName].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        }
       }
     }
 
@@ -1763,7 +1692,7 @@ namespace LTP.Truck.Forms
           using var popupMsg = new PopupConfirm("Không tìm thấy thông tin dữ liệu !",
            EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
           popupMsg.ShowDialog(this);
-        }  
+        }
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Warehouse)
       {
@@ -1898,7 +1827,7 @@ namespace LTP.Truck.Forms
       return Task.CompletedTask;
     }
 
-    private async void PopupUpdateTypeGoods_OnSendSuccess(TypeGoods obj)
+    private async void PopupUpdateTypeGoods_OnSendSuccess(Product obj)
     {
       try
       {
@@ -2187,10 +2116,10 @@ namespace LTP.Truck.Forms
             await _clientService.AddOrUpdateAsync(client);
 
             ClientUpsertRequest clientUpsertRequest = new ClientUpsertRequest();
-            clientUpsertRequest.Id = client.IdSrc!=null ? client.IdSrc : client.Id;
+            clientUpsertRequest.Id = client.IdSrc != null ? client.IdSrc : client.Id;
             clientUpsertRequest.Name = client?.Name ?? string.Empty;
             clientUpsertRequest.Description = client?.Description ?? string.Empty;
-            clientUpsertRequest.DeletedFlag = client?.DeletedFlag??false;
+            clientUpsertRequest.DeletedFlag = client?.DeletedFlag ?? false;
 
             ApiJobs apiJobs = new ApiJobs();
             apiJobs.Json = JsonHelper.ToJson(clientUpsertRequest);
@@ -2211,7 +2140,7 @@ namespace LTP.Truck.Forms
             warehouse.DeletedFlag = true;
             await _warehouseService.AddOrUpdateAsync(warehouse);
 
-            WarehouseUpsertRequest  warehouseUpsertRequest = new WarehouseUpsertRequest();
+            WarehouseUpsertRequest warehouseUpsertRequest = new WarehouseUpsertRequest();
             warehouseUpsertRequest.Id = warehouse.IdSrc != null ? warehouse.IdSrc : warehouse.Id;
             warehouseUpsertRequest.Name = warehouse?.Name ?? string.Empty;
             warehouseUpsertRequest.Description = warehouse?.Description ?? string.Empty;
@@ -2230,11 +2159,12 @@ namespace LTP.Truck.Forms
         }
         else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
         {
-          var  typeGoods = e.Obj as TypeGoods;
+          var typeGoods = e.Obj as Product;
           if (typeGoods != null)
           {
             typeGoods.DeletedFlag = true;
-            await _typeGoodsService.AddOrUpdateAsync(typeGoods);
+            await _productService.AddOrUpdateAsync(
+              typeGoods, EnumTypeDataLocation.Truck);
 
             WarehouseUpsertRequest warehouseUpsertRequest = new WarehouseUpsertRequest();
             warehouseUpsertRequest.Id = typeGoods.IdSrc != null ? typeGoods.IdSrc : typeGoods.Id;
@@ -2318,7 +2248,8 @@ namespace LTP.Truck.Forms
           if (product != null)
           {
             product.DeletedFlag = true;
-            await _productService.AddOrUpdateAsync(product);
+            await _productService.AddOrUpdateAsync(
+              product, EnumTypeDataLocation.Good);
 
             var apiJobs = new ApiJobs
             {
@@ -2385,7 +2316,7 @@ namespace LTP.Truck.Forms
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
-      
+
     }
   }
 }

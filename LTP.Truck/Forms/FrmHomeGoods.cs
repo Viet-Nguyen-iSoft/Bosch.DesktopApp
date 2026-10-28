@@ -406,7 +406,8 @@ namespace LTP.Truck.Forms
 
       try
       {
-        var products = await AppCore.Ins._productService.GetAllAsync();
+        var products = await AppCore.Ins._productService.GetAllAsync(
+          EnumTypeDataLocation.Good);
         if (IsDisposed || Disposing || refreshVersion != _productRefreshVersion)
           return;
 
@@ -459,7 +460,8 @@ namespace LTP.Truck.Forms
 
     private async Task LoadDataFirst()
     {
-      var productsTask = AppCore.Ins._productService.GetAllAsync();
+      var productsTask = AppCore.Ins._productService.GetAllAsync(
+        EnumTypeDataLocation.Good);
       var productGroupsTask = AppCore.Ins._productGroupService.GetAllAsync();
       var categoryTaresTask = AppCore.Ins._tareService
         .GetAllAsync(EnumTypeDataLocation.Good);

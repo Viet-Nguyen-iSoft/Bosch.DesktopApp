@@ -195,7 +195,7 @@ namespace ApiSyncData
       return new ReferenceIds(
         await LoadLocalIdsAsync<Client>(db, rows.Select(row => row.ClientId), token)
           .ConfigureAwait(false),
-        await LoadLocalIdsAsync<TypeGoods>(db, rows.Select(row => row.TypeGoodsId), token)
+        await LoadLocalIdsAsync<Product>(db, rows.Select(row => row.TypeGoodsId), token)
           .ConfigureAwait(false),
         await LoadLocalIdsAsync<Warehouse>(db, rows.Select(row => row.WarehouseId), token)
           .ConfigureAwait(false),

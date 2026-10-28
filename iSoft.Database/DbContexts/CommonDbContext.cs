@@ -36,7 +36,6 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<Product>? Products { get; set; }
     public virtual DbSet<Tare>? Tares { get; set; }
     public virtual DbSet<Warehouse>? Warehouses { get; set; }
-    public virtual DbSet<TypeGoods>? TypeGoods { get; set; }
     public virtual DbSet<Client>? Clients { get; set; }
     public virtual DbSet<RecordTruck>? RecordTrucks { get; set; }
     public virtual DbSet<RecordWeight>? RecordWeights { get; set; }
@@ -129,15 +128,19 @@ namespace iSoft.Database.DbContexts
         .HasConversion<int>()
         .HasDefaultValue((EnumData.EnumWasteType)0);
 
-      modelBuilder.Entity<TypeGoods>()
-        .Property(typeGoods => typeGoods.EnumWasteType)
+      modelBuilder.Entity<Product>()
+        .Property(product => product.EnumTypeData)
         .HasConversion<int>()
-        .HasDefaultValue((EnumData.EnumWasteType)0);
+        .HasDefaultValue(EnumData.EnumTypeDataLocation.Good);
 
-      modelBuilder.Entity<TypeGoods>()
-        .HasOne(typeGoods => typeGoods.ProductGroup)
-        .WithMany()
-        .HasForeignKey(typeGoods => typeGoods.ProductGroupId);
+      modelBuilder.Entity<Product>()
+        .HasIndex(product => new { product.EnumTypeData, product.DeletedFlag })
+        .HasDatabaseName("IX_Products_EnumTypeData_DeletedFlag");
+
+      modelBuilder.Entity<RecordTruck>()
+        .HasOne(record => record.TypeGoods)
+        .WithMany(product => product.RecordTrucks)
+        .HasForeignKey(record => record.TypeGoodsId);
 
       modelBuilder.Entity<Connection>()
         .HasIndex(connection => new

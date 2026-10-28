@@ -61,12 +61,12 @@ namespace LTP.Truck.Popup
 
         dgv.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
       }
-      else if (typeof(T) == typeof(TypeGoods))
+      else if (typeof(T) == typeof(Product))
       {
         _enumTypeData = EnumTypeData.TypeGoods;
         btnAdd.Visible = true;
 
-        var dto = DTOHelper.ConvertTypeGoodsDTO(items as List<TypeGoods>);
+        var dto = DTOHelper.ConvertTypeGoodsDTO(items as List<Product>);
         ConfigureSearch(dto);
         dgv.DataSource = dto;
 

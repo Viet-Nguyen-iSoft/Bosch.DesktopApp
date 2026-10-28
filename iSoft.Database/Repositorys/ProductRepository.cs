@@ -16,11 +16,17 @@ namespace iSoft.Database.Repositorys
     {
     }
 
-    public Task<List<Product>> GetAllAsync(bool IsContainDelete = false)
+    public Task<List<Product>> GetAllAsync(
+      EnumTypeDataLocation location,
+      bool isContainDelete = false)
     {
-      var query = Context.Set<Product>().AsQueryable();
-      if (!IsContainDelete)
-        query = query.Where(x => !x.DeletedFlag).Include(x => x.ProductGroup);
+      var query = Context.Set<Product>()
+        .Include(product => product.ProductGroup)
+        .AsQueryable();
+      if (location != EnumTypeDataLocation.All)
+        query = query.Where(product => product.EnumTypeData == location);
+      if (!isContainDelete)
+        query = query.Where(product => !product.DeletedFlag);
       return query.ToListAsync();
     }
   }

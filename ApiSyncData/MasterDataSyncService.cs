@@ -64,8 +64,18 @@ namespace ApiSyncData
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
 
     public static Task<MasterDataChangedEventArgs?> SyncTypeGoodsAsync(TypeGoodsAPI response, CancellationToken token = default) =>
-      SyncAsync<ListDatumTypeGoods, TypeGoods>(response.Data?.ListData, response.Data?.TotalRecord,
-        (s, l) => { l.Name = s.Name; l.Code = s.SerialCode; l.Description = s.Description; }, token);
+      SyncAsync<ListDatumTypeGoods, Product>(response.Data?.ListData, response.Data?.TotalRecord,
+        (s, l) =>
+        {
+          l.Name = s.Name;
+          l.Code = s.SerialCode;
+          l.Description = s.Description;
+          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck;
+        }, token,
+        initializeAdded: product =>
+          product.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Truck,
+        filterLocals: query => query.Where(product =>
+          product.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Truck));
 
     public static Task<MasterDataChangedEventArgs?> SyncProductGroupsAsync(ProductGroupAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumProductGroup, ProductGroup>(response.Data?.ListData, response.Data?.TotalRecord,
@@ -138,6 +148,7 @@ namespace ApiSyncData
           l.Code = s.SerialCode;
           l.Description = s.Description;
           l.ProductGroupId = localGroupId;
+          l.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good;
           if (s.WasteType.HasValue &&
               Enum.IsDefined(typeof(iSoft.Database.EnumData.EnumWasteType), s.WasteType.Value))
           {
@@ -154,7 +165,11 @@ namespace ApiSyncData
         {
           Guid? groupId = GetProductGroupId(s);
           return !groupId.HasValue || groups.ContainsKey(groupId.Value);
-        });
+        },
+        initializeAdded: product =>
+          product.EnumTypeData = iSoft.Database.EnumData.EnumTypeDataLocation.Good,
+        filterLocals: query => query.Where(product =>
+          product.EnumTypeData == iSoft.Database.EnumData.EnumTypeDataLocation.Good));
     }
 
     private static async Task<MasterDataChangedEventArgs?> SyncAsync<TSource, TEntity>(

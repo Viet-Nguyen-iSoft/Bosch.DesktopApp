@@ -20,11 +20,11 @@ namespace LTP.Truck.MasterData
 {
   public partial class PopupTypeGoods : Form
   {
-    public event Action<TypeGoods>? OnSendSuccess;
+    public event Action<Product>? OnSendSuccess;
 
-    private TypeGoodsService _typeGoodsService { get; set; }
+    private ProductService _productService { get; set; }
     private ProductGroupService _productGroupService { get; set; }
-    private TypeGoods _typeGoodsUpdate { get; set; }
+    private Product _typeGoodsUpdate { get; set; }
     private EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
     public PopupTypeGoods()
     {
@@ -43,7 +43,7 @@ namespace LTP.Truck.MasterData
       cbbType.SelectedIndex = -1;
     }
 
-    public PopupTypeGoods(TypeGoods typeGoods) : this()
+    public PopupTypeGoods(Product typeGoods) : this()
     {
       _typeGoodsUpdate = typeGoods;
       _enumTypePopup = EnumTypePopup.Update;
@@ -57,7 +57,7 @@ namespace LTP.Truck.MasterData
 
     private async void PopupAddClient_Load(object? sender, EventArgs e)
     {
-      _typeGoodsService = new TypeGoodsService();
+      _productService = new ProductService();
       _productGroupService = new ProductGroupService();
 
       try
@@ -85,7 +85,7 @@ namespace LTP.Truck.MasterData
       }
     }
 
-    private void LoadDataUpdate(TypeGoods typeGoods)
+    private void LoadDataUpdate(Product typeGoods)
     {
       if (this.InvokeRequired)
       {
@@ -142,7 +142,8 @@ namespace LTP.Truck.MasterData
           string? typeGoodsCode = string.IsNullOrWhiteSpace(txtCode.Texts)
             ? null
             : txtCode.Texts.Trim();
-          var typeGoodsList = await _typeGoodsService.GetAllAsync(IsContainDelete: true);
+          var typeGoodsList = await _productService.GetAllAsync(
+            EnumTypeDataLocation.Truck, isContainDelete: true);
           bool isDuplicateCode = typeGoodsCode != null && typeGoodsList.Any(typeGoods =>
             !typeGoods.DeletedFlag &&
             string.Equals(typeGoods.Code?.Trim(), typeGoodsCode,
@@ -157,7 +158,7 @@ namespace LTP.Truck.MasterData
             return;
           }
 
-          TypeGoods typeGoods = new TypeGoods();
+          Product typeGoods = new Product();
           typeGoods.Code = typeGoodsCode;
           typeGoods.Name = txtName.Texts.Trim();
           typeGoods.Description = txtDescription.Texts.Trim();
@@ -167,7 +168,8 @@ namespace LTP.Truck.MasterData
           typeGoods.ProductGroupId = selectedProductGroup.Id;
           typeGoods.EnumWasteType = selectedWasteType;
           typeGoods.CreatedAt = DateTime.UtcNow;
-          var rs = await _typeGoodsService.AddOrUpdateAsync(typeGoods);
+          var rs = await _productService.AddOrUpdateAsync(
+            typeGoods, EnumTypeDataLocation.Truck);
 
           this.Close();
           OnSendSuccess?.Invoke(rs);
@@ -185,7 +187,8 @@ namespace LTP.Truck.MasterData
           _typeGoodsUpdate.ProductGroupId = selectedProductGroup.Id;
           _typeGoodsUpdate.EnumWasteType = selectedWasteType;
           _typeGoodsUpdate.UpdatedAt = DateTime.UtcNow;
-          var rs = await _typeGoodsService.AddOrUpdateAsync(_typeGoodsUpdate);
+          var rs = await _productService.AddOrUpdateAsync(
+            _typeGoodsUpdate, EnumTypeDataLocation.Truck);
 
           this.Close();
           OnSendSuccess?.Invoke(rs);
