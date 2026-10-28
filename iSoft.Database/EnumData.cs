@@ -68,5 +68,13 @@ namespace iSoft.Database
       [Description("Tái chế")]
       Recyclable = 3,
     }
+
+
+    public enum EnumTypeDataLocation
+    {
+      All,
+      Truck,
+      Good,
+    }
   }
 }
