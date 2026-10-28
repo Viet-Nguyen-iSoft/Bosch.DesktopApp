@@ -31,5 +31,14 @@ namespace iSoft.Database.Repositorys
         .Where(document => document.Date >= dateFrom && document.Date < dateTo)
         .FirstOrDefaultAsync();
     }
+
+    public Task<bool> ExistsByDateAsync(DateTime date, Guid? excludedId = null)
+    {
+      var dateFrom = date.Date;
+      var dateTo = dateFrom.AddDays(1);
+      return Context.Set<DocumentData>()
+        .Where(document => !excludedId.HasValue || document.Id != excludedId.Value)
+        .AnyAsync(document => document.Date >= dateFrom && document.Date < dateTo && document.DeletedFlag==false);
+    }
   }
 }

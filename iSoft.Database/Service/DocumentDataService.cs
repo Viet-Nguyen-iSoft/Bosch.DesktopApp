@@ -26,5 +26,12 @@ namespace iSoft.Database.Service
       var repository = new DocumentDataRepository(context);
       return await repository.GetByDateAsync(date).ConfigureAwait(false);
     }
+
+    public async Task<bool> ExistsByDateAsync(DateTime date, Guid? excludedId = null)
+    {
+      await using var context = new MySqlDbContext();
+      var repository = new DocumentDataRepository(context);
+      return await repository.ExistsByDateAsync(date, excludedId).ConfigureAwait(false);
+    }
   }
 }

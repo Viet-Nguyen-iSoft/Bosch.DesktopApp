@@ -886,6 +886,64 @@ namespace ApiSyncData
       }
     }
 
+    public async Task<string> UpsertDocumentAsync(
+      DocumentUpsertRequest document,
+      CancellationToken cancellationToken = default)
+    {
+      ArgumentNullException.ThrowIfNull(document);
+      ArgumentException.ThrowIfNullOrWhiteSpace(document.Name);
+
+      if (document.Id == Guid.Empty)
+        throw new ArgumentException("Document Id không được là Guid.Empty.", nameof(document));
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+      string apiUrl = $"{baseAPI.TrimEnd('/')}/v1/Document/upsert-multi-lang";
+
+      using var httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+      using var formData = new MultipartFormDataContent
+      {
+        { new StringContent(FormatUtcTimestamp(document.DocumentDate)), "DocumentDate" },
+        { new StringContent(document.Name.Trim()), "Name" },
+        { new StringContent(document.Description?.Trim() ?? string.Empty), "Description" },
+        { new StringContent(FormatUtcTimestamp(document.UpdatedAt)), "UpdatedAt" },
+        { new StringContent(document.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag" },
+      };
+      if (document.Id.HasValue)
+        formData.Add(new StringContent(document.Id.Value.ToString()), "Id");
+
+      using var response = await httpClient.PostAsync(
+        apiUrl, formData, cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken)
+        .ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"UpsertDocument. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+          $"({response.ReasonPhrase}). Response: {responseContent}");
+      }
+
+      return responseContent;
+    }
+
+    private static string FormatUtcTimestamp(DateTime value)
+    {
+      var utcValue = value.Kind switch
+      {
+        DateTimeKind.Utc => value,
+        DateTimeKind.Local => value.ToUniversalTime(),
+        _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+      };
+      return utcValue.ToString(
+        "yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
+    }
+
     public async Task<string> SyncRecordTruckFromLocal(
       string rawData,
       CancellationToken cancellationToken = default)

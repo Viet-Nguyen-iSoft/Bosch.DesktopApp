@@ -96,6 +96,15 @@ namespace LTP.Truck.Services
                 await api.UpsertUserAsync(userUpsertRequest);
               }
               break;
+            case EnumTypeAPI.MD_Document:
+              var documentUpsertRequest = JsonHelper.FromJson<DocumentUpsertRequest>(
+                apiJob.Json ?? string.Empty);
+              if (documentUpsertRequest != null)
+              {
+                await api.UpsertDocumentAsync(documentUpsertRequest, cancellationToken)
+                  .ConfigureAwait(false);
+              }
+              break;
           }
 
           apiJob.EnumStatusAPI = EnumStatusAPI.Success;

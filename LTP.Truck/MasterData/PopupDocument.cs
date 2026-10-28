@@ -59,10 +59,9 @@ namespace LTP.Truck.MasterData
 
         var documentDate = DateTime.SpecifyKind(
           dateTimePicker1.Value.Date, DateTimeKind.Utc);
-        var documents = await _documentDataService.GetAllAsync(isContainDelete: true);
-        var duplicate = documents.Any(document =>
-          document.Id != _documentUpdate?.Id &&
-          document.Date?.Date == documentDate.Date);
+        var duplicate = await _documentDataService.ExistsByDateAsync(
+          documentDate,
+          _documentUpdate?.Id);
         if (duplicate)
         {
           ShowWarning("Ngày đã chọn đã có chứng từ. Mỗi ngày chỉ được tạo một bản ghi !");

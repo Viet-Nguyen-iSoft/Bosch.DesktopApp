@@ -182,7 +182,7 @@ namespace LTP.Truck
         await Task.Yield();
 
         _syncTask ??= PeriodicRunner.RunEvery5SecondsAsync(AppCore.Ins._station?.Id, 7, _syncCts.Token);
-        _localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
+        //_localDataSyncTask ??= LocalDataSyncService.RunEvery5SecondsAsync(pathFolderSrc: Application.StartupPath, _syncCts02.Token);
 
         AppCore.Ins.CheckConnectServer();
         await Task.Run(() => AppCore.Ins.ConnectWeight());

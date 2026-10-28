@@ -1085,6 +1085,7 @@ namespace LTP.Truck.Forms
     {
       try
       {
+        await QueueDocumentUpsertAsync(document);
         await LoadData(_enumTypeMasterDataCurrent);
         MasterDataChangeNotifier.Notify<DocumentData>();
         ShowSaveSuccess(document.UpdatedAt.HasValue
@@ -1095,6 +1096,31 @@ namespace LTP.Truck.Forms
       {
         HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
+    }
+
+    private async Task QueueDocumentUpsertAsync(DocumentData document)
+    {
+      if (!document.Date.HasValue)
+        throw new InvalidOperationException("DocumentDate không được để trống.");
+
+      var request = new DocumentUpsertRequest
+      {
+        Id = document.IdSrc ?? document.Id,
+        DocumentDate = document.Date.Value,
+        Name = document.Document ?? string.Empty,
+        Description = document.Description,
+        UpdatedAt = document.UpdatedAt ?? document.CreatedAt ?? DateTime.UtcNow,
+        DeletedFlag = document.DeletedFlag,
+      };
+      var apiJob = new ApiJobs
+      {
+        Json = JsonHelper.ToJson(request),
+        EnumTypeAPI = EnumTypeAPI.MD_Document,
+        EnumStatusAPI = EnumStatusAPI.Created,
+        CreatedAt = DateTime.UtcNow,
+      };
+
+      await _apiJobsService.AddOrUpdateAsync(apiJob);
     }
 
     private async void PopupDelivery_OnSendSuccess(Delivery delivery)
@@ -2350,6 +2376,7 @@ namespace LTP.Truck.Forms
             document.DeletedFlag = true;
             document.UpdatedAt = DateTime.UtcNow;
             await _documentDataService.AddOrUpdateAsync(document);
+            await QueueDocumentUpsertAsync(document);
             await LoadData(_enumTypeMasterDataCurrent);
             MasterDataChangeNotifier.Notify<DocumentData>();
           }
