@@ -19,6 +19,7 @@ namespace ApiSyncData
     public static Resp.ClientAPI? Clients { get; private set; }
     public static Resp.DeliveryAPI? Deliveries { get; private set; }
     public static Resp.UserAPI? Users { get; private set; }
+    public static Resp.DocumentAPI? Documents { get; private set; }
 
     public static void SetServerAvailabilityCheck(Func<bool> serverAvailabilityCheck)
     {
@@ -87,11 +88,18 @@ namespace ApiSyncData
       var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
         value => Users = value, cancellationToken);
 
-      await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
-        products, categoryTares, clients, deliveries, users).ConfigureAwait(false);
+      var dtNow = DateTime.UtcNow.Date;
+      var dateTo = dtNow.AddYears(10);
+      var dateFrom = dtNow.AddYears(-10);
+      var documents = LoadAndSyncAsync(
+        api.Documents(dateFrom, dateTo, isContainDelete: true, cancellationToken),
+        MasterDataSyncService.SyncDocumentsAsync,
+        value => Documents = value,
+        cancellationToken);
 
-      //StationId = Guid.Parse("bcbb2319-89e3-45ea-8e80-31ee63cbaf37");
-      //StationId = Guid.Parse("e6d87923-f4e8-4d65-95ad-d8a58b8b1ff2");
+      await Task.WhenAll(stations, warehouses, typeGoods, productGroups,
+        products, categoryTares, clients, deliveries, users, documents).ConfigureAwait(false);
+
       try
       {
         if (StationId != null)
@@ -105,7 +113,7 @@ namespace ApiSyncData
             NotifyEntityChanged(recordTruckChanges);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
 
       }

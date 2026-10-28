@@ -63,6 +63,11 @@ namespace ApiSyncData
         }, token,
         initializeAdded: user => user.CreatedAt = DateTime.UtcNow);
 
+    public static Task<MasterDataChangedEventArgs?> SyncDocumentsAsync(
+      DocumentAPI response,
+      CancellationToken token = default) =>
+      DocumentDataServerSyncService.SyncAsync(response, token);
+
     public static Task<MasterDataChangedEventArgs?> SyncProductsAsync(ProductAPI response, CancellationToken token = default)
     {
       var groups = new Dictionary<Guid, Guid>();

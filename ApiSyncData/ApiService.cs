@@ -4,6 +4,7 @@ using iSoft.Database.Models;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.Net.Http.Headers;
+using WebDriverBiDi.Network;
 
 namespace ApiSyncData
 {
@@ -831,6 +832,60 @@ namespace ApiSyncData
           "RecordTruckFromServer API trả về dữ liệu không hợp lệ.");
     }
 
+    public async Task<DocumentAPI> Documents(
+      DateTime dateFrom,
+      DateTime dateTo,
+      bool isContainDelete = true,
+      CancellationToken cancellationToken = default)
+    {
+      try
+      {
+        if (dateFrom.Date > dateTo.Date)
+        {
+          throw new ArgumentException(
+            "dateFrom phải nhỏ hơn hoặc bằng dateTo.", nameof(dateFrom));
+        }
+
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException("Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
+        string dateFromQuery = Uri.EscapeDataString(
+          dateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        string dateToQuery = Uri.EscapeDataString(
+          dateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        string apiUrl =
+          $"{baseAPI.TrimEnd('/')}/v1/Document/get-list-simplify" +
+          $"?IsDeleted={isContainDelete.ToString().ToLowerInvariant()}" +
+          $"&dateFrom={dateFromQuery}" +
+          $"&dateTo={dateToQuery}";
+
+        using var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+
+        using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+          .ConfigureAwait(false);
+        string responseContent = await response.Content
+          .ReadAsStringAsync(cancellationToken)
+          .ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+        {
+          throw new HttpRequestException(
+            $"Documents. URL: {apiUrl}. HTTP {(int)response.StatusCode} " +
+            $"({response.ReasonPhrase}). Response: {responseContent}");
+        }
+
+        return JsonConvert.DeserializeObject<DocumentAPI>(responseContent)
+          ?? throw new InvalidOperationException(
+            "Document API trả về dữ liệu không hợp lệ.");
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Lỗi API");
+      }
+    }
+
     public async Task<string> SyncRecordTruckFromLocal(
       string rawData,
       CancellationToken cancellationToken = default)
@@ -1019,10 +1074,10 @@ namespace ApiSyncData
       if (!string.IsNullOrWhiteSpace(licensePlate))
         formData.Add(new StringContent(licensePlate.Trim()), "LicensePlateCode");
 
-        if (!string.IsNullOrWhiteSpace(description))
-          formData.Add(new StringContent(description.Trim()), "Description");
-        else
-          formData.Add(new StringContent("Description"), "DeleteFields");
+      if (!string.IsNullOrWhiteSpace(description))
+        formData.Add(new StringContent(description.Trim()), "Description");
+      else
+        formData.Add(new StringContent("Description"), "DeleteFields");
 
       if (additionalFields != null)
       {
