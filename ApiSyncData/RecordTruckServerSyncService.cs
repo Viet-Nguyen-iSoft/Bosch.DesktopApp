@@ -176,9 +176,13 @@ namespace ApiSyncData
       if (localIds.TryGetValue(normalizedId.Value, out var localId))
         return localId;
 
-      System.Diagnostics.Trace.TraceWarning(
+      string warning =
         $"RecordTruck {recordTruckId}: {relationName} {normalizedId} " +
-        "không tồn tại trong master data local; khóa ngoại được để trống.");
+        "không tồn tại trong master data local; khóa ngoại được để trống.";
+      System.Diagnostics.Trace.TraceWarning(warning);
+      HelperManager.LogHelper.LogErrorToFileLog(
+        new InvalidOperationException(warning),
+        Path.Combine(AppContext.BaseDirectory, "Logs"));
       return null;
     }
 

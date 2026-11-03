@@ -34,8 +34,10 @@ namespace ApiSyncData
       {
         return _serverAvailabilityCheck();
       }
-      catch
+      catch (Exception ex)
       {
+        LogSyncError(new InvalidOperationException(
+          "Kiểm tra trạng thái kết nối server thất bại.", ex));
         return false;
       }
     }
@@ -59,7 +61,7 @@ namespace ApiSyncData
           ? RunDefaultFunctionsAsync(api, token)
           : Task.CompletedTask,
         cancellationToken,
-        onError ?? (ex => System.Diagnostics.Trace.TraceError(ex.ToString())));
+        onError ?? LogSyncError);
     }
 
     // Thêm hoặc thay đổi các hàm chạy định kỳ tại đây.
@@ -68,30 +70,41 @@ namespace ApiSyncData
     {
       cancellationToken.ThrowIfCancellationRequested();
 
-      var stations = LoadAndSyncAsync(api.Station(), MasterDataSyncService.SyncStationsAsync,
+      var stations = LoadAndSyncAsync("Station", api.Station(cancellationToken: cancellationToken), MasterDataSyncService.SyncStationsAsync,
         value => Stations = value, cancellationToken);
-      var warehouses = LoadAndSyncAsync(api.Warehouse(), MasterDataSyncService.SyncWarehousesAsync,
+      var warehouses = LoadAndSyncAsync("Warehouse", api.Warehouse(cancellationToken: cancellationToken), MasterDataSyncService.SyncWarehousesAsync,
         value => Warehouses = value, cancellationToken);
-      var productGroups = LoadAndSyncAsync(api.ProductGroup(), MasterDataSyncService.SyncProductGroupsAsync,
+      var productGroups = LoadAndSyncAsync("ProductGroup", api.ProductGroup(cancellationToken: cancellationToken), MasterDataSyncService.SyncProductGroupsAsync,
         value => ProductGroups = value, cancellationToken);
-      var products = SyncProductsAfterGroupsAsync(
-        api.Product(isContainDelete: true), productGroups, cancellationToken);
+      var products = RunWithContextAsync(
+        "ProductFood",
+        () => SyncProductsAfterGroupsAsync(
+          api.Product(isContainDelete: true, cancellationToken), productGroups, cancellationToken),
+        cancellationToken);
       var categoryTares = LoadAndSyncAsync(
+        "CategoryTare",
         api.CategoryTare(isContainDelete: true, cancellationToken),
         MasterDataSyncService.SyncCategoryTaresAsync,
         value => CategoryTares = value, cancellationToken);
 
-      var clientDeliveries = SyncClientDeliveriesAsync(api, cancellationToken);
+      var clientDeliveries = RunWithContextAsync(
+        "Client/Delivery",
+        () => SyncClientDeliveriesAsync(api, cancellationToken),
+        cancellationToken);
 
-      var users = LoadAndSyncAsync(api.Users(), MasterDataSyncService.SyncUsersAsync,
+      var users = LoadAndSyncAsync("User", api.Users(cancellationToken), MasterDataSyncService.SyncUsersAsync,
         value => Users = value, cancellationToken);
 
-      var templates = SyncTemplatesAsync(api, cancellationToken);
+      var templates = RunWithContextAsync(
+        "TemplateFile",
+        () => SyncTemplatesAsync(api, cancellationToken),
+        cancellationToken);
 
       var dtNow = DateTime.UtcNow.Date;
       var dateTo = dtNow.AddYears(10);
       var dateFrom = dtNow.AddYears(-10);
       var documents = LoadAndSyncAsync(
+        "Document",
         api.Documents(dateFrom, dateTo, isContainDelete: true, cancellationToken),
         MasterDataSyncService.SyncDocumentsAsync,
         value => Documents = value,
@@ -105,7 +118,10 @@ namespace ApiSyncData
       {
         if (StationId != null)
         {
-          var recordTrucks = await api.RecordTruckFromServer(StationId, NumberLastDay)
+          var recordTrucks = await api.RecordTruckFromServer(
+              StationId,
+              NumberLastDay,
+              cancellationToken)
             .ConfigureAwait(false);
           var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
             recordTrucks,
@@ -114,22 +130,69 @@ namespace ApiSyncData
             NotifyEntityChanged(recordTruckChanges);
         }
       }
+      catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
-
+        throw new InvalidOperationException(
+          $"RecordTruckFromServer sync thất bại. StationId={StationId}, " +
+          $"NumberLastDay={NumberLastDay}.",
+          ex);
       }
     }
 
-    private static async Task LoadAndSyncAsync<T>(Task<T> request,
+    private static async Task LoadAndSyncAsync<T>(string operationName, Task<T> request,
       Func<T, CancellationToken, Task<MasterDataChangedEventArgs?>> sync,
       Action<T> updateCache, CancellationToken token)
     {
-      var response = await request.ConfigureAwait(false);
-      token.ThrowIfCancellationRequested();
-      var changes = await sync(response, token).ConfigureAwait(false);
-      updateCache(response);
-      if (changes != null)
-        NotifyEntityChanged(changes);
+      try
+      {
+        var response = await request.ConfigureAwait(false);
+        token.ThrowIfCancellationRequested();
+        var changes = await sync(response, token).ConfigureAwait(false);
+        updateCache(response);
+        if (changes != null)
+          NotifyEntityChanged(changes);
+      }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        throw new InvalidOperationException(
+          $"Master data sync '{operationName}' thất bại.", ex);
+      }
+    }
+
+    private static async Task RunWithContextAsync(
+      string operationName,
+      Func<Task> action,
+      CancellationToken token)
+    {
+      try
+      {
+        await action().ConfigureAwait(false);
+      }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        throw new InvalidOperationException(
+          $"Master data sync '{operationName}' thất bại.", ex);
+      }
+    }
+
+    private static void LogSyncError(Exception exception)
+    {
+      System.Diagnostics.Trace.TraceError(exception.ToString());
+      HelperManager.LogHelper.LogErrorToFileLog(
+        exception,
+        Path.Combine(AppContext.BaseDirectory, "Logs"));
     }
 
     private static void NotifyEntityChanged(MasterDataChangedEventArgs changes)
@@ -146,7 +209,9 @@ namespace ApiSyncData
         }
         catch (Exception ex)
         {
-          System.Diagnostics.Trace.TraceError(ex.ToString());
+          LogSyncError(new InvalidOperationException(
+            $"Handler EntityChanged thất bại. Entity={changes.EntityType.Name}.",
+            ex));
         }
       }
     }
@@ -193,13 +258,17 @@ namespace ApiSyncData
       token.ThrowIfCancellationRequested();
 
       var rows = response.Data?.ListData;
-      ServerSnapshot.Validate(rows, response.Data?.TotalRecord);
+      ServerSnapshot.Validate(
+        rows,
+        response.Data?.TotalRecord,
+        allowDeleted: true);
 
       var templateService = new TemplateService();
       var locals = await templateService.GetAllAsync(isContainDelete: true)
         .ConfigureAwait(false);
       var localsById = locals.ToDictionary(template => template.Id);
       var rowsToDownload = rows!
+        .Where(row => row.IsDelete != true)
         .Where(row => TemplateNeedsDownload(
           row,
           localsById.GetValueOrDefault(row.Id!.Value)))
@@ -209,17 +278,32 @@ namespace ApiSyncData
         AppContext.BaseDirectory,
         "TemplateFile");
       var downloads = new List<(Resp.ListDatumTemplate Row, string Path, bool Exists)>();
+      var downloadErrors = new List<Exception>();
       foreach (var row in rowsToDownload)
       {
         token.ThrowIfCancellationRequested();
-        bool exists = localsById.ContainsKey(row.Id!.Value);
-        string path = await api.DownloadTemplateAsync(
-          row.Id.Value,
-          row.Name,
-          row.TemplateFile,
-          destinationFolder,
-          token).ConfigureAwait(false);
-        downloads.Add((row, path, exists));
+        try
+        {
+          bool exists = localsById.ContainsKey(row.Id!.Value);
+          string path = await api.DownloadTemplateAsync(
+            row.Id.Value,
+            row.Name,
+            row.TemplateFile,
+            destinationFolder,
+            token).ConfigureAwait(false);
+          downloads.Add((row, path, exists));
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+          throw;
+        }
+        catch (Exception ex)
+        {
+          downloadErrors.Add(new InvalidOperationException(
+            $"Tải template thất bại. Id={row.Id}, Name='{row.Name}', " +
+            $"TemplateFile='{row.TemplateFile}'.",
+            ex));
+        }
       }
 
       // Cập nhật đường dẫn cho bản ghi đã có trước khi ghi nhận snapshot mới.
@@ -259,6 +343,13 @@ namespace ApiSyncData
           downloadedIds,
           Array.Empty<Guid>(),
           downloadedIds.Count));
+      }
+
+      if (downloadErrors.Count > 0)
+      {
+        throw new AggregateException(
+          $"Có {downloadErrors.Count} template tải xuống thất bại.",
+          downloadErrors);
       }
     }
 
@@ -315,7 +406,7 @@ namespace ApiSyncData
     {
       // Tải song song, nhưng chỉ ghi Product khi nhóm đã lưu thành công.
       await Task.WhenAll(request, groupsSync).ConfigureAwait(false);
-      await LoadAndSyncAsync(request, MasterDataSyncService.SyncProductsAsync,
+      await LoadAndSyncAsync("ProductFood", request, MasterDataSyncService.SyncProductsAsync,
         value => Products = value, token).ConfigureAwait(false);
     }
 

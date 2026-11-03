@@ -23,10 +23,16 @@ namespace iSoft.Database.Repositorys
     public Task<List<ApiJobs>> GetCreatedAsync(
       CancellationToken cancellationToken = default)
     {
+      const int maxAttempts = 3;
+      DateTime retryBefore = DateTime.UtcNow.AddSeconds(-30);
+
       return Context.Set<ApiJobs>()
         .Where(apiJob =>
           !apiJob.DeletedFlag &&
-          apiJob.EnumStatusAPI == EnumStatusAPI.Created)
+          (apiJob.EnumStatusAPI == EnumStatusAPI.Created ||
+           (apiJob.EnumStatusAPI == EnumStatusAPI.Fail &&
+            (apiJob.Retry ?? 0) < maxAttempts &&
+            (!apiJob.UpdatedAt.HasValue || apiJob.UpdatedAt <= retryBefore))))
         .OrderBy(apiJob => apiJob.CreatedAt)
         .ToListAsync(cancellationToken);
     }

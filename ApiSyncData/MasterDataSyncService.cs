@@ -135,7 +135,8 @@ namespace ApiSyncData
       // ISOFT (hiển thị i-Soft) là tài khoản quản trị cục bộ: không nhận dữ liệu
       // từ server và cũng không để snapshot server xóa/ghi đè tài khoản này.
       var syncRows = rows
-        .Where(row => !HelperManager.PasswordPolicy.IsBuiltInAccount(row.Username))
+        .Where(row => row.IsDelete != true &&
+          !HelperManager.PasswordPolicy.IsBuiltInAccount(row.Username))
         .ToList();
 
       return SyncAsync<ListDatumUser, User>(syncRows, syncRows.Count,
@@ -149,7 +150,7 @@ namespace ApiSyncData
           l.Password = s.Password;
           l.EmployeeCode = s.EmployeeCode;
           l.IdCardCode = s.IdCardCode;
-          l.EnableFlag = s?.EnableFlag??false;
+          l.EnableFlag = s.EnableFlag ?? false;
           l.Role = JsonConvert.SerializeObject(s.Permission ?? new List<string>());
         }, token,
         initializeAdded: user => user.CreatedAt = DateTime.UtcNow,
@@ -164,10 +165,21 @@ namespace ApiSyncData
 
     public static Task<MasterDataChangedEventArgs?> SyncTemplatesAsync(
       TemplateAPI response,
-      CancellationToken token = default) =>
-      SyncAsync<ListDatumTemplate, Template>(
-        response.Data?.ListData,
-        response.Data?.TotalRecord,
+      CancellationToken token = default)
+    {
+      var rows = response.Data?.ListData
+        ?? throw new InvalidOperationException(
+          "TemplateFile: response không có Data.ListData.");
+      if (response.Data.TotalRecord != rows.Count)
+      {
+        throw new InvalidOperationException(
+          "TemplateFile: TotalRecord không khớp với số phần tử ListData.");
+      }
+
+      var activeRows = rows.Where(row => row.IsDelete != true).ToList();
+      return SyncAsync<ListDatumTemplate, Template>(
+        activeRows,
+        activeRows.Count,
         (source, local) =>
         {
           local.Name = source.Name;
@@ -177,6 +189,7 @@ namespace ApiSyncData
           local.IsBBGN = source.IsBBGN;
         },
         token);
+    }
 
     public static Task<MasterDataChangedEventArgs?> SyncProductsAsync(ProductAPI response, CancellationToken token = default)
     {
@@ -241,7 +254,12 @@ namespace ApiSyncData
         s =>
         {
           Guid? groupId = GetProductGroupId(s);
-          return !groupId.HasValue || groups.ContainsKey(groupId.Value);
+          if (!groupId.HasValue || groups.ContainsKey(groupId.Value))
+            return true;
+
+          throw new InvalidOperationException(
+            $"Product {s.Id}: ProductGroupId {groupId} không tồn tại ở local " +
+            "sau khi đã đồng bộ ProductGroup.");
         },
         filterLocals: query => query.Where(product =>
           product.EnumTypeData != iSoft.Database.EnumData.EnumTypeDataLocation.All));

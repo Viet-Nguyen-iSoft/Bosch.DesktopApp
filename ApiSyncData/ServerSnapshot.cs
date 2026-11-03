@@ -5,7 +5,11 @@ namespace ApiSyncData
 {
   internal static class ServerSnapshot
   {
-    internal static void Validate<T>(List<T>? rows, int? total) where T : IServerRecord
+    internal static void Validate<T>(
+      List<T>? rows,
+      int? total,
+      bool allowDeleted = false)
+      where T : IServerRecord
     {
       if (rows == null || total != rows.Count)
         throw new InvalidOperationException($"{typeof(T).Name}: cần ListData đầy đủ và TotalRecord khớp.");
@@ -14,7 +18,7 @@ namespace ApiSyncData
       {
         if (row == null || !row.Id.HasValue || row.Id == Guid.Empty || !ids.Add(row.Id.Value))
           throw new InvalidOperationException($"{typeof(T).Name}: Id thiếu, không hợp lệ hoặc trùng lặp.");
-        if (row.IsDelete == true)
+        if (!allowDeleted && row.IsDelete == true)
           throw new InvalidOperationException($"{typeof(T).Name}: danh sách phải chỉ chứa bản ghi chưa xóa.");
       }
     }

@@ -181,20 +181,21 @@ namespace LTP.Truck.Forms
     private bool IsMasterDataChildAvailable(Button button)
     {
       bool isTruckStation = Environment.GetEnvironmentVariable("STATION") == "1";
-      //return isTruckStation
-      //  ? button == btnClient || button == btnWarehouse || button == btnTypeGoods
-      //    || button == btnTareForTruck
-      //  : button == btnGroupProduct || button == btnProduct || button == btnTare
-      //    || button == btnDelivery;
-
       return isTruckStation
-       ? button == btnClient || button == btnWarehouse || button == btnTypeGoods
-         || button == btnTareForTruck
-       : button == btnGroupProduct || button == btnProduct || button == btnTare
-         || button == btnDelivery
+        ? button == btnGroupProduct || button == btnClient || button == btnWarehouse || button == btnTypeGoods
+          || button == btnTareForTruck
+        : button == btnGroupProduct || button == btnProduct || button == btnTare
          || button == btnDocument
-         || button == btnClient || button == btnWarehouse || button == btnTypeGoods
-         || button == btnTareForTruck;
+          || button == btnDelivery;
+
+      //return isTruckStation
+      // ? button == btnClient || button == btnWarehouse || button == btnTypeGoods
+      //   || button == btnTareForTruck
+      // : button == btnGroupProduct || button == btnProduct || button == btnTare
+      //   || button == btnDelivery
+      //   || button == btnDocument
+      //   || button == btnClient || button == btnWarehouse || button == btnTypeGoods
+      //   || button == btnTareForTruck;
     }
 
     private void SetMenuCollapsed(bool collapsed)
@@ -329,7 +330,7 @@ namespace LTP.Truck.Forms
       try
       {
         InitClock();
-
+        btnTemplate.Visible = false;
         // Show the application shell first. Creating and theming the large home
         // form during Load made the whole first window visibly stutter.
         await Task.Yield();
@@ -717,7 +718,7 @@ namespace LTP.Truck.Forms
       try
       {
         _timerClock.Stop();
-        DateTime dt = DateTime.Now;
+        DateTime dt = DateTime.Now.AddDays(-2);
         lbTime.Text = dt.ToString("dd/MM/yyyy HH:mm:ss");
       }
       catch (Exception ex)

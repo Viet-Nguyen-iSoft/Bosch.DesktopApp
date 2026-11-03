@@ -79,7 +79,7 @@ namespace LTP.Truck.Controls
 
     public event Action<Station?>? OnChangeStation;
 
-    public string _folderFileLog = Application.StartupPath + "Logs";
+    public string _folderFileLog = Path.Combine(Application.StartupPath, "Logs");
     public int _time = 7;
     public void Init()
     {

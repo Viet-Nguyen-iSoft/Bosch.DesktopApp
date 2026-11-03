@@ -45,13 +45,17 @@ Reject(() => ServerSnapshot.Validate(new List<Source> { rows[0], rows[0] }, 2), 
 Reject(() => ServerSnapshot.Validate(new List<Source> { new() }, 1), "missing id");
 Reject(() => ServerSnapshot.Validate(new List<Source> { new() { Id = Guid.Empty } }, 1), "empty id");
 Reject(() => ServerSnapshot.Validate(new List<Source> { new() { Id = newId, IsDelete = true } }, 1), "deleted source row");
+ServerSnapshot.Validate(
+  new List<Source> { new() { Id = newId, IsDelete = true } },
+  1,
+  allowDeleted: true);
 try
 {
   ServerSnapshot.Apply(rows, locals, (s, l) => l.Name = s.Name, new CancellationToken(true));
   throw new Exception("Cancellation was ignored");
 }
 catch (OperationCanceledException) { }
-Console.WriteLine("PASS: single Id insert/update, restore, soft delete, skipped record, local field preservation, repeat sync, empty snapshot, invalid snapshots, cancellation.");
+Console.WriteLine("PASS: snapshot mapping/validation, tombstones, cancellation.");
 
 static void Check(bool condition, string name)
 {

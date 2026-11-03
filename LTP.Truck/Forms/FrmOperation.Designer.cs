@@ -644,7 +644,7 @@ namespace LTP.Truck.Forms
       lbVersion.Name = "lbVersion";
       lbVersion.Size = new Size(244, 23);
       lbVersion.TabIndex = 4;
-      lbVersion.Text = "Version: 1.0.0";
+      lbVersion.Text = "Version: 1.0.1";
       lbVersion.TextAlign = ContentAlignment.MiddleCenter;
       // 
       // pictureBox1

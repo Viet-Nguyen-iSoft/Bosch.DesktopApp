@@ -31,7 +31,13 @@ namespace ApiSyncData
           LastSynchronizedCount = await SyncOnceAsync(api, token).ConfigureAwait(false);
         },
         cancellationToken,
-        onError ?? (ex => System.Diagnostics.Trace.TraceError(ex.ToString())));
+        onError ?? (ex =>
+        {
+          System.Diagnostics.Trace.TraceError(ex.ToString());
+          HelperManager.LogHelper.LogErrorToFileLog(
+            ex,
+            Path.Combine(AppContext.BaseDirectory, "Logs"));
+        }));
     }
 
     /// <summary>

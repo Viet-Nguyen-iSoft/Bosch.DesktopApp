@@ -162,14 +162,16 @@ namespace LTP.Truck.Forms
       tableLayoutPanel5.ColumnCount = 1;
       tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel5.Controls.Add(pictureBox1, 0, 1);
-      tableLayoutPanel5.Controls.Add(label2, 0, 3);
-      tableLayoutPanel5.Controls.Add(lbTitle, 0, 2);
+      tableLayoutPanel5.Controls.Add(label2, 0, 5);
+      tableLayoutPanel5.Controls.Add(lbTitle, 0, 3);
       tableLayoutPanel5.Location = new Point(877, 3);
       tableLayoutPanel5.Name = "tableLayoutPanel5";
-      tableLayoutPanel5.RowCount = 5;
+      tableLayoutPanel5.RowCount = 7;
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 49.99998F));
-      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 130F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 180F));
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle());
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 5F));
       tableLayoutPanel5.RowStyles.Add(new RowStyle());
       tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50.0000153F));
       tableLayoutPanel5.Size = new Size(855, 985);
@@ -179,10 +181,10 @@ namespace LTP.Truck.Forms
       // 
       pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-      pictureBox1.Location = new Point(200, 377);
-      pictureBox1.Margin = new Padding(200, 10, 200, 10);
+      pictureBox1.Location = new Point(70, 321);
+      pictureBox1.Margin = new Padding(70, 10, 70, 10);
       pictureBox1.Name = "pictureBox1";
-      pictureBox1.Size = new Size(455, 110);
+      pictureBox1.Size = new Size(715, 160);
       pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
       pictureBox1.TabIndex = 0;
       pictureBox1.TabStop = false;
@@ -191,10 +193,10 @@ namespace LTP.Truck.Forms
       // 
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
-      label2.Font = new Font("Roboto", 24.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      label2.Location = new Point(3, 578);
+      label2.Font = new Font("Roboto", 35.75F, FontStyle.Bold);
+      label2.Location = new Point(3, 614);
       label2.Name = "label2";
-      label2.Size = new Size(849, 39);
+      label2.Size = new Size(849, 58);
       label2.TabIndex = 2;
       label2.Text = "Weight Logging System";
       label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -203,12 +205,12 @@ namespace LTP.Truck.Forms
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Roboto", 50.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-      lbTitle.Location = new Point(3, 497);
+      lbTitle.Font = new Font("Roboto", 70.25F, FontStyle.Bold);
+      lbTitle.Location = new Point(3, 496);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(849, 81);
+      lbTitle.Size = new Size(849, 113);
       lbTitle.TabIndex = 1;
-      lbTitle.Text = "HỆ THỐNG CÂN XE TẢI";
+      lbTitle.Text = "HỆ THỐNG CÂN";
       lbTitle.TextAlign = ContentAlignment.MiddleCenter;
       // 
       // btnMenu

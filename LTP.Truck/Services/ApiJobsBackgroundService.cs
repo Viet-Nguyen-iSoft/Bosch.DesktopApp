@@ -11,6 +11,8 @@ namespace LTP.Truck.Services
   public sealed class ApiJobsBackgroundService
   {
     private readonly ApiJobsService _apiJobsService = new();
+    private readonly ApiService _apiService = new();
+    private readonly SemaphoreSlim _processingLock = new(1, 1);
 
     public async Task CheckCreatedJobsAsync(
       CancellationToken cancellationToken = default)
@@ -20,132 +22,164 @@ namespace LTP.Truck.Services
       if (!AppCore.Ins.IsServerConnected)
         return;
 
-      var apiJobs = await _apiJobsService
-        .GetCreatedAsync(cancellationToken)
-        .ConfigureAwait(false);
-
-      foreach (var apiJob in apiJobs)
+      await _processingLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+      try
       {
-        cancellationToken.ThrowIfCancellationRequested();
+        var apiJobs = await _apiJobsService
+          .GetCreatedAsync(cancellationToken)
+          .ConfigureAwait(false);
 
-        try
+        foreach (var apiJob in apiJobs)
         {
-          var api = new ApiService();
-          switch (apiJob.EnumTypeAPI)
+          cancellationToken.ThrowIfCancellationRequested();
+
+          try
           {
+            switch (apiJob.EnumTypeAPI)
+            {
             case EnumTypeAPI.Plate:
-              var licensePlate = JsonHelper.FromJson<LicensePlateUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (licensePlate != null)
-              {
-                await api.UpsertLicensePlateAsync(licensePlate);
-              }  
+              var licensePlate = DeserializeRequired<LicensePlateUpsertRequest>(apiJob);
+              await _apiService.UpsertLicensePlateAsync(
+                licensePlate,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_Client:
-              var clientUpsertRequest = JsonHelper.FromJson<ClientUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (clientUpsertRequest != null)
-              {
-                var rs = await api.UpsertClientAsync(clientUpsertRequest);
-              }  
+              var clientUpsertRequest = DeserializeRequired<ClientUpsertRequest>(apiJob);
+              await _apiService.UpsertClientAsync(
+                clientUpsertRequest,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_WareHouse:
-              var warehouseUpsert = JsonHelper.FromJson<WarehouseUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (warehouseUpsert != null)
-              {
-                var rs = await api.UpsertWarehouseAsync(warehouseUpsert);
-              }
+              var warehouseUpsert = DeserializeRequired<WarehouseUpsertRequest>(apiJob);
+              await _apiService.UpsertWarehouseAsync(
+                warehouseUpsert,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_TypeGoods:
-              var typeGoodsUpsertRequest = JsonHelper.FromJson<ProductUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (typeGoodsUpsertRequest != null)
-              {
-                // Tương thích job Loại hàng cũ chưa có TypeWeight.
-                typeGoodsUpsertRequest.TypeWeight = 1;
-                if (typeGoodsUpsertRequest.WasteType != 0)
-                  await api.UpsertProductAsync(typeGoodsUpsertRequest);
-              }
+              var typeGoodsUpsertRequest = DeserializeRequired<ProductUpsertRequest>(apiJob);
+              // Tương thích job Loại hàng cũ chưa có TypeWeight.
+              typeGoodsUpsertRequest.TypeWeight = 1;
+              if (typeGoodsUpsertRequest.WasteType != 0)
+                await _apiService.UpsertProductAsync(
+                  typeGoodsUpsertRequest,
+                  cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_Tare:
-              var categoryTareUpsertRequest = JsonHelper.FromJson<CategoryTareUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (categoryTareUpsertRequest != null)
-              {
-                await api.UpsertCategoryTareAsync(categoryTareUpsertRequest);
-              }
+              var categoryTareUpsertRequest = DeserializeRequired<CategoryTareUpsertRequest>(apiJob);
+              await _apiService.UpsertCategoryTareAsync(
+                categoryTareUpsertRequest,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_ProductGroup:
-              var productGroupUpsertRequest = JsonHelper.FromJson<ProductGroupUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (productGroupUpsertRequest != null)
-              {
-                await api.UpsertProductGroupAsync(productGroupUpsertRequest);
-              }
+              var productGroupUpsertRequest = DeserializeRequired<ProductGroupUpsertRequest>(apiJob);
+              await _apiService.UpsertProductGroupAsync(
+                productGroupUpsertRequest,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_Product:
-              var productUpsertRequest = JsonHelper.FromJson<ProductUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (productUpsertRequest != null)
+              var productUpsertRequest = DeserializeRequired<ProductUpsertRequest>(apiJob);
+              // Tương thích job Chất thải cũ chưa có TypeWeight.
+              if (productUpsertRequest.TypeWeight == 0)
+                productUpsertRequest.TypeWeight = 2;
+              if (productUpsertRequest.WasteType != 0)
               {
-                // Tương thích job Chất thải cũ chưa có TypeWeight.
-                if (productUpsertRequest.TypeWeight == 0)
-                  productUpsertRequest.TypeWeight = 2;
-                if (productUpsertRequest.WasteType != 0)
-                  await api.UpsertProductAsync(productUpsertRequest);
+                await _apiService.UpsertProductAsync(
+                  productUpsertRequest,
+                  cancellationToken: cancellationToken).ConfigureAwait(false);
               }
               break;
             case EnumTypeAPI.MD_Delivery:
-              var deliveryUpsertRequest = JsonHelper.FromJson<ClientUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (deliveryUpsertRequest != null)
-              {
-                // Tương thích cả job Delivery cũ chưa có ClientType trong JSON.
-                deliveryUpsertRequest.ClientType = 2;
-                await api.UpsertClientAsync(deliveryUpsertRequest);
-              }
+              var deliveryUpsertRequest = DeserializeRequired<ClientUpsertRequest>(apiJob);
+              // Tương thích cả job Delivery cũ chưa có ClientType trong JSON.
+              deliveryUpsertRequest.ClientType = 2;
+              await _apiService.UpsertClientAsync(
+                deliveryUpsertRequest,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_User:
-              var userUpsertRequest = JsonHelper.FromJson<UserUpsertRequest>(apiJob.Json ?? string.Empty);
-              if (userUpsertRequest != null)
+              var userUpsertRequest = DeserializeRequired<UserUpsertRequest>(apiJob);
+              // Bỏ qua cả các job ISOFT cũ đã nằm trong hàng đợi.
+              if (!PasswordPolicy.IsBuiltInAccount(userUpsertRequest.Username))
               {
-                // Bỏ qua cả các job ISOFT cũ đã nằm trong hàng đợi.
-                if (!PasswordPolicy.IsBuiltInAccount(userUpsertRequest.Username))
-                  await api.UpsertUserAsync(userUpsertRequest);
+                await _apiService.UpsertUserAsync(
+                  userUpsertRequest,
+                  cancellationToken: cancellationToken).ConfigureAwait(false);
               }
               break;
             case EnumTypeAPI.MD_Document:
-              var documentUpsertRequest = JsonHelper.FromJson<DocumentUpsertRequest>(
-                apiJob.Json ?? string.Empty);
-              if (documentUpsertRequest != null)
-              {
-                await api.UpsertDocumentAsync(documentUpsertRequest, cancellationToken)
-                  .ConfigureAwait(false);
-              }
+              var documentUpsertRequest = DeserializeRequired<DocumentUpsertRequest>(apiJob);
+              await _apiService.UpsertDocumentAsync(documentUpsertRequest, cancellationToken)
+                .ConfigureAwait(false);
               break;
             case EnumTypeAPI.MD_Template:
-              var templateUpsertRequest =
-                JsonHelper.FromJson<TemplateUpsertRequest>(
-                  apiJob.Json ?? string.Empty);
-              if (templateUpsertRequest != null)
-              {
-                var rs = await api.UpsertTemplateAsync(
-                  templateUpsertRequest,
-                  cancellationToken: cancellationToken)
-                  .ConfigureAwait(false);
-              }
+              var templateUpsertRequest = DeserializeRequired<TemplateUpsertRequest>(apiJob);
+              await _apiService.UpsertTemplateAsync(
+                templateUpsertRequest,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
               break;
-          }
+            default:
+              throw new NotSupportedException(
+                $"Không hỗ trợ EnumTypeAPI '{apiJob.EnumTypeAPI}'.");
+            }
 
-          apiJob.EnumStatusAPI = EnumStatusAPI.Success;
-          apiJob.UpdatedAt = DateTime.UtcNow;
-          await _apiJobsService.AddOrUpdateAsync(apiJob).ConfigureAwait(false);
+            apiJob.EnumStatusAPI = EnumStatusAPI.Success;
+            apiJob.UpdatedAt = DateTime.UtcNow;
+            if ((apiJob.Retry ?? 0) > 0)
+            {
+              apiJob.Description =
+                $"Đồng bộ {apiJob.EnumTypeAPI} thành công sau " +
+                $"{apiJob.Retry} lần thử lại.";
+            }
+            await _apiJobsService.AddOrUpdateAsync(apiJob).ConfigureAwait(false);
+          }
+          catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+          {
+            throw;
+          }
+          catch (Exception ex)
+          {
+            int retry = (apiJob.Retry ?? 0) + 1;
+            var contextualException = new InvalidOperationException(
+              $"ApiJob thất bại. JobId={apiJob.Id}, " +
+              $"Type={apiJob.EnumTypeAPI}, Retry={retry}.",
+              ex);
+            LogHelper.LogErrorToFileLog(
+              contextualException,
+              AppCore.Ins._folderFileLog);
+            apiJob.EnumStatusAPI = EnumStatusAPI.Fail;
+            apiJob.Retry = retry;
+            apiJob.Description =
+              $"[{DateTime.UtcNow:O}] {apiJob.EnumTypeAPI}: " +
+              ex.GetBaseException().Message;
+            await _apiJobsService.AddOrUpdateAsync(apiJob).ConfigureAwait(false);
+          }
         }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-          throw;
-        }
-        catch (Exception ex)
-        {
-          HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-          apiJob.EnumStatusAPI = EnumStatusAPI.Fail;
-          apiJob.Retry = (apiJob.Retry ?? 0) + 1;
-          apiJob.Description = ex.Message;
-          await _apiJobsService.AddOrUpdateAsync(apiJob).ConfigureAwait(false);
-        }
+      }
+      finally
+      {
+        _processingLock.Release();
+      }
+    }
+
+    private static T DeserializeRequired<T>(ApiJobs apiJob)
+    {
+      if (string.IsNullOrWhiteSpace(apiJob.Json))
+      {
+        throw new InvalidDataException(
+          $"ApiJob {apiJob.Id} không có JSON payload.");
+      }
+
+      try
+      {
+        return JsonHelper.FromJson<T>(apiJob.Json)
+          ?? throw new InvalidDataException(
+            $"ApiJob {apiJob.Id} không deserialize được thành {typeof(T).Name}.");
+      }
+      catch (Exception ex) when (ex is not InvalidDataException)
+      {
+        throw new InvalidDataException(
+          $"ApiJob {apiJob.Id} có JSON không hợp lệ cho {typeof(T).Name}.",
+          ex);
       }
     }
 

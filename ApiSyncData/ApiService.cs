@@ -10,6 +10,19 @@ namespace ApiSyncData
 {
   public class ApiService
   {
+    private static readonly SocketsHttpHandler SharedHttpHandler = new()
+    {
+      PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+      PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
+      MaxConnectionsPerServer = 20,
+    };
+
+    private static HttpClient CreateHttpClient() =>
+      new(SharedHttpHandler, disposeHandler: false)
+      {
+        Timeout = TimeSpan.FromSeconds(60),
+      };
+
     public async Task<string> UpsertUserAsync(
       UserUpsertRequest user,
       string lang = "vi",
@@ -32,7 +45,7 @@ namespace ApiSyncData
           ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
         string apiUrl = $"{baseAPI.TrimEnd('/')}/v1/User/upsert-multi-lang";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
         httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
         using var formData = new MultipartFormDataContent();
@@ -66,7 +79,7 @@ namespace ApiSyncData
 
         return responseContent;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         throw;
       }
@@ -83,17 +96,23 @@ namespace ApiSyncData
         formData.Add(new StringContent(fieldName), "DeleteFields");
     }
 
-    public async Task<StationAPI> Station(bool isContainDelete = false)
+    public async Task<StationAPI> Station(
+      bool isContainDelete = false,
+      CancellationToken cancellationToken = default)
     {
       try
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException(
+            "Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException(
+            "Environment variable API_KEY is not configured.");
 
         var apiUrl =
           $"{baseAPI.TrimEnd('/')}/v1/Station/get-list-simplify?IsDeleted={isContainDelete}";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
 
         // Giống cấu hình Authorization trong Postman:
         // API Key, Key = X-API-KEY, Add to = Header
@@ -101,10 +120,11 @@ namespace ApiSyncData
             "X-API-KEY",
             apiKey.Trim());
 
-        using var response = await httpClient.GetAsync(apiUrl);
+        using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+          .ConfigureAwait(false);
 
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
+        var responseContent = await response.Content
+          .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -116,7 +136,9 @@ namespace ApiSyncData
               $"Response: {responseContent}");
         }
 
-        return JsonConvert.DeserializeObject<StationAPI>(responseContent);
+        return JsonConvert.DeserializeObject<StationAPI>(responseContent)
+          ?? throw new InvalidOperationException(
+            "Station API trả về dữ liệu không hợp lệ.");
       }
       catch (Exception)
       {
@@ -124,17 +146,23 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<WarehouseAPI> Warehouse(bool isContainDelete = false)
+    public async Task<WarehouseAPI> Warehouse(
+      bool isContainDelete = false,
+      CancellationToken cancellationToken = default)
     {
       try
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException(
+            "Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException(
+            "Environment variable API_KEY is not configured.");
 
         var apiUrl =
           $"{baseAPI.TrimEnd('/')}/v1/Warehouse/get-list-simplify?IsDeleted={isContainDelete}";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
 
         // Giống cấu hình Authorization trong Postman:
         // API Key, Key = X-API-KEY, Add to = Header
@@ -142,10 +170,11 @@ namespace ApiSyncData
             "X-API-KEY",
             apiKey.Trim());
 
-        using var response = await httpClient.GetAsync(apiUrl);
+        using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+          .ConfigureAwait(false);
 
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
+        var responseContent = await response.Content
+          .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -157,7 +186,9 @@ namespace ApiSyncData
               $"Response: {responseContent}");
         }
 
-        return JsonConvert.DeserializeObject<WarehouseAPI>(responseContent);
+        return JsonConvert.DeserializeObject<WarehouseAPI>(responseContent)
+          ?? throw new InvalidOperationException(
+            "Warehouse API trả về dữ liệu không hợp lệ.");
       }
       catch (Exception)
       {
@@ -177,7 +208,7 @@ namespace ApiSyncData
         $"{baseAPI.TrimEnd('/')}/v1/ClientGoods/get-list-simplify" +
         $"?IsDeleted={isContainDelete.ToString().ToLowerInvariant()}";
 
-      using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
@@ -215,7 +246,7 @@ namespace ApiSyncData
       string apiUrl =
         $"{baseAPI.TrimEnd('/')}/v1/Warehouse/upsert-multi-lang?lang={Uri.EscapeDataString(lang.Trim())}";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var formData = new MultipartFormDataContent();
@@ -281,7 +312,7 @@ namespace ApiSyncData
         ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
       string apiUrl = $"{baseAPI.TrimEnd('/')}/v1/CategoryTare/upsert-multi-lang";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var formData = new MultipartFormDataContent
@@ -378,7 +409,7 @@ namespace ApiSyncData
       string apiUrl =
         $"{baseApi.TrimEnd('/')}/v1/ProductFood/upsert-multi-lang";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var formData = new MultipartFormDataContent
@@ -483,17 +514,23 @@ namespace ApiSyncData
         nameField: "LicensePlateCode");
     }
 
-    public async Task<ProductGroupAPI> ProductGroup(bool isContainDelete = false)
+    public async Task<ProductGroupAPI> ProductGroup(
+      bool isContainDelete = false,
+      CancellationToken cancellationToken = default)
     {
       try
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException(
+            "Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException(
+            "Environment variable API_KEY is not configured.");
 
         var apiUrl =
           $"{baseAPI.TrimEnd('/')}/v1/ProductGroup/get-list-simplify?IsDeleted={isContainDelete}";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
 
         // Giống cấu hình Authorization trong Postman:
         // API Key, Key = X-API-KEY, Add to = Header
@@ -501,10 +538,11 @@ namespace ApiSyncData
             "X-API-KEY",
             apiKey.Trim());
 
-        using var response = await httpClient.GetAsync(apiUrl);
+        using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+          .ConfigureAwait(false);
 
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
+        var responseContent = await response.Content
+          .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -516,7 +554,9 @@ namespace ApiSyncData
               $"Response: {responseContent}");
         }
 
-        return JsonConvert.DeserializeObject<ProductGroupAPI>(responseContent);
+        return JsonConvert.DeserializeObject<ProductGroupAPI>(responseContent)
+          ?? throw new InvalidOperationException(
+            "ProductGroup API trả về dữ liệu không hợp lệ.");
       }
       catch (Exception)
       {
@@ -524,17 +564,23 @@ namespace ApiSyncData
       }
     }
 
-    public async Task<ProductAPI> Product(bool isContainDelete = false)
+    public async Task<ProductAPI> Product(
+      bool isContainDelete = false,
+      CancellationToken cancellationToken = default)
     {
       try
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException(
+            "Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException(
+            "Environment variable API_KEY is not configured.");
 
         var apiUrl =
           $"{baseAPI.TrimEnd('/')}/v1/ProductFood/get-list-simplify?IsDeleted={isContainDelete}";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
 
         // Giống cấu hình Authorization trong Postman:
         // API Key, Key = X-API-KEY, Add to = Header
@@ -542,10 +588,11 @@ namespace ApiSyncData
             "X-API-KEY",
             apiKey.Trim());
 
-        using var response = await httpClient.GetAsync(apiUrl);
+        using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+          .ConfigureAwait(false);
 
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
+        var responseContent = await response.Content
+          .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -557,7 +604,9 @@ namespace ApiSyncData
               $"Response: {responseContent}");
         }
 
-        return JsonConvert.DeserializeObject<ProductAPI>(responseContent);
+        return JsonConvert.DeserializeObject<ProductAPI>(responseContent)
+          ?? throw new InvalidOperationException(
+            "ProductFood API trả về dữ liệu không hợp lệ.");
       }
       catch (Exception)
       {
@@ -571,13 +620,17 @@ namespace ApiSyncData
     {
       try
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException(
+            "Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException(
+            "Environment variable API_KEY is not configured.");
 
         var apiUrl =
           $"{baseAPI.TrimEnd('/')}/v1/CategoryTare/get-list-simplify?IsDeleted={isContainDelete}";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
 
         // Giống cấu hình Authorization trong Postman:
         // API Key, Key = X-API-KEY, Add to = Header
@@ -625,7 +678,7 @@ namespace ApiSyncData
         $"{baseAPI.TrimEnd('/')}/v1/Client/get-list-simplify" +
         $"?IsDeleted={isContainDelete.ToString().ToLowerInvariant()}";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
 
       // Giống cấu hình Authorization trong Postman:
       // API Key, Key = X-API-KEY, Add to = Header
@@ -649,15 +702,20 @@ namespace ApiSyncData
           "Client API trả về dữ liệu không hợp lệ.");
     }
 
-    public async Task<UserAPI> Users()
+    public async Task<UserAPI> Users(
+      CancellationToken cancellationToken = default)
     {
       try
       {
-        string baseAPI = Environment.GetEnvironmentVariable("URL_API");
-        string apiKey = Environment.GetEnvironmentVariable("API_KEY");
+        string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+          ?? throw new InvalidOperationException(
+            "Environment variable URL_API is not configured.");
+        string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+          ?? throw new InvalidOperationException(
+            "Environment variable API_KEY is not configured.");
 
         var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/User/get-list-simplify";
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
 
         // Giống cấu hình Authorization trong Postman:
         // API Key, Key = X-API-KEY, Add to = Header
@@ -665,10 +723,11 @@ namespace ApiSyncData
             "X-API-KEY",
             apiKey.Trim());
 
-        using var response = await httpClient.GetAsync(apiUrl);
+        using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+          .ConfigureAwait(false);
 
-        var responseContent =
-            await response.Content.ReadAsStringAsync();
+        var responseContent = await response.Content
+          .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -680,7 +739,9 @@ namespace ApiSyncData
               $"Response: {responseContent}");
         }
 
-        return JsonConvert.DeserializeObject<UserAPI>(responseContent);
+        return JsonConvert.DeserializeObject<UserAPI>(responseContent)
+          ?? throw new InvalidOperationException(
+            "User API trả về dữ liệu không hợp lệ.");
       }
       catch (Exception)
       {
@@ -700,7 +761,7 @@ namespace ApiSyncData
       string apiUrl =
         $"{baseAPI.TrimEnd('/')}/v1/TemplateFile/get-list-simplify";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
       using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
         .ConfigureAwait(false);
@@ -747,7 +808,7 @@ namespace ApiSyncData
         $"{baseAPI.TrimEnd('/')}/v1/TemplateFile/upsert-multi-lang" +
         $"?lang={Uri.EscapeDataString(lang)}";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
       using var formData = new MultipartFormDataContent();
       formData.Add(new StringContent(template.Id.ToString()), "Id");
@@ -812,7 +873,7 @@ namespace ApiSyncData
         $"{baseAPI.TrimEnd('/')}/v1/TemplateFile/download-bbgn" +
         $"?Id={Uri.EscapeDataString(id.ToString())}";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
       using var response = await httpClient.GetAsync(
         apiUrl,
@@ -962,7 +1023,7 @@ namespace ApiSyncData
         PhanQuyenCodes = codes,
       });
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
       using var requestContent = new StringContent(
         body,
@@ -1014,7 +1075,7 @@ namespace ApiSyncData
         PhanQuyenCodes = codes,
       });
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
       using var requestContent = new StringContent(
         body,
@@ -1040,7 +1101,8 @@ namespace ApiSyncData
 
     public async Task<RecordTruckAPI> RecordTruckFromServer(
       Guid? stationId,
-      int numberLastDay)
+      int numberLastDay,
+      CancellationToken cancellationToken = default)
     {
       if (numberLastDay <= 0)
         throw new ArgumentOutOfRangeException(
@@ -1064,11 +1126,13 @@ namespace ApiSyncData
         $"&dateFrom={dateFromQuery}" +
         $"&dateTo={dateToQuery}" +
         $"&isDeleted=true";
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
-      using var response = await httpClient.GetAsync(apiUrl).ConfigureAwait(false);
-      var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+      using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+        .ConfigureAwait(false);
+      var responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
       if (!response.IsSuccessStatusCode)
       {
@@ -1113,7 +1177,7 @@ namespace ApiSyncData
           $"&dateFrom={dateFromQuery}" +
           $"&dateTo={dateToQuery}";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
         httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
         using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
@@ -1133,9 +1197,16 @@ namespace ApiSyncData
           ?? throw new InvalidOperationException(
             "Document API trả về dữ liệu không hợp lệ.");
       }
+      catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
-        throw new Exception("Lỗi API");
+        throw new InvalidOperationException(
+          $"Documents API thất bại. dateFrom={dateFrom:yyyy-MM-dd}, " +
+          $"dateTo={dateTo:yyyy-MM-dd}, isDeleted={isContainDelete}.",
+          ex);
       }
     }
 
@@ -1155,7 +1226,7 @@ namespace ApiSyncData
         ?? throw new InvalidOperationException("Environment variable API_KEY is not configured.");
       string apiUrl = $"{baseAPI.TrimEnd('/')}/v1/Document/upsert-multi-lang";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var formData = new MultipartFormDataContent
@@ -1210,7 +1281,7 @@ namespace ApiSyncData
 
       var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/RecordTruck/sync-desktop";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var requestContent = new StringContent(
@@ -1250,7 +1321,7 @@ namespace ApiSyncData
 
       var apiUrl = $"{baseAPI.TrimEnd('/')}/v1/RecordGoods/sync-desktop";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var requestContent = new StringContent(
@@ -1307,7 +1378,7 @@ namespace ApiSyncData
         string apiUrl =
           $"{baseAPI.TrimEnd('/')}/v1/{resource}/upsert-multi-lang?lang={Uri.EscapeDataString(lang.Trim())}";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = CreateHttpClient();
         httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
         using var formData = new MultipartFormDataContent();
@@ -1380,7 +1451,7 @@ namespace ApiSyncData
       string apiUrl =
         $"{baseAPI.TrimEnd('/')}/v1/{resource}/upsert-multi-lang?lang={Uri.EscapeDataString(lang.Trim())}";
 
-      using var httpClient = new HttpClient();
+      using var httpClient = CreateHttpClient();
       httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
 
       using var formData = new MultipartFormDataContent();
