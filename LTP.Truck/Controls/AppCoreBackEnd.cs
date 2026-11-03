@@ -62,6 +62,7 @@ namespace LTP.Truck.Controls
     public readonly WarehouseService _warehouseService = new();
     public readonly RecordTruckService _recordTruckService = new();
     public readonly RecordWeightService _recordWeightService = new();
+    public readonly RecordService _recordService = new();
     public readonly TareService _tareService = new();
     public readonly ProductGroupService _productGroupService = new();
     public readonly ProductService _productService = new();

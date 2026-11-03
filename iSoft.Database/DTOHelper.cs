@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System.Collections.Generic;
 using static HelperManager.EnumData;
 using static iSoft.Database.EnumData;
+using RecordModel = iSoft.Database.Models.Record;
 
 
 namespace iSoft.Database
@@ -12,6 +13,189 @@ namespace iSoft.Database
   public static class DTOHelper
   {
     public static int utc = int.Parse(Environment.GetEnvironmentVariable("UTC"));
+
+    public static RecordTruckDTO ConvertRecordTruckDTO(RecordModel record)
+    {
+      ArgumentNullException.ThrowIfNull(record);
+      string status = "Đã xóa";
+      if (!record.DeletedFlag)
+      {
+        status = record.EnumTypeDataTruck switch
+        {
+          EnumTypeDataTruck.None => "Chưa cân",
+          EnumTypeDataTruck.WeightedTime01 => "Đang cân lần 1",
+          EnumTypeDataTruck.DoneTime01 => "Chưa hoàn thành",
+          EnumTypeDataTruck.WeightedTime02 => "Đã cân lần 2",
+          EnumTypeDataTruck.DoneTime02 => "Hoàn thành",
+          EnumTypeDataTruck.Delete => "Đã xóa",
+          _ => record.EnumTypeDataTruck.ToString()
+        };
+      }
+
+      return new RecordTruckDTO
+      {
+        Record = record,
+        No = 1,
+        NoLabelAuto = record.NoLabelAuto,
+        NoLabelManual = record.NoLabelManual,
+        NetTime01 = WeightFormatHelper.Format(record.NetTime01) + " Kg",
+        NetTime02 = WeightFormatHelper.Format(record.NetTime02) + " Kg",
+        Time01 = record.WeighInAt.HasValue
+          ? record.WeighInAt.Value.AddHours(utc).ToString("dd/MM/yyyy HH:mm:ss")
+          : "---",
+        Time02 = record.WeighOutAt.HasValue
+          ? record.WeighOutAt.Value.AddHours(utc).ToString("dd/MM/yyyy HH:mm:ss")
+          : "---",
+        Status = status,
+        EnumTypeDataTruck = record.EnumTypeDataTruck,
+        Client = record.Client?.Name,
+        TypeGoods = record.TypeGoods?.Name,
+        Warehouse = record.Warehouse?.Name,
+        NameDriver = record.NameDriver,
+        IdCard = record.IdCard,
+        LicensePlate = record.LicensePlate,
+        Document = record.Note,
+        Station = record.Station?.Name,
+        Operator = record.User?.FullName,
+      };
+    }
+
+    public static List<RecordTruckDTO> ConvertRecordTruckDTO(
+      List<RecordModel>? records)
+    {
+      if (records == null || records.Count == 0)
+        return new List<RecordTruckDTO>();
+      var ordered = records
+        .OrderByDescending(record => record.CreatedAt)
+        .ThenByDescending(record => record.Id)
+        .ToList();
+      return ordered.Select((record, index) =>
+      {
+        var dto = ConvertRecordTruckDTO(record);
+        dto.No = ordered.Count - index;
+        return dto;
+      }).ToList();
+    }
+
+    public static List<RecordWeightDTO> ConvertCombinedHistoryDTO(
+      IEnumerable<RecordModel>? records)
+    {
+      var ordered = (records ?? Enumerable.Empty<RecordModel>())
+        .Select(record =>
+        {
+          bool isTruck = record.TypeData == EnumTypeDataLocation.Truck;
+          var time = isTruck
+            ? record.UpdatedAt ?? record.CreatedAt ?? DateTime.MinValue
+            : record.CreatedAt ?? DateTime.MinValue;
+          var gross = isTruck
+            ? Math.Max(record.NetTime01, record.NetTime02)
+            : record.NetTime01 + record.Tare;
+          return new RecordWeightDTO
+          {
+            Record = record,
+            // Adapter tạm cho các template PDF hiện hữu; dữ liệu nguồn vẫn là Records.
+            RecordTruck = isTruck ? ToLegacyRecordTruck(record) : null,
+            RecordWeight = isTruck ? null : ToLegacyRecordWeight(record),
+            SortAt = time,
+            Datetime = time == DateTime.MinValue
+              ? string.Empty
+              : time.AddHours(utc).ToString("dd-MM-yyyy HH:mm:ss"),
+            Source = isTruck ? "Cân xe tải" : "Cân hàng",
+            Delivery = record.Client?.Name,
+            ProductGroup = record.TypeGoods?.ProductGroup?.Name,
+            Type = EnumHelper.GetDescription(record.TypeGoods?.EnumWasteType),
+            Product = record.TypeGoods?.Name,
+            CategoryTare = record.NameTareForTruck,
+            Gross = WeightFormatHelper.Format(gross, 2),
+            Net = WeightFormatHelper.Format(record.NetTime01, 2),
+            Tare = WeightFormatHelper.Format(record.Tare, 2),
+            LicensePlate = record.LicensePlate,
+            NameDriver = record.NameDriver,
+          };
+        })
+        .OrderByDescending(item => item.SortAt)
+        .ThenByDescending(item => item.Record?.Id ?? Guid.Empty)
+        .ToList();
+      for (int index = 0; index < ordered.Count; index++)
+        ordered[index].No = ordered.Count - index;
+      return ordered;
+    }
+
+    private static RecordTruck ToLegacyRecordTruck(RecordModel record)
+    {
+      return new RecordTruck
+      {
+        Id = record.Id,
+        NoLabelAuto = record.NoLabelAuto,
+        NoLabelManual = record.NoLabelManual,
+        NetTimeTemp = record.NetTimeTemp,
+        TareTimeTemp = record.TareTimeTemp,
+        NetTime01 = record.NetTime01,
+        TareTime01 = record.TareTime01,
+        NetTime02 = record.NetTime02,
+        TareTime02 = record.TareTime02,
+        Tare = record.Tare,
+        NameTareForTruck = record.NameTareForTruck,
+        NumberTare = record.NumberTare,
+        EnumTypeDataTruck = record.EnumTypeDataTruck,
+        NameDriver = record.NameDriver,
+        IdCard = record.IdCard,
+        LicensePlate = record.LicensePlate,
+        Note = record.Note,
+        ReasonDelete = record.ReasonDelete,
+        WeighInAt = record.WeighInAt,
+        WeighOutAt = record.WeighOutAt,
+        Type = record.Type,
+        ClientId = record.ClientId,
+        Client = record.Client,
+        TypeGoodsId = record.TypeGoodsId,
+        TypeGoods = record.TypeGoods,
+        WarehouseId = record.WarehouseId,
+        Warehouse = record.Warehouse,
+        UserId = record.UserId,
+        User = record.User,
+        StationId = record.StationId,
+        Station = record.Station,
+        CreatedAt = record.CreatedAt,
+        CreatedBy = record.CreatedBy,
+        UpdatedAt = record.UpdatedAt,
+        UpdatedBy = record.UpdatedBy,
+        DeletedFlag = record.DeletedFlag,
+        EnableFlag = record.EnableFlag,
+        SyncFlag = record.SyncFlag,
+      };
+    }
+
+    private static RecordWeight ToLegacyRecordWeight(RecordModel record)
+    {
+      return new RecordWeight
+      {
+        Id = record.Id,
+        Net = record.NetTime01,
+        Tare = record.Tare,
+        LicensePlate = record.LicensePlate,
+        NameDriver = record.NameDriver,
+        IdCard = record.IdCard,
+        Note = record.Note,
+        ReasonDelete = record.ReasonDelete,
+        StationId = record.StationId,
+        Station = record.Station,
+        UserId = record.UserId,
+        User = record.User,
+        ProductId = record.TypeGoodsId,
+        Product = record.TypeGoods!,
+        CategoryTare = new Tare { Name = record.NameTareForTruck },
+        DeliveryId = record.ClientId,
+        Delivery = record.Client!,
+        CreatedAt = record.CreatedAt,
+        CreatedBy = record.CreatedBy,
+        UpdatedAt = record.UpdatedAt,
+        UpdatedBy = record.UpdatedBy,
+        DeletedFlag = record.DeletedFlag,
+        EnableFlag = record.EnableFlag,
+        SyncFlag = record.SyncFlag,
+      };
+    }
     public static RecordTruckDTO ConvertRecordTruckDTO(RecordTruck recordTruck)
     {
       ArgumentNullException.ThrowIfNull(recordTruck);

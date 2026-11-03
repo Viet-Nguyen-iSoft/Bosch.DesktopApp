@@ -130,7 +130,7 @@ namespace LTP.Truck.Forms
         var searchKey = txtSearchKey.Texts.Trim();
         var pageNumber = ucPage1.CurrentPage;
         var pageSize = ucPage1.PageSize;
-        var (records, totalRecords) = await AppCore.Ins._recordTruckService.GetReportPageAsync(
+        var (records, totalRecords) = await AppCore.Ins._recordService.GetTruckReportPageAsync(
           fromUtc,
           toUtcExclusive,
           searchKey,
@@ -141,8 +141,8 @@ namespace LTP.Truck.Forms
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
         var effectivePage = Math.Min(pageNumber, totalPages);
         var recordsDto = DTOHelper.ConvertRecordTruckDTO(records)
-          .OrderBy(record => record.RecordTruck?.CreatedAt)
-          .ThenBy(record => record.RecordTruck?.Id)
+          .OrderBy(record => record.Record?.CreatedAt)
+          .ThenBy(record => record.Record?.Id)
           .ToList();
         for (var index = 0; index < recordsDto.Count; index++)
           recordsDto[index].No = (effectivePage - 1) * pageSize + index + 1;
@@ -180,6 +180,7 @@ namespace LTP.Truck.Forms
 
       var hiddenColumns = new[]
       {
+        nameof(RecordTruckDTO.Record),
         nameof(RecordTruckDTO.RecordTruck),
         nameof(RecordTruckDTO.EnumTypeDataTruck)
       };
@@ -272,7 +273,7 @@ namespace LTP.Truck.Forms
       {
         btnExport.Enabled = false;
         var searchKey = txtSearchKey.Texts.Trim();
-        var exportRecords = await AppCore.Ins._recordTruckService.GetReportAsync(
+        var exportRecords = await AppCore.Ins._recordService.GetTruckReportAsync(
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
           searchKey,
@@ -289,8 +290,8 @@ namespace LTP.Truck.Forms
         }
 
         var exportData = DTOHelper.ConvertRecordTruckDTO(exportRecords)
-          .OrderBy(record => record.RecordTruck?.CreatedAt)
-          .ThenBy(record => record.RecordTruck?.Id)
+          .OrderBy(record => record.Record?.CreatedAt)
+          .ThenBy(record => record.Record?.Id)
           .ToList();
 
         var exporterName = AppCore.Ins._userCurrent?.DisplayName;
@@ -404,7 +405,7 @@ namespace LTP.Truck.Forms
       for (var index = 0; index < records.Count; index++)
       {
         var dto = records[index];
-        var record = dto.RecordTruck!;
+        var record = dto.Record!;
         var row = firstDataRow + index;
         var operatorName = record.User?.DisplayName;
         if (string.IsNullOrWhiteSpace(operatorName))
@@ -483,7 +484,7 @@ namespace LTP.Truck.Forms
 
       e.PaintBackground(e.CellBounds, true);
 
-      if (itemMaterial.RecordTruck?.DeletedFlag == true)
+      if (itemMaterial.Record?.DeletedFlag == true)
       {
         borderColor = Color.DarkRed;
         backColor = Color.Tomato;

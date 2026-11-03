@@ -6,6 +6,9 @@ namespace iSoft.Database.DTO
   public class RecordWeightDTO
   {
     [Browsable(false)]
+    public iSoft.Database.Models.Record? Record { get; set; }
+
+    [Browsable(false)]
     public RecordWeight? RecordWeight { get; set; }
 
     [Browsable(false)]

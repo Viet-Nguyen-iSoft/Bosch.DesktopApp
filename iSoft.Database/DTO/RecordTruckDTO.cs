@@ -12,6 +12,9 @@ namespace iSoft.Database.DTO
   public class RecordTruckDTO
   {
     [Browsable(false)]
+    public iSoft.Database.Models.Record? Record { get; set; }
+
+    [Browsable(false)]
     public RecordTruck? RecordTruck { get; set; }
     [DisplayName("Stt")]
     public int No { get; set; }

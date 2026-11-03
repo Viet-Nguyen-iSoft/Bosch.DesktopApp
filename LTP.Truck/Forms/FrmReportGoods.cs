@@ -14,6 +14,8 @@ using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
 using static Common.EnumData;
+using static iSoft.Database.EnumData;
+using RecordModel = iSoft.Database.Models.Record;
 
 namespace LTP.Truck.Forms 
 {
@@ -213,37 +215,21 @@ namespace LTP.Truck.Forms
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
         var pageNumber = ucPage1.CurrentPage;
         var pageSize = ucPage1.PageSize;
-        var recordsTask = AppCore.Ins._recordWeightService.GetReportAsync(
+        var (records, totalRecords) = await AppCore.Ins._recordService
+          .GetGoodsReportPageAsync(
           fromUtc,
           toUtcExclusive,
           string.Empty,
+          pageNumber,
+          pageSize,
           _filterDataTypeIndex,
           _filterProductGroupId,
           _filterWasteType);
-
-        var trucksTask = AppCore.Ins._recordTruckService.GetReportAsync(
-          fromUtc, toUtcExclusive, string.Empty, statusFilterIndex: 0);
-        await Task.WhenAll(recordsTask, trucksTask);
-        var records = await recordsTask;
-        var trucks = await trucksTask;
-        if (_filterProductGroupId.HasValue)
-          trucks = trucks.Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value).ToList();
-        if (_filterWasteType.HasValue)
-          trucks = trucks.Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value).ToList();
-        trucks = _filterDataTypeIndex switch
-        {
-          2 => trucks.Where(record => record.DeletedFlag).ToList(),
-          0 => trucks,
-          _ => trucks.Where(record => !record.DeletedFlag).ToList(),
-        };
-        var totalRecords = records.Count + trucks.Count;
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalRecords / (double)pageSize));
         var effectivePage = Math.Min(pageNumber, totalPages);
-        var recordsDto = DTOHelper.ConvertCombinedHistoryDTO(records, trucks)
+        var recordsDto = DTOHelper.ConvertCombinedHistoryDTO(records)
           .OrderByDescending(record => record.SortAt)
-          .ThenBy(record => record.RecordWeight?.Id ?? record.RecordTruck?.Id)
-          .Skip((effectivePage - 1) * pageSize)
-          .Take(pageSize)
+          .ThenBy(record => record.Record?.Id)
           .ToList();
         for (var index = 0; index < recordsDto.Count; index++)
           recordsDto[index].No = (effectivePage - 1) * pageSize + index + 1;
@@ -388,6 +374,8 @@ namespace LTP.Truck.Forms
 
       if (grid.Columns.Contains(nameof(RecordWeightDTO.RecordWeight)))
         grid.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
+      if (grid.Columns.Contains(nameof(RecordWeightDTO.Record)))
+        grid.Columns[nameof(RecordWeightDTO.Record)].Visible = false;
 
       if (grid.Columns.Contains(nameof(RecordWeightDTO.Source)))
       {
@@ -501,7 +489,8 @@ namespace LTP.Truck.Forms
         StringComparer.CurrentCultureIgnoreCase))
       {
         var groupRecords = group.ToList();
-        var totalNetWeight = groupRecords.Sum(record => record.RecordWeight?.Net ?? record.RecordTruck?.NetTime01 ?? 0.0);
+        var totalNetWeight = groupRecords.Sum(record =>
+          record.Record?.NetTime01 ?? 0.0);
         var groupHeaderText =
           $"{group.Key} - Tổng khối lượng {WeightFormatHelper.Format(totalNetWeight, 2)} Kg";
         var groupPanel = new Panel
@@ -875,7 +864,7 @@ namespace LTP.Truck.Forms
       try
       {
         btnExport.Enabled = false;
-        var exportRecords = await AppCore.Ins._recordWeightService.GetReportAsync(
+        var exportRecords = await AppCore.Ins._recordService.GetGoodsReportAsync(
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
           "",
@@ -883,21 +872,9 @@ namespace LTP.Truck.Forms
           _filterProductGroupId,
           _filterWasteType);
 
-        var trucks = await AppCore.Ins._recordTruckService.GetReportAsync(
-          fromDateTime.ToUniversalTime(), toDateTime.AddMinutes(1).ToUniversalTime(), string.Empty, statusFilterIndex: 0);
-        if (_filterProductGroupId.HasValue)
-          trucks = trucks.Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value).ToList();
-        if (_filterWasteType.HasValue)
-          trucks = trucks.Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value).ToList();
-        trucks = _filterDataTypeIndex switch
-        {
-          2 => trucks.Where(record => record.DeletedFlag).ToList(),
-          0 => trucks,
-          _ => trucks.Where(record => !record.DeletedFlag).ToList(),
-        };
-        var exportData = DTOHelper.ConvertCombinedHistoryDTO(exportRecords, trucks)
+        var exportData = DTOHelper.ConvertCombinedHistoryDTO(exportRecords)
           .OrderBy(record => record.SortAt)
-          .ThenBy(record => record.RecordWeight?.Id ?? record.RecordTruck?.Id)
+          .ThenBy(record => record.Record?.Id)
           .ToList();
 
         if (exportData.Count == 0)
@@ -1091,16 +1068,8 @@ namespace LTP.Truck.Forms
       for (var index = 0; index < records.Count; index++)
       {
         var dto = records[index];
-        var truck = dto.RecordTruck;
-        var record = dto.RecordWeight ?? new RecordWeight
-        {
-          CreatedAt = dto.SortAt,
-          LicensePlate = truck?.LicensePlate,
-
-          Net = truck?.NetTime01 ?? 0,
-          Tare = truck?.Tare ?? 0,
-          User = truck?.User,
-        };
+        var record = dto.Record!;
+        var isTruck = record.TypeData == EnumTypeDataLocation.Truck;
         var row = firstDataRow + index;
         var operatorName = record.User?.DisplayName;
         if (string.IsNullOrWhiteSpace(operatorName))
@@ -1109,15 +1078,17 @@ namespace LTP.Truck.Forms
           operatorName = record.User?.Username;
 
         worksheet.Cell(row, 1).Value = index + 1;
-        if (record.CreatedAt.HasValue)
-          worksheet.Cell(row, 2).Value = record.CreatedAt.Value.AddHours(DTOHelper.utc);
+        if (dto.SortAt != DateTime.MinValue)
+          worksheet.Cell(row, 2).Value = dto.SortAt.AddHours(DTOHelper.utc);
         worksheet.Cell(row, 3).Value = record.LicensePlate ?? string.Empty;
         worksheet.Cell(row, 4).Value = dto.ProductGroup ?? string.Empty;
-        worksheet.Cell(row, 5).Value = record.Product?.Code ?? truck?.TypeGoods?.Code ?? string.Empty;
+        worksheet.Cell(row, 5).Value = record.TypeGoods?.Code ?? string.Empty;
         worksheet.Cell(row, 6).Value = dto.Product ?? string.Empty;
         worksheet.Cell(row, 7).Value = dto.CategoryTare ?? string.Empty;
-        worksheet.Cell(row, 8).Value = truck == null ? record.Net + record.Tare : Math.Max(truck.NetTime01, truck.NetTime02);
-        worksheet.Cell(row, 9).Value = record.Net;
+        worksheet.Cell(row, 8).Value = isTruck
+          ? Math.Max(record.NetTime01, record.NetTime02)
+          : record.NetTime01 + record.Tare;
+        worksheet.Cell(row, 9).Value = record.NetTime01;
         worksheet.Cell(row, 10).Value = record.Tare;
         worksheet.Cell(row, 11).Value = operatorName ?? string.Empty;
       }
@@ -1192,23 +1163,17 @@ namespace LTP.Truck.Forms
       try
       {
         btnTracking.Enabled = false;
-        var records = await AppCore.Ins._recordWeightService.GetReportAsync(
+        var records = await AppCore.Ins._recordService.GetGoodsReportAsync(
           fromDateTime.ToUniversalTime(),
           toDateTime.AddMinutes(1).ToUniversalTime(),
           "");
-
-        var truckRecords = await AppCore.Ins._recordTruckService.GetReportAsync(
-          fromDateTime.ToUniversalTime(),
-          toDateTime.AddMinutes(1).ToUniversalTime(),
-          "",
-          statusFilterIndex: 2);
 
         var documents = (await AppCore.Ins._documentDataService.GetAllAsync())
           .Where(document => document.Date.HasValue)
           .Where(document => document.Date!.Value.AddHours(DTOHelper.utc).Year == fromDateTime.Year)
           .ToList();
 
-        if (records.Count == 0 && truckRecords.Count == 0 && documents.Count == 0)
+        if (records.Count == 0 && documents.Count == 0)
         {
           using var popup = new PopupConfirm(
             "Không có dữ liệu phù hợp với điều kiện lọc để xuất tracking.",
@@ -1223,7 +1188,6 @@ namespace LTP.Truck.Forms
           saveDialog.FileName,
           records,
           fromDateTime.Year,
-          truckRecords,
           documents));
 
         var openExportedFile = false;
@@ -1300,20 +1264,21 @@ namespace LTP.Truck.Forms
     private static void ExportTrackingReport(
       string templatePath,
       string outputPath,
-      IReadOnlyList<RecordWeight> records,
+      IReadOnlyList<RecordModel> records,
       int reportYear,
-      IReadOnlyList<RecordTruck> truckRecords,
       IReadOnlyList<DocumentData> documents)
     {
-      if (records.Any(record => record.Product == null || !record.CreatedAt.HasValue))
+      if (records.Any(record => record.TypeGoods == null ||
+        (record.TypeData == EnumTypeDataLocation.Good && !record.CreatedAt.HasValue) ||
+        (record.TypeData == EnumTypeDataLocation.Truck && !record.UpdatedAt.HasValue)))
         throw new InvalidOperationException("Có dữ liệu cân thiếu sản phẩm hoặc ngày cân.");
 
       using var workbook = new XLWorkbook(templatePath);
-      FillTrackingSheet(workbook.Worksheet("HW_HcP"), records, reportYear, truckRecords,
+      FillTrackingSheet(workbook.Worksheet("HW_HcP"), records, reportYear,
         documents: documents, documentColumn: 1);
-      FillTrackingSheet(workbook.Worksheet("Non HW_HcP"), records, reportYear, truckRecords,
+      FillTrackingSheet(workbook.Worksheet("Non HW_HcP"), records, reportYear,
         dateColumn: 1, firstDailyRow: 12);
-      FillTrackingSheet(workbook.Worksheet("Domestic_HcP&TGA"), records, reportYear, truckRecords,
+      FillTrackingSheet(workbook.Worksheet("Domestic_HcP&TGA"), records, reportYear,
         dateColumn: 1, firstDailyRow: 12);
       workbook.Worksheet("HW_HcP").Row(10).Delete();
       workbook.Worksheet("Non HW_HcP").Row(10).Delete();
@@ -1325,9 +1290,8 @@ namespace LTP.Truck.Forms
 
     internal static void FillTrackingSheet(
       IXLWorksheet sheet,
-      IReadOnlyList<RecordWeight> records,
+      IReadOnlyList<RecordModel> records,
       int year,
-      IReadOnlyList<RecordTruck>? truckRecords = null,
       int dateColumn = 2,
       int firstDailyRow = 13,
       IReadOnlyList<DocumentData>? documents = null,
@@ -1380,22 +1344,20 @@ namespace LTP.Truck.Forms
       var tags = mappedColumns.Values.SelectMany(value => value)
         .ToHashSet(StringComparer.OrdinalIgnoreCase);
       var entries = records
-        .Where(record => record.CreatedAt.HasValue && !record.DeletedFlag &&
-          !string.IsNullOrWhiteSpace(record.Product?.TagMappingReport))
+        .Where(record => !record.DeletedFlag &&
+          !string.IsNullOrWhiteSpace(record.TypeGoods?.TagMappingReport) &&
+          ((record.TypeData == EnumTypeDataLocation.Good && record.CreatedAt.HasValue) ||
+           (record.TypeData == EnumTypeDataLocation.Truck && record.UpdatedAt.HasValue &&
+            record.EnumTypeDataTruck == EnumTypeDataTruck.DoneTime02)))
         .Select(record => (
-          Date: record.CreatedAt!.Value.AddHours(DTOHelper.utc).Date,
-          Tag: record.Product.TagMappingReport!.Trim(),
-          Weight: record.Net,
+          Date: (record.TypeData == EnumTypeDataLocation.Truck
+              ? record.UpdatedAt!.Value : record.CreatedAt!.Value)
+            .AddHours(DTOHelper.utc).Date,
+          Tag: record.TypeGoods!.TagMappingReport!.Trim(),
+          Weight: record.TypeData == EnumTypeDataLocation.Truck
+            ? Math.Max(0, Math.Abs(record.NetTime01))
+            : record.NetTime01,
           LicensePlate: record.LicensePlate))
-        .Concat((truckRecords ?? Array.Empty<RecordTruck>())
-          .Where(record => !record.DeletedFlag && record.UpdatedAt.HasValue &&
-            record.EnumTypeDataTruck == iSoft.Database.EnumData.EnumTypeDataTruck.DoneTime02 &&
-            !string.IsNullOrWhiteSpace(record.TypeGoods?.TagMappingReport))
-          .Select(record => (
-            Date: record.UpdatedAt!.Value.AddHours(DTOHelper.utc).Date,
-            Tag: record.TypeGoods!.TagMappingReport!.Trim(),
-            Weight: Math.Max(0, Math.Abs(record.NetTime01)),
-            LicensePlate: record.LicensePlate)))
         .Where(entry => entry.Date.Year == year && tags.Contains(entry.Tag));
       var dailyRecords = entries.GroupBy(entry => entry.Date)
         .ToDictionary(group => group.Key, group => group.ToList());
@@ -1501,7 +1463,7 @@ namespace LTP.Truck.Forms
           $"SUM({string.Join(",", monthlyTotalRows.Select(row => $"{letter}{row}"))})";
       }
     }
-    private static string GetOperatorName(RecordWeight record)
+    private static string GetOperatorName(RecordModel record)
     {
       if (!string.IsNullOrWhiteSpace(record.User?.DisplayName))
         return record.User.DisplayName;
@@ -1520,7 +1482,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var isTruck = item.RecordTruck != null;
+      var isTruck = item.Record?.TypeData == EnumTypeDataLocation.Truck;
       var borderColor = isTruck
         ? Color.FromArgb(30, 64, 175)
         : Color.FromArgb(40, 167, 69);

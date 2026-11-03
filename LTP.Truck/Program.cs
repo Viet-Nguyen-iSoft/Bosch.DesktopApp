@@ -145,6 +145,7 @@ namespace LTP.Truck
 
             //TEST UPDATE DB
             await EnsureRecordTruckNumberTareColumnAsync(db);
+            await EnsureRecordsTableAndMigrateAsync(db);
             //await UpdateDatabaseSchemaAsync(db);
 
             var needsAppConfig = !await db.AppConfigs!.AnyAsync();
@@ -346,6 +347,401 @@ namespace LTP.Truck
       finally
       {
         await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureRecordsTableAndMigrateAsync(
+      MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        await using (var createCommand =
+          db.Database.GetDbConnection().CreateCommand())
+        {
+          createCommand.CommandText = @"
+            CREATE TABLE IF NOT EXISTS `Records` (
+              `Id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+              `TypeData` int NOT NULL,
+              `NoLabelAuto` longtext NULL,
+              `NoLabelManual` longtext NULL,
+              `NetTimeTemp` double NOT NULL DEFAULT 0,
+              `TareTimeTemp` double NOT NULL DEFAULT 0,
+              `NetTime01` double NOT NULL DEFAULT 0,
+              `TareTime01` double NOT NULL DEFAULT 0,
+              `NetTime02` double NOT NULL DEFAULT 0,
+              `TareTime02` double NOT NULL DEFAULT 0,
+              `Tare` double NOT NULL DEFAULT 0,
+              `NameTareForTruck` longtext NULL,
+              `NumberTare` int NULL DEFAULT 1,
+              `EnumTypeDataTruck` int NOT NULL DEFAULT 0,
+              `NameDriver` longtext NULL,
+              `IdCard` longtext NULL,
+              `LicensePlate` varchar(20) NULL,
+              `Note` longtext NULL,
+              `ReasonDelete` longtext NULL,
+              `WeighInAt` datetime(6) NULL,
+              `WeighOutAt` datetime(6) NULL,
+              `Type` longtext NULL,
+              `ClientId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `TypeGoodsId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `WarehouseId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `UserId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `StationId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `CreatedAt` datetime(6) NULL,
+              `CreatedBy` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `UpdatedAt` datetime(6) NULL,
+              `UpdatedBy` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `DeletedFlag` tinyint(1) NOT NULL,
+              `EnableFlag` tinyint(1) NOT NULL,
+              `SyncFlag` tinyint(1) NOT NULL,
+              CONSTRAINT `PK_Records` PRIMARY KEY (`Id`),
+              INDEX `IX_Records_TypeData_Deleted_Created`
+                (`TypeData`, `DeletedFlag`, `CreatedAt`, `Id`)
+            ) CHARACTER SET=utf8mb4;";
+          await createCommand.ExecuteNonQueryAsync();
+        }
+
+        foreach (var obsoleteColumn in new[]
+                 {
+                   "SourceId", "CategoryTareId", "SourceRecordTruckId"
+                 })
+        {
+          await using var checkColumn =
+            db.Database.GetDbConnection().CreateCommand();
+          checkColumn.CommandText = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'Records'
+              AND COLUMN_NAME = @columnName;";
+          var parameter = checkColumn.CreateParameter();
+          parameter.ParameterName = "@columnName";
+          parameter.Value = obsoleteColumn;
+          checkColumn.Parameters.Add(parameter);
+          if (Convert.ToInt32(await checkColumn.ExecuteScalarAsync()) == 0)
+            continue;
+
+          if (obsoleteColumn == "SourceId")
+          {
+            await using var checkIndex =
+              db.Database.GetDbConnection().CreateCommand();
+            checkIndex.CommandText = @"
+              SELECT COUNT(*)
+              FROM INFORMATION_SCHEMA.STATISTICS
+              WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'Records'
+                AND INDEX_NAME = 'UX_Records_TypeData_SourceId';";
+            if (Convert.ToInt32(await checkIndex.ExecuteScalarAsync()) > 0)
+            {
+              await using var dropIndex =
+                db.Database.GetDbConnection().CreateCommand();
+              dropIndex.CommandText = @"
+                ALTER TABLE `Records`
+                DROP INDEX `UX_Records_TypeData_SourceId`;";
+              await dropIndex.ExecuteNonQueryAsync();
+            }
+          }
+
+          await using var dropColumn =
+            db.Database.GetDbConnection().CreateCommand();
+          dropColumn.CommandText =
+            $"ALTER TABLE `Records` DROP COLUMN `{obsoleteColumn}`;";
+          await dropColumn.ExecuteNonQueryAsync();
+        }
+
+        await using (var copyTrucks =
+          db.Database.GetDbConnection().CreateCommand())
+        {
+          copyTrucks.CommandText = @"
+            INSERT IGNORE INTO `Records` (
+              `Id`, `TypeData`, `NoLabelAuto`, `NoLabelManual`,
+              `NetTimeTemp`, `TareTimeTemp`, `NetTime01`, `TareTime01`,
+              `NetTime02`, `TareTime02`, `Tare`, `NameTareForTruck`,
+              `NumberTare`, `EnumTypeDataTruck`, `NameDriver`, `IdCard`,
+              `LicensePlate`, `Note`, `ReasonDelete`, `WeighInAt`, `WeighOutAt`,
+              `Type`, `ClientId`, `TypeGoodsId`, `WarehouseId`, `UserId`,
+              `StationId`, `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
+              `DeletedFlag`, `EnableFlag`, `SyncFlag`)
+            SELECT
+              rt.`Id`, 1, rt.`NoLabelAuto`, rt.`NoLabelManual`,
+              rt.`NetTimeTemp`, rt.`TareTimeTemp`, rt.`NetTime01`,
+              rt.`TareTime01`, rt.`NetTime02`, rt.`TareTime02`, rt.`Tare`,
+              rt.`NameTareForTruck`, rt.`NumberTare`, rt.`EnumTypeDataTruck`,
+              rt.`NameDriver`, rt.`IdCard`, rt.`LicensePlate`, rt.`Note`,
+              rt.`ReasonDelete`, rt.`WeighInAt`, rt.`WeighOutAt`, rt.`Type`,
+              rt.`ClientId`, rt.`TypeGoodsId`, rt.`WarehouseId`, rt.`UserId`,
+              rt.`StationId`, rt.`CreatedAt`, rt.`CreatedBy`, rt.`UpdatedAt`,
+              rt.`UpdatedBy`, rt.`DeletedFlag`, rt.`EnableFlag`, rt.`SyncFlag`
+            FROM `RecordTrucks` rt;";
+          await copyTrucks.ExecuteNonQueryAsync();
+        }
+
+        await ValidateRecordMigrationAsync(
+          db, "RecordTrucks", EnumTypeDataLocation.Truck);
+
+        await using var copyWeights =
+          db.Database.GetDbConnection().CreateCommand();
+        copyWeights.CommandText = @"
+          INSERT IGNORE INTO `Records` (
+            `Id`, `TypeData`, `NetTime01`, `Tare`, `NameDriver`,
+            `IdCard`, `LicensePlate`, `Note`, `ReasonDelete`, `ClientId`,
+            `TypeGoodsId`, `UserId`, `StationId`, `NameTareForTruck`,
+            `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`,
+            `EnableFlag`, `SyncFlag`)
+          SELECT
+            rw.`Id`, 2, rw.`Net`, rw.`Tare`, rw.`NameDriver`, rw.`IdCard`,
+            rw.`LicensePlate`, rw.`Note`, rw.`ReasonDelete`, rw.`DeliveryId`,
+            rw.`ProductId`, rw.`UserId`, rw.`StationId`, tare.`Name`,
+            rw.`CreatedAt`, rw.`CreatedBy`, rw.`UpdatedAt`, rw.`UpdatedBy`,
+            rw.`DeletedFlag`, rw.`EnableFlag`, rw.`SyncFlag`
+          FROM `RecordWeights` rw
+          LEFT JOIN `Tares` tare ON tare.`Id` = rw.`CategoryTareId`;";
+        await copyWeights.ExecuteNonQueryAsync();
+
+        await ValidateRecordMigrationAsync(
+          db, "RecordWeights", EnumTypeDataLocation.Good);
+
+        await EnsureRecordForeignKeyAsync(
+          db, "ClientId", "ClientDeliveries",
+          "FK_Records_ClientDeliveries_ClientId");
+        await EnsureRecordForeignKeyAsync(
+          db, "TypeGoodsId", "Products",
+          "FK_Records_Products_TypeGoodsId");
+        await EnsureRecordForeignKeyAsync(
+          db, "WarehouseId", "Warehouses",
+          "FK_Records_Warehouses_WarehouseId");
+        await EnsureRecordForeignKeyAsync(
+          db, "UserId", "Users",
+          "FK_Records_Users_UserId");
+        await EnsureRecordForeignKeyAsync(
+          db, "StationId", "Stations",
+          "FK_Records_Stations_StationId");
+        await EnsureRecordSyncTriggersAsync(db);
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
+    private static async Task EnsureRecordSyncTriggersAsync(MySqlDbContext db)
+    {
+      var triggers = new Dictionary<string, string>
+      {
+        ["TR_RecordTrucks_AfterInsert"] = BuildRecordTruckUpsertTrigger("INSERT"),
+        ["TR_RecordTrucks_AfterUpdate"] = BuildRecordTruckUpsertTrigger("UPDATE"),
+        ["TR_RecordWeights_AfterInsert"] = BuildRecordWeightUpsertTrigger("INSERT"),
+        ["TR_RecordWeights_AfterUpdate"] = BuildRecordWeightUpsertTrigger("UPDATE"),
+        ["TR_RecordTrucks_AfterDelete"] = @"
+          CREATE TRIGGER `TR_RecordTrucks_AfterDelete`
+          AFTER DELETE ON `RecordTrucks` FOR EACH ROW
+          DELETE FROM `Records` WHERE `Id` = OLD.`Id` AND `TypeData` = 1;",
+        ["TR_RecordWeights_AfterDelete"] = @"
+          CREATE TRIGGER `TR_RecordWeights_AfterDelete`
+          AFTER DELETE ON `RecordWeights` FOR EACH ROW
+          DELETE FROM `Records` WHERE `Id` = OLD.`Id` AND `TypeData` = 2;",
+      };
+
+      foreach (var trigger in triggers)
+      {
+        await using (var dropCommand =
+          db.Database.GetDbConnection().CreateCommand())
+        {
+          dropCommand.CommandText =
+            $"DROP TRIGGER IF EXISTS `{trigger.Key}`;";
+          await dropCommand.ExecuteNonQueryAsync();
+        }
+
+        await using var createCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        createCommand.CommandText = trigger.Value;
+        await createCommand.ExecuteNonQueryAsync();
+      }
+    }
+
+    private static string BuildRecordTruckUpsertTrigger(string eventName)
+    {
+      return $@"
+        CREATE TRIGGER `TR_RecordTrucks_After{eventName[0]}{eventName[1..].ToLowerInvariant()}`
+        AFTER {eventName} ON `RecordTrucks` FOR EACH ROW
+        INSERT INTO `Records` (
+          `Id`, `TypeData`, `NoLabelAuto`, `NoLabelManual`, `NetTimeTemp`,
+          `TareTimeTemp`, `NetTime01`, `TareTime01`, `NetTime02`,
+          `TareTime02`, `Tare`, `NameTareForTruck`, `NumberTare`,
+          `EnumTypeDataTruck`, `NameDriver`, `IdCard`, `LicensePlate`, `Note`,
+          `ReasonDelete`, `WeighInAt`, `WeighOutAt`, `Type`, `ClientId`,
+          `TypeGoodsId`, `WarehouseId`, `UserId`, `StationId`, `CreatedAt`,
+          `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`, `EnableFlag`,
+          `SyncFlag`)
+        VALUES (
+          NEW.`Id`, 1, NEW.`NoLabelAuto`, NEW.`NoLabelManual`,
+          NEW.`NetTimeTemp`, NEW.`TareTimeTemp`, NEW.`NetTime01`,
+          NEW.`TareTime01`, NEW.`NetTime02`, NEW.`TareTime02`, NEW.`Tare`,
+          NEW.`NameTareForTruck`, NEW.`NumberTare`, NEW.`EnumTypeDataTruck`,
+          NEW.`NameDriver`, NEW.`IdCard`, NEW.`LicensePlate`, NEW.`Note`,
+          NEW.`ReasonDelete`, NEW.`WeighInAt`, NEW.`WeighOutAt`, NEW.`Type`,
+          NEW.`ClientId`, NEW.`TypeGoodsId`, NEW.`WarehouseId`, NEW.`UserId`,
+          NEW.`StationId`, NEW.`CreatedAt`, NEW.`CreatedBy`, NEW.`UpdatedAt`,
+          NEW.`UpdatedBy`, NEW.`DeletedFlag`, NEW.`EnableFlag`, NEW.`SyncFlag`)
+        ON DUPLICATE KEY UPDATE
+          `TypeData` = 1, `NoLabelAuto` = NEW.`NoLabelAuto`,
+          `NoLabelManual` = NEW.`NoLabelManual`, `NetTimeTemp` = NEW.`NetTimeTemp`,
+          `TareTimeTemp` = NEW.`TareTimeTemp`, `NetTime01` = NEW.`NetTime01`,
+          `TareTime01` = NEW.`TareTime01`, `NetTime02` = NEW.`NetTime02`,
+          `TareTime02` = NEW.`TareTime02`, `Tare` = NEW.`Tare`,
+          `NameTareForTruck` = NEW.`NameTareForTruck`,
+          `NumberTare` = NEW.`NumberTare`,
+          `EnumTypeDataTruck` = NEW.`EnumTypeDataTruck`,
+          `NameDriver` = NEW.`NameDriver`, `IdCard` = NEW.`IdCard`,
+          `LicensePlate` = NEW.`LicensePlate`, `Note` = NEW.`Note`,
+          `ReasonDelete` = NEW.`ReasonDelete`, `WeighInAt` = NEW.`WeighInAt`,
+          `WeighOutAt` = NEW.`WeighOutAt`, `Type` = NEW.`Type`,
+          `ClientId` = NEW.`ClientId`, `TypeGoodsId` = NEW.`TypeGoodsId`,
+          `WarehouseId` = NEW.`WarehouseId`, `UserId` = NEW.`UserId`,
+          `StationId` = NEW.`StationId`, `CreatedAt` = NEW.`CreatedAt`,
+          `CreatedBy` = NEW.`CreatedBy`, `UpdatedAt` = NEW.`UpdatedAt`,
+          `UpdatedBy` = NEW.`UpdatedBy`, `DeletedFlag` = NEW.`DeletedFlag`,
+          `EnableFlag` = NEW.`EnableFlag`, `SyncFlag` = NEW.`SyncFlag`;";
+    }
+
+    private static string BuildRecordWeightUpsertTrigger(string eventName)
+    {
+      return $@"
+        CREATE TRIGGER `TR_RecordWeights_After{eventName[0]}{eventName[1..].ToLowerInvariant()}`
+        AFTER {eventName} ON `RecordWeights` FOR EACH ROW
+        INSERT INTO `Records` (
+          `Id`, `TypeData`, `NetTime01`, `Tare`, `NameTareForTruck`,
+          `NameDriver`, `IdCard`, `LicensePlate`, `Note`, `ReasonDelete`,
+          `ClientId`, `TypeGoodsId`, `UserId`, `StationId`, `CreatedAt`,
+          `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`, `EnableFlag`,
+          `SyncFlag`)
+        VALUES (
+          NEW.`Id`, 2, NEW.`Net`, NEW.`Tare`,
+          (SELECT tare.`Name` FROM `Tares` tare
+           WHERE tare.`Id` = NEW.`CategoryTareId` LIMIT 1),
+          NEW.`NameDriver`, NEW.`IdCard`, NEW.`LicensePlate`, NEW.`Note`,
+          NEW.`ReasonDelete`, NEW.`DeliveryId`, NEW.`ProductId`, NEW.`UserId`,
+          NEW.`StationId`, NEW.`CreatedAt`, NEW.`CreatedBy`, NEW.`UpdatedAt`,
+          NEW.`UpdatedBy`, NEW.`DeletedFlag`, NEW.`EnableFlag`, NEW.`SyncFlag`)
+        ON DUPLICATE KEY UPDATE
+          `TypeData` = 2, `NetTime01` = NEW.`Net`, `Tare` = NEW.`Tare`,
+          `NameTareForTruck` = (SELECT tare.`Name` FROM `Tares` tare
+            WHERE tare.`Id` = NEW.`CategoryTareId` LIMIT 1),
+          `NameDriver` = NEW.`NameDriver`, `IdCard` = NEW.`IdCard`,
+          `LicensePlate` = NEW.`LicensePlate`, `Note` = NEW.`Note`,
+          `ReasonDelete` = NEW.`ReasonDelete`, `ClientId` = NEW.`DeliveryId`,
+          `TypeGoodsId` = NEW.`ProductId`, `UserId` = NEW.`UserId`,
+          `StationId` = NEW.`StationId`, `CreatedAt` = NEW.`CreatedAt`,
+          `CreatedBy` = NEW.`CreatedBy`, `UpdatedAt` = NEW.`UpdatedAt`,
+          `UpdatedBy` = NEW.`UpdatedBy`, `DeletedFlag` = NEW.`DeletedFlag`,
+          `EnableFlag` = NEW.`EnableFlag`, `SyncFlag` = NEW.`SyncFlag`;";
+    }
+
+    private static async Task EnsureRecordForeignKeyAsync(
+      MySqlDbContext db,
+      string columnName,
+      string referencedTable,
+      string constraintName)
+    {
+      string safeColumn = columnName.Replace("`", "``", StringComparison.Ordinal);
+      string safeReferencedTable = referencedTable.Replace(
+        "`", "``", StringComparison.Ordinal);
+      string safeConstraint = constraintName.Replace(
+        "`", "``", StringComparison.Ordinal);
+
+      await using (var validateCommand =
+        db.Database.GetDbConnection().CreateCommand())
+      {
+        validateCommand.CommandText = $@"
+          SELECT COUNT(*)
+          FROM `Records` record
+          LEFT JOIN `{safeReferencedTable}` related
+            ON related.`Id` = record.`{safeColumn}`
+          WHERE record.`{safeColumn}` IS NOT NULL
+            AND related.`Id` IS NULL;";
+        int orphanCount = Convert.ToInt32(
+          await validateCommand.ExecuteScalarAsync());
+        if (orphanCount > 0)
+        {
+          throw new InvalidOperationException(
+            $"Không thể tạo foreign key {constraintName}: có {orphanCount} " +
+            $"bản ghi Records.{columnName} không tồn tại trong " +
+            $"{referencedTable}.Id.");
+        }
+      }
+
+      var foreignKeys = new List<(string Name, string ReferencedTable)>();
+      await using (var findCommand =
+        db.Database.GetDbConnection().CreateCommand())
+      {
+        findCommand.CommandText = @"
+          SELECT CONSTRAINT_NAME, REFERENCED_TABLE_NAME
+          FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'Records'
+            AND COLUMN_NAME = @columnName
+            AND REFERENCED_TABLE_NAME IS NOT NULL;";
+        var parameter = findCommand.CreateParameter();
+        parameter.ParameterName = "@columnName";
+        parameter.Value = columnName;
+        findCommand.Parameters.Add(parameter);
+
+        await using var reader = await findCommand.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+          foreignKeys.Add((reader.GetString(0), reader.GetString(1)));
+      }
+
+      if (foreignKeys.Count == 1 && string.Equals(
+            foreignKeys[0].ReferencedTable, referencedTable,
+            StringComparison.OrdinalIgnoreCase))
+        return;
+
+      foreach (var foreignKey in foreignKeys)
+      {
+        string safeForeignKey = foreignKey.Name.Replace(
+          "`", "``", StringComparison.Ordinal);
+        await using var dropCommand =
+          db.Database.GetDbConnection().CreateCommand();
+        dropCommand.CommandText =
+          $"ALTER TABLE `Records` DROP FOREIGN KEY `{safeForeignKey}`;";
+        await dropCommand.ExecuteNonQueryAsync();
+      }
+
+      await using var addCommand =
+        db.Database.GetDbConnection().CreateCommand();
+      addCommand.CommandText = $@"
+        ALTER TABLE `Records`
+        ADD CONSTRAINT `{safeConstraint}`
+        FOREIGN KEY (`{safeColumn}`)
+        REFERENCES `{safeReferencedTable}` (`Id`)
+        ON DELETE RESTRICT;";
+      await addCommand.ExecuteNonQueryAsync();
+    }
+
+    private static async Task ValidateRecordMigrationAsync(
+      MySqlDbContext db,
+      string sourceTable,
+      EnumTypeDataLocation typeData)
+    {
+      string safeSourceTable = sourceTable.Replace(
+        "`", "``", StringComparison.Ordinal);
+      await using var validateCommand =
+        db.Database.GetDbConnection().CreateCommand();
+      validateCommand.CommandText = $@"
+        SELECT COUNT(*)
+        FROM `{safeSourceTable}` source
+        LEFT JOIN `Records` merged
+          ON merged.`Id` = source.`Id`
+         AND merged.`TypeData` = {(int)typeData}
+        WHERE merged.`Id` IS NULL;";
+      int missingCount = Convert.ToInt32(
+        await validateCommand.ExecuteScalarAsync());
+      if (missingCount > 0)
+      {
+        throw new InvalidOperationException(
+          $"Không thể chuyển đầy đủ {missingCount} bản ghi từ {sourceTable} " +
+          "sang Records. Có thể Id bị trùng giữa RecordTrucks và RecordWeights.");
       }
     }
 

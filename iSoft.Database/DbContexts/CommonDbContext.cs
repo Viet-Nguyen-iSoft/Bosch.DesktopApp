@@ -39,6 +39,7 @@ namespace iSoft.Database.DbContexts
     public virtual DbSet<ClientDelivery>? ClientDeliveries { get; set; }
     public virtual DbSet<RecordTruck>? RecordTrucks { get; set; }
     public virtual DbSet<RecordWeight>? RecordWeights { get; set; }
+    public virtual DbSet<Models.Record>? Records { get; set; }
     public virtual DbSet<LicensePlate>? LicensePlates { get; set; }
     public virtual DbSet<ApiJobs>? ApiJobs { get; set; }
     public virtual DbSet<User>? Users { get; set; }
@@ -55,6 +56,49 @@ namespace iSoft.Database.DbContexts
       modelBuilder.Entity<RecordTruck>()
         .Property(record => record.LicensePlate)
         .HasMaxLength(20);
+
+      modelBuilder.Entity<Models.Record>()
+        .Property(record => record.LicensePlate)
+        .HasMaxLength(20);
+
+      modelBuilder.Entity<Models.Record>()
+        .Property(record => record.NumberTare)
+        .HasDefaultValue(1);
+
+      modelBuilder.Entity<Models.Record>()
+        .HasIndex(record => new { record.TypeData, record.DeletedFlag,
+          record.CreatedAt, record.Id })
+        .HasDatabaseName("IX_Records_TypeData_Deleted_Created");
+
+      modelBuilder.Entity<Models.Record>()
+        .HasOne(record => record.Client)
+        .WithMany()
+        .HasForeignKey(record => record.ClientId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+      modelBuilder.Entity<Models.Record>()
+        .HasOne(record => record.TypeGoods)
+        .WithMany()
+        .HasForeignKey(record => record.TypeGoodsId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+      modelBuilder.Entity<Models.Record>()
+        .HasOne(record => record.Warehouse)
+        .WithMany()
+        .HasForeignKey(record => record.WarehouseId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+      modelBuilder.Entity<Models.Record>()
+        .HasOne(record => record.User)
+        .WithMany()
+        .HasForeignKey(record => record.UserId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+      modelBuilder.Entity<Models.Record>()
+        .HasOne(record => record.Station)
+        .WithMany()
+        .HasForeignKey(record => record.StationId)
+        .OnDelete(DeleteBehavior.Restrict);
 
       modelBuilder.Entity<RecordTruck>()
         .Property(record => record.NumberTare)
