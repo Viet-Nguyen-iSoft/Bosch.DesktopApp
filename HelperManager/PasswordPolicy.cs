@@ -126,51 +126,5 @@ namespace HelperManager
 
 
 
-    //public static string Decrypt(string encodedText)
-    //{
-    //  if (string.IsNullOrEmpty(encodedText))
-    //  {
-    //    return encodedText;
-    //  }
-
-    //  try
-    //  {
-    //    encodedText = encodedText.Replace("-", "+").Replace("_", "/");
-    //    while (encodedText.Length % 4 != 0)
-    //    {
-    //      encodedText += "=";
-    //    }
-
-    //    byte[] source = Convert.FromBase64String(encodedText);
-    //    string encryptHandshakeSecretKey = CommonConfig.EncryptHandshakeSecretKey;
-    //    if (Encoding.UTF8.GetBytes(encryptHandshakeSecretKey).Length < 32)
-    //    {
-    //      throw new ArgumentException("Secret key must be at least 256 bits (32 characters)");
-    //    }
-
-    //    byte[] key = Encoding.UTF8.GetBytes(encryptHandshakeSecretKey).Take(32).ToArray();
-    //    using Aes aes = Aes.Create();
-    //    aes.Key = key;
-    //    byte[] iV = source.Take(16).ToArray();
-    //    byte[] buffer = source.Skip(16).ToArray();
-    //    aes.IV = iV;
-    //    aes.Mode = CipherMode.CBC;
-    //    aes.Padding = PaddingMode.PKCS7;
-    //    using ICryptoTransform transform = aes.CreateDecryptor(aes.Key, aes.IV);
-    //    using MemoryStream stream = new MemoryStream(buffer);
-    //    using CryptoStream stream2 = new CryptoStream(stream, transform, CryptoStreamMode.Read);
-    //    using StreamReader streamReader = new StreamReader(stream2);
-    //    return streamReader.ReadToEnd();
-    //  }
-    //  catch (FormatException innerException)
-    //  {
-    //    throw new FormatException("The input is not a valid Base-64 string.", innerException);
-    //  }
-    //  catch (Exception)
-    //  {
-    //    throw new BaseException("An error occurred during decryption.");
-    //  }
-    //}
-
   }
 }

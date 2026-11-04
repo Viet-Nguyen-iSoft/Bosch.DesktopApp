@@ -148,6 +148,8 @@ namespace ApiSyncData
             : s.DisplayName;
           l.Username = s.Username ?? string.Empty;
           l.Password = s.Password;
+          l.MustChangePassword = s.MustChangePassword ?? false;
+          l.PasswordChangedAt = s.PasswordChangedAt;
           l.EmployeeCode = s.EmployeeCode;
           l.IdCardCode = s.IdCardCode;
           l.EnableFlag = s.EnableFlag ?? false;

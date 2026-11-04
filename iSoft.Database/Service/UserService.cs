@@ -75,6 +75,17 @@ namespace iSoft.Database.Service
       User? user = await repository.GetByUsernameForLoginAsync(normalizedAccount)
         .ConfigureAwait(false);
 
+      string passwordKey = "3e7da5e8-9540-40ba-bd75-21fe19686e16";
+      bool isValid = EncoderHelper.Verify(
+                                              user.Username,
+                                              pass,
+                                              user.Password,
+                                              passwordKey
+                                          );
+
+      var a = EncoderHelper.Decrypt(user.Password);
+      //var b = EncoderHelper.Decrypt(user.PW);
+
       if (user == null || !user.EnableFlag)
       {
         await WriteLoginAuditAsync(

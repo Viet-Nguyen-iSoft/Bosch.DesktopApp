@@ -28,6 +28,8 @@ namespace ApiSyncData.Resp
     public string? DisplayName { get; set; }
     public string? Username { get; set; }
     public string? Password { get; set; }
+    public bool? MustChangePassword { get; set; }
+    public DateTime? PasswordChangedAt { get; set; }
     public string? EmployeeCode { get; set; }
     public string? IdCardCode { get; set; }
     public bool? EnableFlag { get; set; }

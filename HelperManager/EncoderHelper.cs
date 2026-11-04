@@ -55,6 +55,35 @@ namespace HelperManager
         //throw new BaseException("An error occurred during decryption.");
       }
     }
+
+
+    public static bool Verify(
+       string username,
+       string passwordInput,
+       string storedPassword,
+       string passwordKey)
+    {
+      if (string.IsNullOrEmpty(username) ||
+          string.IsNullOrEmpty(passwordInput) ||
+          string.IsNullOrEmpty(storedPassword) ||
+          string.IsNullOrEmpty(passwordKey))
+      {
+        return false;
+      }
+
+      byte[] keyBytes = Encoding.UTF8.GetBytes(passwordKey);
+      byte[] inputBytes = Encoding.UTF8.GetBytes(username + passwordInput);
+
+      using var hmac = new HMACMD5(keyBytes);
+      string encodedInput = Convert.ToBase64String(
+          hmac.ComputeHash(inputBytes)
+      );
+
+      return CryptographicOperations.FixedTimeEquals(
+          Encoding.UTF8.GetBytes(encodedInput),
+          Encoding.UTF8.GetBytes(storedPassword)
+      );
+    }
   }
 
 }
