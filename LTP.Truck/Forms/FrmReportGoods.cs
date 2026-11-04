@@ -286,10 +286,8 @@ namespace LTP.Truck.Forms
       }
 
       dgv.SuspendLayout();
-      var autoSizeRowsMode = dgv.AutoSizeRowsMode;
       try
       {
-        dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
         dgv.DataSource = records;
         ((CheckBoxColumnHeaderCell)dgv.Columns[SelectColumnName].HeaderCell).Checked = false;
         foreach (DataGridViewRow row in dgv.Rows)
@@ -300,7 +298,6 @@ namespace LTP.Truck.Forms
       }
       finally
       {
-        dgv.AutoSizeRowsMode = autoSizeRowsMode;
         dgv.ResumeLayout();
       }
     }
