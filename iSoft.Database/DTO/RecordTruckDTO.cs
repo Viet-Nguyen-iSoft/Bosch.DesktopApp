@@ -25,18 +25,16 @@ namespace iSoft.Database.DTO
 
     [DisplayName("Biển số xe")]
     public string? LicensePlate { get; set; }
-    [DisplayName("Tên tài xế")]
-    public string? NameDriver { get; set; }
-    [DisplayName("CCCD")]
-    public string? IdCard { get; set; }
-
-
 
     [DisplayName("Cân lần 1")]
     public string? NetTime01 { get; set; }
 
     [DisplayName("Cân lần 2")]
     public string? NetTime02 { get; set; }
+    [DisplayName("Tên tare")]
+    public string? TareName { get; set; }
+    [DisplayName("Giá trị Tare")]
+    public string? TareValue { get; set; }
 
     [DisplayName("Thời gian cân lần 1")]
     public string? Time01 { get; set; }
@@ -46,13 +44,18 @@ namespace iSoft.Database.DTO
 
     [DisplayName("Trạng thái")]
     public string? Status { get; set; }
+
     [Browsable(false)]
     public EnumTypeDataTruck EnumTypeDataTruck { get; set; } = EnumTypeDataTruck.None;
 
 
     [DisplayName("Khách hàng")]
-
     public string? Client { get; set; }
+
+    [DisplayName("Tên tài xế")]
+    public string? NameDriver { get; set; }
+    [DisplayName("CCCD")]
+    public string? IdCard { get; set; }
     [DisplayName("Loại hàng")]
     public string? TypeGoods { get; set; }
     [DisplayName("Kho hàng")]

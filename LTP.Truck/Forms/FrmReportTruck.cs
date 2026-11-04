@@ -196,6 +196,8 @@ namespace LTP.Truck.Forms
         nameof(RecordTruckDTO.LicensePlate),
         nameof(RecordTruckDTO.NetTime01),
         nameof(RecordTruckDTO.NetTime02),
+        nameof(RecordTruckDTO.TareName),
+        nameof(RecordTruckDTO.TareValue),
         nameof(RecordTruckDTO.Time01),
         nameof(RecordTruckDTO.Time02),
         nameof(RecordTruckDTO.Status)
@@ -220,6 +222,7 @@ namespace LTP.Truck.Forms
       {
         nameof(RecordTruckDTO.NetTime01),
         nameof(RecordTruckDTO.NetTime02),
+        nameof(RecordTruckDTO.TareValue),
       };
       foreach (var columnName in alignmentMiddleRightColumns)
       {
