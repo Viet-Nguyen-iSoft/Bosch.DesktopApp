@@ -7,6 +7,13 @@ namespace iSoft.Database.Service
 {
   public sealed class RecordService
   {
+    public async Task<RecordModel> AddOrUpdateAsync(RecordModel record)
+    {
+      await using var context = new MySqlDbContext();
+      return await new RecordRepository(context).AddOrUpdateAsync(record)
+        .ConfigureAwait(false);
+    }
+
     public async Task<List<RecordModel>> GetTruckReportAsync(
       DateTime fromUtc, DateTime toUtcExclusive, string? searchKey,
       int statusFilterIndex = 0)

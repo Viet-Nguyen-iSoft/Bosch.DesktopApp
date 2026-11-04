@@ -14,6 +14,27 @@ namespace iSoft.Database.Repositorys
     {
     }
 
+    public async Task<RecordModel> AddOrUpdateAsync(RecordModel record)
+    {
+      ArgumentNullException.ThrowIfNull(record);
+
+      record.SyncFlag = false;
+      record.LicensePlate = LicensePlateRepository.Normalize(record.LicensePlate);
+
+      var records = Context.Set<RecordModel>();
+      var existingRecord = record.Id == Guid.Empty
+        ? null
+        : await records.FindAsync(record.Id);
+
+      if (existingRecord == null)
+        await records.AddAsync(record);
+      else
+        Context.Entry(existingRecord).CurrentValues.SetValues(record);
+
+      await Context.SaveChangesAsync();
+      return existingRecord ?? record;
+    }
+
     public Task<List<RecordModel>> GetTruckReportAsync(
       DateTime fromUtc, DateTime toUtcExclusive, string? searchKey,
       int statusFilterIndex = 0)

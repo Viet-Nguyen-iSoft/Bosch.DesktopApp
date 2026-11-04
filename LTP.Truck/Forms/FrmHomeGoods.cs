@@ -16,6 +16,7 @@ using System.Globalization;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 using static iSoft.Database.EnumData;
+using RecordModel = iSoft.Database.Models.Record;
 
 namespace LTP.Truck.Forms
 {
@@ -892,13 +893,14 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var recordWeight = new RecordWeight
+      var now = DateTime.UtcNow;
+      var record = new RecordModel
       {
-        ProductId = selectedProduct.Id,
+        TypeData = EnumTypeDataLocation.Good,
+        ProductionId = selectedProduct.Id,
         CategoryTareId = selectedTare.Id,
-        DeliveryId = selectedDelivery.Id,
-        //RecordTruckId = selectedRecordTruck.Id,
-        Net = _msgDataWeight.IndicatedWeight,
+        ClientId = selectedDelivery.Id,
+        NetTime01 = _msgDataWeight.IndicatedWeight,
         Tare = _msgDataWeight.TareWeight,
         UserId = AppCore.Ins._userCurrent?.Id,
         StationId = AppCore.Ins._station?.Id,
@@ -906,7 +908,8 @@ namespace LTP.Truck.Forms
         IdCard = txtIdCard.Texts,
         NameDriver = txtNameDriver.Texts,
         Note = txtNote.Text,
-        CreatedAt = DateTime.UtcNow,
+        CreatedAt = now,
+        UpdatedAt = now,
         EnableFlag = true
       };
 
@@ -937,7 +940,7 @@ namespace LTP.Truck.Forms
           await LoadLicensePlateSuggestionsAsync();
         }
 
-        await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
+        await AppCore.Ins._recordService.AddOrUpdateAsync(record);
         await LoadHistorical();
         _waitingForWeightReset = true;
       }
@@ -1040,43 +1043,15 @@ namespace LTP.Truck.Forms
         // Include records occurring anywhere within the selected ending minute.
         var toUtcExclusive = toDateTime.AddMinutes(1).ToUniversalTime();
         var searchKey = txtSearchKey.Texts.Trim();
-        var goodsTask = AppCore.Ins._recordWeightService.GetReportAsync(
-          fromUtc, toUtcExclusive, searchKey, _filterDataTypeIndex);
-        var truckTask = AppCore.Ins._recordTruckService.GetReportAsync(
-          fromUtc, toUtcExclusive, searchKey, statusFilterIndex: 0);
-        await Task.WhenAll(goodsTask, truckTask);
+        var records = await AppCore.Ins._recordService.GetGoodsReportAsync(
+          fromUtc,
+          toUtcExclusive,
+          searchKey,
+          _filterDataTypeIndex,
+          _filterProductGroupId,
+          _filterWasteType);
 
-        var records = await goodsTask;
-        var truckRecords = await truckTask;
-
-        if (_filterProductGroupId.HasValue)
-        {
-          records = records
-            .Where(record => record.Product?.ProductGroupId == _filterProductGroupId.Value)
-            .ToList();
-          truckRecords = truckRecords
-            .Where(record => record.TypeGoods?.ProductGroupId == _filterProductGroupId.Value)
-            .ToList();
-        }
-
-        if (_filterWasteType.HasValue)
-        {
-          records = records
-            .Where(record => record.Product?.EnumWasteType == _filterWasteType.Value)
-            .ToList();
-          truckRecords = truckRecords
-            .Where(record => record.TypeGoods?.EnumWasteType == _filterWasteType.Value)
-            .ToList();
-        }
-
-        truckRecords = _filterDataTypeIndex switch
-        {
-          2 => truckRecords.Where(record => record.DeletedFlag).ToList(),
-          0 => truckRecords,
-          _ => truckRecords.Where(record => !record.DeletedFlag).ToList(),
-        };
-
-        SetDgvHistorical(DTOHelper.ConvertCombinedHistoryDTO(records, truckRecords));
+        SetDgvHistorical(DTOHelper.ConvertCombinedHistoryDTO(records));
       }
       catch (Exception ex)
       {
@@ -1140,6 +1115,8 @@ namespace LTP.Truck.Forms
           dgv.Columns[nameof(RecordWeightDTO.RecordWeight)].Visible = false;
         if (dgv.Columns.Contains(nameof(RecordWeightDTO.RecordTruck)))
           dgv.Columns[nameof(RecordWeightDTO.RecordTruck)].Visible = false;
+        if (dgv.Columns.Contains(nameof(RecordWeightDTO.Record)))
+          dgv.Columns[nameof(RecordWeightDTO.Record)].Visible = false;
         if (dgv.Columns.Contains(nameof(RecordWeightDTO.SortAt)))
           dgv.Columns[nameof(RecordWeightDTO.SortAt)].Visible = false;
 
@@ -1229,7 +1206,8 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var isTruckRecord = recordWeightDto.RecordTruck != null;
+      var isTruckRecord =
+        recordWeightDto.Record?.TypeData == EnumTypeDataLocation.Truck;
       var isDeleted = IsDeleted(recordWeightDto);
       var requiredPermission = isTruckRecord
         ? isDeleted ? "0202" : "0201"
@@ -1274,26 +1252,27 @@ namespace LTP.Truck.Forms
       {
         // Recheck after confirmation in case the calendar day changed meanwhile.
         if (!isDeleted && !CheckDeleteDate(recordWeightDto)) return;
-        if (recordWeightDto.RecordTruck is RecordTruck recordTruck)
+        if (isTruckRecord && recordWeightDto.RecordTruck is RecordTruck recordTruck)
         {
           recordTruck.ReasonDelete = reasonDelete;
           recordTruck.DeletedFlag = !recordTruck.DeletedFlag;
           recordTruck.UpdatedAt = DateTime.UtcNow;
           await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
         }
-        else if (recordWeightDto.RecordWeight is RecordWeight recordWeight)
+        else if (recordWeightDto.Record is RecordModel record)
         {
-          recordWeight.ReasonDelete = reasonDelete;
-          recordWeight.DeletedFlag = !recordWeight.DeletedFlag;
-          recordWeight.UpdatedAt = DateTime.UtcNow;
-          await AppCore.Ins._recordWeightService.AddOrUpdateAsync(recordWeight);
+          record.ReasonDelete = reasonDelete;
+          record.DeletedFlag = !record.DeletedFlag;
+          record.UpdatedAt = DateTime.UtcNow;
+          await AppCore.Ins._recordService.AddOrUpdateAsync(record);
         }
         await LoadHistorical();
       }
       catch (Exception ex)
       {
-        var entity = recordWeightDto.RecordTruck as object ??
-          recordWeightDto.RecordWeight;
+        var entity = isTruckRecord
+          ? recordWeightDto.RecordTruck as BaseModel
+          : recordWeightDto.Record;
         await AuditTrail.WriteAsync(
           isDeleted ? AuditActions.Restore : AuditActions.Delete,
           entity?.GetType().Name ?? "WeightRecord",
@@ -1371,7 +1350,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var isTruck = item.RecordTruck != null;
+      var isTruck = item.Record?.TypeData == EnumTypeDataLocation.Truck;
       var borderColor = isTruck
         ? Color.FromArgb(30, 64, 175)
         : Color.FromArgb(40, 167, 69);
@@ -1443,7 +1422,7 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      var reasonDelete = item.RecordWeight?.ReasonDelete ?? item.RecordTruck?.ReasonDelete;
+      var reasonDelete = item.Record?.ReasonDelete;
       if (string.IsNullOrWhiteSpace(reasonDelete))
         return;
 
@@ -1486,7 +1465,7 @@ namespace LTP.Truck.Forms
     private bool CheckDeleteDate(RecordWeightDTO item)
     {
       var days = AppCore.Ins._appConfig?.NumberDayPermitDeleteData ?? 1;
-      var createdAt = item.RecordWeight?.CreatedAt ?? item.RecordTruck?.CreatedAt;
+      var createdAt = item.Record?.CreatedAt;
       if (DataDeletionPolicy.CanDelete(createdAt, days, DateTime.UtcNow, DTOHelper.utc))
         return true;
 
@@ -1501,12 +1480,12 @@ namespace LTP.Truck.Forms
 
     private static bool CanModifyRecord(RecordWeightDTO item)
     {
-      var stationId = item.RecordWeight?.StationId ?? item.RecordTruck?.StationId;
+      var stationId = item.Record?.StationId;
       return AppCore.Ins._station != null && stationId == AppCore.Ins._station.Id;
     }
 
     private static bool IsDeleted(RecordWeightDTO item) =>
-      item.RecordWeight?.DeletedFlag ?? item.RecordTruck?.DeletedFlag ?? false;
+      item.Record?.DeletedFlag ?? false;
 
     private void dgv_CellClick(object? sender, DataGridViewCellEventArgs e)
     {
@@ -1608,64 +1587,57 @@ namespace LTP.Truck.Forms
       }
 
       if (dgv.Rows[e.RowIndex].DataBoundItem is RecordWeightDTO recordWeightDto &&
-          recordWeightDto.RecordWeight is RecordWeight recordWeight)
+          recordWeightDto.Record is RecordModel record)
       {
         _isViewingHistoricalDetail = true;
-        ShowHistoricalRecord(recordWeight);
-        ApplyHistoricalViewMode();
-      }
-      else if (dgv.Rows[e.RowIndex].DataBoundItem is RecordWeightDTO truckDto &&
-        truckDto.RecordTruck is RecordTruck recordTruck)
-      {
-        _isViewingHistoricalDetail = true;
-        ShowHistoricalTruckRecord(recordTruck);
+        ShowHistoricalRecord(record);
         ApplyHistoricalViewMode();
       }
 
     }
 
-    private void ShowHistoricalRecord(RecordWeight recordWeight)
+    private void ShowHistoricalRecord(RecordModel record)
     {
-      txtLicensePlate.Texts = FirstNotBlank(
-        recordWeight.LicensePlate,
-        recordWeight.RecordTruck?.LicensePlate);
-      txtNameDriver.Texts = FirstNotBlank(
-        recordWeight.NameDriver,
-        recordWeight.RecordTruck?.NameDriver);
-      txtIdCard.Texts = FirstNotBlank(
-        recordWeight.IdCard,
-        recordWeight.RecordTruck?.IdCard);
-      txtNote.Text = recordWeight.Note ?? string.Empty;
+      if (record.TypeData == EnumTypeDataLocation.Truck)
+      {
+        ShowHistoricalTruckRecord(record);
+        return;
+      }
+
+      txtLicensePlate.Texts = record.LicensePlate ?? string.Empty;
+      txtNameDriver.Texts = record.NameDriver ?? string.Empty;
+      txtIdCard.Texts = record.IdCard ?? string.Empty;
+      txtNote.Text = record.Note ?? string.Empty;
 
       SelectHistoricalComboItem(
         cbbDelivery,
-        recordWeight.Delivery,
-        recordWeight.DeliveryId);
-      cbbProductType.SelectedIndex = GetProductTypeIndex(recordWeight.Product?.EnumWasteType);
+        record.Client,
+        record.ClientId);
+      cbbProductType.SelectedIndex = GetProductTypeIndex(record.TypeGoods?.EnumWasteType);
       SelectHistoricalComboItem(
         cbbProductGroup,
-        recordWeight.Product?.ProductGroup,
-        recordWeight.Product?.ProductGroupId);
-      FillProduct(recordWeight.ProductId, preserveSelection: true);
+        record.TypeGoods?.ProductGroup,
+        record.TypeGoods?.ProductGroupId);
+      FillProduct(record.ProductionId, preserveSelection: true);
       SelectHistoricalComboItem(
         cbbProduct,
-        recordWeight.Product,
-        recordWeight.ProductId);
+        record.TypeGoods,
+        record.ProductionId);
       SelectHistoricalComboItem(
         cbbTare,
-        recordWeight.CategoryTare,
-        recordWeight.CategoryTareId);
+        record.CategoryTare,
+        record.CategoryTareId);
       _categoryTare = cbbTare.SelectedItem as Tare;
-      lbTare.Text = WeightFormatHelper.Format(recordWeight.Tare, 2);
+      lbTare.Text = WeightFormatHelper.Format(record.Tare, 2);
 
       ucItemGross.Value = WeightFormatHelper.Format(
-        recordWeight.Net + recordWeight.Tare,
+        record.NetTime01 + record.Tare,
         2);
-      ucItemNet.Value = WeightFormatHelper.Format(recordWeight.Net, 2);
-      ucItemTare.Value = WeightFormatHelper.Format(recordWeight.Tare, 2);
+      ucItemNet.Value = WeightFormatHelper.Format(record.NetTime01, 2);
+      ucItemTare.Value = WeightFormatHelper.Format(record.Tare, 2);
     }
 
-    private void ShowHistoricalTruckRecord(RecordTruck recordTruck)
+    private void ShowHistoricalTruckRecord(RecordModel recordTruck)
     {
       txtLicensePlate.Texts = recordTruck.LicensePlate ?? string.Empty;
       txtNameDriver.Texts = recordTruck.NameDriver ?? string.Empty;
@@ -1743,11 +1715,6 @@ namespace LTP.Truck.Forms
       txtLicensePlate.Focus();
     }
 
-    private static string FirstNotBlank(string? primary, string? fallback)
-      => !string.IsNullOrWhiteSpace(primary)
-        ? primary
-        : fallback ?? string.Empty;
-
     private static int GetProductTypeIndex(EnumWasteType? wasteType) => wasteType switch
     {
       EnumWasteType.Hazardous => 1,
@@ -1803,7 +1770,7 @@ namespace LTP.Truck.Forms
         .Cast<DataGridViewRow>()
         .Where(row => Convert.ToBoolean(row.Cells[SelectColumnName].Value))
         .Select(row => row.DataBoundItem as RecordWeightDTO)
-        .Where(dto => dto?.RecordWeight is not null)
+        .Where(dto => dto?.Record?.TypeData == EnumTypeDataLocation.Good)
         .Select(dto => dto!)
         .ToList();
 
