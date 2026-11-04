@@ -16,10 +16,12 @@ namespace ApiSyncData.Record
     public double Tare01 { get; set; }
     public double NetTime02 { get; set; }
     public double Tare02 { get; set; }
+    public int? NumberTare { get; set; } = 1;
     public EnumTypeDataTruck EnumTypeDataTruck { get; set; }
     public string? NameDriver { get; set; }
     public string? IdCard { get; set; }
     public string? LicensePlate { get; set; }
+    public string? Type { get; set; }
     public string? Document { get; set; }
     public Guid? StationId { get; set; }
     public Guid? UserId { get; set; }
