@@ -150,7 +150,6 @@ namespace LTP.Truck
 
             var needsAppConfig = !await db.AppConfigs!.AnyAsync();
             var needsUsers = !await db.Users!.AnyAsync();
-            var needStation = !await db.Stations!.AnyAsync();
 
             // Bỏ transaction/SaveChanges trong các lần mở app thông thường.
             //if (!needsAppConfig && !needsRoles)
@@ -178,53 +177,6 @@ namespace LTP.Truck
                 UpdatedAt = DateTime.UtcNow,
               });
             }
-
-            if (needStation)
-            {
-              List<Station> stations = new List<Station>();
-              stations.Add(new Station
-              {
-                Name = "Cân xe tải 80 tấn - Trạm 01",
-                Code = "ST01",
-                Description = "",
-                WeightDeviation = 0,
-                DeletedFlag = false,
-                EnableFlag = true,
-                SyncFlag = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-
-              });
-              stations.Add(new Station
-              {
-                Name = "Cân xe tải 80 tấn - Trạm 02",
-                Code = "ST02",
-                Description = "",
-                WeightDeviation = 0,
-                DeletedFlag = false,
-                EnableFlag = true,
-                SyncFlag = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-
-              });
-              stations.Add(new Station
-              {
-                Name = "Cân chất thải 3 tấn - Trạm 03",
-                Code = "ST03",
-                Description = "",
-                WeightDeviation = 0,
-                DeletedFlag = false,
-                EnableFlag = true,
-                SyncFlag = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-
-              });
-
-              await db.Stations.AddRangeAsync(stations);
-            }
-
 
             var existingRoles = await db.Roles!.ToListAsync();
             await SynchronizePermissionsAsync(

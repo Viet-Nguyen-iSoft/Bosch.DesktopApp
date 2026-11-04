@@ -92,8 +92,8 @@ namespace ApiSyncData
         () => SyncClientDeliveriesAsync(api, cancellationToken),
         cancellationToken);
 
-      var users = LoadAndSyncAsync("User", api.Users(cancellationToken), MasterDataSyncService.SyncUsersAsync,
-        value => Users = value, cancellationToken);
+      //var users = LoadAndSyncAsync("User", api.Users(cancellationToken), MasterDataSyncService.SyncUsersAsync,
+      //  value => Users = value, cancellationToken);
 
       var templates = RunWithContextAsync(
         "TemplateFile",
@@ -110,9 +110,13 @@ namespace ApiSyncData
         value => Documents = value,
         cancellationToken);
 
+      //await Task.WhenAll(stations, warehouses, productGroups,
+      //  products, categoryTares, clientDeliveries, users, templates, documents)
+      //  .ConfigureAwait(false);
       await Task.WhenAll(stations, warehouses, productGroups,
-        products, categoryTares, clientDeliveries, users, templates, documents)
+        products, categoryTares, clientDeliveries, templates, documents)
         .ConfigureAwait(false);
+
 
       //try
       //{
