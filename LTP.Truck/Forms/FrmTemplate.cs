@@ -30,6 +30,29 @@ namespace LTP.Truck.Forms
 
       btnSearch.Click += btnSearch_Click;
       dgv.CellContentClick += dgv_CellContentClick;
+      MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
+      Disposed += (_, _) =>
+        MasterDataChangeNotifier.Changed -= MasterDataChangeNotifier_Changed;
+    }
+
+    private void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
+    {
+      if (entityType != typeof(iSoft.Database.Models.Template) ||
+          IsDisposed || Disposing)
+      {
+        return;
+      }
+
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() => MasterDataChangeNotifier_Changed(
+          sender,
+          entityType)));
+        return;
+      }
+
+      if (Visible)
+        _ = LoadData();
     }
 
     #region Instance

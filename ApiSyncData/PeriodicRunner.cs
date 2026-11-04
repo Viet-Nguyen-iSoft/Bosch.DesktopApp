@@ -1,5 +1,6 @@
 using iSoft.Database.Models;
 using iSoft.Database.Service;
+using System.Collections.Concurrent;
 
 namespace ApiSyncData
 {
@@ -7,6 +8,9 @@ namespace ApiSyncData
   {
     public static event EventHandler<MasterDataChangedEventArgs>? EntityChanged;
     private static Func<bool> _serverAvailabilityCheck = static () => false;
+    private static readonly ConcurrentDictionary<string, DateTime>
+      ErrorLogTimes = new();
+    private static readonly TimeSpan ErrorLogInterval = TimeSpan.FromMinutes(1);
 
     public static Guid? StationId { get; private set; }
     public static int NumberLastDay { get; set; } = 30;
@@ -114,19 +118,56 @@ namespace ApiSyncData
         value => Documents = value,
         cancellationToken);
 
-      await Task.WhenAll(stations, warehouses, productGroups,
-        products, categoryTares, clientDeliveries, users, templates, documents)
+      // Một endpoint lỗi không được làm gián đoạn các nhóm dữ liệu còn lại.
+      // ProductFood đã chờ ProductGroup bên trong nên không cần chờ productGroups lần hai.
+      await Task.WhenAll(
+        RunIsolatedAsync(stations, cancellationToken),
+        RunIsolatedAsync(warehouses, cancellationToken),
+        RunIsolatedAsync(products, cancellationToken),
+        RunIsolatedAsync(categoryTares, cancellationToken),
+        RunIsolatedAsync(clientDeliveries, cancellationToken),
+        RunIsolatedAsync(users, cancellationToken),
+        RunIsolatedAsync(templates, cancellationToken),
+        RunIsolatedAsync(documents, cancellationToken))
         .ConfigureAwait(false);
 
       //các phiếu cân xe từ trạm khác.
-      await SyncRecordTrucksFromOtherStationsAsync(api, cancellationToken)
+      await RunIsolatedAsync(
+          SyncRecordTrucksFromOtherStationsAsync(api, cancellationToken),
+          cancellationToken)
           .ConfigureAwait(false);
+    }
+
+    private static async Task RunIsolatedAsync(
+      Task operation,
+      CancellationToken cancellationToken)
+    {
+      try
+      {
+        await operation.ConfigureAwait(false);
+      }
+      catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        LogSyncError(ex);
+      }
     }
 
     private static async Task SyncRecordTrucksFromOtherStationsAsync(
       ApiService api,
       CancellationToken cancellationToken)
     {
+      if (!string.Equals(
+        Environment.GetEnvironmentVariable("STATION")?.Trim(),
+        "2",
+        StringComparison.Ordinal))
+      {
+        return;
+      }
+
       if (!StationId.HasValue)
       {
         throw new InvalidOperationException(
@@ -205,6 +246,22 @@ namespace ApiSyncData
 
     private static void LogSyncError(Exception exception)
     {
+      string errorKey = $"{exception.Message}|{exception.GetBaseException().Message}";
+      DateTime now = DateTime.UtcNow;
+      if (ErrorLogTimes.TryGetValue(errorKey, out var lastLoggedAt) &&
+          now - lastLoggedAt < ErrorLogInterval)
+      {
+        return;
+      }
+
+      ErrorLogTimes[errorKey] = now;
+      if (ErrorLogTimes.Count > 500)
+      {
+        DateTime removeBefore = now - ErrorLogInterval;
+        foreach (var item in ErrorLogTimes.Where(item => item.Value < removeBefore))
+          ErrorLogTimes.TryRemove(item.Key, out _);
+      }
+
       System.Diagnostics.Trace.TraceError(exception.ToString());
       HelperManager.LogHelper.LogErrorToFileLog(
         exception,

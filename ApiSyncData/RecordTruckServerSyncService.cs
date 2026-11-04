@@ -3,13 +3,19 @@ using iSoft.Database.DbContexts;
 using iSoft.Database.Models;
 using iSoft.Database.Repositorys;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Concurrent;
 using static iSoft.Database.EnumData;
+using RecordModel = iSoft.Database.Models.Record;
 
 namespace ApiSyncData
 {
   internal static class RecordTruckServerSyncService
   {
     private static readonly SemaphoreSlim SyncLock = new(1, 1);
+    private static readonly ConcurrentDictionary<string, DateTime>
+      MissingReferenceLogTimes = new();
+    private static readonly TimeSpan MissingReferenceLogInterval =
+      TimeSpan.FromMinutes(10);
 
     internal static async Task<MasterDataChangedEventArgs?> SyncAsync(
       RecordTruckAPI response,
@@ -40,11 +46,12 @@ namespace ApiSyncData
         await using var db = new MySqlDbContext();
         var references = await LoadReferencesAsync(db, rows, token)
           .ConfigureAwait(false);
-        var localRows = await db.Set<RecordTruck>()
-          .Where(record => sourceIds.Contains(record.Id))
+        var localRows = await db.Set<RecordModel>()
+          .Where(record => record.TypeData == EnumTypeDataLocation.Truck &&
+            sourceIds.Contains(record.Id))
           .ToListAsync(token)
           .ConfigureAwait(false);
-        var locals = new Dictionary<Guid, RecordTruck>();
+        var locals = new Dictionary<Guid, RecordModel>();
         foreach (var localRow in localRows)
         {
           if (!locals.TryAdd(localRow.Id, localRow))
@@ -60,12 +67,13 @@ namespace ApiSyncData
           var sourceId = source.Id!.Value;
           if (!locals.TryGetValue(sourceId, out var local))
           {
-            local = new RecordTruck
+            local = new RecordModel
             {
               Id = sourceId,
+              TypeData = EnumTypeDataLocation.Truck,
               SyncFlag = true
             };
-            db.Set<RecordTruck>().Add(local);
+            db.Set<RecordModel>().Add(local);
             locals.Add(sourceId, local);
           }
 
@@ -73,7 +81,7 @@ namespace ApiSyncData
         }
 
         db.ChangeTracker.DetectChanges();
-        var changedEntries = db.ChangeTracker.Entries<RecordTruck>()
+        var changedEntries = db.ChangeTracker.Entries<RecordModel>()
           .Where(entry => entry.State is EntityState.Added or EntityState.Modified)
           .ToList();
         if (changedEntries.Count == 0)
@@ -89,7 +97,7 @@ namespace ApiSyncData
           .ToList();
         var deletedIds = changedEntries
           .Where(entry => entry.State == EntityState.Modified &&
-            entry.Property(nameof(RecordTruck.DeletedFlag)).IsModified &&
+            entry.Property(nameof(RecordModel.DeletedFlag)).IsModified &&
             entry.Entity.DeletedFlag)
           .Select(entry => entry.Entity.Id)
           .ToList();
@@ -99,7 +107,7 @@ namespace ApiSyncData
           return null;
 
         return new MasterDataChangedEventArgs(
-          typeof(RecordTruck),
+          typeof(RecordModel),
           addedIds,
           updatedIds.Except(deletedIds).ToList(),
           deletedIds,
@@ -113,9 +121,10 @@ namespace ApiSyncData
 
     private static void Map(
       ListDatumRecordTruck source,
-      RecordTruck target,
+      RecordModel target,
       ReferenceIds references)
     {
+      target.TypeData = EnumTypeDataLocation.Truck;
       target.NoLabelAuto = source.NoLabelAuto;
       target.NoLabelManual = source.NoLabelManual;
       target.LicensePlate = LicensePlateRepository.Normalize(
@@ -154,13 +163,13 @@ namespace ApiSyncData
 
     private static void MapTare(
       ListDatumRecordTruck source,
-      RecordTruck target,
+      RecordModel target,
       IReadOnlyDictionary<Guid, TareReference> tares)
     {
       var categoryTareId = NormalizeId(source.CategoryTareId);
       if (!categoryTareId.HasValue)
       {
-        target.NameTareForTruck = null;
+        target.CategoryTareId = null;
         target.Tare = 0;
         return;
       }
@@ -171,12 +180,12 @@ namespace ApiSyncData
           source.Id,
           categoryTareId.Value,
           nameof(source.CategoryTareId));
-        target.NameTareForTruck = null;
+        target.CategoryTareId = null;
         target.Tare = 0;
         return;
       }
 
-      target.NameTareForTruck = tare.Name;
+      target.CategoryTareId = categoryTareId.Value;
       target.Tare = (tare.Value ?? 0) * (target.NumberTare ?? 1);
     }
 
@@ -216,6 +225,25 @@ namespace ApiSyncData
       Guid referenceId,
       string relationName)
     {
+      string logKey = $"{recordTruckId:N}|{relationName}|{referenceId:N}";
+      DateTime now = DateTime.UtcNow;
+      if (MissingReferenceLogTimes.TryGetValue(logKey, out var lastLoggedAt) &&
+          now - lastLoggedAt < MissingReferenceLogInterval)
+      {
+        return;
+      }
+
+      MissingReferenceLogTimes[logKey] = now;
+      if (MissingReferenceLogTimes.Count > 1000)
+      {
+        DateTime removeBefore = now - MissingReferenceLogInterval;
+        foreach (var item in MissingReferenceLogTimes.Where(item =>
+          item.Value < removeBefore))
+        {
+          MissingReferenceLogTimes.TryRemove(item.Key, out _);
+        }
+      }
+
       string warning =
         $"RecordTruck {recordTruckId}: {relationName} {referenceId} " +
         "không tồn tại trong master data local; khóa ngoại được để trống.";

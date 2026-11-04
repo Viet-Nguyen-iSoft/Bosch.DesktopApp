@@ -36,6 +36,26 @@ namespace LTP.Truck.Forms
       txtSearch._TextChanged += txtSearch_TextChanged;
       dgv.CellContentClick += dgv_CellContentClick;
       ucPage1.PageChanged += ucPage1_PageChanged;
+      MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
+      Disposed += (_, _) =>
+        MasterDataChangeNotifier.Changed -= MasterDataChangeNotifier_Changed;
+    }
+
+    private void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
+    {
+      if (entityType != typeof(User) || IsDisposed || Disposing)
+        return;
+
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() => MasterDataChangeNotifier_Changed(
+          sender,
+          entityType)));
+        return;
+      }
+
+      if (Visible)
+        _ = LoadData(resetPage: false);
     }
 
     #region Instance

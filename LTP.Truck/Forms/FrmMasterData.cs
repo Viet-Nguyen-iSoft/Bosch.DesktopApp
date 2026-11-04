@@ -64,7 +64,49 @@ namespace LTP.Truck.Forms
       cbbType.SelectedIndex = 0;
       cbbType.Visible = false;
       cbbType.SelectedIndexChanged += cbbType_SelectedIndexChanged;
+      MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
+      Disposed += (_, _) =>
+        MasterDataChangeNotifier.Changed -= MasterDataChangeNotifier_Changed;
     }
+
+    private void MasterDataChangeNotifier_Changed(
+      object? sender,
+      Type entityType)
+    {
+      if (IsDisposed || Disposing)
+        return;
+
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() => MasterDataChangeNotifier_Changed(
+          sender,
+          entityType)));
+        return;
+      }
+
+      if (!Visible || !DoesEntityAffectCurrentMasterData(entityType))
+        return;
+
+      _ = LoadData(_enumTypeMasterDataCurrent);
+    }
+
+    private bool DoesEntityAffectCurrentMasterData(Type entityType) =>
+      entityType == typeof(ClientDelivery)
+        ? _enumTypeMasterDataCurrent is EnumTypeMasterData.Client or
+          EnumTypeMasterData.Delivery
+        : entityType == typeof(Product)
+          ? _enumTypeMasterDataCurrent is EnumTypeMasterData.TypeGoods or
+            EnumTypeMasterData.Product
+          : entityType == typeof(ProductGroup)
+            ? _enumTypeMasterDataCurrent is EnumTypeMasterData.GroupProduct or
+              EnumTypeMasterData.TypeGoods or EnumTypeMasterData.Product
+            : entityType == typeof(Tare)
+              ? _enumTypeMasterDataCurrent is EnumTypeMasterData.Tare or
+                EnumTypeMasterData.TareForTruck
+              : entityType == typeof(Warehouse)
+                ? _enumTypeMasterDataCurrent == EnumTypeMasterData.Warehouse
+                : entityType == typeof(DocumentData) &&
+                  _enumTypeMasterDataCurrent == EnumTypeMasterData.Document;
 
     private void RegisterService()
     {
@@ -126,11 +168,7 @@ namespace LTP.Truck.Forms
       {
         int loadVersion = Interlocked.Increment(ref _loadDataVersion);
         _enumTypeMasterDataCurrent = enumTypeMaster;
-        btnImport.Visible = enumTypeMaster is
-          EnumTypeMasterData.TypeGoods or
-          EnumTypeMasterData.Product or
-          EnumTypeMasterData.Tare or
-          EnumTypeMasterData.TareForTruck;
+        btnImport.Visible = false;
         ConfigureWasteTypeFilter(enumTypeMaster);
         await ConfigureProductGroupFilterAsync(enumTypeMaster, loadVersion);
         if (!IsCurrentLoad(enumTypeMaster, loadVersion)) return;

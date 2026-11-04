@@ -303,30 +303,6 @@ namespace LTP.Truck.Forms
       }
     }
 
-    private void AddPrintColumn()
-    {
-      if (!dgv.Columns.Contains(PrintColumnName))
-      {
-        dgv.Columns.Add(new DataGridViewButtonColumn
-        {
-          Name = PrintColumnName,
-          HeaderText = "In nhãn",
-          Text = "In nhãn",
-          UseColumnTextForButtonValue = true,
-          AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-          Width = 120,
-          Resizable = DataGridViewTriState.False,
-          SortMode = DataGridViewColumnSortMode.NotSortable,
-        });
-      }
-
-      var printColumn = dgv.Columns[PrintColumnName];
-      printColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-      printColumn.Width = 120;
-      printColumn.DisplayIndex = 0;
-      printColumn.Frozen = true;
-    }
-
     private void dgv_CellContentClick(object? sender, DataGridViewCellEventArgs e)
     {
       if (_isPrintingLabel ||

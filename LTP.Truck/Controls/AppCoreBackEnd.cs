@@ -85,7 +85,9 @@ namespace LTP.Truck.Controls
     {
       try
       {
-        LoadDataConfig().Wait();
+        // Khởi tạo vẫn phải hoàn tất trước khi mở UI; GetResult giữ nguyên
+        // exception gốc thay vì bọc thêm AggregateException như Task.Wait().
+        LoadDataConfig().GetAwaiter().GetResult();
 
         if (!Directory.Exists(_folderFileLog))
           Directory.CreateDirectory(_folderFileLog);

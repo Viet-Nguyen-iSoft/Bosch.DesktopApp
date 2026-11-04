@@ -9,12 +9,13 @@ using LTP.Truck.Popup;
 using System.Globalization;
 using static Common.EnumData;
 using static iSoft.Database.EnumData;
+using RecordModel = iSoft.Database.Models.Record;
 
 namespace LTP.Truck.Forms
 {
   public partial class PopupAddRecordTruckInGoods : Form
   {
-    public event Action<RecordTruck>? OnSendSuccess;
+    public event Action<RecordModel>? OnSendSuccess;
 
     private readonly TareService _tareService = new();
     private Guid? _clientId;
@@ -205,8 +206,9 @@ namespace LTP.Truck.Forms
 
       var now = DateTime.UtcNow;
       var selectedTare = cbbTareForTruck.SelectedItem as Tare;
-      OnSendSuccess?.Invoke(new RecordTruck
+      OnSendSuccess?.Invoke(new RecordModel
       {
+        TypeData = EnumTypeDataLocation.Truck,
         NetTime01 = netWeight,
         NetTime02 = grossWeight,
         EnumTypeDataTruck = EnumTypeDataTruck.DoneTime02,
@@ -218,7 +220,7 @@ namespace LTP.Truck.Forms
         ProductionId = _productionId,
         WarehouseId = _warehouseId,
         Tare = tare,
-        NameTareForTruck = selectedTare?.Id == Guid.Empty ? null : selectedTare?.Name,
+        CategoryTareId = selectedTare?.Id == Guid.Empty ? null : selectedTare?.Id,
         NumberTare = decimal.ToInt32(numericUpDownNumberTare.Value),
         StationId = AppCore.Ins._station?.Id,
         UserId = AppCore.Ins._userCurrent?.Id,

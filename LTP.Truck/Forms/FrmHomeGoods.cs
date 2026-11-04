@@ -204,9 +204,6 @@ namespace LTP.Truck.Forms
         //Đăng kí sự kiện
         cbbProductGroup.SelectedValueChanged += cbbProductGroup_SelectedValueChanged;
 
-        FrmMain.Instance.OnChangeProductGroup += Instance_OnChangeProductGroup;
-        FrmMain.Instance.OnChangeProduct += Instance_OnChangeProduct;
-        FrmMain.Instance.OnChangeTare += Instance_OnChangeTare;
         MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
         AppCore.Ins.OnSendDataWeight += Ins_OnSendDataWeight;
         AppCore.Ins.OnSendStatusWeight += Ins_OnSendStatusWeight;
@@ -220,6 +217,17 @@ namespace LTP.Truck.Forms
 
     private void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
     {
+      if (IsDisposed || Disposing)
+        return;
+
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() => MasterDataChangeNotifier_Changed(
+          sender,
+          entityType)));
+        return;
+      }
+
       if (entityType == typeof(ProductGroup))
         Instance_OnChangeProductGroup(sender, EventArgs.Empty);
       else if (entityType == typeof(Product))
@@ -751,22 +759,24 @@ namespace LTP.Truck.Forms
       popup.ShowDialog(this);
     }
 
-    private async void SaveManualTruckAsync(RecordTruck recordTruck)
+    private async void SaveManualTruckAsync(RecordModel record)
     {
       try
       {
-        recordTruck.NoLabelAuto = await AppCore.Ins._appConfigService
+        record.NoLabelAuto = await AppCore.Ins._appConfigService
           .CreateNextLabelAsync(AppCore.Ins._appConfig ??
             throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
 
-        var result = await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
-        if (!result.Exist)
+        var licensePlateResult = await AppCore.Ins._licensePlateService
+          .EnsureExistsAsync(record.LicensePlate);
+        var savedRecord = await AppCore.Ins._recordService.AddOrUpdateAsync(record);
+        if (!licensePlateResult.Exist)
         {
           var licensePlateRequest = new LicensePlateUpsertRequest
           {
-            Id = result.LicensePlate?.Id,
-            LicensePlateCode = result.LicensePlate?.Plate ?? string.Empty,
-            Description = result.LicensePlate?.Description,
+            Id = licensePlateResult.LicensePlate?.Id,
+            LicensePlateCode = licensePlateResult.LicensePlate?.Plate ?? string.Empty,
+            Description = licensePlateResult.LicensePlate?.Description,
           };
           await AppCore.Ins._apiJobsService.AddOrUpdateAsync(new ApiJobs
           {
@@ -777,9 +787,9 @@ namespace LTP.Truck.Forms
           });
         }
 
-        txtLicensePlate.Texts = result.Record.LicensePlate ?? string.Empty;
-        txtNameDriver.Texts = result.Record.NameDriver ?? string.Empty;
-        txtIdCard.Texts = result.Record.IdCard ?? string.Empty;
+        txtLicensePlate.Texts = savedRecord.LicensePlate ?? string.Empty;
+        txtNameDriver.Texts = savedRecord.NameDriver ?? string.Empty;
+        txtIdCard.Texts = savedRecord.IdCard ?? string.Empty;
         await LoadLicensePlateSuggestionsAsync();
         await LoadHistorical();
 
@@ -1055,7 +1065,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
-
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
     }
 
@@ -1252,14 +1262,7 @@ namespace LTP.Truck.Forms
       {
         // Recheck after confirmation in case the calendar day changed meanwhile.
         if (!isDeleted && !CheckDeleteDate(recordWeightDto)) return;
-        if (isTruckRecord && recordWeightDto.RecordTruck is RecordTruck recordTruck)
-        {
-          recordTruck.ReasonDelete = reasonDelete;
-          recordTruck.DeletedFlag = !recordTruck.DeletedFlag;
-          recordTruck.UpdatedAt = DateTime.UtcNow;
-          await AppCore.Ins._recordTruckService.AddOrUpdateAsync(recordTruck);
-        }
-        else if (recordWeightDto.Record is RecordModel record)
+        if (recordWeightDto.Record is RecordModel record)
         {
           record.ReasonDelete = reasonDelete;
           record.DeletedFlag = !record.DeletedFlag;
@@ -1270,9 +1273,7 @@ namespace LTP.Truck.Forms
       }
       catch (Exception ex)
       {
-        var entity = isTruckRecord
-          ? recordWeightDto.RecordTruck as BaseModel
-          : recordWeightDto.Record;
+        var entity = recordWeightDto.Record;
         await AuditTrail.WriteAsync(
           isDeleted ? AuditActions.Restore : AuditActions.Delete,
           entity?.GetType().Name ?? "WeightRecord",

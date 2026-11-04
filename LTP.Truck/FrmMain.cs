@@ -13,9 +13,6 @@ namespace LTP.Truck
 {
   public partial class FrmMain : Form
   {
-    public event EventHandler? OnChangeProductGroup;
-    public event EventHandler? OnChangeProduct;
-    public event EventHandler? OnChangeTare;
     public FrmMain()
     {
       InitializeComponent();
@@ -194,24 +191,111 @@ namespace LTP.Truck
       }
     }
 
-    private void PeriodicRunner_EntityChanged(object? sender, MasterDataChangedEventArgs e)
+    private async void PeriodicRunner_EntityChanged(
+      object? sender,
+      MasterDataChangedEventArgs e)
     {
-      if (e.EntityType == typeof(ProductGroup))
+      try
       {
-        OnChangeProductGroup?.Invoke(this, e);
+        global::LTP.Truck.Controls.MasterDataChangeNotifier.Notify(e.EntityType);
+
+        if (e.EntityType == typeof(User))
+        {
+          await RefreshCurrentUserAsync(e);
+        }
+        else if (e.EntityType == typeof(Station))
+        {
+          await RefreshCurrentStationAsync(e);
+        }
       }
-      else if (e.EntityType == typeof(Product))
+      catch (Exception ex)
       {
-        OnChangeProduct?.Invoke(this, e);
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
       }
-      else if (e.EntityType == typeof(Tare))
+    }
+
+    private async Task RefreshCurrentUserAsync(MasterDataChangedEventArgs changes)
+    {
+      var currentUser = AppCore.Ins._userCurrent;
+      if (currentUser == null)
+        return;
+
+      var currentUserId = currentUser.Id;
+      bool currentUserChanged = changes.AddedIds.Contains(currentUserId) ||
+        changes.UpdatedIds.Contains(currentUserId) ||
+        changes.DeletedIds.Contains(currentUserId);
+      if (!currentUserChanged)
+        return;
+
+      var refreshedUser = await AppCore.Ins._userService.GetByIdAsync(
+        currentUserId,
+        isContainDelete: true);
+
+      void ApplyUserChange()
       {
-        OnChangeTare?.Invoke(this, e);
+        if (IsDisposed || Disposing ||
+            AppCore.Ins._userCurrent?.Id != currentUserId)
+        {
+          return;
+        }
+
+        if (refreshedUser == null || refreshedUser.DeletedFlag ||
+            !refreshedUser.EnableFlag)
+        {
+          Logout();
+          return;
+        }
+
+        AppCore.Ins._userCurrent = refreshedUser;
+        FrmOperation.Instance.LoadAccount(refreshedUser);
       }
-      else if (e.EntityType == typeof(DocumentData))
+
+      if (InvokeRequired)
       {
-        global::LTP.Truck.Controls.MasterDataChangeNotifier.Notify<DocumentData>();
+        BeginInvoke((Action)ApplyUserChange);
+        return;
       }
+
+      ApplyUserChange();
+    }
+
+    private async Task RefreshCurrentStationAsync(
+      MasterDataChangedEventArgs changes)
+    {
+      var currentStation = AppCore.Ins._station;
+      if (currentStation == null)
+        return;
+
+      var currentStationId = currentStation.Id;
+      bool currentStationChanged = changes.AddedIds.Contains(currentStationId) ||
+        changes.UpdatedIds.Contains(currentStationId) ||
+        changes.DeletedIds.Contains(currentStationId);
+      if (!currentStationChanged)
+        return;
+
+      var refreshedStation = await AppCore.Ins._stationService.GetByCodeAsync(
+        currentStationId);
+      if (refreshedStation == null)
+        return;
+
+      void ApplyStationChange()
+      {
+        if (IsDisposed || Disposing ||
+            AppCore.Ins._station?.Id != currentStationId)
+        {
+          return;
+        }
+
+        AppCore.Ins.ChangeStation(refreshedStation);
+      }
+
+      if (InvokeRequired)
+      {
+        BeginInvoke((Action)ApplyStationChange);
+        return;
+      }
+
+      ApplyStationChange();
     }
 
     private void CheckOpenMulApp()

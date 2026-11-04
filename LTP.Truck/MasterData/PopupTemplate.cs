@@ -4,6 +4,7 @@ using HelperManager;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
+using LTP.Truck.Popup;
 using static Common.EnumData;
 using static HelperManager.EnumData;
 
@@ -47,14 +48,17 @@ namespace LTP.Truck.MasterData
         ? string.Empty
         : Path.GetFileName(_template.PathLocal);
       txtDescription.Texts = _template.TemplateFile ?? string.Empty;
-
-      txtName.Enabled = false;
-      txtNameFile.Enabled = false;
-      txtDescription.Enabled = false;
     }
 
     private void btnUpfile_Click(object? sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0304"))
+      {
+        using var popup = new PopupNoPermitRole();
+        popup.ShowDialog(this);
+        return;
+      }
+
       using var openFileDialog = new OpenFileDialog
       {
         Title = $"Chọn file local cho {_template.Name}",
@@ -81,6 +85,13 @@ namespace LTP.Truck.MasterData
 
     private async void btnConfirm_Click(object? sender, EventArgs e)
     {
+      if (!AppCore.Ins.CheckPermission("0304"))
+      {
+        using var popup = new PopupNoPermitRole();
+        popup.ShowDialog(this);
+        return;
+      }
+
       using var buttonLock = ButtonExecutionScope.Enter(sender);
 
       if (string.IsNullOrWhiteSpace(_selectedPath) ||

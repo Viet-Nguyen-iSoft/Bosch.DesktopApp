@@ -268,6 +268,7 @@ namespace LTP.Truck.Forms
       btnImport.Text = "Import";
       btnImport.TextColor = Color.White;
       btnImport.UseVisualStyleBackColor = false;
+      btnImport.Visible = false;
       // 
       // label27
       // 

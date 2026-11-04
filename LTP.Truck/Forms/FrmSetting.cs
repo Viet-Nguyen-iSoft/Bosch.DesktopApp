@@ -50,6 +50,26 @@ namespace LTP.Truck.Forms
       txtValueWeightGoodsCheckPermitConfirm._TextChanged += NonNegativeDecimal_TextChanged;
 
       btnSaveValueWeightGoodsCheckPermitConfirm.Click += btnSaveValueWeightGoodsCheckPermitConfirm_Click;
+      MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
+      Disposed += (_, _) =>
+        MasterDataChangeNotifier.Changed -= MasterDataChangeNotifier_Changed;
+    }
+
+    private void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
+    {
+      if (entityType != typeof(Station) || IsDisposed || Disposing)
+        return;
+
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() => MasterDataChangeNotifier_Changed(
+          sender,
+          entityType)));
+        return;
+      }
+
+      if (Visible)
+        _ = LoadStationsAsync();
     }
 
     private static void NonNegativeInteger_KeyPress(object? sender, KeyPressEventArgs e)
