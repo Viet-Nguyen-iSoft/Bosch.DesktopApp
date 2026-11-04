@@ -1428,6 +1428,8 @@ namespace LTP.Truck.Forms
         nameof(RecordTruckDTO.IdCard),
         nameof(RecordTruckDTO.NoLabelManual),
         nameof(RecordTruckDTO.Document),
+        nameof(RecordTruckDTO.TareName),
+        nameof(RecordTruckDTO.TareValue),
       };
       foreach (var columnName in hiddenColumns)
       {

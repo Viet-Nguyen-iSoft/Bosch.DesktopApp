@@ -118,12 +118,9 @@ namespace ApiSyncData
         products, categoryTares, clientDeliveries, users, templates, documents)
         .ConfigureAwait(false);
 
-      // Chỉ trạm hàng (STATION=2) cần nhận các phiếu cân xe từ trạm khác.
-      if (Environment.GetEnvironmentVariable("STATION") == "2")
-      {
-        await SyncRecordTrucksFromOtherStationsAsync(api, cancellationToken)
+      //các phiếu cân xe từ trạm khác.
+      await SyncRecordTrucksFromOtherStationsAsync(api, cancellationToken)
           .ConfigureAwait(false);
-      }
     }
 
     private static async Task SyncRecordTrucksFromOtherStationsAsync(
