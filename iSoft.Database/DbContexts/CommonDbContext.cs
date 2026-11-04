@@ -79,7 +79,7 @@ namespace iSoft.Database.DbContexts
       modelBuilder.Entity<Models.Record>()
         .HasOne(record => record.TypeGoods)
         .WithMany()
-        .HasForeignKey(record => record.TypeGoodsId)
+        .HasForeignKey(record => record.ProductionId)
         .OnDelete(DeleteBehavior.Restrict);
 
       modelBuilder.Entity<Models.Record>()
@@ -214,7 +214,7 @@ namespace iSoft.Database.DbContexts
       modelBuilder.Entity<RecordTruck>()
         .HasOne(record => record.TypeGoods)
         .WithMany(product => product.RecordTrucks)
-        .HasForeignKey(record => record.TypeGoodsId);
+        .HasForeignKey(record => record.ProductionId);
 
       modelBuilder.Entity<Connection>()
         .HasIndex(connection => new

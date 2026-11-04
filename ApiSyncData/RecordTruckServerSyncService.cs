@@ -130,8 +130,8 @@ namespace ApiSyncData
 
       target.ClientId = ResolveLocalId(
         source.Id, source.ClientId, references.Clients, nameof(source.ClientId));
-      target.TypeGoodsId = ResolveLocalId(
-        source.Id, source.TypeGoodsId, references.TypeGoods, nameof(source.TypeGoodsId));
+      target.ProductionId = ResolveLocalId(
+        source.Id, source.ProductionId, references.TypeGoods, nameof(source.ProductionId));
       target.WarehouseId = ResolveLocalId(
         source.Id, source.WarehouseId, references.Warehouses, nameof(source.WarehouseId));
       target.UserId = ResolveLocalId(
@@ -194,7 +194,7 @@ namespace ApiSyncData
       return new ReferenceIds(
         await LoadLocalIdsAsync<ClientDelivery>(db, rows.Select(row => row.ClientId), token)
           .ConfigureAwait(false),
-        await LoadLocalIdsAsync<Product>(db, rows.Select(row => row.TypeGoodsId), token)
+        await LoadLocalIdsAsync<Product>(db, rows.Select(row => row.ProductionId), token)
           .ConfigureAwait(false),
         await LoadLocalIdsAsync<Warehouse>(db, rows.Select(row => row.WarehouseId), token)
           .ConfigureAwait(false),

@@ -34,7 +34,7 @@ namespace iSoft.Database.Models
     public Guid? ClientId { get; set; }
     public ClientDelivery? Client { get; set; }
 
-    public Guid? TypeGoodsId { get; set; }
+    public Guid? ProductionId { get; set; }
     public Product? TypeGoods { get; set; }
 
     public Guid? CategoryTareId { get; set; }

@@ -18,7 +18,7 @@ namespace LTP.Truck.Forms
 
     private readonly TareService _tareService = new();
     private Guid? _clientId;
-    private Guid? _typeGoodsId;
+    private Guid? _productionId;
     private Guid? _warehouseId;
 
     public PopupAddRecordTruckInGoods()
@@ -107,7 +107,7 @@ namespace LTP.Truck.Forms
         {
           if (type == EnumTypeData.TypeGoods && value is TypeGoodsDTO dto)
           {
-            _typeGoodsId = dto.TypeGoods?.Id;
+            _productionId = dto.TypeGoods?.Id;
             txtTypeGoods.Texts = dto.Name ?? string.Empty;
           }
         };
@@ -190,7 +190,7 @@ namespace LTP.Truck.Forms
         ShowWarning("Vui lòng chọn khách hàng !");
         return;
       }
-      if (!_typeGoodsId.HasValue)
+      if (!_productionId.HasValue)
       {
         ShowWarning("Vui lòng chọn loại hàng !");
         return;
@@ -215,7 +215,7 @@ namespace LTP.Truck.Forms
         IdCard = txtIdCard.Texts.Trim(),
         Note = txtDocument.Text.Trim(),
         ClientId = _clientId,
-        TypeGoodsId = _typeGoodsId,
+        ProductionId = _productionId,
         WarehouseId = _warehouseId,
         Tare = tare,
         NameTareForTruck = selectedTare?.Id == Guid.Empty ? null : selectedTare?.Name,

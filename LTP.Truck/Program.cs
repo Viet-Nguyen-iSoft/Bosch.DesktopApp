@@ -129,6 +129,7 @@ namespace LTP.Truck
           try
           {
             await db.Database.EnsureCreatedAsync();
+            await EnsureProductionIdColumnsAsync(db);
             // Các service hiện tại chỉ đọc bảng hợp nhất. Tạo và chuyển dữ liệu
             // bảng này trước để một migration độc lập khác không thể chặn nó.
             await EnsureClientDeliveryTableAndMigrateAsync(db);
@@ -269,6 +270,103 @@ namespace LTP.Truck
       }
     }
 
+    private static async Task EnsureProductionIdColumnsAsync(MySqlDbContext db)
+    {
+      await db.Database.OpenConnectionAsync();
+      try
+      {
+        foreach (var tableName in new[] { "RecordTrucks", "Records" })
+        {
+          await using var findColumns =
+            db.Database.GetDbConnection().CreateCommand();
+          findColumns.CommandText = @"
+            SELECT COLUMN_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = @tableName
+              AND COLUMN_NAME IN ('TypeGoodsId', 'ProductionId');";
+          var tableParameter = findColumns.CreateParameter();
+          tableParameter.ParameterName = "@tableName";
+          tableParameter.Value = tableName;
+          findColumns.Parameters.Add(tableParameter);
+
+          var columns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+          await using (var reader = await findColumns.ExecuteReaderAsync())
+          {
+            while (await reader.ReadAsync())
+              columns.Add(reader.GetString(0));
+          }
+
+          if (!columns.Contains("TypeGoodsId"))
+            continue;
+
+          var foreignKeys = new List<string>();
+          await using (var findForeignKeys =
+            db.Database.GetDbConnection().CreateCommand())
+          {
+            findForeignKeys.CommandText = @"
+              SELECT DISTINCT CONSTRAINT_NAME
+              FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+              WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = @tableName
+                AND COLUMN_NAME = 'TypeGoodsId'
+                AND REFERENCED_TABLE_NAME IS NOT NULL;";
+            var foreignKeyTableParameter = findForeignKeys.CreateParameter();
+            foreignKeyTableParameter.ParameterName = "@tableName";
+            foreignKeyTableParameter.Value = tableName;
+            findForeignKeys.Parameters.Add(foreignKeyTableParameter);
+
+            await using var reader = await findForeignKeys.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+              foreignKeys.Add(reader.GetString(0));
+          }
+
+          foreach (var foreignKey in foreignKeys)
+          {
+            string safeForeignKey = foreignKey.Replace(
+              "`", "``", StringComparison.Ordinal);
+            await using var dropForeignKey =
+              db.Database.GetDbConnection().CreateCommand();
+            dropForeignKey.CommandText =
+              $"ALTER TABLE `{tableName}` DROP FOREIGN KEY `{safeForeignKey}`;";
+            await dropForeignKey.ExecuteNonQueryAsync();
+          }
+
+          if (columns.Contains("ProductionId"))
+          {
+            await using (var copyValues =
+              db.Database.GetDbConnection().CreateCommand())
+            {
+              copyValues.CommandText = $@"
+                UPDATE `{tableName}`
+                SET `ProductionId` = COALESCE(`ProductionId`, `TypeGoodsId`);";
+              await copyValues.ExecuteNonQueryAsync();
+            }
+
+            await using var dropLegacyColumn =
+              db.Database.GetDbConnection().CreateCommand();
+            dropLegacyColumn.CommandText =
+              $"ALTER TABLE `{tableName}` DROP COLUMN `TypeGoodsId`;";
+            await dropLegacyColumn.ExecuteNonQueryAsync();
+          }
+          else
+          {
+            await using var renameColumn =
+              db.Database.GetDbConnection().CreateCommand();
+            renameColumn.CommandText = $@"
+              ALTER TABLE `{tableName}`
+              CHANGE COLUMN `TypeGoodsId` `ProductionId`
+                char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL;";
+            await renameColumn.ExecuteNonQueryAsync();
+          }
+        }
+      }
+      finally
+      {
+        await db.Database.CloseConnectionAsync();
+      }
+    }
+
     private static async Task EnsureRecordTruckNumberTareColumnAsync(
       MySqlDbContext db)
     {
@@ -335,7 +433,7 @@ namespace LTP.Truck
               `WeighOutAt` datetime(6) NULL,
               `Type` longtext NULL,
               `ClientId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
-              `TypeGoodsId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `ProductionId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
               `CategoryTareId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
               `WarehouseId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
               `UserId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
@@ -372,7 +470,7 @@ namespace LTP.Truck
               ALTER TABLE `Records`
               ADD COLUMN `CategoryTareId`
                 char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL
-                AFTER `TypeGoodsId`;";
+                AFTER `ProductionId`;";
             await addCategoryTareColumn.ExecuteNonQueryAsync();
           }
         }
@@ -435,7 +533,7 @@ namespace LTP.Truck
               `NetTime02`, `TareTime02`, `Tare`, `NumberTare`,
               `EnumTypeDataTruck`, `NameDriver`, `IdCard`,
               `LicensePlate`, `Note`, `ReasonDelete`, `WeighInAt`, `WeighOutAt`,
-              `Type`, `ClientId`, `TypeGoodsId`, `CategoryTareId`,
+              `Type`, `ClientId`, `ProductionId`, `CategoryTareId`,
               `WarehouseId`, `UserId`,
               `StationId`, `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
               `DeletedFlag`, `EnableFlag`, `SyncFlag`)
@@ -446,7 +544,7 @@ namespace LTP.Truck
               rt.`NumberTare`, rt.`EnumTypeDataTruck`,
               rt.`NameDriver`, rt.`IdCard`, rt.`LicensePlate`, rt.`Note`,
               rt.`ReasonDelete`, rt.`WeighInAt`, rt.`WeighOutAt`, rt.`Type`,
-              rt.`ClientId`, rt.`TypeGoodsId`,
+              rt.`ClientId`, rt.`ProductionId`,
               (SELECT tare.`Id` FROM `Tares` tare
                WHERE tare.`Name` = rt.`NameTareForTruck`
                  AND tare.`EnumTypeData` = 1
@@ -467,7 +565,7 @@ namespace LTP.Truck
           INSERT IGNORE INTO `Records` (
             `Id`, `TypeData`, `NetTime01`, `Tare`, `NameDriver`,
             `IdCard`, `LicensePlate`, `Note`, `ReasonDelete`, `ClientId`,
-            `TypeGoodsId`, `CategoryTareId`, `UserId`, `StationId`,
+            `ProductionId`, `CategoryTareId`, `UserId`, `StationId`,
             `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`,
             `EnableFlag`, `SyncFlag`)
           SELECT
@@ -518,8 +616,8 @@ namespace LTP.Truck
           db, "ClientId", "ClientDeliveries",
           "FK_Records_ClientDeliveries_ClientId");
         await EnsureRecordForeignKeyAsync(
-          db, "TypeGoodsId", "Products",
-          "FK_Records_Products_TypeGoodsId");
+          db, "ProductionId", "Products",
+          "FK_Records_Products_ProductionId");
         await EnsureRecordForeignKeyAsync(
           db, "CategoryTareId", "Tares",
           "FK_Records_Tares_CategoryTareId");
@@ -586,7 +684,7 @@ namespace LTP.Truck
           `TareTime02`, `Tare`, `NumberTare`,
           `EnumTypeDataTruck`, `NameDriver`, `IdCard`, `LicensePlate`, `Note`,
           `ReasonDelete`, `WeighInAt`, `WeighOutAt`, `Type`, `ClientId`,
-          `TypeGoodsId`, `CategoryTareId`, `WarehouseId`, `UserId`,
+          `ProductionId`, `CategoryTareId`, `WarehouseId`, `UserId`,
           `StationId`, `CreatedAt`,
           `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`, `EnableFlag`,
           `SyncFlag`)
@@ -597,7 +695,7 @@ namespace LTP.Truck
           NEW.`NumberTare`, NEW.`EnumTypeDataTruck`,
           NEW.`NameDriver`, NEW.`IdCard`, NEW.`LicensePlate`, NEW.`Note`,
           NEW.`ReasonDelete`, NEW.`WeighInAt`, NEW.`WeighOutAt`, NEW.`Type`,
-          NEW.`ClientId`, NEW.`TypeGoodsId`,
+          NEW.`ClientId`, NEW.`ProductionId`,
           (SELECT tare.`Id` FROM `Tares` tare
            WHERE tare.`Name` = NEW.`NameTareForTruck`
              AND tare.`EnumTypeData` = 1
@@ -617,7 +715,7 @@ namespace LTP.Truck
           `LicensePlate` = NEW.`LicensePlate`, `Note` = NEW.`Note`,
           `ReasonDelete` = NEW.`ReasonDelete`, `WeighInAt` = NEW.`WeighInAt`,
           `WeighOutAt` = NEW.`WeighOutAt`, `Type` = NEW.`Type`,
-          `ClientId` = NEW.`ClientId`, `TypeGoodsId` = NEW.`TypeGoodsId`,
+          `ClientId` = NEW.`ClientId`, `ProductionId` = NEW.`ProductionId`,
           `CategoryTareId` = (SELECT tare.`Id` FROM `Tares` tare
             WHERE tare.`Name` = NEW.`NameTareForTruck`
               AND tare.`EnumTypeData` = 1
@@ -637,7 +735,7 @@ namespace LTP.Truck
         INSERT INTO `Records` (
           `Id`, `TypeData`, `NetTime01`, `Tare`, `NameDriver`, `IdCard`,
           `LicensePlate`, `Note`, `ReasonDelete`,
-          `ClientId`, `TypeGoodsId`, `CategoryTareId`, `UserId`, `StationId`, `CreatedAt`,
+          `ClientId`, `ProductionId`, `CategoryTareId`, `UserId`, `StationId`, `CreatedAt`,
           `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`, `EnableFlag`,
           `SyncFlag`)
         VALUES (
@@ -652,7 +750,7 @@ namespace LTP.Truck
           `NameDriver` = NEW.`NameDriver`, `IdCard` = NEW.`IdCard`,
           `LicensePlate` = NEW.`LicensePlate`, `Note` = NEW.`Note`,
           `ReasonDelete` = NEW.`ReasonDelete`, `ClientId` = NEW.`DeliveryId`,
-          `TypeGoodsId` = NEW.`ProductId`,
+          `ProductionId` = NEW.`ProductId`,
           `CategoryTareId` = NEW.`CategoryTareId`, `UserId` = NEW.`UserId`,
           `StationId` = NEW.`StationId`, `CreatedAt` = NEW.`CreatedAt`,
           `CreatedBy` = NEW.`CreatedBy`, `UpdatedAt` = NEW.`UpdatedAt`,
@@ -1341,7 +1439,7 @@ namespace LTP.Truck
             FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
             WHERE TABLE_SCHEMA = DATABASE()
               AND TABLE_NAME = 'RecordTrucks'
-              AND COLUMN_NAME = 'TypeGoodsId'
+              AND COLUMN_NAME = 'ProductionId'
               AND REFERENCED_TABLE_NAME IS NOT NULL;";
           await using var reader = await findForeignKeys.ExecuteReaderAsync();
           while (await reader.ReadAsync())
@@ -1364,8 +1462,8 @@ namespace LTP.Truck
           await using var addForeignKey = db.Database.GetDbConnection().CreateCommand();
           addForeignKey.CommandText = @"
             ALTER TABLE `RecordTrucks`
-            ADD CONSTRAINT `FK_RecordTrucks_Products_TypeGoodsId`
-            FOREIGN KEY (`TypeGoodsId`) REFERENCES `Products` (`Id`);";
+            ADD CONSTRAINT `FK_RecordTrucks_Products_ProductionId`
+            FOREIGN KEY (`ProductionId`) REFERENCES `Products` (`Id`);";
           await addForeignKey.ExecuteNonQueryAsync();
         }
 

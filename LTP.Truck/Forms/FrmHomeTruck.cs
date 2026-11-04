@@ -530,7 +530,7 @@ namespace LTP.Truck.Forms
 
           if (rsTypeGoods != null)
           {
-            _recordTruck.TypeGoodsId = rsTypeGoods?.TypeGoods?.Id;
+            _recordTruck.ProductionId = rsTypeGoods?.TypeGoods?.Id;
           }
           break;
         case Common.EnumData.EnumTypeData.Warehouse:
@@ -603,7 +603,7 @@ namespace LTP.Truck.Forms
         if (!ValidateClientSelected())
           return;
 
-        if (_recordTruck.TypeGoodsId == null)
+        if (_recordTruck.ProductionId == null)
         {
           using var popupMsg = new PopupConfirm("Vui lòng chọn Loại hàng trước khi cân !",
             EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);

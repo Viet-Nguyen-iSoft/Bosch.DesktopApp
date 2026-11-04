@@ -28,7 +28,7 @@ namespace ApiSyncData.Resp
     public DateTime? WeighInAt { get; set; }
     public DateTime? WeighOutAt { get; set; }
     public Guid? ClientId { get; set; }
-    public Guid? TypeGoodsId { get; set; }
+    public Guid? ProductionId { get; set; }
     public Guid? WarehouseId { get; set; }
     public Guid? UserId { get; set; }
     public Guid? StationId { get; set; }

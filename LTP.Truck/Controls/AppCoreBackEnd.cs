@@ -353,7 +353,7 @@ namespace LTP.Truck.Controls
           SumNet = group.Sum(recordWeight => recordWeight.Net)
         })
         .Concat((exportTruckData ?? new List<RecordTruck>())
-          .GroupBy(recordTruck => recordTruck.TypeGoodsId)
+          .GroupBy(recordTruck => recordTruck.ProductionId)
           .Select(group => new
           {
             ProductGroup = (string?)null,
@@ -489,7 +489,7 @@ namespace LTP.Truck.Controls
           SumNet = group.Sum(recordWeight => recordWeight.Net)
         })
         .Concat((exportTruckData ?? new List<RecordTruck>())
-          .GroupBy(recordTruck => recordTruck.TypeGoodsId)
+          .GroupBy(recordTruck => recordTruck.ProductionId)
           .Select(group => new
           {
             ProductGroup = (string?)null,

@@ -75,17 +75,6 @@ namespace iSoft.Database.Service
       User? user = await repository.GetByUsernameForLoginAsync(normalizedAccount)
         .ConfigureAwait(false);
 
-      string passwordKey = "3e7da5e8-9540-40ba-bd75-21fe19686e16";
-      bool isValid = EncoderHelper.Verify(
-                                              user.Username,
-                                              pass,
-                                              user.Password,
-                                              passwordKey
-                                          );
-
-      var a = EncoderHelper.Decrypt(user.Password);
-      //var b = EncoderHelper.Decrypt(user.PW);
-
       if (user == null || !user.EnableFlag)
       {
         await WriteLoginAuditAsync(
@@ -103,12 +92,28 @@ namespace iSoft.Database.Service
         return LoginResult.Locked();
       }
 
-      bool passwordMatches = string.Equals(user.PW, pass,
-        StringComparison.Ordinal);
-      if (!passwordMatches && user.Password != null)
+      bool IsCheckPassSecurity = true;
+      bool passwordMatches;
+      if (IsCheckPassSecurity)
       {
-        passwordMatches = SecurityHelper.VerifyPassword(
-          user.Username, pass, user.Password);
+        const string passwordKey = "3e7da5e8-9540-40ba-bd75-21fe19686e16";
+        bool isValid = EncoderHelper.Verify(
+          user.Username,
+          pass,
+          user.Password ?? string.Empty,
+          passwordKey);
+        passwordMatches = isValid;
+      }
+      else
+      {
+        // Giữ nguyên cơ chế đăng nhập cũ cho tài khoản được tạo/chỉnh sửa ở local.
+        passwordMatches = string.Equals(user.PW, pass,
+          StringComparison.Ordinal);
+        if (!passwordMatches && user.Password != null)
+        {
+          passwordMatches = SecurityHelper.VerifyPassword(
+            user.Username, pass, user.Password);
+        }
       }
 
       if (!passwordMatches)
