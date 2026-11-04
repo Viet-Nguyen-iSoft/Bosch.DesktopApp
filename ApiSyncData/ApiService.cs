@@ -60,6 +60,13 @@ namespace ApiSyncData
         AddOptionalFormField(formData, "Password", user.Password);
         AddOptionalFormField(formData, "EmployeeCode", user.EmployeeCode);
         AddOptionalFormField(formData, "IdCardCode", "");
+        AddOptionalFormField(
+          formData,
+          "PasswordChangedAt",
+          user.PasswordChangedAt?.ToString("O", CultureInfo.InvariantCulture));
+        formData.Add(
+          new StringContent(user.MustChangePassword.ToString().ToLowerInvariant()),
+          "MustChangePassword");
         formData.Add(new StringContent(user.EnableFlag.ToString().ToLowerInvariant()), "EnableFlag");
         formData.Add(new StringContent(user.SyncFlag.ToString().ToLowerInvariant()), "SyncFlag");
         formData.Add(new StringContent(user.DeletedFlag.ToString().ToLowerInvariant()), "DeletedFlag");

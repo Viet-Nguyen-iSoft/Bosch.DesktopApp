@@ -5,6 +5,7 @@ using HelperManager;
 using iSoft.Database.Models;
 using iSoft.Database.Service;
 using LTP.Truck.Controls;
+using LTP.Truck.Services;
 using static Common.EnumData;
 
 namespace LTP.Truck.Popup
@@ -127,7 +128,8 @@ namespace LTP.Truck.Popup
         UserService.ApplyNewPassword(_user, newPassword,
           mustChangePassword: false);
         _user.UpdatedAt = DateTime.UtcNow;
-        await _userService.AddOrUpdateAsync(_user);
+        var savedUser = await _userService.AddOrUpdateAsync(_user);
+        await UserSyncJobService.QueueUpsertAsync(savedUser);
         PasswordChanged = true;
 
         using var successPopup = new PopupConfirm(

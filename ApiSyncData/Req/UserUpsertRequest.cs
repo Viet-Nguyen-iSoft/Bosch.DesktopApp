@@ -14,6 +14,8 @@ namespace ApiSyncData.Req
     public string? Password { get; set; }
     public string? EmployeeCode { get; set; }
     public string? IdCardCode { get; set; }
+    public DateTime? PasswordChangedAt { get; set; }
+    public bool MustChangePassword { get; set; }
     public bool EnableFlag { get; set; }
     public bool SyncFlag { get; set; }
     public bool DeletedFlag { get; set; }
