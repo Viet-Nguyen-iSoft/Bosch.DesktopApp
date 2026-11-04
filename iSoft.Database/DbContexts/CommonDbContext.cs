@@ -83,6 +83,12 @@ namespace iSoft.Database.DbContexts
         .OnDelete(DeleteBehavior.Restrict);
 
       modelBuilder.Entity<Models.Record>()
+        .HasOne(record => record.CategoryTare)
+        .WithMany()
+        .HasForeignKey(record => record.CategoryTareId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+      modelBuilder.Entity<Models.Record>()
         .HasOne(record => record.Warehouse)
         .WithMany()
         .HasForeignKey(record => record.WarehouseId)

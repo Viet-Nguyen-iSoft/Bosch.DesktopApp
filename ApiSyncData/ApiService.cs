@@ -1268,7 +1268,7 @@ namespace ApiSyncData
         "yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
     }
 
-    public async Task<string> SyncRecordTruckFromLocal(
+    public async Task<string> SyncRecordsFromLocal(
       string rawData,
       CancellationToken cancellationToken = default)
     {
@@ -1298,7 +1298,7 @@ namespace ApiSyncData
       if (!response.IsSuccessStatusCode)
       {
         throw new HttpRequestException(
-          $"SyncRecordTruck. " +
+          $"SyncRecords. " +
           $"URL: {apiUrl}. " +
           $"HTTP {(int)response.StatusCode} " +
           $"({response.ReasonPhrase}). " +
@@ -1306,6 +1306,13 @@ namespace ApiSyncData
       }
 
       return responseContent;
+    }
+
+    public Task<string> SyncRecordTruckFromLocal(
+      string rawData,
+      CancellationToken cancellationToken = default)
+    {
+      return SyncRecordsFromLocal(rawData, cancellationToken);
     }
 
     public async Task<string> SyncRecordWeightFromLocal(

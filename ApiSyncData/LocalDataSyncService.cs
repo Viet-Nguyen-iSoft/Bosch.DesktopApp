@@ -1,9 +1,9 @@
 using ApiSyncData.Record;
 using iSoft.Database.DbContexts;
-using iSoft.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using static System.Net.Mime.MediaTypeNames;
+using static iSoft.Database.EnumData;
+using RecordModel = iSoft.Database.Models.Record;
 
 namespace ApiSyncData
 {
@@ -12,18 +12,15 @@ namespace ApiSyncData
     private static readonly SemaphoreSlim SyncLock = new(1, 1);
 
     public static int LastSynchronizedCount { get; private set; }
-    public static string? PathFolderSrc { get; private set; }
     
     /// <summary>
-    /// Đồng bộ RecordTruck và RecordWeight local chưa được gửi lên server sau mỗi 5 giây.
+    /// Đồng bộ Record local chưa được gửi lên server sau mỗi 5 giây.
     /// Bản ghi lỗi sẽ giữ SyncFlag = false để được thử lại ở chu kỳ tiếp theo.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
-      string? pathFolderSrc,
       CancellationToken cancellationToken = default,
       Action<Exception>? onError = null)
     {
-      PathFolderSrc = pathFolderSrc;
       var api = new ApiService();
       return PeriodicRunner.RunEvery5SecondsAsync(
         async token =>
@@ -59,15 +56,8 @@ namespace ApiSyncData
       try
       {
         var errors = new List<Exception>();
-        var synchronizedCount = await SyncRecordTrucksAsync(
-          api,
-          errors,
-          cancellationToken).ConfigureAwait(false);
-
-        synchronizedCount += await SyncRecordWeightsAsync(
-          api,
-          errors,
-          cancellationToken).ConfigureAwait(false);
+        var synchronizedCount = await SyncRecordsAsync(
+          api, errors, cancellationToken).ConfigureAwait(false);
 
         if (errors.Count > 0)
           throw new AggregateException("Một hoặc nhiều bản ghi local đồng bộ thất bại.", errors);
@@ -80,7 +70,7 @@ namespace ApiSyncData
       }
     }
 
-    private static async Task<int> SyncRecordTrucksAsync(
+    private static async Task<int> SyncRecordsAsync(
       ApiService api,
       List<Exception> errors,
       CancellationToken cancellationToken)
@@ -96,10 +86,9 @@ namespace ApiSyncData
         try
         {
           var payload = Map(record);
-          List<RecordTruckSync> recordTruckSyncs = new List<RecordTruckSync>();
-          recordTruckSyncs.Add(payload);
-          var rawData = JsonConvert.SerializeObject(recordTruckSyncs);
-          await api.SyncRecordTruckFromLocal(rawData, cancellationToken).ConfigureAwait(false);
+          var rawData = JsonConvert.SerializeObject(new[] { payload });
+          await api.SyncRecordsFromLocal(rawData, cancellationToken)
+            .ConfigureAwait(false);
 
           if (await MarkAsSynchronizedAsync(
             record.Id,
@@ -123,100 +112,40 @@ namespace ApiSyncData
         catch (Exception ex)
         {
           errors.Add(new InvalidOperationException(
-            $"Không thể đồng bộ RecordTruck local Id {record.Id}.", ex));
+            $"Không thể đồng bộ Record local Id {record.Id}.", ex));
         }
       }
 
       return synchronizedCount;
     }
 
-    private static async Task<int> SyncRecordWeightsAsync(
-      ApiService api,
-      List<Exception> errors,
-      CancellationToken cancellationToken)
-    {
-      var pendingRecords = await LoadPendingRecordWeightsAsync(cancellationToken)
-        .ConfigureAwait(false);
-      var synchronizedCount = 0;
-
-      foreach (var record in pendingRecords)
-      {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        try
-        {
-          var payload = Map(record);
-          List<RecordWeightSync> recordWeightSyncs = new List<RecordWeightSync>();
-          recordWeightSyncs.Add(payload);
-          var rawData = JsonConvert.SerializeObject(recordWeightSyncs);
-          await api.SyncRecordWeightFromLocal(rawData, cancellationToken).ConfigureAwait(false);
-
-          if (await MarkRecordWeightAsSynchronizedAsync(
-            record.Id,
-            record.UpdatedAt,
-            cancellationToken).ConfigureAwait(false))
-          {
-            synchronizedCount++;
-          }
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-          throw;
-        }
-        catch (Exception ex)
-        {
-          errors.Add(new InvalidOperationException(
-            $"Không thể đồng bộ RecordWeight local Id {record.Id}.", ex));
-        }
-      }
-
-      return synchronizedCount;
-    }
-
-    private static async Task<List<RecordTruck>> LoadPendingRecordsAsync(
+    private static async Task<List<RecordModel>> LoadPendingRecordsAsync(
       CancellationToken cancellationToken)
     {
       await using var db = new MySqlDbContext();
-      var records = await db.Set<RecordTruck>()
-        .Where(record => !record.SyncFlag)
-        .Include(record => record.Client)
-        .Include(record => record.TypeGoods)
-        .Include(record => record.Warehouse)
-        .Include(record => record.Station)
-        .OrderBy(record => record.CreatedAt)
-        .ThenBy(record => record.Id)
-        .ToListAsync(cancellationToken)
-        .ConfigureAwait(false);
-
-      return records;
-    }
-
-    private static async Task<List<RecordWeight>> LoadPendingRecordWeightsAsync(
-      CancellationToken cancellationToken)
-    {
-      await using var db = new MySqlDbContext();
-      return await db.Set<RecordWeight>()
-        .Where(record => !record.SyncFlag)
-        .Include(record => record.Station)
-        .Include(record => record.User)
-        .Include(record => record.Product)
-        .Include(record => record.CategoryTare)
-        .Include(record => record.RecordTruck)
+      return await db.Set<RecordModel>()
+        .Where(record => !record.SyncFlag &&
+          (record.TypeData == EnumTypeDataLocation.Truck ||
+           record.TypeData == EnumTypeDataLocation.Good))
         .OrderBy(record => record.CreatedAt)
         .ThenBy(record => record.Id)
         .ToListAsync(cancellationToken)
         .ConfigureAwait(false);
     }
 
-    private static RecordTruckSync Map(RecordTruck record)
+    private static RecordSync Map(RecordModel record)
     {
-      return new RecordTruckSync
+      var isTruck = record.TypeData == EnumTypeDataLocation.Truck;
+      return new RecordSync
       {
         Id = record.Id,
+        RecordType = record.TypeData,
         NoLabelAuto = record.NoLabelAuto,
         NoLabelManual = record.NoLabelManual,
         NetTime01 = record.NetTime01,
+        Tare01 = isTruck ? record.TareTime01 : record.Tare,
         NetTime02 = record.NetTime02,
+        Tare02 = record.TareTime02,
         EnumTypeDataTruck = record.EnumTypeDataTruck,
         NameDriver = record.NameDriver,
         IdCard = record.IdCard,
@@ -225,7 +154,9 @@ namespace ApiSyncData
         ReasonDelete = record.ReasonDelete,
         UserId = record.UserId,
         ClientId = record.ClientId,
-        TypeGoodsId = record.TypeGoodsId,
+        TypeGoodsId = isTruck ? record.TypeGoodsId : null,
+        CategoryTareId = record.CategoryTareId,
+        ProductionId = isTruck ? null : record.TypeGoodsId,
         WarehouseId = record.WarehouseId,
         StationId = record.StationId,
         CreatedAt = record.CreatedAt,
@@ -236,37 +167,13 @@ namespace ApiSyncData
       };
     }
 
-    private static RecordWeightSync Map(RecordWeight record)
-    {
-      return new RecordWeightSync
-      {
-        Id = record.Id,
-        Net = record.Net,
-        Tare = record.Tare,
-        LicensePlate = record.LicensePlate,
-        Note = record.Note,
-        NameDriver = record.NameDriver,
-        IdCard = record.IdCard,
-        ReasonDelete = record.ReasonDelete,
-        DeletedFlag = record.DeletedFlag,
-        StationId = record.StationId,
-        EmployeeId = record.UserId,
-        ProductId = record.ProductId,
-        CategoryTareId = record.CategoryTareId,
-        ClientGoodsId = record.DeliveryId,
-        RecordTruckId = record.RecordTruckId,
-        CreatedAt = record.CreatedAt,
-        UpdatedAt = record.UpdatedAt
-      };
-    }
-
     private static async Task<bool> MarkAsSynchronizedAsync(
       Guid localId,
       DateTime? expectedUpdatedAt,
       CancellationToken cancellationToken)
     {
       await using var db = new MySqlDbContext();
-      var current = await db.Set<RecordTruck>()
+      var current = await db.Set<RecordModel>()
         .SingleOrDefaultAsync(record => record.Id == localId, cancellationToken)
         .ConfigureAwait(false);
 
@@ -282,26 +189,5 @@ namespace ApiSyncData
       return true;
     }
 
-    private static async Task<bool> MarkRecordWeightAsSynchronizedAsync(
-      Guid localId,
-      DateTime? expectedUpdatedAt,
-      CancellationToken cancellationToken)
-    {
-      await using var db = new MySqlDbContext();
-      var current = await db.Set<RecordWeight>()
-        .SingleOrDefaultAsync(record => record.Id == localId, cancellationToken)
-        .ConfigureAwait(false);
-
-      if (current == null || current.SyncFlag)
-        return false;
-
-      // Nếu dữ liệu thay đổi trong khi request đang chạy, giữ trạng thái chưa đồng bộ.
-      if (current.UpdatedAt != expectedUpdatedAt)
-        return false;
-
-      current.SyncFlag = true;
-      await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-      return true;
-    }
   }
 }

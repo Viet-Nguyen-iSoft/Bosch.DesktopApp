@@ -372,7 +372,6 @@ namespace LTP.Truck
               `NetTime02` double NOT NULL DEFAULT 0,
               `TareTime02` double NOT NULL DEFAULT 0,
               `Tare` double NOT NULL DEFAULT 0,
-              `NameTareForTruck` longtext NULL,
               `NumberTare` int NULL DEFAULT 1,
               `EnumTypeDataTruck` int NOT NULL DEFAULT 0,
               `NameDriver` longtext NULL,
@@ -385,6 +384,7 @@ namespace LTP.Truck
               `Type` longtext NULL,
               `ClientId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
               `TypeGoodsId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
+              `CategoryTareId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
               `WarehouseId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
               `UserId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
               `StationId` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL,
@@ -402,9 +402,32 @@ namespace LTP.Truck
           await createCommand.ExecuteNonQueryAsync();
         }
 
+        await using (var checkCategoryTareColumn =
+          db.Database.GetDbConnection().CreateCommand())
+        {
+          checkCategoryTareColumn.CommandText = @"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'Records'
+              AND COLUMN_NAME = 'CategoryTareId';";
+          if (Convert.ToInt32(
+                await checkCategoryTareColumn.ExecuteScalarAsync()) == 0)
+          {
+            await using var addCategoryTareColumn =
+              db.Database.GetDbConnection().CreateCommand();
+            addCategoryTareColumn.CommandText = @"
+              ALTER TABLE `Records`
+              ADD COLUMN `CategoryTareId`
+                char(36) CHARACTER SET ascii COLLATE ascii_general_ci NULL
+                AFTER `TypeGoodsId`;";
+            await addCategoryTareColumn.ExecuteNonQueryAsync();
+          }
+        }
+
         foreach (var obsoleteColumn in new[]
                  {
-                   "SourceId", "CategoryTareId", "SourceRecordTruckId"
+                   "SourceId", "SourceRecordTruckId", "NameTareForTruck"
                  })
         {
           await using var checkColumn =
@@ -457,20 +480,26 @@ namespace LTP.Truck
             INSERT IGNORE INTO `Records` (
               `Id`, `TypeData`, `NoLabelAuto`, `NoLabelManual`,
               `NetTimeTemp`, `TareTimeTemp`, `NetTime01`, `TareTime01`,
-              `NetTime02`, `TareTime02`, `Tare`, `NameTareForTruck`,
-              `NumberTare`, `EnumTypeDataTruck`, `NameDriver`, `IdCard`,
+              `NetTime02`, `TareTime02`, `Tare`, `NumberTare`,
+              `EnumTypeDataTruck`, `NameDriver`, `IdCard`,
               `LicensePlate`, `Note`, `ReasonDelete`, `WeighInAt`, `WeighOutAt`,
-              `Type`, `ClientId`, `TypeGoodsId`, `WarehouseId`, `UserId`,
+              `Type`, `ClientId`, `TypeGoodsId`, `CategoryTareId`,
+              `WarehouseId`, `UserId`,
               `StationId`, `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`,
               `DeletedFlag`, `EnableFlag`, `SyncFlag`)
             SELECT
               rt.`Id`, 1, rt.`NoLabelAuto`, rt.`NoLabelManual`,
               rt.`NetTimeTemp`, rt.`TareTimeTemp`, rt.`NetTime01`,
               rt.`TareTime01`, rt.`NetTime02`, rt.`TareTime02`, rt.`Tare`,
-              rt.`NameTareForTruck`, rt.`NumberTare`, rt.`EnumTypeDataTruck`,
+              rt.`NumberTare`, rt.`EnumTypeDataTruck`,
               rt.`NameDriver`, rt.`IdCard`, rt.`LicensePlate`, rt.`Note`,
               rt.`ReasonDelete`, rt.`WeighInAt`, rt.`WeighOutAt`, rt.`Type`,
-              rt.`ClientId`, rt.`TypeGoodsId`, rt.`WarehouseId`, rt.`UserId`,
+              rt.`ClientId`, rt.`TypeGoodsId`,
+              (SELECT tare.`Id` FROM `Tares` tare
+               WHERE tare.`Name` = rt.`NameTareForTruck`
+                 AND tare.`EnumTypeData` = 1
+               ORDER BY tare.`DeletedFlag`, tare.`Id` LIMIT 1),
+              rt.`WarehouseId`, rt.`UserId`,
               rt.`StationId`, rt.`CreatedAt`, rt.`CreatedBy`, rt.`UpdatedAt`,
               rt.`UpdatedBy`, rt.`DeletedFlag`, rt.`EnableFlag`, rt.`SyncFlag`
             FROM `RecordTrucks` rt;";
@@ -486,18 +515,49 @@ namespace LTP.Truck
           INSERT IGNORE INTO `Records` (
             `Id`, `TypeData`, `NetTime01`, `Tare`, `NameDriver`,
             `IdCard`, `LicensePlate`, `Note`, `ReasonDelete`, `ClientId`,
-            `TypeGoodsId`, `UserId`, `StationId`, `NameTareForTruck`,
+            `TypeGoodsId`, `CategoryTareId`, `UserId`, `StationId`,
             `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`,
             `EnableFlag`, `SyncFlag`)
           SELECT
             rw.`Id`, 2, rw.`Net`, rw.`Tare`, rw.`NameDriver`, rw.`IdCard`,
             rw.`LicensePlate`, rw.`Note`, rw.`ReasonDelete`, rw.`DeliveryId`,
-            rw.`ProductId`, rw.`UserId`, rw.`StationId`, tare.`Name`,
+            rw.`ProductId`, rw.`CategoryTareId`, rw.`UserId`, rw.`StationId`,
             rw.`CreatedAt`, rw.`CreatedBy`, rw.`UpdatedAt`, rw.`UpdatedBy`,
             rw.`DeletedFlag`, rw.`EnableFlag`, rw.`SyncFlag`
-          FROM `RecordWeights` rw
-          LEFT JOIN `Tares` tare ON tare.`Id` = rw.`CategoryTareId`;";
+          FROM `RecordWeights` rw;";
         await copyWeights.ExecuteNonQueryAsync();
+
+        await using (var backfillTruckCategoryTare =
+          db.Database.GetDbConnection().CreateCommand())
+        {
+          backfillTruckCategoryTare.CommandText = @"
+            UPDATE `Records` record
+            INNER JOIN `RecordTrucks` rt ON rt.`Id` = record.`Id`
+            LEFT JOIN `Tares` tare
+              ON tare.`Id` = (
+                SELECT matchedTare.`Id`
+                FROM `Tares` matchedTare
+                WHERE matchedTare.`Name` = rt.`NameTareForTruck`
+                  AND matchedTare.`EnumTypeData` = 1
+                ORDER BY matchedTare.`DeletedFlag`, matchedTare.`Id`
+                LIMIT 1)
+            SET record.`CategoryTareId` = tare.`Id`
+            WHERE record.`TypeData` = 1
+              AND NOT (record.`CategoryTareId` <=> tare.`Id`);";
+          await backfillTruckCategoryTare.ExecuteNonQueryAsync();
+        }
+
+        await using (var backfillCategoryTare =
+          db.Database.GetDbConnection().CreateCommand())
+        {
+          backfillCategoryTare.CommandText = @"
+            UPDATE `Records` record
+            INNER JOIN `RecordWeights` rw ON rw.`Id` = record.`Id`
+            SET record.`CategoryTareId` = rw.`CategoryTareId`
+            WHERE record.`TypeData` = 2
+              AND NOT (record.`CategoryTareId` <=> rw.`CategoryTareId`);";
+          await backfillCategoryTare.ExecuteNonQueryAsync();
+        }
 
         await ValidateRecordMigrationAsync(
           db, "RecordWeights", EnumTypeDataLocation.Good);
@@ -508,6 +568,9 @@ namespace LTP.Truck
         await EnsureRecordForeignKeyAsync(
           db, "TypeGoodsId", "Products",
           "FK_Records_Products_TypeGoodsId");
+        await EnsureRecordForeignKeyAsync(
+          db, "CategoryTareId", "Tares",
+          "FK_Records_Tares_CategoryTareId");
         await EnsureRecordForeignKeyAsync(
           db, "WarehouseId", "Warehouses",
           "FK_Records_Warehouses_WarehouseId");
@@ -568,20 +631,26 @@ namespace LTP.Truck
         INSERT INTO `Records` (
           `Id`, `TypeData`, `NoLabelAuto`, `NoLabelManual`, `NetTimeTemp`,
           `TareTimeTemp`, `NetTime01`, `TareTime01`, `NetTime02`,
-          `TareTime02`, `Tare`, `NameTareForTruck`, `NumberTare`,
+          `TareTime02`, `Tare`, `NumberTare`,
           `EnumTypeDataTruck`, `NameDriver`, `IdCard`, `LicensePlate`, `Note`,
           `ReasonDelete`, `WeighInAt`, `WeighOutAt`, `Type`, `ClientId`,
-          `TypeGoodsId`, `WarehouseId`, `UserId`, `StationId`, `CreatedAt`,
+          `TypeGoodsId`, `CategoryTareId`, `WarehouseId`, `UserId`,
+          `StationId`, `CreatedAt`,
           `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`, `EnableFlag`,
           `SyncFlag`)
         VALUES (
           NEW.`Id`, 1, NEW.`NoLabelAuto`, NEW.`NoLabelManual`,
           NEW.`NetTimeTemp`, NEW.`TareTimeTemp`, NEW.`NetTime01`,
           NEW.`TareTime01`, NEW.`NetTime02`, NEW.`TareTime02`, NEW.`Tare`,
-          NEW.`NameTareForTruck`, NEW.`NumberTare`, NEW.`EnumTypeDataTruck`,
+          NEW.`NumberTare`, NEW.`EnumTypeDataTruck`,
           NEW.`NameDriver`, NEW.`IdCard`, NEW.`LicensePlate`, NEW.`Note`,
           NEW.`ReasonDelete`, NEW.`WeighInAt`, NEW.`WeighOutAt`, NEW.`Type`,
-          NEW.`ClientId`, NEW.`TypeGoodsId`, NEW.`WarehouseId`, NEW.`UserId`,
+          NEW.`ClientId`, NEW.`TypeGoodsId`,
+          (SELECT tare.`Id` FROM `Tares` tare
+           WHERE tare.`Name` = NEW.`NameTareForTruck`
+             AND tare.`EnumTypeData` = 1
+           ORDER BY tare.`DeletedFlag`, tare.`Id` LIMIT 1),
+          NEW.`WarehouseId`, NEW.`UserId`,
           NEW.`StationId`, NEW.`CreatedAt`, NEW.`CreatedBy`, NEW.`UpdatedAt`,
           NEW.`UpdatedBy`, NEW.`DeletedFlag`, NEW.`EnableFlag`, NEW.`SyncFlag`)
         ON DUPLICATE KEY UPDATE
@@ -590,7 +659,6 @@ namespace LTP.Truck
           `TareTimeTemp` = NEW.`TareTimeTemp`, `NetTime01` = NEW.`NetTime01`,
           `TareTime01` = NEW.`TareTime01`, `NetTime02` = NEW.`NetTime02`,
           `TareTime02` = NEW.`TareTime02`, `Tare` = NEW.`Tare`,
-          `NameTareForTruck` = NEW.`NameTareForTruck`,
           `NumberTare` = NEW.`NumberTare`,
           `EnumTypeDataTruck` = NEW.`EnumTypeDataTruck`,
           `NameDriver` = NEW.`NameDriver`, `IdCard` = NEW.`IdCard`,
@@ -598,6 +666,10 @@ namespace LTP.Truck
           `ReasonDelete` = NEW.`ReasonDelete`, `WeighInAt` = NEW.`WeighInAt`,
           `WeighOutAt` = NEW.`WeighOutAt`, `Type` = NEW.`Type`,
           `ClientId` = NEW.`ClientId`, `TypeGoodsId` = NEW.`TypeGoodsId`,
+          `CategoryTareId` = (SELECT tare.`Id` FROM `Tares` tare
+            WHERE tare.`Name` = NEW.`NameTareForTruck`
+              AND tare.`EnumTypeData` = 1
+            ORDER BY tare.`DeletedFlag`, tare.`Id` LIMIT 1),
           `WarehouseId` = NEW.`WarehouseId`, `UserId` = NEW.`UserId`,
           `StationId` = NEW.`StationId`, `CreatedAt` = NEW.`CreatedAt`,
           `CreatedBy` = NEW.`CreatedBy`, `UpdatedAt` = NEW.`UpdatedAt`,
@@ -611,27 +683,25 @@ namespace LTP.Truck
         CREATE TRIGGER `TR_RecordWeights_After{eventName[0]}{eventName[1..].ToLowerInvariant()}`
         AFTER {eventName} ON `RecordWeights` FOR EACH ROW
         INSERT INTO `Records` (
-          `Id`, `TypeData`, `NetTime01`, `Tare`, `NameTareForTruck`,
-          `NameDriver`, `IdCard`, `LicensePlate`, `Note`, `ReasonDelete`,
-          `ClientId`, `TypeGoodsId`, `UserId`, `StationId`, `CreatedAt`,
+          `Id`, `TypeData`, `NetTime01`, `Tare`, `NameDriver`, `IdCard`,
+          `LicensePlate`, `Note`, `ReasonDelete`,
+          `ClientId`, `TypeGoodsId`, `CategoryTareId`, `UserId`, `StationId`, `CreatedAt`,
           `CreatedBy`, `UpdatedAt`, `UpdatedBy`, `DeletedFlag`, `EnableFlag`,
           `SyncFlag`)
         VALUES (
-          NEW.`Id`, 2, NEW.`Net`, NEW.`Tare`,
-          (SELECT tare.`Name` FROM `Tares` tare
-           WHERE tare.`Id` = NEW.`CategoryTareId` LIMIT 1),
-          NEW.`NameDriver`, NEW.`IdCard`, NEW.`LicensePlate`, NEW.`Note`,
-          NEW.`ReasonDelete`, NEW.`DeliveryId`, NEW.`ProductId`, NEW.`UserId`,
-          NEW.`StationId`, NEW.`CreatedAt`, NEW.`CreatedBy`, NEW.`UpdatedAt`,
+          NEW.`Id`, 2, NEW.`Net`, NEW.`Tare`, NEW.`NameDriver`, NEW.`IdCard`,
+          NEW.`LicensePlate`, NEW.`Note`,
+          NEW.`ReasonDelete`, NEW.`DeliveryId`, NEW.`ProductId`,
+          NEW.`CategoryTareId`, NEW.`UserId`, NEW.`StationId`, NEW.`CreatedAt`,
+          NEW.`CreatedBy`, NEW.`UpdatedAt`,
           NEW.`UpdatedBy`, NEW.`DeletedFlag`, NEW.`EnableFlag`, NEW.`SyncFlag`)
         ON DUPLICATE KEY UPDATE
           `TypeData` = 2, `NetTime01` = NEW.`Net`, `Tare` = NEW.`Tare`,
-          `NameTareForTruck` = (SELECT tare.`Name` FROM `Tares` tare
-            WHERE tare.`Id` = NEW.`CategoryTareId` LIMIT 1),
           `NameDriver` = NEW.`NameDriver`, `IdCard` = NEW.`IdCard`,
           `LicensePlate` = NEW.`LicensePlate`, `Note` = NEW.`Note`,
           `ReasonDelete` = NEW.`ReasonDelete`, `ClientId` = NEW.`DeliveryId`,
-          `TypeGoodsId` = NEW.`ProductId`, `UserId` = NEW.`UserId`,
+          `TypeGoodsId` = NEW.`ProductId`,
+          `CategoryTareId` = NEW.`CategoryTareId`, `UserId` = NEW.`UserId`,
           `StationId` = NEW.`StationId`, `CreatedAt` = NEW.`CreatedAt`,
           `CreatedBy` = NEW.`CreatedBy`, `UpdatedAt` = NEW.`UpdatedAt`,
           `UpdatedBy` = NEW.`UpdatedBy`, `DeletedFlag` = NEW.`DeletedFlag`,

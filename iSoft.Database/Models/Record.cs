@@ -19,7 +19,6 @@ namespace iSoft.Database.Models
     public double NetTime02 { get; set; }
     public double TareTime02 { get; set; }
     public double Tare { get; set; }
-    public string? NameTareForTruck { get; set; }
     public int? NumberTare { get; set; } = 1;
     public EnumTypeDataTruck EnumTypeDataTruck { get; set; }
 
@@ -30,13 +29,16 @@ namespace iSoft.Database.Models
     public string? ReasonDelete { get; set; }
     public DateTime? WeighInAt { get; set; }
     public DateTime? WeighOutAt { get; set; }
-    public string? Type { get; set; }
+    public string? Type { get; set; } //Nhập hàng, Xuất hàng, Khác
 
     public Guid? ClientId { get; set; }
     public ClientDelivery? Client { get; set; }
 
     public Guid? TypeGoodsId { get; set; }
     public Product? TypeGoods { get; set; }
+
+    public Guid? CategoryTareId { get; set; }
+    public Tare? CategoryTare { get; set; }
 
     public Guid? WarehouseId { get; set; }
     public Warehouse? Warehouse { get; set; }

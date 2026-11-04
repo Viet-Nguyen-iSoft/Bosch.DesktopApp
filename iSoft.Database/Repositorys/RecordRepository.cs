@@ -90,6 +90,7 @@ namespace iSoft.Database.Repositorys
         .Include(record => record.Client)
         .Include(record => record.TypeGoods)
           .ThenInclude(product => product.ProductGroup)
+        .Include(record => record.CategoryTare)
         .Include(record => record.Warehouse)
         .Include(record => record.User)
         .Include(record => record.Station);
