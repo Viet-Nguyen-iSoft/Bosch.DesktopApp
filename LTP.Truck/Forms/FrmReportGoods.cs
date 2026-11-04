@@ -5,6 +5,7 @@ using iSoft.Database;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
 using iSoft.Database.Repositorys;
+using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using LTP.Truck.Custom;
 using LTP.Truck.Popup;
@@ -1120,11 +1121,32 @@ namespace LTP.Truck.Forms
     private async void btnTracking_Click(object sender, EventArgs e)
     {
       using var buttonLock = ButtonExecutionScope.Enter(sender);
-      var templatePath = Path.Combine(AppContext.BaseDirectory, "Template", "TemplateFileTracking.xlsx");
-      if (!File.Exists(templatePath))
+      string templatePath;
+      try
       {
+        var templates = await new TemplateService().GetAllAsync();
+        var template = templates.FirstOrDefault(template =>
+          template.IsBBGN && template.Order == 9)
+          ?? throw new InvalidOperationException(
+            "Không tìm thấy template BBGN có Order = 9.");
+
+        if (string.IsNullOrWhiteSpace(template.PathLocal) ||
+            !File.Exists(template.PathLocal))
+        {
+          throw new FileNotFoundException(
+            "File local của template tracking (Order = 9) không tồn tại.",
+            template.PathLocal);
+        }
+
+        templatePath = Path.GetFullPath(template.PathLocal);
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         using var popup = new PopupConfirm(
-          "Không tìm thấy file mẫu TemplateFileTracking.xlsx.",
+          ex is InvalidOperationException or FileNotFoundException
+            ? ex.Message
+            : "Không thể tải template tracking. Vui lòng thử lại !",
           EnumTypeMsg.MessageManualClose,
           EnumImageMsg.Warning);
         popup.ShowDialog(this);
