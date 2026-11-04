@@ -2,6 +2,7 @@ using Common;
 using HelperManager;
 using iSoft.Database.DTO;
 using iSoft.Database.Models;
+using iSoft.Database.Service;
 using LTP.Truck.Controls;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,10 @@ namespace LTP.Truck.Popup
 {
   public partial class PopupChooseTemplateReport : Form
   {
+    private readonly TemplateService _templateService = new();
+    private readonly Dictionary<int, Template> _templatesByOrder = new();
+    private bool _templatesLoaded;
+
     private static readonly Regex ReportPlaceholderRegex = new(
       @"\{[ \t]*(?<tag>[^{}+\r\n]+?)_[ \t]*(?<kind>weight|qty)[ \t]*(?:\+[ \t]*[^{}+\r\n]+?[ \t]*)*\}",
       RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -46,7 +51,71 @@ namespace LTP.Truck.Popup
       InitializeComponent();
       SelectedData = selectedData;
       SetExportStatus(string.Empty);
+      Shown += PopupChooseTemplateReport_Shown;
     }
+
+    private async void PopupChooseTemplateReport_Shown(
+      object? sender,
+      EventArgs e)
+    {
+      if (_templatesLoaded)
+        return;
+
+      _templatesLoaded = true;
+      await LoadTemplateButtonsAsync();
+    }
+
+    private async Task LoadTemplateButtonsAsync()
+    {
+      var buttonsByOrder = GetTemplateButtonsByOrder();
+      foreach (var button in buttonsByOrder.Values)
+        button.Enabled = false;
+
+      try
+      {
+        var templates = await _templateService.GetAllAsync();
+        foreach (var template in templates
+          .Where(template => template.IsBBGN &&
+            buttonsByOrder.ContainsKey(template.Order))
+          .GroupBy(template => template.Order)
+          .Select(group => group.First()))
+        {
+          _templatesByOrder[template.Order] = template;
+          var button = buttonsByOrder[template.Order];
+          button.Text = !string.IsNullOrWhiteSpace(template.Name)
+            ? template.Name
+            : template.TemplateFile ?? $"Template {template.Order}";
+          button.Enabled = true;
+        }
+
+        foreach (var item in buttonsByOrder.Where(item =>
+          !_templatesByOrder.ContainsKey(item.Key)))
+        {
+          item.Value.Text = $"Chưa cấu hình template (Order {item.Key})";
+        }
+      }
+      catch (Exception ex)
+      {
+        LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
+        using var popup = new PopupConfirm(
+          "Không thể tải danh sách template. Vui lòng thử lại !",
+          EnumTypeMsg.MessageManualClose,
+          EnumImageMsg.Warning);
+        popup.ShowDialog(this);
+      }
+    }
+
+    private Dictionary<int, Button> GetTemplateButtonsByOrder() => new()
+    {
+      [1] = btnHcP_TH,
+      [2] = btnTGA_TH,
+      [3] = btnHcP_CN,
+      [4] = btnTGA_CN,
+      [5] = btnHcP_SH,
+      [6] = btnTGA_SH,
+      [7] = btnBiwaseScrapSale,
+      [8] = btnBiwaseCNTT,
+    };
 
     private async void btnHcP_TH_Click(object sender, EventArgs e)
     {
@@ -102,7 +171,7 @@ namespace LTP.Truck.Popup
         return;
       }
 
-      await DownloadHcpSummaryReportAsync(recordWeights, recordTrucks);
+      await DownloadHcpSummaryReportAsync(recordWeights, recordTrucks, 1);
     }
 
     private async void btnHcP_CN_Click(object sender, EventArgs e)
@@ -162,7 +231,7 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch HCP-CN.doc",
+        3,
         weightDivisor: 1d,1);
     }
 
@@ -223,7 +292,7 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch HCP-SH.doc",
+        5,
         weightDivisor: 1000d,3);
     }
 
@@ -286,7 +355,7 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN TỔNG TGA.doc");
+        2);
 
     }
 
@@ -347,7 +416,7 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch TGA-CN.doc",
+        4,
         weightDivisor: 1d, 1);
     }
 
@@ -408,7 +477,7 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_BBGN KNH Bosch TGA-SH.doc",
+        6,
         weightDivisor: 1000d, 3);
     }
 
@@ -444,7 +513,7 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_Biwase_Scrap sale.docx");
+        7);
     }
 
 
@@ -477,7 +546,7 @@ namespace LTP.Truck.Popup
       await DownloadHcpSummaryReportAsync(
         recordWeights,
         recordTrucks,
-        "Template_Biwase_CNTT.docx");
+        8);
     }
 
 
@@ -735,11 +804,24 @@ namespace LTP.Truck.Popup
     private async Task DownloadHcpSummaryReportAsync(
       List<RecordWeight> recordWeights,
       List<RecordTruck> recordTrucks,
-      string templateFileName = "Template_BBGN TỔNG HCP.doc",
+      int templateOrder,
       double weightDivisor = 1d, int lamTron = 1)
     {
       try
       {
+        if (!_templatesByOrder.TryGetValue(templateOrder, out var template))
+          throw new InvalidOperationException(
+            $"Không tìm thấy template BBGN có Order={templateOrder}.");
+
+        if (string.IsNullOrWhiteSpace(template.PathLocal) ||
+            !File.Exists(template.PathLocal))
+        {
+          throw new FileNotFoundException(
+            $"File local của template Order={templateOrder} không tồn tại.",
+            template.PathLocal);
+        }
+
+        string templatePath = Path.GetFullPath(template.PathLocal);
         SetExportStatus("Đang tổng hợp dữ liệu...");
         await Task.Yield();
         var summariesByTag = recordWeights
@@ -784,7 +866,7 @@ namespace LTP.Truck.Popup
 
         var progress = new Progress<string>(SetExportStatus);
         var pdfPath = await RunWordExportAsync(() => ExportWordTemplateToPdf(
-          summariesByTag, vehicleReportEntries, templateFileName, weightDivisor, lamTron, progress));
+          summariesByTag, vehicleReportEntries, templatePath, weightDivisor, lamTron, progress));
         SetExportStatus("Xuất PDF hoàn tất.");
         var openReportFile = false;
         using (var popup = new PopupConfirm(
@@ -822,7 +904,7 @@ namespace LTP.Truck.Popup
     private static string ExportWordTemplateToPdf(
       IReadOnlyDictionary<string, TagReportSummary> summariesByTag,
       IReadOnlyList<(string Tag, string? LicensePlate)> vehicleReportEntries,
-      string templateFileName,
+      string templatePath,
       double weightDivisor
       , int lamTron = 1,
       IProgress<string>? progress = null)
@@ -833,18 +915,14 @@ namespace LTP.Truck.Popup
       const int wdExportFormatPdf = 17;
 
       progress?.Report("Đang chuẩn bị template...");
-      var templatePath = Path.Combine(
-        Application.StartupPath,
-        "Template",
-        templateFileName);
       if (!File.Exists(templatePath))
         throw new FileNotFoundException("Không tìm thấy template báo cáo.", templatePath);
 
       var outputFolder = Path.Combine(Application.StartupPath, "ReportGoods");
       Directory.CreateDirectory(outputFolder);
-      var fileName = $"{Path.GetFileNameWithoutExtension(templateFileName)}_{exportDate:yyMMddHHmmssfff}";
+      var fileName = $"{Path.GetFileNameWithoutExtension(templatePath)}_{exportDate:yyMMddHHmmssfff}";
       var workingDocPath = Path.Combine(
-        outputFolder, $"{fileName}{Path.GetExtension(templateFileName)}");
+        outputFolder, $"{fileName}{Path.GetExtension(templatePath)}");
       var pdfPath = Path.Combine(outputFolder, $"{fileName}.pdf");
       File.Copy(templatePath, workingDocPath, overwrite: true);
 
