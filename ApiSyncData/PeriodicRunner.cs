@@ -118,34 +118,48 @@ namespace ApiSyncData
         products, categoryTares, clientDeliveries, users, templates, documents)
         .ConfigureAwait(false);
 
+      // Chỉ trạm hàng (STATION=2) cần nhận các phiếu cân xe từ trạm khác.
+      if (Environment.GetEnvironmentVariable("STATION") == "2")
+      {
+        await SyncRecordTrucksFromOtherStationsAsync(api, cancellationToken)
+          .ConfigureAwait(false);
+      }
+    }
 
-      //try
-      //{
-      //  if (StationId != null)
-      //  {
-      //    var recordTrucks = await api.RecordTruckFromServer(
-      //        StationId,
-      //        NumberLastDay,
-      //        cancellationToken)
-      //      .ConfigureAwait(false);
-      //    var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
-      //      recordTrucks,
-      //      cancellationToken).ConfigureAwait(false);
-      //    if (recordTruckChanges != null)
-      //      NotifyEntityChanged(recordTruckChanges);
-      //  }
-      //}
-      //catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-      //{
-      //  throw;
-      //}
-      //catch (Exception ex)
-      //{
-      //  throw new InvalidOperationException(
-      //    $"RecordTruckFromServer sync thất bại. StationId={StationId}, " +
-      //    $"NumberLastDay={NumberLastDay}.",
-      //    ex);
-      //}
+    private static async Task SyncRecordTrucksFromOtherStationsAsync(
+      ApiService api,
+      CancellationToken cancellationToken)
+    {
+      if (!StationId.HasValue)
+      {
+        throw new InvalidOperationException(
+          "Không thể đồng bộ RecordTruck từ trạm khác vì chưa cấu hình StationId.");
+      }
+
+      try
+      {
+        var recordTrucks = await api.RecordTruckFromServer(
+            StationId.Value,
+            NumberLastDay,
+            cancellationToken)
+          .ConfigureAwait(false);
+        var recordTruckChanges = await RecordTruckServerSyncService.SyncAsync(
+          recordTrucks,
+          cancellationToken).ConfigureAwait(false);
+        if (recordTruckChanges != null)
+          NotifyEntityChanged(recordTruckChanges);
+      }
+      catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        throw new InvalidOperationException(
+          $"RecordTruckFromServer sync thất bại. StationId={StationId}, " +
+          $"NumberLastDay={NumberLastDay}.",
+          ex);
+      }
     }
 
     private static async Task LoadAndSyncAsync<T>(string operationName, Task<T> request,

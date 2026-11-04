@@ -1107,7 +1107,7 @@ namespace ApiSyncData
     }
 
     public async Task<RecordTruckAPI> RecordTruckFromServer(
-      Guid? stationId,
+      Guid stationId,
       int numberLastDay,
       CancellationToken cancellationToken = default)
     {
