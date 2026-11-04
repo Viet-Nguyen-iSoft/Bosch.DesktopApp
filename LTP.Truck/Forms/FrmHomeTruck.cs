@@ -405,10 +405,11 @@ namespace LTP.Truck.Forms
           popupClient.ShowDialog(popupLoadMD);
           break;
         case Common.EnumData.EnumTypeData.TypeGoods:
-          var popupTypeGoods = new PopupTypeGoods();
-          popupTypeGoods.OnSendSuccess += typeGoods =>
+          var popupProduct = new PopupProduct(
+            iSoft.Database.EnumData.EnumTypeDataLocation.Truck);
+          popupProduct.OnSendSuccess += typeGoods =>
             PopupLoadMD_OnAddSuccess(popupLoadMD, typeGoods, type);
-          popupTypeGoods.ShowDialog(popupLoadMD);
+          popupProduct.ShowDialog(popupLoadMD);
           break;
         case Common.EnumData.EnumTypeData.Warehouse:
           var popupWarehouse = new PopupWarehouse();

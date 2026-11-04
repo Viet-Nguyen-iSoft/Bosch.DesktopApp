@@ -1047,9 +1047,9 @@ namespace LTP.Truck.Forms
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.TypeGoods)
       {
-        PopupTypeGoods popupTypeGoods = new PopupTypeGoods();
-        popupTypeGoods.OnSendSuccess += PopupTypeGoods_OnSendSuccess;
-        popupTypeGoods.ShowDialog();
+        var popupProduct = new PopupProduct(EnumTypeDataLocation.Truck);
+        popupProduct.OnSendSuccess += PopupTruckProduct_OnSendSuccess;
+        popupProduct.ShowDialog();
       }
       else if (_enumTypeMasterDataCurrent == EnumTypeMasterData.Tare)
       {
@@ -1299,7 +1299,7 @@ namespace LTP.Truck.Forms
       await _apiJobsService.AddOrUpdateAsync(apiJob);
     }
 
-    private async void PopupTypeGoods_OnSendSuccess(Product obj)
+    private async void PopupTruckProduct_OnSendSuccess(Product obj)
     {
       try
       {
@@ -1708,9 +1708,9 @@ namespace LTP.Truck.Forms
         var data = rowData as ProductDTO;
         if (data?.Product != null)
         {
-          PopupTypeGoods popupTypeGoods = new PopupTypeGoods(data.Product);
-          popupTypeGoods.OnSendSuccess += PopupUpdateTypeGoods_OnSendSuccess;
-          popupTypeGoods.ShowDialog();
+          var popupProduct = new PopupProduct(data.Product);
+          popupProduct.OnSendSuccess += PopupUpdateTruckProduct_OnSendSuccess;
+          popupProduct.ShowDialog();
         }
         else
         {
@@ -1821,7 +1821,7 @@ namespace LTP.Truck.Forms
       return Task.CompletedTask;
     }
 
-    private async void PopupUpdateTypeGoods_OnSendSuccess(Product obj)
+    private async void PopupUpdateTruckProduct_OnSendSuccess(Product obj)
     {
       try
       {

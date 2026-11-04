@@ -17,10 +17,25 @@ namespace LTP.Truck.MasterData
     private ProductGroupService _productGroupService { get; set; }
     private Product _productUpdate { get; set; }
     private EnumTypePopup _enumTypePopup = EnumTypePopup.Add;
+    private readonly EnumTypeDataLocation _location;
 
-    public PopupProduct()
+    public PopupProduct() : this(EnumTypeDataLocation.Good)
     {
+    }
+
+    public PopupProduct(EnumTypeDataLocation location)
+    {
+      if (location is not EnumTypeDataLocation.Truck and
+          not EnumTypeDataLocation.Good)
+      {
+        throw new ArgumentOutOfRangeException(nameof(location));
+      }
+
+      _location = location;
       InitializeComponent();
+      lbTitle.Text = location == EnumTypeDataLocation.Truck
+        ? "Loại hàng"
+        : "Chất thải";
       Load += PopupProduct_Load;
       btnConfirm.Click += BtnConfirm_Click;
       btnClose.Click += BtnClose_Click;
@@ -35,7 +50,7 @@ namespace LTP.Truck.MasterData
       cbbType.SelectedIndex = -1;
     }
 
-    public PopupProduct(Product product) : this()
+    public PopupProduct(Product product) : this(GetLocation(product))
     {
       _productUpdate = product;
       _enumTypePopup = EnumTypePopup.Update;
@@ -48,6 +63,20 @@ namespace LTP.Truck.MasterData
 
       if (Enum.IsDefined(typeof(EnumWasteType), product.EnumWasteType))
         cbbType.SelectedValue = product.EnumWasteType;
+    }
+
+    private static EnumTypeDataLocation GetLocation(Product product)
+    {
+      ArgumentNullException.ThrowIfNull(product);
+      if (product.EnumTypeData is not EnumTypeDataLocation.Truck and
+          not EnumTypeDataLocation.Good)
+      {
+        throw new ArgumentOutOfRangeException(
+          nameof(product),
+          "Product phải thuộc loại Truck hoặc Good.");
+      }
+
+      return product.EnumTypeData;
     }
 
     private async void PopupProduct_Load(object? sender, EventArgs e)
@@ -117,7 +146,7 @@ namespace LTP.Truck.MasterData
         {
           string productName = txtName.Texts.Trim();
           var products = await _productService.GetAllAsync(
-            EnumTypeDataLocation.Good, isContainDelete: true);
+            _location, isContainDelete: true);
           bool isDuplicateProduct = products.Any(item =>
             !item.DeletedFlag &&
             item.ProductGroupId == selectedProductGroup.Id &&
@@ -150,7 +179,7 @@ namespace LTP.Truck.MasterData
         product.EnumWasteType = selectedWasteType;
 
         var result = await _productService.AddOrUpdateAsync(
-          product, EnumTypeDataLocation.Good);
+          product, _location);
 
         Close();
         OnSendSuccess?.Invoke(result);
