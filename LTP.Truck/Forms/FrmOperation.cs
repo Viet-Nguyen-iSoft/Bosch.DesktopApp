@@ -181,15 +181,8 @@ namespace LTP.Truck.Forms
     private bool IsMasterDataChildAvailable(Button button)
     {
       bool isTruckStation = Environment.GetEnvironmentVariable("STATION") == "1";
-      //return isTruckStation
-      //  ? button == btnGroupProduct || button == btnClient || button == btnWarehouse || button == btnTypeGoods
-      //    || button == btnTareForTruck
-      //  : button == btnGroupProduct || button == btnProduct || button == btnTare
-      //   || button == btnDocument
-      //    || button == btnDelivery;
-
       return isTruckStation
-       ? button == btnClient || button == btnWarehouse || button == btnTypeGoods
+       ? button == btnGroupProduct || button == btnClient || button == btnWarehouse || button == btnTypeGoods
          || button == btnTareForTruck
        : button == btnGroupProduct || button == btnProduct || button == btnTare
          || button == btnDelivery

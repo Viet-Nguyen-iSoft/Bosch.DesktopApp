@@ -128,6 +128,9 @@ namespace ApiSyncData
       target.WeighInAt = NormalizeTimestamp(source.WeighInAt);
       target.WeighOutAt = NormalizeTimestamp(source.WeighOutAt);
 
+      target.NumberTare = Math.Max(1, source.NumberTare ?? 1);
+      MapTare(source, target, references.Tares);
+
       target.ClientId = ResolveLocalId(
         source.Id, source.ClientId, references.Clients, nameof(source.ClientId));
       target.ProductionId = ResolveLocalId(
@@ -147,6 +150,34 @@ namespace ApiSyncData
       target.NameDriver = source.NameDriver;
       target.IdCard = source.IdCard;
       target.ReasonDelete = source.ReasonDelete;
+    }
+
+    private static void MapTare(
+      ListDatumRecordTruck source,
+      RecordTruck target,
+      IReadOnlyDictionary<Guid, TareReference> tares)
+    {
+      var categoryTareId = NormalizeId(source.CategoryTareId);
+      if (!categoryTareId.HasValue)
+      {
+        target.NameTareForTruck = null;
+        target.Tare = 0;
+        return;
+      }
+
+      if (!tares.TryGetValue(categoryTareId.Value, out var tare))
+      {
+        LogMissingReference(
+          source.Id,
+          categoryTareId.Value,
+          nameof(source.CategoryTareId));
+        target.NameTareForTruck = null;
+        target.Tare = 0;
+        return;
+      }
+
+      target.NameTareForTruck = tare.Name;
+      target.Tare = (tare.Value ?? 0) * (target.NumberTare ?? 1);
     }
 
     private static EnumTypeDataTruck GetLocalStatus(ListDatumRecordTruck source)
@@ -176,14 +207,22 @@ namespace ApiSyncData
       if (localIds.TryGetValue(normalizedId.Value, out var localId))
         return localId;
 
+      LogMissingReference(recordTruckId, normalizedId.Value, relationName);
+      return null;
+    }
+
+    private static void LogMissingReference(
+      Guid? recordTruckId,
+      Guid referenceId,
+      string relationName)
+    {
       string warning =
-        $"RecordTruck {recordTruckId}: {relationName} {normalizedId} " +
+        $"RecordTruck {recordTruckId}: {relationName} {referenceId} " +
         "không tồn tại trong master data local; khóa ngoại được để trống.";
       System.Diagnostics.Trace.TraceWarning(warning);
       HelperManager.LogHelper.LogErrorToFileLog(
         new InvalidOperationException(warning),
         Path.Combine(AppContext.BaseDirectory, "Logs"));
-      return null;
     }
 
     private static async Task<ReferenceIds> LoadReferencesAsync(
@@ -201,7 +240,33 @@ namespace ApiSyncData
         await LoadLocalIdsAsync<User>(db, rows.Select(row => row.UserId), token)
           .ConfigureAwait(false),
         await LoadLocalIdsAsync<Station>(db, rows.Select(row => row.StationId), token)
+          .ConfigureAwait(false),
+        await LoadTaresAsync(db, rows.Select(row => row.CategoryTareId), token)
           .ConfigureAwait(false));
+    }
+
+    private static async Task<Dictionary<Guid, TareReference>> LoadTaresAsync(
+      MySqlDbContext db,
+      IEnumerable<Guid?> sourceIds,
+      CancellationToken token)
+    {
+      var ids = sourceIds
+        .Where(id => id.HasValue && id != Guid.Empty)
+        .Select(id => id!.Value)
+        .Distinct()
+        .ToList();
+      if (ids.Count == 0)
+        return new Dictionary<Guid, TareReference>();
+
+      var entities = await db.Set<Tare>()
+        .AsNoTracking()
+        .Where(tare => ids.Contains(tare.Id))
+        .ToListAsync(token)
+        .ConfigureAwait(false);
+
+      return entities.ToDictionary(
+        tare => tare.Id,
+        tare => new TareReference(tare.Name, tare.Value));
     }
 
     private static async Task<Dictionary<Guid, Guid>> LoadLocalIdsAsync<TEntity>(
@@ -237,7 +302,10 @@ namespace ApiSyncData
       IReadOnlyDictionary<Guid, Guid> TypeGoods,
       IReadOnlyDictionary<Guid, Guid> Warehouses,
       IReadOnlyDictionary<Guid, Guid> Users,
-      IReadOnlyDictionary<Guid, Guid> Stations);
+      IReadOnlyDictionary<Guid, Guid> Stations,
+      IReadOnlyDictionary<Guid, TareReference> Tares);
+
+    private sealed record TareReference(string? Name, double? Value);
 
     private static DateTime? NormalizeTimestamp(DateTime? value)
     {

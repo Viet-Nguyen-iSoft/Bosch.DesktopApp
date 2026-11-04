@@ -15,6 +15,7 @@ namespace ApiSyncData.Resp
   public sealed class ListDatumRecordTruck : IServerRecord
   {
     public Guid? Id { get; set; }
+    public int? NumberTare { get; set; }
     public string? SerialCode { get; set; }
     public string? Plate { get; set; }
     public string? LicensePlate { get; set; }
@@ -28,6 +29,7 @@ namespace ApiSyncData.Resp
     public DateTime? WeighInAt { get; set; }
     public DateTime? WeighOutAt { get; set; }
     public Guid? ClientId { get; set; }
+    public Guid? CategoryTareId { get; set; }
     public Guid? ProductionId { get; set; }
     public Guid? WarehouseId { get; set; }
     public Guid? UserId { get; set; }

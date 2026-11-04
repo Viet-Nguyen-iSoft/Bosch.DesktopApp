@@ -181,7 +181,7 @@ namespace LTP.Truck.Forms
       // 
       pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-      pictureBox1.Location = new Point(70, 321);
+      pictureBox1.Location = new Point(70, 337);
       pictureBox1.Margin = new Padding(70, 10, 70, 10);
       pictureBox1.Name = "pictureBox1";
       pictureBox1.Size = new Size(715, 160);
@@ -193,10 +193,10 @@ namespace LTP.Truck.Forms
       // 
       label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       label2.AutoSize = true;
-      label2.Font = new Font("Roboto", 35.75F, FontStyle.Bold);
+      label2.Font = new Font("Roboto", 25.75F, FontStyle.Bold);
       label2.Location = new Point(3, 614);
       label2.Name = "label2";
-      label2.Size = new Size(849, 58);
+      label2.Size = new Size(849, 42);
       label2.TabIndex = 2;
       label2.Text = "Weight Logging System";
       label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -205,10 +205,10 @@ namespace LTP.Truck.Forms
       // 
       lbTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       lbTitle.AutoSize = true;
-      lbTitle.Font = new Font("Roboto", 70.25F, FontStyle.Bold);
-      lbTitle.Location = new Point(3, 496);
+      lbTitle.Font = new Font("Roboto", 60.25F, FontStyle.Bold);
+      lbTitle.Location = new Point(3, 512);
       lbTitle.Name = "lbTitle";
-      lbTitle.Size = new Size(849, 113);
+      lbTitle.Size = new Size(849, 97);
       lbTitle.TabIndex = 1;
       lbTitle.Text = "HỆ THỐNG CÂN";
       lbTitle.TextAlign = ContentAlignment.MiddleCenter;
