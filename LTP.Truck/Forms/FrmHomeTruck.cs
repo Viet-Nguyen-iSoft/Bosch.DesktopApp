@@ -76,6 +76,34 @@ namespace LTP.Truck.Forms
         return _Instance;
       }
     }
+
+    public static void ClearDraftForUserChangeIfCreated()
+    {
+      var instance = _Instance;
+      if (instance == null || instance.IsDisposed || instance.Disposing)
+        return;
+
+      instance.ClearDraftForUserChange();
+    }
+
+    private void ClearDraftForUserChange()
+    {
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(ClearDraftForUserChange));
+        return;
+      }
+
+      _isViewingHistoricalDetail = false;
+      _recordTruck = new RecordTruck();
+      ShowDataHistorical(_recordTruck);
+      if (cbbTareForTruck.Items.Count > 0)
+        cbbTareForTruck.SelectedIndex = 0;
+      numericUpDownNumberTare.Value = 1;
+      cbbType.SelectedIndex = -1;
+      dgv.ClearSelection();
+      dgv.CurrentCell = null;
+    }
     #endregion
 
     private void CustomUI()

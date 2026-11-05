@@ -156,6 +156,7 @@ namespace LTP.Truck
     private readonly CancellationTokenSource _syncCts02 = new();
     private Task? _syncTask;
     private Task? _localDataSyncTask;
+    private Guid? _lastSessionUserId;
 
     private void FrmMain_Load(object? sender, EventArgs e)
     {
@@ -323,6 +324,21 @@ namespace LTP.Truck
 
       try
       {
+        var currentUserId = AppCore.Ins._userCurrent?.Id;
+        if (currentUserId.HasValue)
+        {
+          if (_lastSessionUserId.HasValue &&
+              _lastSessionUserId.Value != currentUserId.Value)
+          {
+            FrmHomeTruck.ClearDraftForUserChangeIfCreated();
+            FrmHomeGoods.ClearDraftForUserChangeIfCreated();
+          }
+
+          // Không xóa khi logout. Giữ UserId này để lần đăng nhập tiếp theo
+          // quyết định giữ hay xóa dữ liệu nhập dở.
+          _lastSessionUserId = currentUserId.Value;
+        }
+
         FrmOperation.Instance.ResetToDefaultHome();
         AppCore.Ins._autoLogoutService.Start(
           AppCore.Ins._appConfig?.TimeAutoLogOut);

@@ -91,6 +91,26 @@ namespace LTP.Truck.Forms
         return _Instance;
       }
     }
+
+    public static void ClearDraftForUserChangeIfCreated()
+    {
+      var instance = _Instance;
+      if (instance == null || instance.IsDisposed || instance.Disposing)
+        return;
+
+      instance.ClearDraftForUserChange();
+    }
+
+    private void ClearDraftForUserChange()
+    {
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(ClearDraftForUserChange));
+        return;
+      }
+
+      ResetDraftForm(focusLicensePlate: false);
+    }
     #endregion
 
     private void CustomUI()
@@ -1684,7 +1704,13 @@ namespace LTP.Truck.Forms
         return;
       }
 
+      ResetDraftForm(focusLicensePlate: true);
+    }
+
+    private void ResetDraftForm(bool focusLicensePlate)
+    {
       _isViewingHistoricalDetail = false;
+      _waitingForWeightReset = false;
       _recordTruckDTO = null!;
       _categoryTare = null;
 
@@ -1713,7 +1739,8 @@ namespace LTP.Truck.Forms
       dgv.ClearSelection();
       dgv.CurrentCell = null;
       ApplyHistoricalViewMode();
-      txtLicensePlate.Focus();
+      if (focusLicensePlate)
+        txtLicensePlate.Focus();
     }
 
     private static int GetProductTypeIndex(EnumWasteType? wasteType) => wasteType switch
