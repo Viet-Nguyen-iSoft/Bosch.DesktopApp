@@ -307,10 +307,20 @@ namespace LTP.Truck.Forms
 
     private async void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
     {
-      if (entityType != typeof(Tare) || IsDisposed || Disposing)
+      if (IsDisposed || Disposing)
         return;
 
-      await LoadTareForTruckAsync();
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() =>
+          MasterDataChangeNotifier_Changed(sender, entityType)));
+        return;
+      }
+
+      if (entityType == typeof(Tare))
+        await LoadTareForTruckAsync();
+      else if (entityType == typeof(iSoft.Database.Models.Record))
+        await LoadHistorical();
     }
 
     private async Task LoadLicensePlateSuggestionsAsync()
@@ -1238,7 +1248,7 @@ namespace LTP.Truck.Forms
         var statusIndex = _statusFilterIndex;
         var searchKey = txtSearchKey.Texts.Trim();
 
-        var records = await AppCore.Ins._recordTruckService.GetReportAsync(
+        var records = await AppCore.Ins._recordService.GetTruckReportAsync(
           fromUtc,
           toUtcExclusive,
           searchKey,

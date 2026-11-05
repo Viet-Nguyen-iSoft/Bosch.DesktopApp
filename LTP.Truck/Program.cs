@@ -116,7 +116,6 @@ namespace LTP.Truck
 
       ["0300"] = "Cho phép xóa dữ liệu cân",
       ["0301"] = "Cho phép thu hồi dữ liệu đã xóa",
-      ["0303"] = "Cho phép xem Audit Log",
       ["0303"] = "Cho phép truy cập trang Audit",
       ["0304"] = "Cho phép chỉnh sửa template",
     };

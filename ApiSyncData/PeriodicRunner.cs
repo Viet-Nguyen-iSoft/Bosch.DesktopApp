@@ -160,10 +160,11 @@ namespace ApiSyncData
       ApiService api,
       CancellationToken cancellationToken)
     {
-      if (!string.Equals(
-        Environment.GetEnvironmentVariable("STATION")?.Trim(),
-        "2",
-        StringComparison.Ordinal))
+      // Cả trạm cân xe tải (1) và trạm cân phế phẩm (2) đều cần nhận
+      // các phiếu xe tải của trạm khác. API tự loại trạm hiện tại bằng
+      // ExcludeStationId nên hai trạm xe tải có thể đồng bộ qua lại.
+      var stationType = Environment.GetEnvironmentVariable("STATION")?.Trim();
+      if (stationType is not ("1" or "2"))
       {
         return;
       }

@@ -32,6 +32,9 @@ namespace LTP.Truck.Forms
       ucPage1.PageChanged += ucPage1_PageChanged;
       Shown += FrmReportTruck_Shown;
       dgv.CellPainting += dgv_CellPainting;
+      MasterDataChangeNotifier.Changed += MasterDataChangeNotifier_Changed;
+      Disposed += (_, _) =>
+        MasterDataChangeNotifier.Changed -= MasterDataChangeNotifier_Changed;
     }
 
     private void CustomUI()
@@ -71,6 +74,27 @@ namespace LTP.Truck.Forms
     private async void FrmReportTruck_Shown(object? sender, EventArgs e)
     {
       await LoadHistorical(resetPage: true);
+    }
+
+    private async void MasterDataChangeNotifier_Changed(
+      object? sender,
+      Type entityType)
+    {
+      if (entityType != typeof(iSoft.Database.Models.Record) ||
+          IsDisposed || Disposing)
+      {
+        return;
+      }
+
+      if (InvokeRequired)
+      {
+        BeginInvoke(new Action(() =>
+          MasterDataChangeNotifier_Changed(sender, entityType)));
+        return;
+      }
+
+      if (Visible)
+        await LoadHistorical();
     }
 
     private async void btnSearchHistorical_Click(object? sender, EventArgs e)

@@ -35,6 +35,9 @@ namespace iSoft.Database
       return new RecordTruckDTO
       {
         Record = record,
+        // Adapter chỉ phục vụ màn hình vận hành cũ. Nguồn dữ liệu và báo cáo
+        // vẫn là bảng Records; quyền sửa tiếp tục được chặn theo StationId.
+        RecordTruck = ToLegacyRecordTruck(record),
         No = 1,
         NoLabelAuto = record.NoLabelAuto,
         NoLabelManual = record.NoLabelManual,

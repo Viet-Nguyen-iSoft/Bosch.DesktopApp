@@ -14,7 +14,8 @@ namespace ApiSyncData
     public static int LastSynchronizedCount { get; private set; }
     
     /// <summary>
-    /// Đồng bộ Record local chưa được gửi lên server sau mỗi 5 giây.
+    /// Đồng bộ riêng Record xe tải local chưa được gửi lên server sau mỗi 5 giây.
+    /// Dữ liệu cân hàng/phế phẩm không thuộc luồng đồng bộ liên trạm này.
     /// Bản ghi lỗi sẽ giữ SyncFlag = false để được thử lại ở chu kỳ tiếp theo.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
@@ -118,8 +119,7 @@ namespace ApiSyncData
       await using var db = new MySqlDbContext();
       return await db.Set<RecordModel>()
         .Where(record => !record.SyncFlag &&
-          (record.TypeData == EnumTypeDataLocation.Truck ||
-           record.TypeData == EnumTypeDataLocation.Good))
+          record.TypeData == EnumTypeDataLocation.Truck)
         .OrderBy(record => record.CreatedAt)
         .ThenBy(record => record.Id)
         .ToListAsync(cancellationToken)
@@ -128,7 +128,12 @@ namespace ApiSyncData
 
     private static RecordSync Map(RecordModel record)
     {
-      var isTruck = record.TypeData == EnumTypeDataLocation.Truck;
+      if (record.TypeData != EnumTypeDataLocation.Truck)
+      {
+        throw new InvalidOperationException(
+          $"Không thể đồng bộ Record {record.Id}: chỉ hỗ trợ dữ liệu cân xe tải.");
+      }
+
       return new RecordSync
       {
         Id = record.Id,
@@ -136,7 +141,7 @@ namespace ApiSyncData
         NoLabelAuto = record.NoLabelAuto,
         NoLabelManual = record.NoLabelManual,
         NetTime01 = record.NetTime01,
-        Tare01 = isTruck ? record.TareTime01 : record.Tare,
+        Tare01 = record.TareTime01,
         NetTime02 = record.NetTime02,
         Tare02 = record.TareTime02,
         NumberTare = record.NumberTare,
