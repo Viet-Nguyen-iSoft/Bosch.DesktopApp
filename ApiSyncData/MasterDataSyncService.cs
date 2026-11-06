@@ -67,6 +67,11 @@ namespace ApiSyncData
       var source = response.Data?.Client
         ?? throw new InvalidOperationException(
           "DefaultDeliverySetting: response không có Data.Client.");
+      if (!source.Id.HasValue || source.Id == Guid.Empty)
+      {
+        throw new InvalidOperationException(
+          "DefaultDeliverySetting: Data.Client.Id không hợp lệ.");
+      }
 
       await SyncLock.WaitAsync(token).ConfigureAwait(false);
       try
@@ -78,11 +83,16 @@ namespace ApiSyncData
           ?? throw new InvalidOperationException(
             "DefaultDeliverySetting: local chưa có AppConfig.");
 
+        // Local đang chờ POST thì không để lượt GET định kỳ ghi đè dữ liệu.
+        if (!appConfig.SyncFlag)
+          return null;
+
         appConfig.Company = source.Name;
         appConfig.OfficeAddress = source.OfficeAddress;
         appConfig.PhoneForOfficeAddress = source.PhoneForOfficeAddress;
         appConfig.AgentAddress = source.AgentAddress;
         appConfig.PhoneForAgentAddress = source.PhoneForAgentAddress;
+        appConfig.SyncFlag = true;
 
         db.ChangeTracker.DetectChanges();
         var entry = db.Entry(appConfig);

@@ -13,6 +13,7 @@ namespace ApiSyncData.Resp
 
   public sealed class DefaultDeliverySettingClient
   {
+    public Guid? Id { get; set; }
     public string? Name { get; set; }
     public string? OfficeAddress { get; set; }
     public string? PhoneForOfficeAddress { get; set; }

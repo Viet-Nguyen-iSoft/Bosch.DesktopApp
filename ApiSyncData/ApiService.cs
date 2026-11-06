@@ -140,6 +140,49 @@ namespace ApiSyncData
           "DefaultDeliverySetting API trả về dữ liệu không hợp lệ.");
     }
 
+    public async Task<string> UpdateDefaultDeliverySettingAsync(
+      DefaultDeliverySettingUpdateRequest request,
+      string lang = "vi",
+      CancellationToken cancellationToken = default)
+    {
+      ArgumentNullException.ThrowIfNull(request);
+      if (request.Client.Id == Guid.Empty)
+        throw new ArgumentException(
+          "Default delivery Client.Id không hợp lệ.", nameof(request));
+      ArgumentException.ThrowIfNullOrWhiteSpace(lang);
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException(
+          "Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException(
+          "Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/DefaultDeliverySetting/" +
+        $"update-default-delivery-settings?lang={Uri.EscapeDataString(lang.Trim())}";
+
+      using var httpClient = CreateHttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+      using var content = new StringContent(
+        JsonConvert.SerializeObject(request),
+        System.Text.Encoding.UTF8,
+        "application/json");
+      using var response = await httpClient.PostAsync(
+        apiUrl, content, cancellationToken).ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"UpdateDefaultDeliverySetting. URL: {apiUrl}. " +
+          $"HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). " +
+          $"Response: {responseContent}");
+      }
+
+      return responseContent;
+    }
+
     public async Task<StationAPI> Station(
       bool isContainDelete = false,
       CancellationToken cancellationToken = default)

@@ -143,6 +143,18 @@ namespace ApiSyncData
         RunIsolatedAsync(documents, cancellationToken))
         .ConfigureAwait(false);
 
+      var defaultDeliveryClientId = DefaultDeliverySetting?.Data?.Client?.Id;
+      if (defaultDeliveryClientId.HasValue &&
+          defaultDeliveryClientId.Value != Guid.Empty)
+      {
+        await RunIsolatedAsync(
+          SyncLocalDefaultDeliverySettingAsync(
+            api,
+            defaultDeliveryClientId.Value,
+            cancellationToken),
+          cancellationToken).ConfigureAwait(false);
+      }
+
       //các phiếu cân xe từ trạm khác.
       await RunIsolatedAsync(
           SyncRecordTrucksFromOtherStationsAsync(api, cancellationToken),
@@ -166,6 +178,17 @@ namespace ApiSyncData
       {
         LogSyncError(ex);
       }
+    }
+
+    private static async Task SyncLocalDefaultDeliverySettingAsync(
+      ApiService api,
+      Guid clientId,
+      CancellationToken cancellationToken)
+    {
+      var changes = await DefaultDeliverySettingLocalSyncService.SyncAsync(
+        api, clientId, cancellationToken).ConfigureAwait(false);
+      if (changes != null)
+        NotifyEntityChanged(changes);
     }
 
     private static async Task SyncRecordTrucksFromOtherStationsAsync(

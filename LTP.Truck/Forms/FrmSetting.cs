@@ -955,12 +955,32 @@ namespace LTP.Truck.Forms
 
       try
       {
-        appConfig.Company = txtCompany.Texts.Trim();
-        appConfig.OfficeAddress = txtOfficeAddress.Texts.Trim();
-        appConfig.PhoneForOfficeAddress = txtPhoneForOfficeAddress.Texts.Trim();
-        appConfig.AgentAddress = txtAgentAddress.Texts.Trim();
-        appConfig.PhoneForAgentAddress = txtPhoneForAgentAddress.Texts.Trim();
-        appConfig.UpdatedAt = DateTime.UtcNow;
+        string company = txtCompany.Texts.Trim();
+        string officeAddress = txtOfficeAddress.Texts.Trim();
+        string phoneForOfficeAddress = txtPhoneForOfficeAddress.Texts.Trim();
+        string agentAddress = txtAgentAddress.Texts.Trim();
+        string phoneForAgentAddress = txtPhoneForAgentAddress.Texts.Trim();
+        bool reportInformationChanged =
+          !string.Equals(appConfig.Company, company, StringComparison.Ordinal) ||
+          !string.Equals(appConfig.OfficeAddress, officeAddress,
+            StringComparison.Ordinal) ||
+          !string.Equals(appConfig.PhoneForOfficeAddress, phoneForOfficeAddress,
+            StringComparison.Ordinal) ||
+          !string.Equals(appConfig.AgentAddress, agentAddress,
+            StringComparison.Ordinal) ||
+          !string.Equals(appConfig.PhoneForAgentAddress, phoneForAgentAddress,
+            StringComparison.Ordinal);
+
+        appConfig.Company = company;
+        appConfig.OfficeAddress = officeAddress;
+        appConfig.PhoneForOfficeAddress = phoneForOfficeAddress;
+        appConfig.AgentAddress = agentAddress;
+        appConfig.PhoneForAgentAddress = phoneForAgentAddress;
+        if (reportInformationChanged)
+        {
+          appConfig.SyncFlag = false;
+          appConfig.UpdatedAt = DateTime.UtcNow;
+        }
 
         AppCore.Ins._appConfig = await AppCore.Ins._appConfigService
           .AddOrUpdateAsync(appConfig);
