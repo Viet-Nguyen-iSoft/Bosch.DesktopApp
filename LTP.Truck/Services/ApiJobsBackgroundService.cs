@@ -188,7 +188,7 @@ namespace LTP.Truck.Services
       Action<Exception>? onError = null,
       TimeSpan? interval = null)
     {
-      var delay = interval ?? TimeSpan.FromSeconds(3);
+      var delay = interval ?? TimeSpan.FromSeconds(2);
 
       while (!cancellationToken.IsCancellationRequested)
       {

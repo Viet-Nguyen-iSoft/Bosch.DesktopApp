@@ -915,65 +915,72 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      using var buttonLock = ButtonExecutionScope.Enter(sender);
-      try
+      RecordTruck? savedRecord = null;
+      using (ButtonExecutionScope.Enter(sender))
       {
-        if (_recordTruck.NetTimeTemp <= 0)
+        try
         {
-          PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupConfirm.ShowDialog();
-          return;
+          if (_recordTruck.NetTimeTemp <= 0)
+          {
+            PopupConfirm popupConfirm = new PopupConfirm("Giá trị cân ≤ 0 Kg !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupConfirm.ShowDialog();
+            return;
+          }
+
+          var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
+          if (!validLicense.IsValid)
+          {
+            PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
+            popupConfirm.ShowDialog();
+            return;
+          }
+
+          if (!ValidateClientSelected())
+            return;
+
+          _recordTruck.NetTime02 = _recordTruck.NetTimeTemp;
+          _recordTruck.NetTimeTemp = 0.0;
+          _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime02;
+
+          //Save DB
+          _recordTruck.NoLabelAuto ??= await AppCore.Ins._appConfigService
+            .CreateNextLabelAsync(AppCore.Ins._appConfig ??
+              throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
+          _recordTruck.NoLabelManual = txtNoLabel.Texts;
+          _recordTruck.NameDriver = txtNameDriver.Texts;
+          _recordTruck.LicensePlate = validLicense.Plate;
+          _recordTruck.IdCard = txtIdCard.Texts;
+          _recordTruck.Note = txtDocument.Text;
+          _recordTruck.Tare = GetTareForTruckValue();
+          _recordTruck.NameTareForTruck = GetTareForTruckName();
+          _recordTruck.NumberTare = decimal.ToInt32(numericUpDownNumberTare.Value);
+          _recordTruck.Type = cbbType.SelectedItem?.ToString();
+          _recordTruck.StationId = AppCore.Ins._station?.Id;
+          _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
+          _recordTruck.UpdatedAt = DateTime.UtcNow;
+          _recordTruck.WeighOutAt = DateTime.UtcNow;
+          CheckShowStatusButton(_recordTruck);
+
+          var result = await AppCore.Ins._recordTruckService
+            .AddOrUpdateAsync(_recordTruck);
+          savedRecord = await _recordTruckService
+            .GetDetailByIdAsync(result.Record.Id) ?? result.Record;
+          await LoadHistorical();
+
+          // Tạo sẵn file PDF sau khi hoàn tất cân lần 2 để người dùng có thể
+          // chủ động in bằng nút In.
+          await DownloadReportTruck02(DateTime.Now, savedRecord);
         }
-
-        var validLicense = LicensePlateHelper.IsValidVietnamLicensePlate(txtLicensePlate.Texts);
-        if (!validLicense.IsValid)
+        catch (Exception ex)
         {
-          PopupConfirm popupConfirm = new PopupConfirm("Biển số xe không hợp lệ !", EnumTypeMsg.MessageManualClose, EnumImageMsg.Warning);
-          popupConfirm.ShowDialog();
-          return;
-        }
-
-        if (!ValidateClientSelected())
-          return;
-
-        _recordTruck.NetTime02 = _recordTruck.NetTimeTemp;
-        _recordTruck.NetTimeTemp = 0.0;
-        _recordTruck.EnumTypeDataTruck = EnumTypeDataTruck.DoneTime02;
-
-        //Save DB
-        _recordTruck.NoLabelAuto ??= await AppCore.Ins._appConfigService
-          .CreateNextLabelAsync(AppCore.Ins._appConfig ??
-            throw new InvalidOperationException("Không tìm thấy cấu hình ứng dụng."));
-        _recordTruck.NoLabelManual = txtNoLabel.Texts;
-        _recordTruck.NameDriver = txtNameDriver.Texts;
-        _recordTruck.LicensePlate = validLicense.Plate;
-        _recordTruck.IdCard = txtIdCard.Texts;
-        _recordTruck.Note = txtDocument.Text;
-        _recordTruck.Tare = GetTareForTruckValue();
-        _recordTruck.NameTareForTruck = GetTareForTruckName();
-        _recordTruck.NumberTare = decimal.ToInt32(numericUpDownNumberTare.Value);
-        _recordTruck.Type = cbbType.SelectedItem?.ToString();
-        _recordTruck.StationId = AppCore.Ins._station?.Id;
-        _recordTruck.UserId = AppCore.Ins._userCurrent?.Id;
-        _recordTruck.UpdatedAt = DateTime.UtcNow;
-        _recordTruck.WeighOutAt = DateTime.UtcNow;
-        CheckShowStatusButton(_recordTruck);
-
-        await AppCore.Ins._recordTruckService.AddOrUpdateAsync(_recordTruck);
-        await LoadHistorical();
-
-        // Tạo sẵn file PDF sau khi hoàn tất cân lần 2 để người dùng có thể
-        // chủ động in bằng nút In.
-        RecordTruck? record = await _recordTruckService.GetDetailByIdAsync(_recordTruck.Id);
-        if (record != null)
-        {
-          await DownloadReportTruck02(DateTime.Now, record);
+          HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
         }
       }
-      catch (Exception ex)
-      {
-        HelperManager.LogHelper.LogErrorToFileLog(ex, AppCore.Ins._folderFileLog);
-      }
+
+      // ButtonExecutionScope khôi phục Enabled ban đầu khi Dispose. Phải áp
+      // lại trạng thái DoneTime02 sau đó để nút Cân lần 2 luôn bị khóa.
+      if (savedRecord != null)
+        ShowRecordDetail(savedRecord);
     }
 
     private void btnBack_Click(object sender, EventArgs e)

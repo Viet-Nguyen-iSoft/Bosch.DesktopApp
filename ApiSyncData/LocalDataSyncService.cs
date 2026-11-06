@@ -14,8 +14,9 @@ namespace ApiSyncData
     public static int LastSynchronizedCount { get; private set; }
     
     /// <summary>
-    /// Đồng bộ riêng Record xe tải local chưa được gửi lên server sau mỗi 5 giây.
-    /// Dữ liệu cân hàng/phế phẩm không thuộc luồng đồng bộ liên trạm này.
+    /// Đẩy Record local chưa đồng bộ lên API RecordTruck sau mỗi 5 giây.
+    /// Xe tải và cân hàng/phế phẩm dùng chung payload, phân biệt bằng RecordType.
+    /// Chiều tải dữ liệu từ các trạm khác vẫn chỉ áp dụng cho xe tải.
     /// Bản ghi lỗi sẽ giữ SyncFlag = false để được thử lại ở chu kỳ tiếp theo.
     /// </summary>
     public static Task RunEvery5SecondsAsync(
@@ -86,9 +87,7 @@ namespace ApiSyncData
 
         try
         {
-          var payload = Map(record);
-          var rawData = JsonConvert.SerializeObject(new[] { payload });
-          await api.SyncRecordsFromLocal(rawData, cancellationToken)
+          await SyncRecordAsync(api, record, cancellationToken)
             .ConfigureAwait(false);
 
           if (await MarkAsSynchronizedAsync(
@@ -106,7 +105,8 @@ namespace ApiSyncData
         catch (Exception ex)
         {
           errors.Add(new InvalidOperationException(
-            $"Không thể đồng bộ Record local Id {record.Id}.", ex));
+            $"Không thể đồng bộ Record local Id {record.Id}, " +
+            $"TypeData={record.TypeData}.", ex));
         }
       }
 
@@ -119,20 +119,36 @@ namespace ApiSyncData
       await using var db = new MySqlDbContext();
       return await db.Set<RecordModel>()
         .Where(record => !record.SyncFlag &&
-          record.TypeData == EnumTypeDataLocation.Truck)
+          (record.TypeData == EnumTypeDataLocation.Truck ||
+           record.TypeData == EnumTypeDataLocation.Good))
         .OrderBy(record => record.CreatedAt)
         .ThenBy(record => record.Id)
         .ToListAsync(cancellationToken)
         .ConfigureAwait(false);
     }
 
-    private static RecordSync Map(RecordModel record)
+    private static async Task SyncRecordAsync(
+      ApiService api,
+      RecordModel record,
+      CancellationToken cancellationToken)
     {
-      if (record.TypeData != EnumTypeDataLocation.Truck)
+      if (record.TypeData is not (
+          EnumTypeDataLocation.Truck or EnumTypeDataLocation.Good))
       {
         throw new InvalidOperationException(
-          $"Không thể đồng bộ Record {record.Id}: chỉ hỗ trợ dữ liệu cân xe tải.");
+          $"Không hỗ trợ đồng bộ Record {record.Id} với " +
+          $"TypeData={record.TypeData}.");
       }
+
+      var payload = MapRecord(record);
+      await api.SyncRecordTruckFromLocal(
+        JsonConvert.SerializeObject(new[] { payload }),
+        cancellationToken).ConfigureAwait(false);
+    }
+
+    private static RecordSync MapRecord(RecordModel record)
+    {
+      bool isTruck = record.TypeData == EnumTypeDataLocation.Truck;
 
       return new RecordSync
       {
@@ -141,11 +157,12 @@ namespace ApiSyncData
         NoLabelAuto = record.NoLabelAuto,
         NoLabelManual = record.NoLabelManual,
         NetTime01 = record.NetTime01,
-        Tare01 = record.TareTime01,
+        // Với cân phế phẩm, Tare là giá trị bì thực tế của phiếu.
+        Tare01 = isTruck ? record.TareTime01 : record.Tare,
         NetTime02 = record.NetTime02,
         Tare02 = record.TareTime02,
         NumberTare = record.NumberTare,
-        EnumTypeDataTruck = record.EnumTypeDataTruck,
+        EnumTypeDataTruck = isTruck == true ? record.EnumTypeDataTruck : EnumTypeDataTruck.DoneTime02,
         NameDriver = record.NameDriver,
         IdCard = record.IdCard,
         LicensePlate = record.LicensePlate,
