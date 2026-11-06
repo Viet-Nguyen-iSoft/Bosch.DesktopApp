@@ -25,6 +25,10 @@ namespace ApiSyncData
     public static Resp.UserAPI? Users { get; private set; }
     public static Resp.DocumentAPI? Documents { get; private set; }
     public static Resp.TemplateAPI? Templates { get; private set; }
+    public static Resp.DefaultDeliverySettingAPI? DefaultDeliverySetting {
+      get;
+      private set;
+    }
 
     public static void SetServerAvailabilityCheck(Func<bool> serverAvailabilityCheck)
     {
@@ -108,6 +112,13 @@ namespace ApiSyncData
         () => SyncTemplatesAsync(api, cancellationToken),
         cancellationToken);
 
+      var defaultDeliverySetting = LoadAndSyncAsync(
+        "DefaultDeliverySetting",
+        api.DefaultDeliverySetting(cancellationToken: cancellationToken),
+        MasterDataSyncService.SyncDefaultDeliverySettingAsync,
+        value => DefaultDeliverySetting = value,
+        cancellationToken);
+
       var dtNow = DateTime.UtcNow.Date;
       var dateTo = dtNow.AddYears(10);
       var dateFrom = dtNow.AddYears(-10);
@@ -128,6 +139,7 @@ namespace ApiSyncData
         RunIsolatedAsync(clientDeliveries, cancellationToken),
         RunIsolatedAsync(users, cancellationToken),
         RunIsolatedAsync(templates, cancellationToken),
+        RunIsolatedAsync(defaultDeliverySetting, cancellationToken),
         RunIsolatedAsync(documents, cancellationToken))
         .ConfigureAwait(false);
 

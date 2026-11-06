@@ -103,6 +103,43 @@ namespace ApiSyncData
         formData.Add(new StringContent(fieldName), "DeleteFields");
     }
 
+    public async Task<DefaultDeliverySettingAPI> DefaultDeliverySetting(
+      string lang = "vi",
+      CancellationToken cancellationToken = default)
+    {
+      ArgumentException.ThrowIfNullOrWhiteSpace(lang);
+
+      string baseAPI = Environment.GetEnvironmentVariable("URL_API")
+        ?? throw new InvalidOperationException(
+          "Environment variable URL_API is not configured.");
+      string apiKey = Environment.GetEnvironmentVariable("API_KEY")
+        ?? throw new InvalidOperationException(
+          "Environment variable API_KEY is not configured.");
+      string apiUrl =
+        $"{baseAPI.TrimEnd('/')}/v1/DefaultDeliverySetting/" +
+        $"get-default-delivery-settings?lang={Uri.EscapeDataString(lang.Trim())}";
+
+      using var httpClient = CreateHttpClient();
+      httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey.Trim());
+      using var response = await httpClient.GetAsync(apiUrl, cancellationToken)
+        .ConfigureAwait(false);
+      string responseContent = await response.Content
+        .ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new HttpRequestException(
+          $"DefaultDeliverySetting. URL: {apiUrl}. " +
+          $"HTTP {(int)response.StatusCode} ({response.ReasonPhrase}). " +
+          $"Response: {responseContent}");
+      }
+
+      return JsonConvert.DeserializeObject<DefaultDeliverySettingAPI>(
+          responseContent)
+        ?? throw new InvalidOperationException(
+          "DefaultDeliverySetting API trả về dữ liệu không hợp lệ.");
+    }
+
     public async Task<StationAPI> Station(
       bool isContainDelete = false,
       CancellationToken cancellationToken = default)

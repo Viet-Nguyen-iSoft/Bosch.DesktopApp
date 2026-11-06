@@ -59,6 +59,62 @@ namespace ApiSyncData
       SyncAsync<ListDatumStation, Station>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);
 
+    public static async Task<MasterDataChangedEventArgs?>
+      SyncDefaultDeliverySettingAsync(
+        DefaultDeliverySettingAPI response,
+        CancellationToken token = default)
+    {
+      var source = response.Data?.Client
+        ?? throw new InvalidOperationException(
+          "DefaultDeliverySetting: response không có Data.Client.");
+
+      await SyncLock.WaitAsync(token).ConfigureAwait(false);
+      try
+      {
+        await using var db = new MySqlDbContext();
+        var appConfig = await db.Set<AppConfig>()
+          .FirstOrDefaultAsync(item => !item.DeletedFlag, token)
+          .ConfigureAwait(false)
+          ?? throw new InvalidOperationException(
+            "DefaultDeliverySetting: local chưa có AppConfig.");
+
+        appConfig.Company = source.Name;
+        appConfig.OfficeAddress = source.OfficeAddress;
+        appConfig.PhoneForOfficeAddress = source.PhoneForOfficeAddress;
+        appConfig.AgentAddress = source.AgentAddress;
+        appConfig.PhoneForAgentAddress = source.PhoneForAgentAddress;
+
+        db.ChangeTracker.DetectChanges();
+        var entry = db.Entry(appConfig);
+        bool hasChanges = entry.Properties.Any(property =>
+          property.IsModified &&
+          property.Metadata.Name is
+            nameof(AppConfig.Company) or
+            nameof(AppConfig.OfficeAddress) or
+            nameof(AppConfig.PhoneForOfficeAddress) or
+            nameof(AppConfig.AgentAddress) or
+            nameof(AppConfig.PhoneForAgentAddress));
+        if (!hasChanges)
+          return null;
+
+        appConfig.UpdatedAt = DateTime.UtcNow;
+        int affectedRows = await db.SaveChangesAsync(token).ConfigureAwait(false);
+        if (affectedRows == 0)
+          return null;
+
+        return new MasterDataChangedEventArgs(
+          typeof(AppConfig),
+          Array.Empty<Guid>(),
+          new[] { appConfig.Id },
+          Array.Empty<Guid>(),
+          affectedRows);
+      }
+      finally
+      {
+        SyncLock.Release();
+      }
+    }
+
     public static Task<MasterDataChangedEventArgs?> SyncWarehousesAsync(WarehouseAPI response, CancellationToken token = default) =>
       SyncAsync<ListDatumWarehouse, Warehouse>(response.Data?.ListData, response.Data?.TotalRecord,
         (s, l) => { l.Name = s.Name; l.Description = s.Description; }, token);

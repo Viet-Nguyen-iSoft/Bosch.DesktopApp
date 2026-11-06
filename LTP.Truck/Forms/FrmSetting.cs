@@ -57,7 +57,7 @@ namespace LTP.Truck.Forms
 
     private void MasterDataChangeNotifier_Changed(object? sender, Type entityType)
     {
-      if (entityType != typeof(Station) || IsDisposed || Disposing)
+      if (IsDisposed || Disposing)
         return;
 
       if (InvokeRequired)
@@ -68,8 +68,13 @@ namespace LTP.Truck.Forms
         return;
       }
 
-      if (Visible)
+      if (!Visible)
+        return;
+
+      if (entityType == typeof(Station))
         _ = LoadStationsAsync();
+      else if (entityType == typeof(AppConfig))
+        LoadReportInformation(AppCore.Ins._appConfig);
     }
 
     private static void NonNegativeInteger_KeyPress(object? sender, KeyPressEventArgs e)

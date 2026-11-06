@@ -198,8 +198,6 @@ namespace LTP.Truck
     {
       try
       {
-        global::LTP.Truck.Controls.MasterDataChangeNotifier.Notify(e.EntityType);
-
         if (e.EntityType == typeof(User))
         {
           await RefreshCurrentUserAsync(e);
@@ -208,6 +206,12 @@ namespace LTP.Truck
         {
           await RefreshCurrentStationAsync(e);
         }
+        else if (e.EntityType == typeof(AppConfig))
+        {
+          await RefreshCurrentAppConfigAsync(e);
+        }
+
+        global::LTP.Truck.Controls.MasterDataChangeNotifier.Notify(e.EntityType);
       }
       catch (Exception ex)
       {
@@ -297,6 +301,24 @@ namespace LTP.Truck
       }
 
       ApplyStationChange();
+    }
+
+    private async Task RefreshCurrentAppConfigAsync(
+      MasterDataChangedEventArgs changes)
+    {
+      var currentConfig = AppCore.Ins._appConfig;
+      if (currentConfig != null &&
+          !changes.AddedIds.Contains(currentConfig.Id) &&
+          !changes.UpdatedIds.Contains(currentConfig.Id) &&
+          !changes.DeletedIds.Contains(currentConfig.Id))
+      {
+        return;
+      }
+
+      var refreshedConfig = await AppCore.Ins._appConfigService
+        .GetAppConfigAsync().ConfigureAwait(false);
+      if (refreshedConfig != null)
+        AppCore.Ins._appConfig = refreshedConfig;
     }
 
     private void CheckOpenMulApp()
